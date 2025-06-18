@@ -23,6 +23,7 @@
                     <select id="practiceMode" class="controls__select">
                         <option value="normal">通常練習</option>
                         <option value="sentence">文章練習</option>
+                        <option value="word">単語練習</option>
                     </select>
                 </label>
             </div>
@@ -43,6 +44,18 @@
                     <input type="checkbox" id="showExamples" class="controls__checkbox" checked>
                     例文を表示
                 </label>
+                
+                <label class="controls__label" style="margin-top: 0.5rem;">
+                    例文カテゴリー:
+                    <select id="exampleCategory" class="controls__select">
+                        <option value="all">すべて</option>
+                        <option value="daily">日常会話</option>
+                        <option value="school">学校</option>
+                        <option value="family">家族</option>
+                        <option value="hobby">趣味</option>
+                    </select>
+                </label>
+                
                 <button id="refreshExamplesBtn" class="btn btn--secondary" style="margin-top: 0.5rem; font-size: 0.9rem;">
                     例文を更新
                 </button>
@@ -55,6 +68,66 @@
                 </label>
             </div>
 
+            <div class="controls__group" id="wordOptions" style="display: none;">
+                <label class="controls__label">
+                    単語カテゴリー:
+                    <select id="wordCategory" class="controls__select">
+                        <option value="animals">動物</option>
+                        <option value="food">食べ物</option>
+                        <option value="colors">色（準備中）</option>
+                        <option value="numbers">数字（準備中）</option>
+                    </select>
+                </label>
+            </div>
+            
+            <div class="controls__group" id="customExampleOptions" style="display: none;">
+                <h3 class="controls__subtitle">カスタム例文</h3>
+                <label class="controls__label">
+                    英語:
+                    <input type="text" id="customEnglish" class="controls__input" placeholder="例: Hello, world!">
+                </label>
+                <label class="controls__label">
+                    日本語:
+                    <input type="text" id="customJapanese" class="controls__input" placeholder="例: こんにちは、世界！">
+                </label>
+                <button id="addCustomExampleBtn" class="btn btn--secondary" style="margin-top: 0.5rem;">
+                    例文を追加
+                </button>
+            </div>
+
+            <div class="controls__group" id="customizeOptions" style="display: block;">
+                <h3 class="controls__subtitle">カスタマイズ設定</h3>
+                
+                <label class="controls__label">
+                    罫線の高さ:
+                    <select id="lineHeight" class="controls__select">
+                        <option value="8">8mm（小さめ）</option>
+                        <option value="10" selected>10mm（標準）</option>
+                        <option value="12">12mm（大きめ）</option>
+                    </select>
+                </label>
+                
+                <label class="controls__label">
+                    罫線の色:
+                    <select id="lineColor" class="controls__select">
+                        <option value="gray" selected>グレー</option>
+                        <option value="blue">青</option>
+                        <option value="green">緑</option>
+                    </select>
+                </label>
+                
+                <label class="controls__label">
+                    <input type="checkbox" id="showHeader" class="controls__checkbox">
+                    名前・日付欄を表示
+                </label>
+                
+                <label class="controls__label">
+                    ページ数:
+                    <input type="number" id="pageCount" class="controls__input" value="1" min="1" max="5">
+                </label>
+            </div>
+
+            <button id="previewBtn" class="btn btn--secondary">プレビュー確認</button>
             <button id="printBtn" class="btn btn--primary">印刷・PDF保存</button>
         </section>
 
@@ -68,6 +141,7 @@
         <p>&copy; 2025 英語罫線ノート作成ツール</p>
     </footer>
 
+    <script src="src/quality-validator.js"></script>
     <script src="script.js"></script>
 </body>
 

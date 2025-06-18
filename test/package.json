@@ -1,0 +1,14 @@
+{
+  "name": "english-note-pdf-test",
+  "version": "1.0.0",
+  "description": "PDF preview test system for English note maker",
+  "main": "pdf-preview.js",
+  "scripts": {
+    "test": "node pdf-preview.js",
+    "serve": "http-server .. -p 3000 -c-1"
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0",
+    "http-server": "^14.1.1"
+  }
+}
