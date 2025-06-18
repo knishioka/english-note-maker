@@ -246,8 +246,9 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:3000
 ## 📞 参考資料
 
 - **PDF印刷技術**: `/docs/technical/pdf-printing-tips.md`
-- **レイアウト仕様**: `/docs/specifications/layout-spec.md`
-- **実装計画**: `/docs/plans/implementation-plan.md`
+- **機能要件書**: `/docs/specifications/feature-requirements.md`
+- **開発ロードマップ**: `/docs/plans/development-roadmap.md`
+- **テストシナリオ**: `/docs/testing/test-scenarios.md`
 
 ## 🎯 開発優先度
 
