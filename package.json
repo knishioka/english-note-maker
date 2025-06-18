@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "live-server --port=3000",
     "build": "echo 'Static files ready for deployment'",
-    "test": "echo 'No tests yet'",
+    "test": "npm run test:content && npm run test:layout",
+    "test:content": "node test/content-test.js",
+    "test:layout": "node test/layout-test.js",
     "lint": "echo 'No linting configured yet'",
     "typecheck": "echo 'No TypeScript yet'"
   },

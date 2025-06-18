@@ -213,7 +213,9 @@ npm run dev         # 開発サーバー起動（localhost:3000）
 
 # 品質チェック
 npm run lint        # コード品質チェック
-npm run test        # テスト実行
+npm run test        # テスト実行（コンテンツ＋レイアウト）
+npm run test:content # コンテンツ整合性テスト
+npm run test:layout  # レイアウト妥当性テスト
 
 # 本番ビルド
 npm run build       # 静的ファイル最適化
@@ -241,6 +243,31 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:3000
 - 相対パスを使用（絶対パスは避ける）
 - 外部API呼び出しなし
 - LocalStorage のみ使用可能
+- **公開URL**: https://knishioka.github.io/english-note-maker/
+
+##### リリース後の確認手順
+1. **GitHub Actions の確認**
+   - https://github.com/knishioka/english-note-maker/actions でワークフローの成功を確認
+   - `static.yml` (デプロイ) と `test.yml` (テスト) の両方がグリーンであること
+
+2. **本番サイトの動作確認**
+   ```bash
+   # サイトの疎通確認
+   curl -s -o /dev/null -w "%{http_code}" https://knishioka.github.io/english-note-maker/
+   # 200が返れば正常
+   ```
+
+3. **ブラウザでの確認項目**
+   - [ ] ページが正常に表示される
+   - [ ] 練習モードの切り替えが動作する
+   - [ ] プレビューが正しく更新される
+   - [ ] 印刷ボタンで印刷ダイアログが開く
+   - [ ] コンソールにエラーが出ていない
+
+4. **印刷品質の確認**
+   - [ ] 印刷プレビューでA4サイズに収まっている
+   - [ ] 4本線が正しく表示されている
+   - [ ] 余白が適切に設定されている
 
 #### 3. 印刷品質の厳格な管理
 - **レイアウト崩れの自動検知**: LayoutValidator クラスを使用
@@ -279,6 +306,17 @@ if (report.errors.length > 0) {
 - **[機能要件書](./docs/specifications/feature-requirements.md)** - 詳細な要件定義
 - **[開発ロードマップ](./docs/plans/development-roadmap.md)** - 今後の開発計画
 - **[テストシナリオ](./docs/testing/test-scenarios.md)** - 品質検証手順
+
+## 📊 コンテンツ統計の確認
+
+開発中のコンテンツ数を確認するには、ブラウザのコンソールで以下を実行：
+
+```javascript
+// コンテンツ統計を表示
+displayContentStats()
+```
+
+これにより、単語・フレーズ・例文の総数とカテゴリー別・年齢別の内訳が表示されます。
 
 ## 🎯 開発優先度
 
