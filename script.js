@@ -12,6 +12,25 @@ const CONFIG = {
     }
 };
 
+// コンテンツ統計管理システム
+const CONTENT_STATS = {
+    lastUpdated: "2025-01-18",
+    words: {
+        total: 0,
+        byCategory: {},
+        byAge: { "4-6": 0, "7-9": 0, "10-12": 0 }
+    },
+    phrases: {
+        total: 0,
+        byCategory: {},
+        byAge: { "4-6": 0, "7-9": 0, "10-12": 0 }
+    },
+    examples: {
+        total: 0,
+        byAge: { "4-6": 0, "7-9": 0, "10-12": 0 }
+    }
+};
+
 // 年齢別例文データ
 const EXAMPLE_SENTENCES_BY_AGE = {
     "4-6": [
@@ -1457,3 +1476,76 @@ function filterExamplesByCategory(category) {
     const sentences = EXAMPLE_SENTENCES_BY_AGE[ageGroup] || EXAMPLE_SENTENCES_BY_AGE["7-9"];
     return sentences.filter(s => s.category === category);
 }
+// コンテンツ統計を自動計算する関数
+function updateContentStats() {
+    // 単語の統計を計算
+    CONTENT_STATS.words.total = 0;
+    CONTENT_STATS.words.byCategory = {};
+    CONTENT_STATS.words.byAge = { "4-6": 0, "7-9": 0, "10-12": 0 };
+    
+    Object.entries(WORD_LISTS).forEach(([category, ageData]) => {
+        CONTENT_STATS.words.byCategory[category] = 0;
+        Object.entries(ageData).forEach(([age, words]) => {
+            const count = words.length;
+            CONTENT_STATS.words.byCategory[category] += count;
+            CONTENT_STATS.words.byAge[age] += count;
+            CONTENT_STATS.words.total += count;
+        });
+    });
+    
+    // フレーズの統計を計算
+    CONTENT_STATS.phrases.total = 0;
+    CONTENT_STATS.phrases.byCategory = {};
+    CONTENT_STATS.phrases.byAge = { "4-6": 0, "7-9": 0, "10-12": 0 };
+    
+    Object.entries(PHRASE_DATA).forEach(([category, ageData]) => {
+        CONTENT_STATS.phrases.byCategory[category] = 0;
+        Object.entries(ageData).forEach(([age, phrases]) => {
+            const count = phrases.length;
+            CONTENT_STATS.phrases.byCategory[category] += count;
+            CONTENT_STATS.phrases.byAge[age] += count;
+            CONTENT_STATS.phrases.total += count;
+        });
+    });
+    
+    // 例文の統計を計算
+    CONTENT_STATS.examples.total = 0;
+    CONTENT_STATS.examples.byAge = { "4-6": 0, "7-9": 0, "10-12": 0 };
+    
+    Object.entries(EXAMPLE_SENTENCES_BY_AGE).forEach(([age, examples]) => {
+        const count = examples.length;
+        CONTENT_STATS.examples.byAge[age] = count;
+        CONTENT_STATS.examples.total += count;
+    });
+    
+    return CONTENT_STATS;
+}
+
+// コンテンツ統計を表示する関数
+function displayContentStats() {
+    updateContentStats();
+    
+    console.group("📊 英語ノートメーカー コンテンツ統計");
+    console.log(`最終更新: ${CONTENT_STATS.lastUpdated}`);
+    
+    console.group("📝 単語コンテンツ");
+    console.log(`総単語数: ${CONTENT_STATS.words.total}`);
+    console.table(CONTENT_STATS.words.byCategory);
+    console.table(CONTENT_STATS.words.byAge);
+    console.groupEnd();
+    
+    console.group("💬 フレーズコンテンツ");
+    console.log(`総フレーズ数: ${CONTENT_STATS.phrases.total}`);
+    console.table(CONTENT_STATS.phrases.byCategory);
+    console.table(CONTENT_STATS.phrases.byAge);
+    console.groupEnd();
+    
+    console.group("📖 例文コンテンツ");
+    console.log(`総例文数: ${CONTENT_STATS.examples.total}`);
+    console.table(CONTENT_STATS.examples.byAge);
+    console.groupEnd();
+    
+    console.log("🔤 アルファベット: 52文字 (大文字26 + 小文字26)");
+    console.groupEnd();
+}
+
