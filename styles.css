@@ -340,7 +340,8 @@ body {
     .no-print,
     .controls,
     .header,
-    .footer {
+    .footer,
+    .page-separator {
         display: none !important;
     }
 
@@ -407,8 +408,29 @@ body {
     /* ページ内改行制御 */
     .baseline-group,
     .sentence-practice-group,
-    .example-sentence {
+    .example-sentence,
+    .phrase-item {
         page-break-inside: avoid !important;
+    }
+    
+    /* フレーズ練習の印刷時調整 */
+    .phrase-situation {
+        background: none !important;
+        border: 1px solid #ddd !important;
+        font-size: 8pt !important;
+    }
+    
+    /* 印刷時のページ番号スタイル調整 */
+    .page-number {
+        background: none !important;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+    
+    /* 複数ページの影を削除 */
+    .note-page:not(:first-child) {
+        margin-top: 0 !important;
+        box-shadow: none !important;
     }
 }
 
@@ -431,6 +453,195 @@ body {
         transform: scale(0.8);
         transform-origin: top center;
     }
+}
+
+/* === 新しい練習モード用スタイル === */
+
+/* アルファベット練習 */
+.alphabet-practice {
+    padding: 5mm 0;
+}
+
+/* アルファベット2列グリッドレイアウト */
+.alphabet-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10mm 15mm;
+    margin-top: 5mm;
+}
+
+.alphabet-grid-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.alphabet-header {
+    display: flex;
+    align-items: baseline;
+    gap: 5mm;
+    margin-bottom: 3mm;
+    min-height: 10mm;
+}
+
+.alphabet-letter {
+    font-size: 28pt;
+    font-weight: bold;
+    color: var(--primary-color);
+    min-width: 15mm;
+}
+
+.alphabet-example {
+    display: flex;
+    align-items: baseline;
+    gap: 3mm;
+    flex: 1;
+}
+
+.example-word {
+    font-size: 12pt;
+    color: #666;
+}
+
+.example-meaning {
+    font-size: 10pt;
+    color: #999;
+}
+
+.alphabet-lines {
+    flex: 1;
+}
+
+.alphabet-note {
+    text-align: center;
+    margin-top: 10mm;
+    font-size: 10pt;
+    color: #666;
+    font-style: italic;
+}
+
+/* フレーズ練習 */
+.phrase-practice {
+    padding: 5mm 0;
+}
+
+.phrase-item {
+    margin-bottom: 12mm;
+}
+
+/* フレーズヘッダー部分 */
+.phrase-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10mm;
+    margin-bottom: 3mm;
+}
+
+.phrase-main {
+    flex: 1;
+}
+
+.phrase-english {
+    font-size: 14pt;
+    font-weight: bold;
+    color: var(--text-color);
+    line-height: 1.3;
+}
+
+.phrase-japanese {
+    font-size: 11pt;
+    color: #666;
+    margin-top: 2mm;
+    line-height: 1.2;
+}
+
+/* 使用場面 - 右側に配置 */
+.phrase-situation {
+    font-size: 9pt;
+    color: #999;
+    background: #f8f8f8;
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    align-self: flex-start;
+    flex-shrink: 0;
+}
+
+/* 練習用罫線部分 */
+.phrase-lines {
+    margin-top: 2mm;
+}
+
+/* 練習モード共通のタイトル */
+.practice-title {
+    text-align: center;
+    font-size: 16pt;
+    font-weight: bold;
+    margin-bottom: 10mm;
+    color: var(--text-color);
+}
+
+/* === ページ区切りとページ番号のスタイル === */
+
+/* ページ区切り（プレビュー用） */
+.page-separator {
+    display: flex;
+    align-items: center;
+    margin: 30px 0;
+    padding: 20px 0;
+    position: relative;
+}
+
+.page-separator-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #ddd, transparent);
+}
+
+.page-separator-text {
+    padding: 0 20px;
+    font-size: 14px;
+    color: #666;
+    background: var(--background-color);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ページ番号 */
+.page-number {
+    position: absolute;
+    bottom: 10mm;
+    right: 15mm;
+    padding: 5px 10px;
+    background: #f0f0f0;
+    border-radius: 15px;
+    font-size: 12pt;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.page-number-current {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 14pt;
+}
+
+.page-number-separator {
+    color: #999;
+}
+
+.page-number-total {
+    color: #666;
+}
+
+/* 複数ページの場合、各ページに影をつける */
+.note-page:not(:first-child) {
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* === デバッグモード（開発時のみ） === */

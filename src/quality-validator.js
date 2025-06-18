@@ -46,6 +46,8 @@ class LayoutValidator {
         };
         
         this.results = [];
+        this.A4_HEIGHT_MM = 297; // A4の高さ
+        this.A4_WIDTH_MM = 210;  // A4の幅
     }
     
     // ピクセルをミリメートルに変換
@@ -100,6 +102,31 @@ class LayoutValidator {
         };
     }
     
+    // ページ高さチェック
+    checkPageHeight() {
+        const pages = document.querySelectorAll('.note-page');
+        const results = [];
+        
+        pages.forEach((page, index) => {
+            const rect = page.getBoundingClientRect();
+            const heightInMm = this.pxToMm(rect.height);
+            const isValid = heightInMm <= this.A4_HEIGHT_MM;
+            
+            results.push({
+                rule: `pageHeight_${index + 1}`,
+                status: isValid ? 'pass' : 'fail',
+                severity: 'error',
+                actualValue: heightInMm.toFixed(2),
+                expectedRange: `0-${this.A4_HEIGHT_MM}mm`,
+                message: isValid 
+                    ? `✅ ページ${index + 1}高さ: ${heightInMm.toFixed(2)}mm (A4内)`
+                    : `❌ ページ${index + 1}高さ: ${heightInMm.toFixed(2)}mm (A4超過: +${(heightInMm - this.A4_HEIGHT_MM).toFixed(2)}mm)`
+            });
+        });
+        
+        return results;
+    }
+    
     // 全ルールの検証実行
     validate() {
         this.results = [];
@@ -108,6 +135,10 @@ class LayoutValidator {
             const result = this.validateRule(name, rule);
             this.results.push(result);
         });
+        
+        // ページ高さチェックを追加
+        const pageHeightResults = this.checkPageHeight();
+        this.results.push(...pageHeightResults);
         
         return this.results;
     }

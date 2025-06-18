@@ -249,6 +249,576 @@ const WORD_LISTS = {
             { english: "restaurant", japanese: "レストラン", syllables: "res-tau-rant" },
             { english: "breakfast", japanese: "朝食", syllables: "break-fast" }
         ]
+    },
+    colors: {
+        "4-6": [
+            { english: "red", japanese: "あか", syllables: "red" },
+            { english: "blue", japanese: "あお", syllables: "blue" },
+            { english: "yellow", japanese: "きいろ", syllables: "yel-low" },
+            { english: "green", japanese: "みどり", syllables: "green" },
+            { english: "white", japanese: "しろ", syllables: "white" }
+        ],
+        "7-9": [
+            { english: "black", japanese: "くろ", syllables: "black" },
+            { english: "orange", japanese: "オレンジ", syllables: "or-ange" },
+            { english: "purple", japanese: "むらさき", syllables: "pur-ple" },
+            { english: "pink", japanese: "ピンク", syllables: "pink" },
+            { english: "brown", japanese: "ちゃいろ", syllables: "brown" }
+        ],
+        "10-12": [
+            { english: "gray", japanese: "はいいろ", syllables: "gray" },
+            { english: "silver", japanese: "ぎんいろ", syllables: "sil-ver" },
+            { english: "golden", japanese: "きんいろ", syllables: "gold-en" },
+            { english: "rainbow", japanese: "にじ", syllables: "rain-bow" },
+            { english: "colorful", japanese: "カラフル", syllables: "col-or-ful" }
+        ]
+    },
+    numbers: {
+        "4-6": [
+            { english: "one", japanese: "いち", syllables: "one" },
+            { english: "two", japanese: "に", syllables: "two" },
+            { english: "three", japanese: "さん", syllables: "three" },
+            { english: "four", japanese: "よん", syllables: "four" },
+            { english: "five", japanese: "ご", syllables: "five" }
+        ],
+        "7-9": [
+            { english: "six", japanese: "ろく", syllables: "six" },
+            { english: "seven", japanese: "なな", syllables: "sev-en" },
+            { english: "eight", japanese: "はち", syllables: "eight" },
+            { english: "nine", japanese: "きゅう", syllables: "nine" },
+            { english: "ten", japanese: "じゅう", syllables: "ten" }
+        ],
+        "10-12": [
+            { english: "eleven", japanese: "じゅういち", syllables: "e-lev-en" },
+            { english: "twelve", japanese: "じゅうに", syllables: "twelve" },
+            { english: "twenty", japanese: "にじゅう", syllables: "twen-ty" },
+            { english: "hundred", japanese: "ひゃく", syllables: "hun-dred" },
+            { english: "thousand", japanese: "せん", syllables: "thou-sand" }
+        ]
+    },
+    calendar: {
+        "4-6": [
+            { english: "Monday", japanese: "げつようび", syllables: "Mon-day" },
+            { english: "Sunday", japanese: "にちようび", syllables: "Sun-day" },
+            { english: "today", japanese: "きょう", syllables: "to-day" },
+            { english: "tomorrow", japanese: "あした", syllables: "to-mor-row" },
+            { english: "birthday", japanese: "たんじょうび", syllables: "birth-day" }
+        ],
+        "7-9": [
+            { english: "Tuesday", japanese: "かようび", syllables: "Tues-day" },
+            { english: "Wednesday", japanese: "すいようび", syllables: "Wednes-day" },
+            { english: "Thursday", japanese: "もくようび", syllables: "Thurs-day" },
+            { english: "Friday", japanese: "きんようび", syllables: "Fri-day" },
+            { english: "Saturday", japanese: "どようび", syllables: "Sat-ur-day" }
+        ],
+        "10-12": [
+            { english: "January", japanese: "いちがつ", syllables: "Jan-u-ar-y" },
+            { english: "February", japanese: "にがつ", syllables: "Feb-ru-ar-y" },
+            { english: "March", japanese: "さんがつ", syllables: "March" },
+            { english: "April", japanese: "しがつ", syllables: "A-pril" },
+            { english: "December", japanese: "じゅうにがつ", syllables: "De-cem-ber" }
+        ]
+    },
+    school_items: {
+        "4-6": [
+            { english: "pen", japanese: "ペン", syllables: "pen" },
+            { english: "book", japanese: "ほん", syllables: "book" },
+            { english: "bag", japanese: "かばん", syllables: "bag" },
+            { english: "desk", japanese: "つくえ", syllables: "desk" },
+            { english: "chair", japanese: "いす", syllables: "chair" }
+        ],
+        "7-9": [
+            { english: "pencil", japanese: "えんぴつ", syllables: "pen-cil" },
+            { english: "eraser", japanese: "けしゴム", syllables: "e-ras-er" },
+            { english: "notebook", japanese: "ノート", syllables: "note-book" },
+            { english: "ruler", japanese: "じょうぎ", syllables: "rul-er" },
+            { english: "scissors", japanese: "はさみ", syllables: "scis-sors" }
+        ],
+        "10-12": [
+            { english: "dictionary", japanese: "じしょ", syllables: "dic-tion-ar-y" },
+            { english: "computer", japanese: "コンピューター", syllables: "com-pu-ter" },
+            { english: "blackboard", japanese: "こくばん", syllables: "black-board" },
+            { english: "homework", japanese: "しゅくだい", syllables: "home-work" },
+            { english: "classroom", japanese: "きょうしつ", syllables: "class-room" }
+        ]
+    },
+    body_parts: {
+        "4-6": [
+            { english: "head", japanese: "あたま", syllables: "head" },
+            { english: "eye", japanese: "め", syllables: "eye" },
+            { english: "nose", japanese: "はな", syllables: "nose" },
+            { english: "mouth", japanese: "くち", syllables: "mouth" },
+            { english: "hand", japanese: "て", syllables: "hand" }
+        ],
+        "7-9": [
+            { english: "ear", japanese: "みみ", syllables: "ear" },
+            { english: "face", japanese: "かお", syllables: "face" },
+            { english: "foot", japanese: "あし", syllables: "foot" },
+            { english: "finger", japanese: "ゆび", syllables: "fin-ger" },
+            { english: "hair", japanese: "かみ", syllables: "hair" }
+        ],
+        "10-12": [
+            { english: "shoulder", japanese: "かた", syllables: "shoul-der" },
+            { english: "elbow", japanese: "ひじ", syllables: "el-bow" },
+            { english: "knee", japanese: "ひざ", syllables: "knee" },
+            { english: "stomach", japanese: "おなか", syllables: "stom-ach" },
+            { english: "tooth", japanese: "は", syllables: "tooth" }
+        ]
+    },
+    weather: {
+        "4-6": [
+            { english: "sunny", japanese: "はれ", syllables: "sun-ny" },
+            { english: "rainy", japanese: "あめ", syllables: "rain-y" },
+            { english: "hot", japanese: "あつい", syllables: "hot" },
+            { english: "cold", japanese: "さむい", syllables: "cold" },
+            { english: "cloud", japanese: "くも", syllables: "cloud" }
+        ],
+        "7-9": [
+            { english: "cloudy", japanese: "くもり", syllables: "cloud-y" },
+            { english: "windy", japanese: "かぜ", syllables: "wind-y" },
+            { english: "snowy", japanese: "ゆき", syllables: "snow-y" },
+            { english: "warm", japanese: "あたたかい", syllables: "warm" },
+            { english: "cool", japanese: "すずしい", syllables: "cool" }
+        ],
+        "10-12": [
+            { english: "temperature", japanese: "おんど", syllables: "tem-per-a-ture" },
+            { english: "thunder", japanese: "かみなり", syllables: "thun-der" },
+            { english: "lightning", japanese: "いなずま", syllables: "light-ning" },
+            { english: "foggy", japanese: "きり", syllables: "fog-gy" },
+            { english: "rainbow", japanese: "にじ", syllables: "rain-bow" }
+        ]
+    },
+    classroom_objects: {
+        "4-6": [
+            { english: "whiteboard", japanese: "ホワイトボード", syllables: "white-board" },
+            { english: "marker", japanese: "マーカー", syllables: "mar-ker" },
+            { english: "textbook", japanese: "教科書", syllables: "text-book" },
+            { english: "folder", japanese: "フォルダー", syllables: "fol-der" },
+            { english: "glue stick", japanese: "のり", syllables: "glue stick" }
+        ],
+        "7-9": [
+            { english: "projector", japanese: "プロジェクター", syllables: "pro-jec-tor" },
+            { english: "calculator", japanese: "電卓", syllables: "cal-cu-la-tor" },
+            { english: "highlighter", japanese: "蛍光ペン", syllables: "high-light-er" },
+            { english: "clipboard", japanese: "クリップボード", syllables: "clip-board" },
+            { english: "binder", japanese: "バインダー", syllables: "bin-der" }
+        ],
+        "10-12": [
+            { english: "protractor", japanese: "分度器", syllables: "pro-trac-tor" },
+            { english: "compass", japanese: "コンパス", syllables: "com-pass" },
+            { english: "microscope", japanese: "顕微鏡", syllables: "mi-cro-scope" },
+            { english: "laptop", japanese: "ノートパソコン", syllables: "lap-top" },
+            { english: "headphones", japanese: "ヘッドフォン", syllables: "head-phones" }
+        ]
+    },
+    subjects: {
+        "4-6": [
+            { english: "Math", japanese: "算数", syllables: "Math" },
+            { english: "English", japanese: "英語", syllables: "Eng-lish" },
+            { english: "Art", japanese: "美術", syllables: "Art" },
+            { english: "Music", japanese: "音楽", syllables: "Mu-sic" },
+            { english: "P.E.", japanese: "体育", syllables: "P-E" }
+        ],
+        "7-9": [
+            { english: "Science", japanese: "理科", syllables: "Sci-ence" },
+            { english: "History", japanese: "歴史", syllables: "His-to-ry" },
+            { english: "Geography", japanese: "地理", syllables: "Ge-og-ra-phy" },
+            { english: "Drama", japanese: "演劇", syllables: "Dra-ma" },
+            { english: "Library", japanese: "図書", syllables: "Li-brar-y" }
+        ],
+        "10-12": [
+            { english: "Biology", japanese: "生物", syllables: "Bi-ol-o-gy" },
+            { english: "Chemistry", japanese: "化学", syllables: "Chem-is-try" },
+            { english: "Physics", japanese: "物理", syllables: "Phys-ics" },
+            { english: "Economics", japanese: "経済", syllables: "E-co-nom-ics" },
+            { english: "Psychology", japanese: "心理学", syllables: "Psy-chol-o-gy" }
+        ]
+    },
+    sports_activities: {
+        "4-6": [
+            { english: "soccer", japanese: "サッカー", syllables: "soc-cer" },
+            { english: "running", japanese: "ランニング", syllables: "run-ning" },
+            { english: "jumping", japanese: "ジャンプ", syllables: "jump-ing" },
+            { english: "catching", japanese: "キャッチ", syllables: "catch-ing" },
+            { english: "throwing", japanese: "投げる", syllables: "throw-ing" }
+        ],
+        "7-9": [
+            { english: "basketball", japanese: "バスケットボール", syllables: "bas-ket-ball" },
+            { english: "volleyball", japanese: "バレーボール", syllables: "vol-ley-ball" },
+            { english: "swimming", japanese: "水泳", syllables: "swim-ming" },
+            { english: "tennis", japanese: "テニス", syllables: "ten-nis" },
+            { english: "badminton", japanese: "バドミントン", syllables: "bad-min-ton" }
+        ],
+        "10-12": [
+            { english: "athletics", japanese: "陸上競技", syllables: "ath-let-ics" },
+            { english: "gymnastics", japanese: "体操", syllables: "gym-nas-tics" },
+            { english: "wrestling", japanese: "レスリング", syllables: "wres-tling" },
+            { english: "fencing", japanese: "フェンシング", syllables: "fenc-ing" },
+            { english: "archery", japanese: "アーチェリー", syllables: "ar-cher-y" }
+        ]
+    },
+    emotions_advanced: {
+        "4-6": [
+            { english: "lonely", japanese: "さみしい", syllables: "lone-ly" },
+            { english: "shy", japanese: "はずかしがり", syllables: "shy" },
+            { english: "brave", japanese: "ゆうかん", syllables: "brave" },
+            { english: "silly", japanese: "ばかげた", syllables: "sil-ly" },
+            { english: "curious", japanese: "こうきしん", syllables: "cu-ri-ous" }
+        ],
+        "7-9": [
+            { english: "embarrassed", japanese: "恥ずかしい", syllables: "em-bar-rassed" },
+            { english: "jealous", japanese: "うらやましい", syllables: "jeal-ous" },
+            { english: "anxious", japanese: "心配", syllables: "anx-ious" },
+            { english: "relieved", japanese: "安心", syllables: "re-lieved" },
+            { english: "hopeful", japanese: "希望的", syllables: "hope-ful" }
+        ],
+        "10-12": [
+            { english: "overwhelmed", japanese: "圧倒された", syllables: "o-ver-whelmed" },
+            { english: "motivated", japanese: "やる気", syllables: "mo-ti-vat-ed" },
+            { english: "frustrated", japanese: "イライラ", syllables: "frus-trat-ed" },
+            { english: "determined", japanese: "決意", syllables: "de-ter-mined" },
+            { english: "accomplished", japanese: "達成感", syllables: "ac-com-plished" }
+        ]
+    },
+    academic_words: {
+        "4-6": [
+            { english: "question", japanese: "しつもん", syllables: "ques-tion" },
+            { english: "answer", japanese: "こたえ", syllables: "an-swer" },
+            { english: "example", japanese: "れい", syllables: "ex-am-ple" },
+            { english: "practice", japanese: "れんしゅう", syllables: "prac-tice" },
+            { english: "homework", japanese: "しゅくだい", syllables: "home-work" }
+        ],
+        "7-9": [
+            { english: "research", japanese: "研究", syllables: "re-search" },
+            { english: "project", japanese: "プロジェクト", syllables: "proj-ect" },
+            { english: "presentation", japanese: "発表", syllables: "pres-en-ta-tion" },
+            { english: "summary", japanese: "要約", syllables: "sum-ma-ry" },
+            { english: "experiment", japanese: "実験", syllables: "ex-per-i-ment" }
+        ],
+        "10-12": [
+            { english: "hypothesis", japanese: "仮説", syllables: "hy-poth-e-sis" },
+            { english: "analysis", japanese: "分析", syllables: "a-nal-y-sis" },
+            { english: "conclusion", japanese: "結論", syllables: "con-clu-sion" },
+            { english: "evidence", japanese: "証拠", syllables: "ev-i-dence" },
+            { english: "theory", japanese: "理論", syllables: "the-o-ry" }
+        ]
+    }
+};
+
+// アルファベット練習データ
+const ALPHABET_DATA = {
+    uppercase: [
+        { letter: "A", example: "Apple", japanese: "りんご" },
+        { letter: "B", example: "Ball", japanese: "ボール" },
+        { letter: "C", example: "Cat", japanese: "ねこ" },
+        { letter: "D", example: "Dog", japanese: "いぬ" },
+        { letter: "E", example: "Egg", japanese: "たまご" },
+        { letter: "F", example: "Fish", japanese: "さかな" },
+        { letter: "G", example: "Girl", japanese: "女の子" },
+        { letter: "H", example: "House", japanese: "いえ" },
+        { letter: "I", example: "Ice", japanese: "こおり" },
+        { letter: "J", example: "Jump", japanese: "ジャンプ" },
+        { letter: "K", example: "King", japanese: "おうさま" },
+        { letter: "L", example: "Lion", japanese: "ライオン" },
+        { letter: "M", example: "Moon", japanese: "つき" },
+        { letter: "N", example: "Nice", japanese: "すてき" },
+        { letter: "O", example: "Orange", japanese: "オレンジ" },
+        { letter: "P", example: "Pen", japanese: "ペン" },
+        { letter: "Q", example: "Queen", japanese: "じょおう" },
+        { letter: "R", example: "Rain", japanese: "あめ" },
+        { letter: "S", example: "Sun", japanese: "たいよう" },
+        { letter: "T", example: "Tree", japanese: "き" },
+        { letter: "U", example: "Umbrella", japanese: "かさ" },
+        { letter: "V", example: "Van", japanese: "バン" },
+        { letter: "W", example: "Water", japanese: "みず" },
+        { letter: "X", example: "Box", japanese: "はこ" },
+        { letter: "Y", example: "Yellow", japanese: "きいろ" },
+        { letter: "Z", example: "Zoo", japanese: "どうぶつえん" }
+    ],
+    lowercase: [
+        { letter: "a", example: "apple", japanese: "りんご" },
+        { letter: "b", example: "ball", japanese: "ボール" },
+        { letter: "c", example: "cat", japanese: "ねこ" },
+        { letter: "d", example: "dog", japanese: "いぬ" },
+        { letter: "e", example: "egg", japanese: "たまご" },
+        { letter: "f", example: "fish", japanese: "さかな" },
+        { letter: "g", example: "girl", japanese: "女の子" },
+        { letter: "h", example: "house", japanese: "いえ" },
+        { letter: "i", example: "ice", japanese: "こおり" },
+        { letter: "j", example: "jump", japanese: "ジャンプ" },
+        { letter: "k", example: "king", japanese: "おうさま" },
+        { letter: "l", example: "lion", japanese: "ライオン" },
+        { letter: "m", example: "moon", japanese: "つき" },
+        { letter: "n", example: "nice", japanese: "すてき" },
+        { letter: "o", example: "orange", japanese: "オレンジ" },
+        { letter: "p", example: "pen", japanese: "ペン" },
+        { letter: "q", example: "queen", japanese: "じょおう" },
+        { letter: "r", example: "rain", japanese: "あめ" },
+        { letter: "s", example: "sun", japanese: "たいよう" },
+        { letter: "t", example: "tree", japanese: "き" },
+        { letter: "u", example: "umbrella", japanese: "かさ" },
+        { letter: "v", example: "van", japanese: "バン" },
+        { letter: "w", example: "water", japanese: "みず" },
+        { letter: "x", example: "box", japanese: "はこ" },
+        { letter: "y", example: "yellow", japanese: "きいろ" },
+        { letter: "z", example: "zoo", japanese: "どうぶつえん" }
+    ]
+};
+
+// フレーズ練習データ
+const PHRASE_DATA = {
+    greetings: {
+        "4-6": [
+            { english: "Hello!", japanese: "こんにちは！", situation: "友達に会ったとき" },
+            { english: "Good morning!", japanese: "おはよう！", situation: "朝のあいさつ" },
+            { english: "Thank you!", japanese: "ありがとう！", situation: "お礼を言うとき" },
+            { english: "Bye bye!", japanese: "バイバイ！", situation: "さよならのあいさつ" },
+            { english: "Please!", japanese: "おねがい！", situation: "お願いするとき" }
+        ],
+        "7-9": [
+            { english: "How are you?", japanese: "元気ですか？", situation: "相手の様子を聞く" },
+            { english: "Nice to meet you.", japanese: "はじめまして。", situation: "初対面のあいさつ" },
+            { english: "See you later!", japanese: "またね！", situation: "別れのあいさつ" },
+            { english: "Excuse me.", japanese: "すみません。", situation: "声をかけるとき" },
+            { english: "You're welcome.", japanese: "どういたしまして。", situation: "お礼への返事" }
+        ],
+        "10-12": [
+            { english: "How have you been?", japanese: "お元気でしたか？", situation: "久しぶりに会ったとき" },
+            { english: "Long time no see.", japanese: "お久しぶりです。", situation: "久しぶりの再会" },
+            { english: "Have a nice day!", japanese: "良い一日を！", situation: "別れ際の言葉" },
+            { english: "Take care.", japanese: "お気をつけて。", situation: "心配するとき" },
+            { english: "Best wishes.", japanese: "幸運を祈ります。", situation: "応援するとき" }
+        ]
+    },
+    self_introduction: {
+        "4-6": [
+            { english: "My name is [name].", japanese: "わたしの名前は[なまえ]です。", situation: "名前を言う" },
+            { english: "I am [age] years old.", japanese: "わたしは[ねんれい]歳です。", situation: "年齢を言う" },
+            { english: "I like [thing].", japanese: "わたしは[もの]が好きです。", situation: "好きなものを言う" },
+            { english: "I can [action].", japanese: "わたしは[こうどう]ができます。", situation: "できることを言う" },
+            { english: "I have a [pet].", japanese: "わたしは[ペット]を飼っています。", situation: "ペットについて" }
+        ],
+        "7-9": [
+            { english: "I'm from [place].", japanese: "[ばしょ]から来ました。", situation: "出身地を言う" },
+            { english: "My hobby is [hobby].", japanese: "趣味は[しゅみ]です。", situation: "趣味を言う" },
+            { english: "I go to [school] school.", japanese: "[がっこう]学校に通っています。", situation: "学校について" },
+            { english: "My favorite color is [color].", japanese: "好きな色は[いろ]です。", situation: "好きな色" },
+            { english: "I want to be a [job].", japanese: "[しょくぎょう]になりたいです。", situation: "将来の夢" }
+        ],
+        "10-12": [
+            { english: "I'm interested in [subject].", japanese: "[ぶんや]に興味があります。", situation: "興味のあること" },
+            { english: "I've been studying English for [time].", japanese: "[きかん]英語を勉強しています。", situation: "学習期間" },
+            { english: "My goal is to [goal].", japanese: "目標は[もくひょう]です。", situation: "目標を語る" },
+            { english: "I enjoy [activity] in my free time.", japanese: "暇な時は[かつどう]を楽しみます。", situation: "余暇の過ごし方" },
+            { english: "I hope to [hope].", japanese: "[きぼう]したいです。", situation: "希望を語る" }
+        ]
+    },
+    school: {
+        "4-6": [
+            { english: "May I go to the bathroom?", japanese: "トイレに行ってもいいですか？", situation: "トイレに行きたいとき" },
+            { english: "I don't understand.", japanese: "わかりません。", situation: "理解できないとき" },
+            { english: "Can you help me?", japanese: "手伝ってもらえますか？", situation: "助けが必要なとき" },
+            { english: "I finished!", japanese: "できました！", situation: "課題が終わったとき" },
+            { english: "Let's play together!", japanese: "一緒に遊ぼう！", situation: "友達を誘うとき" }
+        ],
+        "7-9": [
+            { english: "May I borrow your pencil?", japanese: "鉛筆を借りてもいいですか？", situation: "物を借りるとき" },
+            { english: "What page are we on?", japanese: "何ページですか？", situation: "ページを確認するとき" },
+            { english: "I forgot my homework.", japanese: "宿題を忘れました。", situation: "忘れ物をしたとき" },
+            { english: "Can you repeat that?", japanese: "もう一度言ってください。", situation: "聞き返すとき" },
+            { english: "That's a good idea!", japanese: "それはいいアイデアです！", situation: "賛成するとき" }
+        ],
+        "10-12": [
+            { english: "Could you explain it again?", japanese: "もう一度説明してもらえますか？", situation: "再説明を求めるとき" },
+            { english: "I have a question.", japanese: "質問があります。", situation: "質問したいとき" },
+            { english: "May I work with a partner?", japanese: "パートナーと一緒に作業してもいいですか？", situation: "協力したいとき" },
+            { english: "I need more time.", japanese: "もっと時間が必要です。", situation: "時間が足りないとき" },
+            { english: "I disagree because...", japanese: "私は反対です。なぜなら...", situation: "意見を述べるとき" }
+        ]
+    },
+    shopping: {
+        "4-6": [
+            { english: "How much is this?", japanese: "これはいくらですか？", situation: "値段を聞くとき" },
+            { english: "I want this one.", japanese: "これがほしいです。", situation: "商品を選ぶとき" },
+            { english: "It's too expensive.", japanese: "高すぎます。", situation: "値段が高いとき" },
+            { english: "Do you have [item]?", japanese: "[しょうひん]はありますか？", situation: "商品を探すとき" },
+            { english: "Thank you for your help.", japanese: "お手伝いありがとう。", situation: "店員にお礼" }
+        ],
+        "7-9": [
+            { english: "Where can I find [item]?", japanese: "[しょうひん]はどこにありますか？", situation: "場所を聞くとき" },
+            { english: "Do you have a smaller size?", japanese: "もっと小さいサイズはありますか？", situation: "サイズを聞くとき" },
+            { english: "Can I try this on?", japanese: "試着してもいいですか？", situation: "試着したいとき" },
+            { english: "I'll take two of these.", japanese: "これを2つください。", situation: "複数買うとき" },
+            { english: "Do you accept credit cards?", japanese: "クレジットカードは使えますか？", situation: "支払い方法" }
+        ],
+        "10-12": [
+            { english: "Is this on sale?", japanese: "これはセール品ですか？", situation: "割引を確認" },
+            { english: "What's the return policy?", japanese: "返品規定はどうなっていますか？", situation: "返品について" },
+            { english: "Could you gift-wrap this?", japanese: "プレゼント包装してもらえますか？", situation: "包装を頼む" },
+            { english: "I'm just looking, thanks.", japanese: "見ているだけです、ありがとう。", situation: "断るとき" },
+            { english: "Do you have this in stock?", japanese: "在庫はありますか？", situation: "在庫確認" }
+        ]
+    },
+    travel: {
+        "4-6": [
+            { english: "Are we there yet?", japanese: "もう着いた？", situation: "到着を確認" },
+            { english: "I'm hungry.", japanese: "お腹がすいた。", situation: "空腹を伝える" },
+            { english: "Where is the toilet?", japanese: "トイレはどこ？", situation: "トイレを探す" },
+            { english: "I want to go home.", japanese: "家に帰りたい。", situation: "帰りたいとき" },
+            { english: "This is fun!", japanese: "楽しい！", situation: "楽しいとき" }
+        ],
+        "7-9": [
+            { english: "How long does it take?", japanese: "どのくらいかかりますか？", situation: "時間を聞く" },
+            { english: "Can we stop here?", japanese: "ここで止まってもらえますか？", situation: "停車を頼む" },
+            { english: "I feel sick.", japanese: "気分が悪いです。", situation: "体調不良" },
+            { english: "What time do we leave?", japanese: "何時に出発しますか？", situation: "出発時間" },
+            { english: "Can I take a picture?", japanese: "写真を撮ってもいいですか？", situation: "撮影許可" }
+        ],
+        "10-12": [
+            { english: "Could you recommend a good restaurant?", japanese: "おすすめのレストランを教えてください。", situation: "推薦を求める" },
+            { english: "How do I get to [place]?", japanese: "[ばしょ]への行き方を教えてください。", situation: "道を聞く" },
+            { english: "Is it within walking distance?", japanese: "歩いて行ける距離ですか？", situation: "距離を確認" },
+            { english: "What's the local specialty?", japanese: "地元の名物は何ですか？", situation: "名物を聞く" },
+            { english: "Do you have a map?", japanese: "地図はありますか？", situation: "地図を求める" }
+        ]
+    },
+    feelings: {
+        "4-6": [
+            { english: "I'm happy!", japanese: "うれしい！", situation: "喜びを表現" },
+            { english: "I'm sad.", japanese: "かなしい。", situation: "悲しみを表現" },
+            { english: "I'm scared.", japanese: "こわい。", situation: "恐怖を表現" },
+            { english: "I'm angry.", japanese: "おこってる。", situation: "怒りを表現" },
+            { english: "I love you.", japanese: "大好き。", situation: "愛情を表現" }
+        ],
+        "7-9": [
+            { english: "I'm excited!", japanese: "ワクワクする！", situation: "興奮を表現" },
+            { english: "I'm nervous.", japanese: "緊張しています。", situation: "緊張を表現" },
+            { english: "I'm proud of you.", japanese: "あなたを誇りに思います。", situation: "誇りを表現" },
+            { english: "I'm disappointed.", japanese: "がっかりしました。", situation: "失望を表現" },
+            { english: "I'm confused.", japanese: "混乱しています。", situation: "困惑を表現" }
+        ],
+        "10-12": [
+            { english: "I'm grateful for your help.", japanese: "助けてくれて感謝しています。", situation: "感謝を表現" },
+            { english: "I'm frustrated with this.", japanese: "これにイライラしています。", situation: "苛立ちを表現" },
+            { english: "I feel confident.", japanese: "自信があります。", situation: "自信を表現" },
+            { english: "I'm worried about the test.", japanese: "テストが心配です。", situation: "心配を表現" },
+            { english: "I'm impressed by your work.", japanese: "あなたの仕事に感銘を受けました。", situation: "感銘を表現" }
+        ]
+    },
+    daily_life: {
+        "4-6": [
+            { english: "Time to wake up!", japanese: "起きる時間だよ！", situation: "起床時" },
+            { english: "Brush your teeth.", japanese: "歯を磨いて。", situation: "歯磨き" },
+            { english: "Let's eat!", japanese: "食べよう！", situation: "食事時" },
+            { english: "Good night.", japanese: "おやすみ。", situation: "就寝時" },
+            { english: "Wash your hands.", japanese: "手を洗って。", situation: "手洗い" }
+        ],
+        "7-9": [
+            { english: "What's for dinner?", japanese: "夕食は何ですか？", situation: "夕食を聞く" },
+            { english: "I'll do it later.", japanese: "後でやります。", situation: "後回しにする" },
+            { english: "Can I watch TV?", japanese: "テレビを見てもいい？", situation: "許可を求める" },
+            { english: "It's bedtime.", japanese: "寝る時間です。", situation: "就寝時間" },
+            { english: "I'm done with my chores.", japanese: "お手伝いが終わりました。", situation: "家事完了" }
+        ],
+        "10-12": [
+            { english: "I'll be back by 6.", japanese: "6時までに戻ります。", situation: "帰宅時間" },
+            { english: "Can I go out with friends?", japanese: "友達と出かけてもいいですか？", situation: "外出許可" },
+            { english: "I need to study.", japanese: "勉強しなければなりません。", situation: "勉強時" },
+            { english: "What should I wear?", japanese: "何を着ればいいですか？", situation: "服装相談" },
+            { english: "I'll help with cooking.", japanese: "料理を手伝います。", situation: "手伝いを申し出る" }
+        ]
+    },
+    classroom_english: {
+        "4-6": [
+            { english: "I need help, please.", japanese: "助けてください。", situation: "助けが必要なとき" },
+            { english: "Can you show me?", japanese: "見せてもらえますか？", situation: "手本を求める" },
+            { english: "I don't know this word.", japanese: "この単語がわかりません。", situation: "単語がわからない" },
+            { english: "Is this correct?", japanese: "これで合っていますか？", situation: "確認したいとき" },
+            { english: "I'm finished with my work.", japanese: "課題が終わりました。", situation: "完了報告" }
+        ],
+        "7-9": [
+            { english: "Could you speak more slowly?", japanese: "もっとゆっくり話してもらえますか？", situation: "聞き取れないとき" },
+            { english: "What does this mean?", japanese: "これはどういう意味ですか？", situation: "意味を聞く" },
+            { english: "May I use the dictionary?", japanese: "辞書を使ってもいいですか？", situation: "辞書使用許可" },
+            { english: "I need more time to finish.", japanese: "終わらせるのにもっと時間が必要です。", situation: "時間延長依頼" },
+            { english: "Can we work in pairs?", japanese: "ペアで作業してもいいですか？", situation: "協力作業の提案" }
+        ],
+        "10-12": [
+            { english: "I'd like to share my opinion.", japanese: "私の意見を述べたいです。", situation: "発言したいとき" },
+            { english: "Could you clarify that point?", japanese: "その点を明確にしてもらえますか？", situation: "詳細説明を求める" },
+            { english: "I respectfully disagree.", japanese: "失礼ですが、私は違う意見です。", situation: "丁寧に反対する" },
+            { english: "May I add something?", japanese: "何か付け加えてもいいですか？", situation: "追加発言" },
+            { english: "I see your point, but...", japanese: "おっしゃることはわかりますが...", situation: "部分的同意" }
+        ]
+    },
+    friend_making: {
+        "4-6": [
+            { english: "Do you want to play?", japanese: "一緒に遊ぶ？", situation: "遊びに誘う" },
+            { english: "Can I sit with you?", japanese: "一緒に座ってもいい？", situation: "席を共有" },
+            { english: "What's your favorite game?", japanese: "好きなゲームは何？", situation: "興味を聞く" },
+            { english: "Let's be friends!", japanese: "友達になろう！", situation: "友達になる" },
+            { english: "Want to share my snack?", japanese: "おやつを分ける？", situation: "分け合い" }
+        ],
+        "7-9": [
+            { english: "Would you like to join our group?", japanese: "私たちのグループに入る？", situation: "グループに誘う" },
+            { english: "Do you want to be study partners?", japanese: "勉強パートナーになる？", situation: "勉強仲間" },
+            { english: "What clubs are you in?", japanese: "どんなクラブに入ってる？", situation: "活動を聞く" },
+            { english: "Can I have your contact?", japanese: "連絡先を教えてもらえる？", situation: "連絡先交換" },
+            { english: "Want to hang out after school?", japanese: "放課後遊ばない？", situation: "放課後の誘い" }
+        ],
+        "10-12": [
+            { english: "We have a lot in common.", japanese: "私たち共通点が多いね。", situation: "共通点を見つける" },
+            { english: "I really enjoy talking with you.", japanese: "あなたと話すのが楽しいです。", situation: "会話を楽しむ" },
+            { english: "Would you like to study together?", japanese: "一緒に勉強しませんか？", situation: "勉強の誘い" },
+            { english: "I appreciate your friendship.", japanese: "あなたの友情に感謝します。", situation: "友情への感謝" },
+            { english: "Let's keep in touch.", japanese: "連絡を取り合いましょう。", situation: "関係継続" }
+        ]
+    },
+    cultural_exchange: {
+        "4-6": [
+            { english: "In Japan, we bow.", japanese: "日本ではお辞儀をします。", situation: "文化紹介" },
+            { english: "What's this called in English?", japanese: "これは英語で何と言いますか？", situation: "英語名を聞く" },
+            { english: "We eat with chopsticks.", japanese: "私たちは箸で食べます。", situation: "食文化" },
+            { english: "How do you say hello?", japanese: "こんにちはは何と言いますか？", situation: "挨拶を学ぶ" },
+            { english: "That's different from Japan.", japanese: "それは日本と違います。", situation: "違いに気づく" }
+        ],
+        "7-9": [
+            { english: "In my country, we celebrate...", japanese: "私の国では...を祝います。", situation: "祝日紹介" },
+            { english: "Can you teach me your language?", japanese: "あなたの言語を教えてくれる？", situation: "言語学習" },
+            { english: "What's your traditional food?", japanese: "伝統的な食べ物は何？", situation: "食文化質問" },
+            { english: "How do you celebrate birthdays?", japanese: "誕生日はどう祝うの？", situation: "祝い方を聞く" },
+            { english: "That's similar to Japanese culture.", japanese: "それは日本文化に似ています。", situation: "類似点発見" }
+        ],
+        "10-12": [
+            { english: "I'd love to learn about your culture.", japanese: "あなたの文化について学びたいです。", situation: "文化学習意欲" },
+            { english: "Cultural diversity is fascinating.", japanese: "文化の多様性は魅力的です。", situation: "多様性評価" },
+            { english: "Let me explain our customs.", japanese: "私たちの習慣を説明させてください。", situation: "習慣説明" },
+            { english: "I respect your traditions.", japanese: "あなたの伝統を尊重します。", situation: "文化尊重" },
+            { english: "We can learn from each other.", japanese: "お互いから学べます。", situation: "相互学習" }
+        ]
+    },
+    emergency_situations: {
+        "4-6": [
+            { english: "I feel sick.", japanese: "気分が悪いです。", situation: "体調不良" },
+            { english: "I lost my lunch box.", japanese: "お弁当箱をなくしました。", situation: "紛失" },
+            { english: "Someone is being mean.", japanese: "誰かが意地悪をしています。", situation: "いじめ報告" },
+            { english: "I need to call home.", japanese: "家に電話したいです。", situation: "連絡希望" },
+            { english: "I'm scared.", japanese: "怖いです。", situation: "恐怖表現" }
+        ],
+        "7-9": [
+            { english: "I need to go to the nurse.", japanese: "保健室に行きたいです。", situation: "保健室希望" },
+            { english: "I'm being bullied.", japanese: "いじめられています。", situation: "いじめ相談" },
+            { english: "I forgot my homework at home.", japanese: "宿題を家に忘れました。", situation: "忘れ物報告" },
+            { english: "Can I call my parents?", japanese: "両親に電話してもいいですか？", situation: "親への連絡" },
+            { english: "I don't feel safe.", japanese: "安全だと感じません。", situation: "不安表現" }
+        ],
+        "10-12": [
+            { english: "I need immediate assistance.", japanese: "すぐに助けが必要です。", situation: "緊急援助" },
+            { english: "This is a serious problem.", japanese: "これは深刻な問題です。", situation: "問題の深刻さ" },
+            { english: "I'd like to speak privately.", japanese: "個人的に話したいです。", situation: "個別相談" },
+            { english: "I'm experiencing anxiety.", japanese: "不安を感じています。", situation: "精神的不調" },
+            { english: "I need professional help.", japanese: "専門的な助けが必要です。", situation: "専門家希望" }
+        ]
     }
 };
 
@@ -275,7 +845,6 @@ function setupEventListeners() {
     const refreshExamplesBtn = document.getElementById('refreshExamplesBtn');
     const ageGroupSelect = document.getElementById('ageGroup');
     const printBtn = document.getElementById('printBtn');
-    const previewBtn = document.getElementById('previewBtn');
 
     // Phase 1: カスタマイズ機能のイベントリスナー
     const lineHeightSelect = document.getElementById('lineHeight');
@@ -287,9 +856,13 @@ function setupEventListeners() {
     const exampleCategorySelect = document.getElementById('exampleCategory');
     const wordCategorySelect = document.getElementById('wordCategory');
     const addCustomExampleBtn = document.getElementById('addCustomExampleBtn');
+    const alphabetTypeSelect = document.getElementById('alphabetType');
+    const showAlphabetExampleCheckbox = document.getElementById('showAlphabetExample');
+    const phraseCategorySelect = document.getElementById('phraseCategory');
+    const showSituationCheckbox = document.getElementById('showSituation');
 
     // 更新イベントリスナー
-    practiceMode.addEventListener('change', updatePreview);
+    // practiceMode.addEventListener('change', updatePreview); // 削除（571行目で設定済み）
     showExamplesCheckbox.addEventListener('change', updatePreview);
     showTranslationCheckbox.addEventListener('change', updatePreview);
     refreshExamplesBtn.addEventListener('click', () => {
@@ -298,6 +871,7 @@ function setupEventListeners() {
     });
     ageGroupSelect.addEventListener('change', () => {
         currentExampleIndices = {};
+        currentExamples = []; // 年齢変更時に例文をリセット
         updatePreview();
     });
     
@@ -315,12 +889,28 @@ function setupEventListeners() {
     wordCategorySelect.addEventListener('change', updatePreview);
     addCustomExampleBtn.addEventListener('click', handleAddCustomExample);
     
+    // 新しい練習モード用のイベントリスナー
+    if (alphabetTypeSelect) {
+        alphabetTypeSelect.addEventListener('change', updatePreview);
+    }
+    if (showAlphabetExampleCheckbox) {
+        showAlphabetExampleCheckbox.addEventListener('change', updatePreview);
+    }
+    if (phraseCategorySelect) {
+        phraseCategorySelect.addEventListener('change', updatePreview);
+    }
+    if (showSituationCheckbox) {
+        showSituationCheckbox.addEventListener('change', updatePreview);
+    }
+    
     // ボタンイベント
     printBtn.addEventListener('click', printNote);
-    previewBtn.addEventListener('click', showPreviewDialog);
     
     // 練習モード変更時の処理
-    practiceMode.addEventListener('change', updateOptionsVisibility);
+    practiceMode.addEventListener('change', () => {
+        updateOptionsVisibility();
+        updatePreview();
+    });
 }
 
 // オプションの表示/非表示を更新
@@ -331,28 +921,40 @@ function updateOptionsVisibility() {
     const ageOptions = document.getElementById('ageOptions');
     const wordOptions = document.getElementById('wordOptions');
     const customExampleOptions = document.getElementById('customExampleOptions');
+    const alphabetOptions = document.getElementById('alphabetOptions');
+    const phraseOptions = document.getElementById('phraseOptions');
+    
+    // すべて非表示にリセット
+    ageOptions.style.display = 'none';
+    exampleOptions.style.display = 'none';
+    translationOptions.style.display = 'none';
+    wordOptions.style.display = 'none';
+    customExampleOptions.style.display = 'none';
+    alphabetOptions.style.display = 'none';
+    phraseOptions.style.display = 'none';
     
     if (practiceMode === 'sentence') {
         ageOptions.style.display = 'block';
         exampleOptions.style.display = 'block';
         translationOptions.style.display = 'block';
-        wordOptions.style.display = 'none';
         customExampleOptions.style.display = 'block';
         document.getElementById('showExamples').checked = true;
     } else if (practiceMode === 'word') {
         ageOptions.style.display = 'block';
-        exampleOptions.style.display = 'none';
-        translationOptions.style.display = 'none';
         wordOptions.style.display = 'block';
-        customExampleOptions.style.display = 'none';
         document.getElementById('showExamples').checked = false;
         document.getElementById('showTranslation').checked = false;
+    } else if (practiceMode === 'alphabet') {
+        alphabetOptions.style.display = 'block';
+        document.getElementById('showExamples').checked = false;
+        document.getElementById('showTranslation').checked = false;
+    } else if (practiceMode === 'phrase') {
+        ageOptions.style.display = 'block';
+        phraseOptions.style.display = 'block';
+        translationOptions.style.display = 'block';
+        document.getElementById('showExamples').checked = false;
+        document.getElementById('showTranslation').checked = true;
     } else {
-        ageOptions.style.display = 'none';
-        exampleOptions.style.display = 'none';
-        translationOptions.style.display = 'none';
-        wordOptions.style.display = 'none';
-        customExampleOptions.style.display = 'none';
         document.getElementById('showExamples').checked = false;
         document.getElementById('showTranslation').checked = false;
     }
@@ -368,6 +970,15 @@ function updatePreview() {
     
     for (let page = 0; page < pageCount; page++) {
         if (page > 0) {
+            // プレビュー用のページ区切り（画面表示用）
+            html += `
+                <div class="page-separator">
+                    <div class="page-separator-line"></div>
+                    <div class="page-separator-text">ページ ${page + 1}</div>
+                    <div class="page-separator-line"></div>
+                </div>
+            `;
+            // 印刷用のページ区切り
             html += '<div style="page-break-before: always;"></div>';
         }
         html += generateNotePage(page + 1, pageCount);
@@ -413,15 +1024,23 @@ function generateNotePage(pageNumber, totalPages) {
         html += generateSentencePractice(showExamples, showTranslation, ageGroup);
     } else if (practiceMode === 'word') {
         html += generateWordPractice(ageGroup);
+    } else if (practiceMode === 'alphabet') {
+        html += generateAlphabetPractice(pageNumber);
+    } else if (practiceMode === 'phrase') {
+        html += generatePhrasePractice(showTranslation, ageGroup);
     } else {
         html += generateNormalPractice(showExamples, showTranslation, ageGroup);
     }
     
-    // ページ番号
+    // ページ番号（複数ページの場合のみ表示）
     if (totalPages > 1) {
-        html += `<div style="position: absolute; bottom: 5mm; right: 10mm; font-size: 10pt; color: #999;">
-            ${pageNumber} / ${totalPages}
-        </div>`;
+        html += `
+            <div class="page-number">
+                <span class="page-number-current">${pageNumber}</span>
+                <span class="page-number-separator">/</span>
+                <span class="page-number-total">${totalPages}</span>
+            </div>
+        `;
     }
     
     html += '</div>';
@@ -573,25 +1192,68 @@ function shuffleCurrentExamples() {
 
 // 印刷機能
 function printNote() {
+    // 印刷前にレイアウトチェックを実行
+    if (window.LayoutValidator) {
+        runLayoutTest();
+    }
     window.print();
 }
 
-// プレビューダイアログ表示
-function showPreviewDialog() {
-    // 品質検証を実行
-    if (window.LayoutValidator) {
-        const validator = new window.LayoutValidator();
-        const report = validator.generateReport();
-        
-        if (report.errors.length > 0) {
-            if (!confirm('レイアウトにエラーがあります。続行しますか？')) {
-                return;
-            }
-        }
+// PDFレイアウトの自動テスト機能
+function runLayoutTest() {
+    console.group('🧪 PDFレイアウトテスト実行');
+    console.log(`実行時刻: ${new Date().toLocaleString()}`);
+    
+    const validator = new window.LayoutValidator();
+    const report = validator.generateReport();
+    
+    // テスト結果のサマリー
+    console.log(`\n📊 テスト結果サマリー:`);
+    console.log(`✅ 合格: ${report.summary.passed}項目`);
+    console.log(`❌ 不合格: ${report.summary.failed}項目`);
+    console.log(`⏭️ スキップ: ${report.summary.skipped}項目`);
+    
+    // エラーの詳細
+    if (report.errors.length > 0) {
+        console.group('\n❌ エラー詳細:');
+        report.errors.forEach(error => {
+            console.error(`- ${error.rule}: ${error.actualValue} (期待値: ${error.expectedRange})`);
+        });
+        console.groupEnd();
     }
     
-    alert('プレビューが正常に表示されています。印刷ボタンを押してPDFを生成してください。');
+    // 警告の詳細
+    if (report.warnings.length > 0) {
+        console.group('\n⚠️ 警告詳細:');
+        report.warnings.forEach(warning => {
+            console.warn(`- ${warning.rule}: ${warning.actualValue} (期待値: ${warning.expectedRange})`);
+        });
+        console.groupEnd();
+    }
+    
+    // ページ高さのチェック結果を強調
+    const pageHeightErrors = report.errors.filter(e => e.rule.startsWith('pageHeight'));
+    if (pageHeightErrors.length > 0) {
+        console.group('\n📏 ページ高さエラー:');
+        pageHeightErrors.forEach(error => {
+            console.error(error.message);
+        });
+        console.groupEnd();
+    }
+    
+    // 最終判定
+    const isPassed = report.errors.length === 0;
+    if (isPassed) {
+        console.log('\n✅ すべてのレイアウトテストに合格しました！');
+    } else {
+        console.error('\n❌ レイアウトに問題があります。印刷結果を確認してください。');
+    }
+    
+    console.groupEnd();
+    
+    return report;
 }
+
 
 // 初期化実行
 document.addEventListener('DOMContentLoaded', init);
@@ -602,7 +1264,39 @@ document.addEventListener('keydown', (e) => {
         document.body.classList.toggle('debug-mode');
         console.log('Debug mode toggled');
     }
+    
+    // Ctrl + Shift + T でレイアウトテスト実行
+    if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+        console.log('📋 手動レイアウトテストを実行します...');
+        runLayoutTest();
+    }
 });
+
+// グローバルに公開（開発者コンソールから実行可能）
+window.testPDFLayout = function() {
+    console.log('🔍 PDFレイアウトテストを開始します...');
+    updatePreview(); // プレビューを最新状態に更新
+    setTimeout(() => {
+        const report = runLayoutTest();
+        
+        // 追加の診断情報
+        console.group('\n📐 追加診断情報:');
+        console.log(`現在の練習モード: ${document.getElementById('practiceMode').value}`);
+        console.log(`ページ数: ${document.getElementById('pageCount').value}`);
+        console.log(`罫線の高さ: ${document.getElementById('lineHeight').value}mm`);
+        
+        // ページごとの高さ情報
+        const pages = document.querySelectorAll('.note-page');
+        pages.forEach((page, index) => {
+            const rect = page.getBoundingClientRect();
+            const heightInMm = rect.height / 3.7795275591;
+            console.log(`ページ${index + 1}の高さ: ${heightInMm.toFixed(2)}mm`);
+        });
+        console.groupEnd();
+        
+        return report;
+    }, 100);
+};
 
 // カスタム例文を追加するハンドラ
 function handleAddCustomExample() {
@@ -623,6 +1317,124 @@ function handleAddCustomExample() {
     document.getElementById('customJapanese').value = '';
     
     alert('カスタム例文を追加しました！');
+}
+
+// アルファベット練習モード生成
+function generateAlphabetPractice(pageNumber) {
+    const alphabetType = document.getElementById('alphabetType').value;
+    const showExample = document.getElementById('showAlphabetExample').checked;
+    
+    let letters = [];
+    if (alphabetType === 'uppercase' || alphabetType === 'both') {
+        letters = letters.concat(ALPHABET_DATA.uppercase);
+    }
+    if (alphabetType === 'lowercase' || alphabetType === 'both') {
+        letters = letters.concat(ALPHABET_DATA.lowercase);
+    }
+    
+    // 2列レイアウトで1ページに8文字（4行×2列）
+    const lettersPerPage = 8;
+    const startIndex = (pageNumber - 1) * lettersPerPage;
+    const endIndex = startIndex + lettersPerPage;
+    const currentPageLetters = letters.slice(startIndex, endIndex);
+    
+    // 空のページの場合は何も表示しない
+    if (currentPageLetters.length === 0) {
+        return '<div class="alphabet-practice"><p style="text-align: center; color: #999;">このページには表示する文字がありません</p></div>';
+    }
+    
+    // 必要なページ数を自動計算して設定
+    if (alphabetType === 'both' && pageNumber === 1) {
+        const neededPages = Math.ceil(letters.length / lettersPerPage);
+        const pageCountInput = document.getElementById('pageCount');
+        if (pageCountInput && parseInt(pageCountInput.value) < neededPages) {
+            console.info(`アルファベット練習（両方）: ${neededPages}ページ必要です`);
+            // ユーザーに通知
+            setTimeout(() => {
+                if (confirm(`全${letters.length}文字を表示するには${neededPages}ページ必要です。ページ数を${neededPages}に変更しますか？`)) {
+                    pageCountInput.value = neededPages;
+                    updatePreview();
+                }
+            }, 100);
+        }
+    }
+    
+    let html = '<div class="alphabet-practice">';
+    
+    // タイトルにページ情報を追加
+    const totalPages = Math.ceil(letters.length / lettersPerPage);
+    html += `<h3 class="practice-title">Alphabet Practice ${totalPages > 1 ? `(${pageNumber}/${totalPages})` : ''}</h3>`;
+    
+    html += '<div class="alphabet-grid">';
+    
+    for (let i = 0; i < currentPageLetters.length; i++) {
+        const item = currentPageLetters[i];
+        html += `
+            <div class="alphabet-grid-item">
+                <div class="alphabet-header">
+                    <span class="alphabet-letter">${item.letter}</span>
+                    ${showExample ? `
+                        <div class="alphabet-example">
+                            <span class="example-word">${item.example}</span>
+                            <span class="example-meaning">(${item.japanese})</span>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="alphabet-lines">
+                    ${generateBaselineGroup()}
+                </div>
+            </div>
+        `;
+    }
+    
+    html += '</div>'; // alphabet-grid
+    html += '</div>'; // alphabet-practice
+    return html;
+}
+
+// フレーズ練習モード生成
+function generatePhrasePractice(showTranslation, ageGroup) {
+    let html = '<div class="phrase-practice">';
+    const phraseCategory = document.getElementById('phraseCategory').value;
+    const showSituation = document.getElementById('showSituation').checked;
+    
+    const phrases = PHRASE_DATA[phraseCategory] && PHRASE_DATA[phraseCategory][ageGroup] ? 
+                   PHRASE_DATA[phraseCategory][ageGroup] : 
+                   PHRASE_DATA['greetings'][ageGroup] || PHRASE_DATA['greetings']['7-9'];
+    
+    const categoryNames = {
+        greetings: 'あいさつ',
+        self_introduction: '自己紹介',
+        school: '学校生活',
+        shopping: '買い物',
+        travel: '旅行・移動',
+        feelings: '感情表現',
+        daily_life: '日常生活'
+    };
+    
+    html += `<h3 style="text-align: center; margin-bottom: 10mm;">Phrase Practice - ${categoryNames[phraseCategory] || phraseCategory}</h3>`;
+    
+    for (let phrase of phrases) {
+        html += `
+            <div class="phrase-item">
+                <div class="phrase-header">
+                    <div class="phrase-main">
+                        <div class="phrase-english">${phrase.english}</div>
+                        ${showTranslation ? `<div class="phrase-japanese">${phrase.japanese}</div>` : ''}
+                    </div>
+                    ${showSituation ? `<div class="phrase-situation">【${phrase.situation}】</div>` : ''}
+                </div>
+                <div class="phrase-lines">
+                    ${generateBaselineGroup()}
+                    <div class="line-separator-small"></div>
+                    ${generateBaselineGroup()}
+                </div>
+            </div>
+        `;
+    }
+    
+    html += '</div>';
+    return html;
 }
 
 // Phase 2: カスタム例文機能

@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="app-name" content="english-note-maker">
+    <meta name="version" content="1.0.0">
     <title>英語罫線ノート作成ツール</title>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -24,6 +26,8 @@
                         <option value="normal">通常練習</option>
                         <option value="sentence">文章練習</option>
                         <option value="word">単語練習</option>
+                        <option value="alphabet">アルファベット練習</option>
+                        <option value="phrase">フレーズ練習</option>
                     </select>
                 </label>
             </div>
@@ -74,9 +78,56 @@
                     <select id="wordCategory" class="controls__select">
                         <option value="animals">動物</option>
                         <option value="food">食べ物</option>
-                        <option value="colors">色（準備中）</option>
-                        <option value="numbers">数字（準備中）</option>
+                        <option value="colors">色</option>
+                        <option value="numbers">数字</option>
+                        <option value="calendar">曜日・月</option>
+                        <option value="school_items">学用品</option>
+                        <option value="body_parts">身体</option>
+                        <option value="weather">天気</option>
+                        <option value="classroom_objects">教室の物</option>
+                        <option value="subjects">教科</option>
+                        <option value="sports_activities">スポーツ・活動</option>
+                        <option value="emotions_advanced">感情（上級）</option>
+                        <option value="academic_words">学習用語</option>
                     </select>
+                </label>
+            </div>
+            
+            <div class="controls__group" id="alphabetOptions" style="display: none;">
+                <label class="controls__label">
+                    文字の種類:
+                    <select id="alphabetType" class="controls__select">
+                        <option value="uppercase">大文字 (A-Z)</option>
+                        <option value="lowercase">小文字 (a-z)</option>
+                        <option value="both">大文字・小文字</option>
+                    </select>
+                </label>
+                <label class="controls__label">
+                    <input type="checkbox" id="showAlphabetExample" class="controls__checkbox" checked>
+                    例示単語を表示
+                </label>
+            </div>
+            
+            <div class="controls__group" id="phraseOptions" style="display: none;">
+                <label class="controls__label">
+                    フレーズカテゴリー:
+                    <select id="phraseCategory" class="controls__select">
+                        <option value="greetings">あいさつ</option>
+                        <option value="self_introduction">自己紹介</option>
+                        <option value="school">学校生活</option>
+                        <option value="shopping">買い物</option>
+                        <option value="travel">旅行・移動</option>
+                        <option value="feelings">感情表現</option>
+                        <option value="daily_life">日常生活</option>
+                        <option value="classroom_english">教室での英語</option>
+                        <option value="friend_making">友達作り</option>
+                        <option value="cultural_exchange">文化交流</option>
+                        <option value="emergency_situations">緊急時の表現</option>
+                    </select>
+                </label>
+                <label class="controls__label">
+                    <input type="checkbox" id="showSituation" class="controls__checkbox" checked>
+                    使用場面を表示
                 </label>
             </div>
             
@@ -127,7 +178,6 @@
                 </label>
             </div>
 
-            <button id="previewBtn" class="btn btn--secondary">プレビュー確認</button>
             <button id="printBtn" class="btn btn--primary">印刷・PDF保存</button>
         </section>
 
