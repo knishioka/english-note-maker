@@ -200,7 +200,7 @@ body {
 .baseline-group {
     height: var(--line-height-mm, 10mm);
     position: relative;
-    margin-bottom: 2mm;
+    margin-bottom: var(--line-spacing-mm, 2mm);
     page-break-inside: avoid;
 }
 
@@ -266,7 +266,7 @@ body {
 
 /* === 文章練習モード === */
 .sentence-practice-group {
-    margin-bottom: 10mm;
+    margin-bottom: var(--sentence-group-margin, 10mm);
     page-break-inside: avoid;
 }
 
@@ -303,19 +303,19 @@ body {
 }
 
 .line-separator {
-    height: 4mm;
+    height: var(--line-separator-height, 4mm);
     border-bottom: none;
 }
 
 /* 通常練習モードの行グループ区切り */
 .line-group-separator {
-    height: 3mm;
+    height: var(--line-group-separator-height, 3mm);
     border-bottom: none;
 }
 
 /* 通常練習モードの1行ごとの区切り */
 .line-separator-small {
-    height: 4mm;
+    height: var(--line-separator-small-height, 4mm);
     border-bottom: none;
 }
 

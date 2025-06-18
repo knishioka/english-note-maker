@@ -1009,15 +1009,29 @@ function updatePreview() {
 // ノートページ生成
 function generateNotePage(pageNumber, totalPages) {
     const practiceMode = document.getElementById('practiceMode').value;
-    const lineHeight = document.getElementById('lineHeight').value;
+    const lineHeight = parseInt(document.getElementById('lineHeight').value);
     const lineColor = document.getElementById('lineColor').value;
     const showHeader = document.getElementById('showHeader').checked;
     const showExamples = document.getElementById('showExamples').checked;
     const showTranslation = document.getElementById('showTranslation').checked;
     const ageGroup = document.getElementById('ageGroup').value;
     
+    // 行高さに応じたスペーシングを計算
+    const lineSpacing = Math.max(1, Math.floor(lineHeight * 0.2)); // 行高の20%
+    const lineSeparatorHeight = Math.max(2, Math.floor(lineHeight * 0.4)); // 行高の40%
+    const lineSeparatorSmallHeight = Math.max(2, Math.floor(lineHeight * 0.4));
+    const lineGroupSeparatorHeight = Math.max(2, Math.floor(lineHeight * 0.3));
+    const sentenceGroupMargin = Math.max(8, lineHeight);
+    
     // CSS変数を設定
-    const styleVars = `style="--line-height-mm: ${lineHeight}mm;"`;
+    const styleVars = `style="
+        --line-height-mm: ${lineHeight}mm;
+        --line-spacing-mm: ${lineSpacing}mm;
+        --line-separator-height: ${lineSeparatorHeight}mm;
+        --line-separator-small-height: ${lineSeparatorSmallHeight}mm;
+        --line-group-separator-height: ${lineGroupSeparatorHeight}mm;
+        --sentence-group-margin: ${sentenceGroupMargin}mm;
+    "`;
     const colorClass = lineColor !== 'gray' ? `line-color-${lineColor}` : '';
     
     let html = `<div class="note-page ${colorClass}" ${styleVars}>`;
@@ -1070,7 +1084,12 @@ function generateNotePage(pageNumber, totalPages) {
 // 通常練習モード生成
 function generateNormalPractice(showExamples, showTranslation, ageGroup) {
     let html = '';
-    const maxLines = showExamples ? 15 : 17;
+    // 行高さに応じて最大行数を調整
+    const lineHeight = parseInt(document.getElementById('lineHeight').value);
+    const baseMaxLines = showExamples ? 15 : 17;
+    const maxLines = lineHeight === 12 ? Math.floor(baseMaxLines * 0.8) : 
+                     lineHeight === 8 ? Math.floor(baseMaxLines * 1.2) : 
+                     baseMaxLines;
     
     if (showExamples) {
         const neededExamples = Math.floor(maxLines / 4);
@@ -1098,7 +1117,12 @@ function generateNormalPractice(showExamples, showTranslation, ageGroup) {
 // 文章練習モード生成
 function generateSentencePractice(showExamples, showTranslation, ageGroup) {
     let html = '';
-    const maxExamples = showTranslation ? 5 : 6;
+    // 行高さに応じて例文数を調整
+    const lineHeight = parseInt(document.getElementById('lineHeight').value);
+    const baseMaxExamples = showTranslation ? 5 : 6;
+    const maxExamples = lineHeight === 12 ? Math.floor(baseMaxExamples * 0.8) : 
+                        lineHeight === 8 ? Math.floor(baseMaxExamples * 1.2) : 
+                        baseMaxExamples;
     
     ensureExamples(maxExamples, ageGroup);
     
@@ -1132,14 +1156,28 @@ function generateWordPractice(ageGroup) {
         animals: '動物',
         food: '食べ物',
         colors: '色',
-        numbers: '数字'
+        numbers: '数字',
+        calendar: '曜日・月',
+        school_items: '学用品',
+        body_parts: '身体',
+        weather: '天気',
+        classroom_objects: '教室の物',
+        subjects: '教科',
+        sports_activities: 'スポーツ・活動',
+        emotions_advanced: '感情（上級）',
+        academic_words: '学習用語'
     };
     
     html += `<h3 style="text-align: center; margin-bottom: 10mm;">Word Practice - ${categoryNames[category] || category}</h3>`;
     
-    for (let word of words) {
+    // 行高さに応じて単語数を調整
+    const lineHeight = parseInt(document.getElementById('lineHeight').value);
+    const maxWords = lineHeight === 12 ? 4 : lineHeight === 8 ? 6 : 5;
+    const displayWords = words.slice(0, maxWords);
+    
+    for (let word of displayWords) {
         html += `
-            <div class="word-practice-item" style="margin-bottom: 15mm;">
+            <div class="word-practice-item" style="margin-bottom: ${lineHeight === 12 ? '20mm' : lineHeight === 8 ? '12mm' : '15mm'};">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 2mm;">
                     <span style="font-size: 16pt; font-weight: bold;">${word.english}</span>
                     <span style="font-size: 12pt; color: #666;">${word.syllables}</span>
