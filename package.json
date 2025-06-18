@@ -1,0 +1,27 @@
+{
+  "name": "english-note-maker",
+  "version": "1.0.0",
+  "description": "Web application for creating English lined notebook pages with baseline guides",
+  "main": "index.html",
+  "scripts": {
+    "dev": "live-server --port=3000",
+    "build": "echo 'Static files ready for deployment'",
+    "test": "echo 'No tests yet'",
+    "lint": "echo 'No linting configured yet'",
+    "typecheck": "echo 'No TypeScript yet'"
+  },
+  "keywords": [
+    "english",
+    "handwriting",
+    "notebook",
+    "pdf",
+    "education",
+    "baseline",
+    "print"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

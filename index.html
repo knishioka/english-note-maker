@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英語罫線ノート作成ツール</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="header">
+        <h1 class="header__title">英語罫線ノート作成ツール</h1>
+        <p class="header__description">美しいアルファベット練習用の4本線ノートを作成できます</p>
+    </header>
+
+    <main class="main">
+        <section class="controls">
+
+            <div class="controls__group">
+                <label class="controls__label">
+                    練習モード:
+                    <select id="practiceMode" class="controls__select">
+                        <option value="normal">通常練習</option>
+                        <option value="sentence">文章練習</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="controls__group" id="ageOptions" style="display: none;">
+                <label class="controls__label">
+                    年齢:
+                    <select id="ageGroup" class="controls__select">
+                        <option value="4-6">4〜6歳</option>
+                        <option value="7-9" selected>7〜9歳</option>
+                        <option value="10-12">10〜12歳</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="controls__group" id="exampleOptions" style="display: none;">
+                <label class="controls__label">
+                    <input type="checkbox" id="showExamples" class="controls__checkbox" checked>
+                    例文を表示
+                </label>
+                <button id="refreshExamplesBtn" class="btn btn--secondary" style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    例文を更新
+                </button>
+            </div>
+
+            <div class="controls__group" id="translationOptions" style="display: none;">
+                <label class="controls__label">
+                    <input type="checkbox" id="showTranslation" class="controls__checkbox">
+                    日本語訳を表示
+                </label>
+            </div>
+
+            <button id="printBtn" class="btn btn--primary">印刷・PDF保存</button>
+        </section>
+
+        <section class="preview">
+            <div id="notePreview" class="note-preview">
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer no-print">
+        <p>&copy; 2025 英語罫線ノート作成ツール</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
