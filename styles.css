@@ -198,7 +198,7 @@ body {
 
 /* === 4本線ベースライン === */
 .baseline-group {
-    height: 10mm;
+    height: var(--line-height-mm, 10mm);
     position: relative;
     margin-bottom: 2mm;
     page-break-inside: avoid;
