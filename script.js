@@ -611,25 +611,25 @@ const PHRASE_DATA = {
     },
     self_introduction: {
         "4-6": [
-            { english: "My name is [name].", japanese: "わたしの名前は[なまえ]です。", situation: "名前を言う" },
-            { english: "I am [age] years old.", japanese: "わたしは[ねんれい]歳です。", situation: "年齢を言う" },
-            { english: "I like [thing].", japanese: "わたしは[もの]が好きです。", situation: "好きなものを言う" },
-            { english: "I can [action].", japanese: "わたしは[こうどう]ができます。", situation: "できることを言う" },
-            { english: "I have a [pet].", japanese: "わたしは[ペット]を飼っています。", situation: "ペットについて" }
+            { english: "My name is Emma.", japanese: "わたしの名前はエマです。", situation: "名前を言う" },
+            { english: "I am 6 years old.", japanese: "わたしは6歳です。", situation: "年齢を言う" },
+            { english: "I like dogs.", japanese: "わたしは犬が好きです。", situation: "好きなものを言う" },
+            { english: "I can swim.", japanese: "わたしは泳ぐことができます。", situation: "できることを言う" },
+            { english: "I have a cat.", japanese: "わたしは猫を飼っています。", situation: "ペットについて" }
         ],
         "7-9": [
-            { english: "I'm from [place].", japanese: "[ばしょ]から来ました。", situation: "出身地を言う" },
-            { english: "My hobby is [hobby].", japanese: "趣味は[しゅみ]です。", situation: "趣味を言う" },
-            { english: "I go to [school] school.", japanese: "[がっこう]学校に通っています。", situation: "学校について" },
-            { english: "My favorite color is [color].", japanese: "好きな色は[いろ]です。", situation: "好きな色" },
-            { english: "I want to be a [job].", japanese: "[しょくぎょう]になりたいです。", situation: "将来の夢" }
+            { english: "I'm from Japan.", japanese: "日本から来ました。", situation: "出身地を言う" },
+            { english: "My hobby is reading.", japanese: "趣味は読書です。", situation: "趣味を言う" },
+            { english: "I go to Lincoln Elementary school.", japanese: "リンカーン小学校に通っています。", situation: "学校について" },
+            { english: "My favorite color is blue.", japanese: "好きな色は青です。", situation: "好きな色" },
+            { english: "I want to be a teacher.", japanese: "先生になりたいです。", situation: "将来の夢" }
         ],
         "10-12": [
-            { english: "I'm interested in [subject].", japanese: "[ぶんや]に興味があります。", situation: "興味のあること" },
-            { english: "I've been studying English for [time].", japanese: "[きかん]英語を勉強しています。", situation: "学習期間" },
-            { english: "My goal is to [goal].", japanese: "目標は[もくひょう]です。", situation: "目標を語る" },
-            { english: "I enjoy [activity] in my free time.", japanese: "暇な時は[かつどう]を楽しみます。", situation: "余暇の過ごし方" },
-            { english: "I hope to [hope].", japanese: "[きぼう]したいです。", situation: "希望を語る" }
+            { english: "I'm interested in science.", japanese: "科学に興味があります。", situation: "興味のあること" },
+            { english: "I've been studying English for 3 years.", japanese: "3年間英語を勉強しています。", situation: "学習期間" },
+            { english: "My goal is to speak three languages.", japanese: "目標は3つの言語を話すことです。", situation: "目標を語る" },
+            { english: "I enjoy playing chess in my free time.", japanese: "暇な時はチェスを楽しみます。", situation: "余暇の過ごし方" },
+            { english: "I hope to travel around the world.", japanese: "世界中を旅行したいです。", situation: "希望を語る" }
         ]
     },
     school: {
@@ -660,11 +660,11 @@ const PHRASE_DATA = {
             { english: "How much is this?", japanese: "これはいくらですか？", situation: "値段を聞くとき" },
             { english: "I want this one.", japanese: "これがほしいです。", situation: "商品を選ぶとき" },
             { english: "It's too expensive.", japanese: "高すぎます。", situation: "値段が高いとき" },
-            { english: "Do you have [item]?", japanese: "[しょうひん]はありますか？", situation: "商品を探すとき" },
+            { english: "Do you have pencils?", japanese: "鉛筆はありますか？", situation: "商品を探すとき" },
             { english: "Thank you for your help.", japanese: "お手伝いありがとう。", situation: "店員にお礼" }
         ],
         "7-9": [
-            { english: "Where can I find [item]?", japanese: "[しょうひん]はどこにありますか？", situation: "場所を聞くとき" },
+            { english: "Where can I find notebooks?", japanese: "ノートはどこにありますか？", situation: "場所を聞くとき" },
             { english: "Do you have a smaller size?", japanese: "もっと小さいサイズはありますか？", situation: "サイズを聞くとき" },
             { english: "Can I try this on?", japanese: "試着してもいいですか？", situation: "試着したいとき" },
             { english: "I'll take two of these.", japanese: "これを2つください。", situation: "複数買うとき" },
@@ -695,7 +695,7 @@ const PHRASE_DATA = {
         ],
         "10-12": [
             { english: "Could you recommend a good restaurant?", japanese: "おすすめのレストランを教えてください。", situation: "推薦を求める" },
-            { english: "How do I get to [place]?", japanese: "[ばしょ]への行き方を教えてください。", situation: "道を聞く" },
+            { english: "How do I get to Tokyo Station?", japanese: "東京駅への行き方を教えてください。", situation: "道を聞く" },
             { english: "Is it within walking distance?", japanese: "歩いて行ける距離ですか？", situation: "距離を確認" },
             { english: "What's the local specialty?", japanese: "地元の名物は何ですか？", situation: "名物を聞く" },
             { english: "Do you have a map?", japanese: "地図はありますか？", situation: "地図を求める" }
