@@ -1086,7 +1086,7 @@ function generateNormalPractice(showExamples, showTranslation, ageGroup) {
     let html = '';
     // 行高さに応じて最大行数を調整
     const lineHeight = parseInt(document.getElementById('lineHeight').value);
-    const baseMaxLines = showExamples ? 15 : 17;
+    const baseMaxLines = showExamples ? 12 : 14;
     const maxLines = lineHeight === 12 ? Math.floor(baseMaxLines * 0.8) : 
                      lineHeight === 8 ? Math.floor(baseMaxLines * 1.2) : 
                      baseMaxLines;
@@ -1119,7 +1119,7 @@ function generateSentencePractice(showExamples, showTranslation, ageGroup) {
     let html = '';
     // 行高さに応じて例文数を調整
     const lineHeight = parseInt(document.getElementById('lineHeight').value);
-    const baseMaxExamples = showTranslation ? 5 : 6;
+    const baseMaxExamples = showTranslation ? 4 : 5;
     const maxExamples = lineHeight === 12 ? Math.floor(baseMaxExamples * 0.8) : 
                         lineHeight === 8 ? Math.floor(baseMaxExamples * 1.2) : 
                         baseMaxExamples;
@@ -1172,12 +1172,12 @@ function generateWordPractice(ageGroup) {
     
     // 行高さに応じて単語数を調整
     const lineHeight = parseInt(document.getElementById('lineHeight').value);
-    const maxWords = lineHeight === 12 ? 4 : lineHeight === 8 ? 6 : 5;
+    const maxWords = lineHeight === 12 ? 3 : lineHeight === 8 ? 5 : 4;
     const displayWords = words.slice(0, maxWords);
     
     for (let word of displayWords) {
         html += `
-            <div class="word-practice-item" style="margin-bottom: ${lineHeight === 12 ? '20mm' : lineHeight === 8 ? '12mm' : '15mm'};">
+            <div class="word-practice-item" style="margin-bottom: ${lineHeight === 12 ? '18mm' : lineHeight === 8 ? '10mm' : '12mm'};">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 2mm;">
                     <span style="font-size: 16pt; font-weight: bold;">${word.english}</span>
                     <span style="font-size: 12pt; color: #666;">${word.syllables}</span>
@@ -1389,8 +1389,8 @@ function generateAlphabetPractice(pageNumber) {
         letters = letters.concat(ALPHABET_DATA.lowercase);
     }
     
-    // 2列レイアウトで1ページに8文字（4行×2列）
-    const lettersPerPage = 8;
+    // 2列レイアウトで1ページに6文字（3行×2列）
+    const lettersPerPage = 6;
     const startIndex = (pageNumber - 1) * lettersPerPage;
     const endIndex = startIndex + lettersPerPage;
     const currentPageLetters = letters.slice(startIndex, endIndex);
