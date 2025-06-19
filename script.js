@@ -592,21 +592,36 @@ const PHRASE_DATA = {
             { english: "Good morning!", japanese: "おはよう！", situation: "朝のあいさつ" },
             { english: "Thank you!", japanese: "ありがとう！", situation: "お礼を言うとき" },
             { english: "Bye bye!", japanese: "バイバイ！", situation: "さよならのあいさつ" },
-            { english: "Please!", japanese: "おねがい！", situation: "お願いするとき" }
+            { english: "Please!", japanese: "おねがい！", situation: "お願いするとき" },
+            { english: "Good night!", japanese: "おやすみ！", situation: "寝る前のあいさつ" },
+            { english: "Sorry!", japanese: "ごめんなさい！", situation: "謝るとき" },
+            { english: "Hi there!", japanese: "やあ！", situation: "カジュアルなあいさつ" },
+            { english: "Welcome!", japanese: "ようこそ！", situation: "お迎えするとき" },
+            { english: "Good afternoon!", japanese: "こんにちは！", situation: "午後のあいさつ" }
         ],
         "7-9": [
             { english: "How are you?", japanese: "元気ですか？", situation: "相手の様子を聞く" },
             { english: "Nice to meet you.", japanese: "はじめまして。", situation: "初対面のあいさつ" },
             { english: "See you later!", japanese: "またね！", situation: "別れのあいさつ" },
             { english: "Excuse me.", japanese: "すみません。", situation: "声をかけるとき" },
-            { english: "You're welcome.", japanese: "どういたしまして。", situation: "お礼への返事" }
+            { english: "You're welcome.", japanese: "どういたしまして。", situation: "お礼への返事" },
+            { english: "Good to see you!", japanese: "会えて嬉しいです！", situation: "再会のあいさつ" },
+            { english: "How's it going?", japanese: "調子はどう？", situation: "カジュアルな様子聞き" },
+            { english: "Have a good day!", japanese: "良い一日を！", situation: "別れ際の励まし" },
+            { english: "See you tomorrow!", japanese: "また明日！", situation: "翌日会う約束" },
+            { english: "Take care!", japanese: "気をつけて！", situation: "心配の気持ち" }
         ],
         "10-12": [
             { english: "How have you been?", japanese: "お元気でしたか？", situation: "久しぶりに会ったとき" },
             { english: "Long time no see.", japanese: "お久しぶりです。", situation: "久しぶりの再会" },
             { english: "Have a nice day!", japanese: "良い一日を！", situation: "別れ際の言葉" },
             { english: "Take care.", japanese: "お気をつけて。", situation: "心配するとき" },
-            { english: "Best wishes.", japanese: "幸運を祈ります。", situation: "応援するとき" }
+            { english: "Best wishes.", japanese: "幸運を祈ります。", situation: "応援するとき" },
+            { english: "It's been a while.", japanese: "しばらくぶりです。", situation: "久々の再会" },
+            { english: "Good luck with that!", japanese: "頑張ってください！", situation: "応援の言葉" },
+            { english: "I appreciate it.", japanese: "感謝します。", situation: "感謝を伝える" },
+            { english: "My pleasure.", japanese: "どういたしまして。", situation: "丁寧なお礼の返事" },
+            { english: "Have a great weekend!", japanese: "良い週末を！", situation: "週末前のあいさつ" }
         ]
     },
     self_introduction: {
@@ -615,21 +630,36 @@ const PHRASE_DATA = {
             { english: "I am 6 years old.", japanese: "わたしは6歳です。", situation: "年齢を言う" },
             { english: "I like dogs.", japanese: "わたしは犬が好きです。", situation: "好きなものを言う" },
             { english: "I can swim.", japanese: "わたしは泳ぐことができます。", situation: "できることを言う" },
-            { english: "I have a cat.", japanese: "わたしは猫を飼っています。", situation: "ペットについて" }
+            { english: "I have a cat.", japanese: "わたしは猫を飼っています。", situation: "ペットについて" },
+            { english: "I live in Tokyo.", japanese: "わたしは東京に住んでいます。", situation: "住んでいる場所" },
+            { english: "My birthday is in May.", japanese: "わたしの誕生日は5月です。", situation: "誕生日について" },
+            { english: "I like ice cream.", japanese: "わたしはアイスクリームが好きです。", situation: "好きな食べ物" },
+            { english: "I have one sister.", japanese: "わたしには妹が一人います。", situation: "兄弟姉妹について" },
+            { english: "I can ride a bike.", japanese: "わたしは自転車に乗れます。", situation: "できること" }
         ],
         "7-9": [
             { english: "I'm from Japan.", japanese: "日本から来ました。", situation: "出身地を言う" },
             { english: "My hobby is reading.", japanese: "趣味は読書です。", situation: "趣味を言う" },
             { english: "I go to Lincoln Elementary school.", japanese: "リンカーン小学校に通っています。", situation: "学校について" },
             { english: "My favorite color is blue.", japanese: "好きな色は青です。", situation: "好きな色" },
-            { english: "I want to be a teacher.", japanese: "先生になりたいです。", situation: "将来の夢" }
+            { english: "I want to be a teacher.", japanese: "先生になりたいです。", situation: "将来の夢" },
+            { english: "I'm in grade 3.", japanese: "3年生です。", situation: "学年を言う" },
+            { english: "I play soccer on weekends.", japanese: "週末にサッカーをします。", situation: "スポーツについて" },
+            { english: "My favorite subject is math.", japanese: "好きな科目は算数です。", situation: "好きな教科" },
+            { english: "I have been here for 2 years.", japanese: "ここに2年間います。", situation: "滞在期間" },
+            { english: "I enjoy drawing pictures.", japanese: "絵を描くのが楽しいです。", situation: "趣味を詳しく" }
         ],
         "10-12": [
             { english: "I'm interested in science.", japanese: "科学に興味があります。", situation: "興味のあること" },
             { english: "I've been studying English for 3 years.", japanese: "3年間英語を勉強しています。", situation: "学習期間" },
             { english: "My goal is to speak three languages.", japanese: "目標は3つの言語を話すことです。", situation: "目標を語る" },
             { english: "I enjoy playing chess in my free time.", japanese: "暇な時はチェスを楽しみます。", situation: "余暇の過ごし方" },
-            { english: "I hope to travel around the world.", japanese: "世界中を旅行したいです。", situation: "希望を語る" }
+            { english: "I hope to travel around the world.", japanese: "世界中を旅行したいです。", situation: "希望を語る" },
+            { english: "I'm passionate about environmental issues.", japanese: "環境問題に情熱を持っています。", situation: "関心事について" },
+            { english: "I participate in the debate club.", japanese: "ディベート部に参加しています。", situation: "クラブ活動" },
+            { english: "My dream is to become a scientist.", japanese: "私の夢は科学者になることです。", situation: "将来の夢を詳しく" },
+            { english: "I speak Japanese and English fluently.", japanese: "日本語と英語を流暢に話せます。", situation: "言語能力" },
+            { english: "I volunteer at the library on Saturdays.", japanese: "土曜日に図書館でボランティアをしています。", situation: "ボランティア活動" }
         ]
     },
     school: {
@@ -638,21 +668,36 @@ const PHRASE_DATA = {
             { english: "I don't understand.", japanese: "わかりません。", situation: "理解できないとき" },
             { english: "Can you help me?", japanese: "手伝ってもらえますか？", situation: "助けが必要なとき" },
             { english: "I finished!", japanese: "できました！", situation: "課題が終わったとき" },
-            { english: "Let's play together!", japanese: "一緒に遊ぼう！", situation: "友達を誘うとき" }
+            { english: "Let's play together!", japanese: "一緒に遊ぼう！", situation: "友達を誘うとき" },
+            { english: "May I drink water?", japanese: "水を飲んでもいいですか？", situation: "水を飲みたいとき" },
+            { english: "I need a pencil.", japanese: "鉛筆が必要です。", situation: "文房具が必要なとき" },
+            { english: "Can I sit here?", japanese: "ここに座ってもいい？", situation: "席について聞く" },
+            { english: "I like this book!", japanese: "この本が好き！", situation: "本の感想" },
+            { english: "It's my turn!", japanese: "私の番だよ！", situation: "順番を主張" }
         ],
         "7-9": [
             { english: "May I borrow your pencil?", japanese: "鉛筆を借りてもいいですか？", situation: "物を借りるとき" },
             { english: "What page are we on?", japanese: "何ページですか？", situation: "ページを確認するとき" },
             { english: "I forgot my homework.", japanese: "宿題を忘れました。", situation: "忘れ物をしたとき" },
             { english: "Can you repeat that?", japanese: "もう一度言ってください。", situation: "聞き返すとき" },
-            { english: "That's a good idea!", japanese: "それはいいアイデアです！", situation: "賛成するとき" }
+            { english: "That's a good idea!", japanese: "それはいいアイデアです！", situation: "賛成するとき" },
+            { english: "When is the test?", japanese: "テストはいつですか？", situation: "テスト日程確認" },
+            { english: "I need help with this problem.", japanese: "この問題で助けが必要です。", situation: "問題解決を求める" },
+            { english: "Can I join your group?", japanese: "あなたのグループに入ってもいい？", situation: "グループ参加希望" },
+            { english: "I'll share my notes.", japanese: "私のノートを共有します。", situation: "協力を申し出る" },
+            { english: "What's for homework?", japanese: "宿題は何ですか？", situation: "宿題内容確認" }
         ],
         "10-12": [
             { english: "Could you explain it again?", japanese: "もう一度説明してもらえますか？", situation: "再説明を求めるとき" },
             { english: "I have a question.", japanese: "質問があります。", situation: "質問したいとき" },
             { english: "May I work with a partner?", japanese: "パートナーと一緒に作業してもいいですか？", situation: "協力したいとき" },
             { english: "I need more time.", japanese: "もっと時間が必要です。", situation: "時間が足りないとき" },
-            { english: "I disagree because...", japanese: "私は反対です。なぜなら...", situation: "意見を述べるとき" }
+            { english: "I disagree because...", japanese: "私は反対です。なぜなら...", situation: "意見を述べるとき" },
+            { english: "Could we discuss this further?", japanese: "これについてもっと議論できますか？", situation: "深い議論を求める" },
+            { english: "I'd like to present my findings.", japanese: "私の発見を発表したいです。", situation: "発表希望" },
+            { english: "What's the deadline for this?", japanese: "これの締切はいつですか？", situation: "締切確認" },
+            { english: "Can I use the computer?", japanese: "コンピューターを使ってもいいですか？", situation: "機器使用許可" },
+            { english: "I think there's another solution.", japanese: "別の解決策があると思います。", situation: "代替案提示" }
         ]
     },
     shopping: {
@@ -661,21 +706,36 @@ const PHRASE_DATA = {
             { english: "I want this one.", japanese: "これがほしいです。", situation: "商品を選ぶとき" },
             { english: "It's too expensive.", japanese: "高すぎます。", situation: "値段が高いとき" },
             { english: "Do you have pencils?", japanese: "鉛筆はありますか？", situation: "商品を探すとき" },
-            { english: "Thank you for your help.", japanese: "お手伝いありがとう。", situation: "店員にお礼" }
+            { english: "Thank you for your help.", japanese: "お手伝いありがとう。", situation: "店員にお礼" },
+            { english: "Can I see that?", japanese: "それを見せてもらえる？", situation: "商品を見たいとき" },
+            { english: "I like this color.", japanese: "この色が好きです。", situation: "色の好み" },
+            { english: "Is this new?", japanese: "これは新しいですか？", situation: "新商品か確認" },
+            { english: "I need a bag.", japanese: "袋が必要です。", situation: "袋をもらう" },
+            { english: "Where are the toys?", japanese: "おもちゃはどこですか？", situation: "売り場を探す" }
         ],
         "7-9": [
             { english: "Where can I find notebooks?", japanese: "ノートはどこにありますか？", situation: "場所を聞くとき" },
             { english: "Do you have a smaller size?", japanese: "もっと小さいサイズはありますか？", situation: "サイズを聞くとき" },
             { english: "Can I try this on?", japanese: "試着してもいいですか？", situation: "試着したいとき" },
             { english: "I'll take two of these.", japanese: "これを2つください。", situation: "複数買うとき" },
-            { english: "Do you accept credit cards?", japanese: "クレジットカードは使えますか？", situation: "支払い方法" }
+            { english: "Do you accept credit cards?", japanese: "クレジットカードは使えますか？", situation: "支払い方法" },
+            { english: "What colors do you have?", japanese: "どんな色がありますか？", situation: "色の選択肢" },
+            { english: "Can I exchange this?", japanese: "これを交換できますか？", situation: "交換希望" },
+            { english: "Is there a discount?", japanese: "割引はありますか？", situation: "割引確認" },
+            { english: "I'm looking for a gift.", japanese: "プレゼントを探しています。", situation: "ギフト探し" },
+            { english: "How long is the warranty?", japanese: "保証期間はどのくらいですか？", situation: "保証確認" }
         ],
         "10-12": [
             { english: "Is this on sale?", japanese: "これはセール品ですか？", situation: "割引を確認" },
             { english: "What's the return policy?", japanese: "返品規定はどうなっていますか？", situation: "返品について" },
             { english: "Could you gift-wrap this?", japanese: "プレゼント包装してもらえますか？", situation: "包装を頼む" },
             { english: "I'm just looking, thanks.", japanese: "見ているだけです、ありがとう。", situation: "断るとき" },
-            { english: "Do you have this in stock?", japanese: "在庫はありますか？", situation: "在庫確認" }
+            { english: "Do you have this in stock?", japanese: "在庫はありますか？", situation: "在庫確認" },
+            { english: "Can you order this for me?", japanese: "これを注文してもらえますか？", situation: "注文依頼" },
+            { english: "What's the difference between these?", japanese: "これらの違いは何ですか？", situation: "比較質問" },
+            { english: "Do you offer student discount?", japanese: "学生割引はありますか？", situation: "学割確認" },
+            { english: "Can I pay in installments?", japanese: "分割払いはできますか？", situation: "支払い方法相談" },
+            { english: "When will new stock arrive?", japanese: "新しい在庫はいつ入りますか？", situation: "入荷予定確認" }
         ]
     },
     travel: {
@@ -684,21 +744,36 @@ const PHRASE_DATA = {
             { english: "I'm hungry.", japanese: "お腹がすいた。", situation: "空腹を伝える" },
             { english: "Where is the toilet?", japanese: "トイレはどこ？", situation: "トイレを探す" },
             { english: "I want to go home.", japanese: "家に帰りたい。", situation: "帰りたいとき" },
-            { english: "This is fun!", japanese: "楽しい！", situation: "楽しいとき" }
+            { english: "This is fun!", japanese: "楽しい！", situation: "楽しいとき" },
+            { english: "I'm tired.", japanese: "疲れた。", situation: "疲労を伝える" },
+            { english: "Can we stop?", japanese: "止まってもらえる？", situation: "休憩希望" },
+            { english: "I see a plane!", japanese: "飛行機が見える！", situation: "何かを発見" },
+            { english: "Are we lost?", japanese: "迷子になった？", situation: "道に迷った心配" },
+            { english: "I want ice cream!", japanese: "アイスクリームが欲しい！", situation: "おやつの要求" }
         ],
         "7-9": [
             { english: "How long does it take?", japanese: "どのくらいかかりますか？", situation: "時間を聞く" },
             { english: "Can we stop here?", japanese: "ここで止まってもらえますか？", situation: "停車を頼む" },
             { english: "I feel sick.", japanese: "気分が悪いです。", situation: "体調不良" },
             { english: "What time do we leave?", japanese: "何時に出発しますか？", situation: "出発時間" },
-            { english: "Can I take a picture?", japanese: "写真を撮ってもいいですか？", situation: "撮影許可" }
+            { english: "Can I take a picture?", japanese: "写真を撮ってもいいですか？", situation: "撮影許可" },
+            { english: "Where are we going?", japanese: "どこに行くの？", situation: "目的地確認" },
+            { english: "Is it far from here?", japanese: "ここから遠いですか？", situation: "距離を聞く" },
+            { english: "Can I buy a souvenir?", japanese: "お土産を買ってもいい？", situation: "お土産購入希望" },
+            { english: "I need to use the restroom.", japanese: "トイレに行きたいです。", situation: "トイレ希望" },
+            { english: "This place is beautiful!", japanese: "ここはきれいです！", situation: "景色の感想" }
         ],
         "10-12": [
             { english: "Could you recommend a good restaurant?", japanese: "おすすめのレストランを教えてください。", situation: "推薦を求める" },
             { english: "How do I get to Tokyo Station?", japanese: "東京駅への行き方を教えてください。", situation: "道を聞く" },
             { english: "Is it within walking distance?", japanese: "歩いて行ける距離ですか？", situation: "距離を確認" },
             { english: "What's the local specialty?", japanese: "地元の名物は何ですか？", situation: "名物を聞く" },
-            { english: "Do you have a map?", japanese: "地図はありますか？", situation: "地図を求める" }
+            { english: "Do you have a map?", japanese: "地図はありますか？", situation: "地図を求める" },
+            { english: "What time does it close?", japanese: "何時に閉まりますか？", situation: "営業時間確認" },
+            { english: "Is there an admission fee?", japanese: "入場料はありますか？", situation: "料金確認" },
+            { english: "Can I book a ticket online?", japanese: "オンラインでチケットを予約できますか？", situation: "オンライン予約" },
+            { english: "Are there any guided tours?", japanese: "ガイドツアーはありますか？", situation: "ツアー確認" },
+            { english: "What's the best way to get there?", japanese: "そこへの最良の行き方は何ですか？", situation: "最適ルート確認" }
         ]
     },
     feelings: {
@@ -707,21 +782,36 @@ const PHRASE_DATA = {
             { english: "I'm sad.", japanese: "かなしい。", situation: "悲しみを表現" },
             { english: "I'm scared.", japanese: "こわい。", situation: "恐怖を表現" },
             { english: "I'm angry.", japanese: "おこってる。", situation: "怒りを表現" },
-            { english: "I love you.", japanese: "大好き。", situation: "愛情を表現" }
+            { english: "I love you.", japanese: "大好き。", situation: "愛情を表現" },
+            { english: "I'm sleepy.", japanese: "ねむい。", situation: "眠気を表現" },
+            { english: "I'm excited!", japanese: "ワクワクする！", situation: "興奮を表現" },
+            { english: "I miss you.", japanese: "会いたい。", situation: "寂しさを表現" },
+            { english: "I'm bored.", japanese: "つまらない。", situation: "退屈を表現" },
+            { english: "I'm surprised!", japanese: "びっくりした！", situation: "驚きを表現" }
         ],
         "7-9": [
             { english: "I'm excited!", japanese: "ワクワクする！", situation: "興奮を表現" },
             { english: "I'm nervous.", japanese: "緊張しています。", situation: "緊張を表現" },
             { english: "I'm proud of you.", japanese: "あなたを誇りに思います。", situation: "誇りを表現" },
             { english: "I'm disappointed.", japanese: "がっかりしました。", situation: "失望を表現" },
-            { english: "I'm confused.", japanese: "混乱しています。", situation: "困惑を表現" }
+            { english: "I'm confused.", japanese: "混乱しています。", situation: "困惑を表現" },
+            { english: "I feel lonely.", japanese: "寂しいです。", situation: "孤独を表現" },
+            { english: "I'm embarrassed.", japanese: "恥ずかしいです。", situation: "恥ずかしさを表現" },
+            { english: "I'm jealous.", japanese: "うらやましいです。", situation: "羨望を表現" },
+            { english: "I feel relieved.", japanese: "安心しました。", situation: "安堵を表現" },
+            { english: "I'm curious about it.", japanese: "それが気になります。", situation: "好奇心を表現" }
         ],
         "10-12": [
             { english: "I'm grateful for your help.", japanese: "助けてくれて感謝しています。", situation: "感謝を表現" },
             { english: "I'm frustrated with this.", japanese: "これにイライラしています。", situation: "苛立ちを表現" },
             { english: "I feel confident.", japanese: "自信があります。", situation: "自信を表現" },
             { english: "I'm worried about the test.", japanese: "テストが心配です。", situation: "心配を表現" },
-            { english: "I'm impressed by your work.", japanese: "あなたの仕事に感銘を受けました。", situation: "感銘を表現" }
+            { english: "I'm impressed by your work.", japanese: "あなたの仕事に感銘を受けました。", situation: "感銘を表現" },
+            { english: "I feel overwhelmed.", japanese: "圧倒されています。", situation: "圧倒感を表現" },
+            { english: "I'm motivated to succeed.", japanese: "成功への意欲があります。", situation: "やる気を表現" },
+            { english: "I feel accomplished.", japanese: "達成感を感じます。", situation: "達成感を表現" },
+            { english: "I'm anxious about the future.", japanese: "将来が不安です。", situation: "不安を表現" },
+            { english: "I feel inspired.", japanese: "インスピレーションを感じます。", situation: "感化を表現" }
         ]
     },
     daily_life: {
@@ -730,21 +820,36 @@ const PHRASE_DATA = {
             { english: "Brush your teeth.", japanese: "歯を磨いて。", situation: "歯磨き" },
             { english: "Let's eat!", japanese: "食べよう！", situation: "食事時" },
             { english: "Good night.", japanese: "おやすみ。", situation: "就寝時" },
-            { english: "Wash your hands.", japanese: "手を洗って。", situation: "手洗い" }
+            { english: "Wash your hands.", japanese: "手を洗って。", situation: "手洗い" },
+            { english: "Clean up your toys.", japanese: "おもちゃを片付けて。", situation: "片付け" },
+            { english: "It's bath time!", japanese: "お風呂の時間だよ！", situation: "入浴時" },
+            { english: "Put on your shoes.", japanese: "靴を履いて。", situation: "外出準備" },
+            { english: "Time for bed!", japanese: "寝る時間だよ！", situation: "就寝準備" },
+            { english: "Drink your milk.", japanese: "ミルクを飲んで。", situation: "飲み物" }
         ],
         "7-9": [
             { english: "What's for dinner?", japanese: "夕食は何ですか？", situation: "夕食を聞く" },
             { english: "I'll do it later.", japanese: "後でやります。", situation: "後回しにする" },
             { english: "Can I watch TV?", japanese: "テレビを見てもいい？", situation: "許可を求める" },
             { english: "It's bedtime.", japanese: "寝る時間です。", situation: "就寝時間" },
-            { english: "I'm done with my chores.", japanese: "お手伝いが終わりました。", situation: "家事完了" }
+            { english: "I'm done with my chores.", japanese: "お手伝いが終わりました。", situation: "家事完了" },
+            { english: "May I use the computer?", japanese: "コンピューターを使ってもいい？", situation: "機器使用許可" },
+            { english: "I need to do homework.", japanese: "宿題をしなければなりません。", situation: "宿題時間" },
+            { english: "Can I have a snack?", japanese: "おやつを食べてもいい？", situation: "おやつ希望" },
+            { english: "I'll set the table.", japanese: "テーブルを準備します。", situation: "食事準備" },
+            { english: "Time to get dressed.", japanese: "着替える時間です。", situation: "着替え" }
         ],
         "10-12": [
             { english: "I'll be back by 6.", japanese: "6時までに戻ります。", situation: "帰宅時間" },
             { english: "Can I go out with friends?", japanese: "友達と出かけてもいいですか？", situation: "外出許可" },
             { english: "I need to study.", japanese: "勉強しなければなりません。", situation: "勉強時" },
             { english: "What should I wear?", japanese: "何を着ればいいですか？", situation: "服装相談" },
-            { english: "I'll help with cooking.", japanese: "料理を手伝います。", situation: "手伝いを申し出る" }
+            { english: "I'll help with cooking.", japanese: "料理を手伝います。", situation: "手伝いを申し出る" },
+            { english: "I'm going to the library.", japanese: "図書館に行きます。", situation: "外出報告" },
+            { english: "Can I stay up late?", japanese: "遅くまで起きていてもいい？", situation: "就寝時間延長" },
+            { english: "I need pocket money.", japanese: "お小遣いが必要です。", situation: "お金の相談" },
+            { english: "I'll do the dishes.", japanese: "皿洗いをします。", situation: "家事協力" },
+            { english: "May I invite friends over?", japanese: "友達を招待してもいい？", situation: "友達招待" }
         ]
     },
     classroom_english: {
@@ -753,21 +858,36 @@ const PHRASE_DATA = {
             { english: "Can you show me?", japanese: "見せてもらえますか？", situation: "手本を求める" },
             { english: "I don't know this word.", japanese: "この単語がわかりません。", situation: "単語がわからない" },
             { english: "Is this correct?", japanese: "これで合っていますか？", situation: "確認したいとき" },
-            { english: "I'm finished with my work.", japanese: "課題が終わりました。", situation: "完了報告" }
+            { english: "I'm finished with my work.", japanese: "課題が終わりました。", situation: "完了報告" },
+            { english: "Can I sharpen my pencil?", japanese: "鉛筆を削ってもいいですか？", situation: "鉛筆削り許可" },
+            { english: "I can't see the board.", japanese: "黒板が見えません。", situation: "視界の問題" },
+            { english: "May I move my seat?", japanese: "席を移動してもいいですか？", situation: "席替え希望" },
+            { english: "I dropped my eraser.", japanese: "消しゴムを落としました。", situation: "物を落とした" },
+            { english: "Can you say it again?", japanese: "もう一度言ってもらえる？", situation: "聞き返し" }
         ],
         "7-9": [
             { english: "Could you speak more slowly?", japanese: "もっとゆっくり話してもらえますか？", situation: "聞き取れないとき" },
             { english: "What does this mean?", japanese: "これはどういう意味ですか？", situation: "意味を聞く" },
             { english: "May I use the dictionary?", japanese: "辞書を使ってもいいですか？", situation: "辞書使用許可" },
             { english: "I need more time to finish.", japanese: "終わらせるのにもっと時間が必要です。", situation: "時間延長依頼" },
-            { english: "Can we work in pairs?", japanese: "ペアで作業してもいいですか？", situation: "協力作業の提案" }
+            { english: "Can we work in pairs?", japanese: "ペアで作業してもいいですか？", situation: "協力作業の提案" },
+            { english: "How do you spell that?", japanese: "それはどう綴りますか？", situation: "スペル確認" },
+            { english: "Which book should I use?", japanese: "どの本を使えばいいですか？", situation: "教材確認" },
+            { english: "I finished early.", japanese: "早く終わりました。", situation: "早期完了報告" },
+            { english: "Can I help others?", japanese: "他の人を手伝ってもいいですか？", situation: "協力申し出" },
+            { english: "Is this for homework?", japanese: "これは宿題ですか？", situation: "宿題確認" }
         ],
         "10-12": [
             { english: "I'd like to share my opinion.", japanese: "私の意見を述べたいです。", situation: "発言したいとき" },
             { english: "Could you clarify that point?", japanese: "その点を明確にしてもらえますか？", situation: "詳細説明を求める" },
             { english: "I respectfully disagree.", japanese: "失礼ですが、私は違う意見です。", situation: "丁寧に反対する" },
             { english: "May I add something?", japanese: "何か付け加えてもいいですか？", situation: "追加発言" },
-            { english: "I see your point, but...", japanese: "おっしゃることはわかりますが...", situation: "部分的同意" }
+            { english: "I see your point, but...", japanese: "おっしゃることはわかりますが...", situation: "部分的同意" },
+            { english: "Could you provide an example?", japanese: "例を示してもらえますか？", situation: "例示要求" },
+            { english: "I'd like to build on that idea.", japanese: "そのアイデアを発展させたいです。", situation: "意見発展" },
+            { english: "What's the main objective?", japanese: "主な目的は何ですか？", situation: "目的確認" },
+            { english: "Can we review this together?", japanese: "一緒に復習できますか？", situation: "共同復習提案" },
+            { english: "I need clarification on the instructions.", japanese: "指示の説明が必要です。", situation: "指示確認" }
         ]
     },
     friend_making: {
@@ -776,21 +896,36 @@ const PHRASE_DATA = {
             { english: "Can I sit with you?", japanese: "一緒に座ってもいい？", situation: "席を共有" },
             { english: "What's your favorite game?", japanese: "好きなゲームは何？", situation: "興味を聞く" },
             { english: "Let's be friends!", japanese: "友達になろう！", situation: "友達になる" },
-            { english: "Want to share my snack?", japanese: "おやつを分ける？", situation: "分け合い" }
+            { english: "Want to share my snack?", japanese: "おやつを分ける？", situation: "分け合い" },
+            { english: "Do you like this toy?", japanese: "このおもちゃ好き？", situation: "共通の興味" },
+            { english: "Can I play too?", japanese: "私も遊んでいい？", situation: "参加希望" },
+            { english: "You're nice!", japanese: "あなたは優しいね！", situation: "褒める" },
+            { english: "Let's play again tomorrow!", japanese: "明日また遊ぼう！", situation: "次の約束" },
+            { english: "I like your drawing!", japanese: "あなたの絵が好き！", situation: "作品を褒める" }
         ],
         "7-9": [
             { english: "Would you like to join our group?", japanese: "私たちのグループに入る？", situation: "グループに誘う" },
             { english: "Do you want to be study partners?", japanese: "勉強パートナーになる？", situation: "勉強仲間" },
             { english: "What clubs are you in?", japanese: "どんなクラブに入ってる？", situation: "活動を聞く" },
             { english: "Can I have your contact?", japanese: "連絡先を教えてもらえる？", situation: "連絡先交換" },
-            { english: "Want to hang out after school?", japanese: "放課後遊ばない？", situation: "放課後の誘い" }
+            { english: "Want to hang out after school?", japanese: "放課後遊ばない？", situation: "放課後の誘い" },
+            { english: "Do you play any sports?", japanese: "何かスポーツをしてる？", situation: "スポーツの話題" },
+            { english: "We have similar interests!", japanese: "私たち興味が似てるね！", situation: "共通点発見" },
+            { english: "Want to work on this project together?", japanese: "このプロジェクトを一緒にやらない？", situation: "協力提案" },
+            { english: "You're really good at this!", japanese: "あなたはこれが本当に上手だね！", situation: "能力を褒める" },
+            { english: "Let's eat lunch together!", japanese: "一緒にランチを食べよう！", situation: "昼食の誘い" }
         ],
         "10-12": [
             { english: "We have a lot in common.", japanese: "私たち共通点が多いね。", situation: "共通点を見つける" },
             { english: "I really enjoy talking with you.", japanese: "あなたと話すのが楽しいです。", situation: "会話を楽しむ" },
             { english: "Would you like to study together?", japanese: "一緒に勉強しませんか？", situation: "勉強の誘い" },
             { english: "I appreciate your friendship.", japanese: "あなたの友情に感謝します。", situation: "友情への感謝" },
-            { english: "Let's keep in touch.", japanese: "連絡を取り合いましょう。", situation: "関係継続" }
+            { english: "Let's keep in touch.", japanese: "連絡を取り合いましょう。", situation: "関係継続" },
+            { english: "I value your opinion.", japanese: "あなたの意見を大切にしています。", situation: "意見尊重" },
+            { english: "You inspire me to do better.", japanese: "あなたは私をより良くする刺激を与えてくれます。", situation: "刺激を受ける" },
+            { english: "Thanks for being a great friend.", japanese: "素晴らしい友達でいてくれてありがとう。", situation: "友情感謝" },
+            { english: "Let's support each other.", japanese: "お互いを支え合いましょう。", situation: "相互支援" },
+            { english: "I'm glad we became friends.", japanese: "友達になれて嬉しいです。", situation: "友情の喜び" }
         ]
     },
     cultural_exchange: {
@@ -799,21 +934,36 @@ const PHRASE_DATA = {
             { english: "What's this called in English?", japanese: "これは英語で何と言いますか？", situation: "英語名を聞く" },
             { english: "We eat with chopsticks.", japanese: "私たちは箸で食べます。", situation: "食文化" },
             { english: "How do you say hello?", japanese: "こんにちはは何と言いますか？", situation: "挨拶を学ぶ" },
-            { english: "That's different from Japan.", japanese: "それは日本と違います。", situation: "違いに気づく" }
+            { english: "That's different from Japan.", japanese: "それは日本と違います。", situation: "違いに気づく" },
+            { english: "We take off shoes inside.", japanese: "家の中では靴を脱ぎます。", situation: "生活習慣" },
+            { english: "What's your favorite food?", japanese: "好きな食べ物は何？", situation: "食の好み" },
+            { english: "In my country, we...", japanese: "私の国では...", situation: "文化説明" },
+            { english: "That's interesting!", japanese: "それは面白い！", situation: "興味を示す" },
+            { english: "Can you teach me?", japanese: "教えてくれる？", situation: "学習希望" }
         ],
         "7-9": [
             { english: "In my country, we celebrate...", japanese: "私の国では...を祝います。", situation: "祝日紹介" },
             { english: "Can you teach me your language?", japanese: "あなたの言語を教えてくれる？", situation: "言語学習" },
             { english: "What's your traditional food?", japanese: "伝統的な食べ物は何？", situation: "食文化質問" },
             { english: "How do you celebrate birthdays?", japanese: "誕生日はどう祝うの？", situation: "祝い方を聞く" },
-            { english: "That's similar to Japanese culture.", japanese: "それは日本文化に似ています。", situation: "類似点発見" }
+            { english: "That's similar to Japanese culture.", japanese: "それは日本文化に似ています。", situation: "類似点発見" },
+            { english: "What sports are popular there?", japanese: "そこでは何のスポーツが人気？", situation: "スポーツ文化" },
+            { english: "Tell me about your school.", japanese: "あなたの学校について教えて。", situation: "学校生活" },
+            { english: "What's the weather like?", japanese: "天気はどんな感じ？", situation: "気候について" },
+            { english: "Do you have school uniforms?", japanese: "学校の制服はある？", situation: "学校文化" },
+            { english: "What languages do you speak?", japanese: "何語を話せる？", situation: "言語能力" }
         ],
         "10-12": [
             { english: "I'd love to learn about your culture.", japanese: "あなたの文化について学びたいです。", situation: "文化学習意欲" },
             { english: "Cultural diversity is fascinating.", japanese: "文化の多様性は魅力的です。", situation: "多様性評価" },
             { english: "Let me explain our customs.", japanese: "私たちの習慣を説明させてください。", situation: "習慣説明" },
             { english: "I respect your traditions.", japanese: "あなたの伝統を尊重します。", situation: "文化尊重" },
-            { english: "We can learn from each other.", japanese: "お互いから学べます。", situation: "相互学習" }
+            { english: "We can learn from each other.", japanese: "お互いから学べます。", situation: "相互学習" },
+            { english: "What are your cultural values?", japanese: "あなたの文化的価値観は何ですか？", situation: "価値観について" },
+            { english: "How has globalization affected your country?", japanese: "グローバル化はあなたの国にどう影響しましたか？", situation: "社会変化" },
+            { english: "I'm interested in your history.", japanese: "あなたの国の歴史に興味があります。", situation: "歴史への関心" },
+            { english: "Let's share our experiences.", japanese: "経験を共有しましょう。", situation: "経験共有" },
+            { english: "Cultural exchange enriches us.", japanese: "文化交流は私たちを豊かにします。", situation: "交流の価値" }
         ]
     },
     emergency_situations: {
@@ -822,21 +972,36 @@ const PHRASE_DATA = {
             { english: "I lost my lunch box.", japanese: "お弁当箱をなくしました。", situation: "紛失" },
             { english: "Someone is being mean.", japanese: "誰かが意地悪をしています。", situation: "いじめ報告" },
             { english: "I need to call home.", japanese: "家に電話したいです。", situation: "連絡希望" },
-            { english: "I'm scared.", japanese: "怖いです。", situation: "恐怖表現" }
+            { english: "I'm scared.", japanese: "怖いです。", situation: "恐怖表現" },
+            { english: "I hurt my knee.", japanese: "膝を怪我しました。", situation: "怪我の報告" },
+            { english: "I can't find my bag.", japanese: "かばんが見つかりません。", situation: "物の紛失" },
+            { english: "My stomach hurts.", japanese: "お腹が痛いです。", situation: "腹痛" },
+            { english: "I need my medicine.", japanese: "薬が必要です。", situation: "薬の必要性" },
+            { english: "Help me, please!", japanese: "助けてください！", situation: "緊急の助け" }
         ],
         "7-9": [
             { english: "I need to go to the nurse.", japanese: "保健室に行きたいです。", situation: "保健室希望" },
             { english: "I'm being bullied.", japanese: "いじめられています。", situation: "いじめ相談" },
             { english: "I forgot my homework at home.", japanese: "宿題を家に忘れました。", situation: "忘れ物報告" },
             { english: "Can I call my parents?", japanese: "両親に電話してもいいですか？", situation: "親への連絡" },
-            { english: "I don't feel safe.", japanese: "安全だと感じません。", situation: "不安表現" }
+            { english: "I don't feel safe.", japanese: "安全だと感じません。", situation: "不安表現" },
+            { english: "I have a headache.", japanese: "頭痛がします。", situation: "頭痛の報告" },
+            { english: "Someone took my things.", japanese: "誰かが私の物を取りました。", situation: "盗難報告" },
+            { english: "I feel dizzy.", japanese: "めまいがします。", situation: "めまい" },
+            { english: "There's been an accident.", japanese: "事故がありました。", situation: "事故報告" },
+            { english: "I need to go home early.", japanese: "早退したいです。", situation: "早退希望" }
         ],
         "10-12": [
             { english: "I need immediate assistance.", japanese: "すぐに助けが必要です。", situation: "緊急援助" },
             { english: "This is a serious problem.", japanese: "これは深刻な問題です。", situation: "問題の深刻さ" },
             { english: "I'd like to speak privately.", japanese: "個人的に話したいです。", situation: "個別相談" },
             { english: "I'm experiencing anxiety.", japanese: "不安を感じています。", situation: "精神的不調" },
-            { english: "I need professional help.", japanese: "専門的な助けが必要です。", situation: "専門家希望" }
+            { english: "I need professional help.", japanese: "専門的な助けが必要です。", situation: "専門家希望" },
+            { english: "I'm having a panic attack.", japanese: "パニック発作を起こしています。", situation: "パニック発作" },
+            { english: "I need to report an incident.", japanese: "事件を報告する必要があります。", situation: "事件報告" },
+            { english: "This requires urgent attention.", japanese: "これは緊急の対応が必要です。", situation: "緊急対応" },
+            { english: "I'm concerned about a friend.", japanese: "友達のことが心配です。", situation: "友人の心配" },
+            { english: "I need counseling support.", japanese: "カウンセリングのサポートが必要です。", situation: "カウンセリング希望" }
         ]
     }
 };
@@ -1479,7 +1644,11 @@ function generatePhrasePractice(showTranslation, ageGroup) {
         shopping: '買い物',
         travel: '旅行・移動',
         feelings: '感情表現',
-        daily_life: '日常生活'
+        daily_life: '日常生活',
+        classroom_english: '教室での英語',
+        friend_making: '友達作り',
+        cultural_exchange: '文化交流',
+        emergency_situations: '緊急時の表現'
     };
     
     html += `<h3 style="text-align: center; margin-bottom: 1mm; margin-top: 0mm;">Phrase Practice - ${categoryNames[phraseCategory] || phraseCategory}</h3>`;
