@@ -879,6 +879,7 @@ function setupEventListeners() {
     const showAlphabetExampleCheckbox = document.getElementById('showAlphabetExample');
     const phraseCategorySelect = document.getElementById('phraseCategory');
     const showSituationCheckbox = document.getElementById('showSituation');
+    const shufflePhrasesBtn = document.getElementById('shufflePhrases');
 
     // 更新イベントリスナー
     // practiceMode.addEventListener('change', updatePreview); // 削除（571行目で設定済み）
@@ -920,6 +921,13 @@ function setupEventListeners() {
     }
     if (showSituationCheckbox) {
         showSituationCheckbox.addEventListener('change', updatePreview);
+    }
+    
+    // フレーズシャッフルボタン
+    if (shufflePhrasesBtn) {
+        shufflePhrasesBtn.addEventListener('click', () => {
+            updatePreview();
+        });
     }
     
     // ボタンイベント
@@ -1460,7 +1468,9 @@ function generatePhrasePractice(showTranslation, ageGroup) {
                       PHRASE_DATA['greetings'][ageGroup] || PHRASE_DATA['greetings']['7-9'];
     
     // A4に収めるため4つのフレーズに制限（練習行3行ずつ）
-    const phrases = allPhrases.slice(0, 4);
+    // ランダムに4つ選択して、全てのフレーズが練習できるようにする
+    const shuffled = [...allPhrases].sort(() => 0.5 - Math.random());
+    const phrases = shuffled.slice(0, 4);
     
     const categoryNames = {
         greetings: 'あいさつ',
