@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>進捗トラッキングデモ</title>
+    <style>
+        .progress-demo { padding: 20px; font-family: Arial, sans-serif; }
+        .progress-card { 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin: 10px 0; 
+            background: #f8f9fa; 
+        }
+        .phrase-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 8px 0; 
+            border-bottom: 1px solid #eee; 
+        }
+        .phrase-item:last-child { border-bottom: none; }
+        .status-btn { 
+            padding: 4px 8px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 12px; 
+        }
+        .status-new { background: #dc3545; color: white; }
+        .status-practicing { background: #ffc107; color: black; }
+        .status-learned { background: #28a745; color: white; }
+        .progress-bar { 
+            width: 100%; 
+            height: 20px; 
+            background: #e9ecef; 
+            border-radius: 10px; 
+            overflow: hidden; 
+            margin: 10px 0; 
+        }
+        .progress-fill { 
+            height: 100%; 
+            background: linear-gradient(45deg, #007bff, #28a745); 
+            transition: width 0.3s ease; 
+        }
+        .stats { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+            margin: 20px 0; 
+        }
+        .stat-card { 
+            text-align: center; 
+            padding: 15px; 
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        .stat-number { font-size: 24px; font-weight: bold; }
+        .stat-label { font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="progress-demo">
+        <h2>📊 進捗トラッキングデモ</h2>
+        
+        <!-- 統計表示 -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" style="color: #dc3545;" id="newCount">5</div>
+                <div class="stat-label">未練習</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #ffc107;" id="practicingCount">3</div>
+                <div class="stat-label">練習中</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #28a745;" id="learnedCount">2</div>
+                <div class="stat-label">習得済み</div>
+            </div>
+        </div>
+        
+        <!-- 進捗バー -->
+        <div>
+            <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                <span>全体の進捗</span>
+                <span id="progressPercent">20%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 20%;"></div>
+            </div>
+        </div>
+        
+        <!-- フレーズリスト -->
+        <div class="progress-card">
+            <h3>あいさつ - 進捗管理</h3>
+            
+            <div class="phrase-item">
+                <span>How are you?</span>
+                <button class="status-btn status-learned" onclick="changeStatus(this, 0)">習得済み</button>
+            </div>
+            
+            <div class="phrase-item">
+                <span>Nice to meet you.</span>
+                <button class="status-btn status-practicing" onclick="changeStatus(this, 1)">練習中</button>
+            </div>
+            
+            <div class="phrase-item">
+                <span>Thank you!</span>
+                <button class="status-btn status-learned" onclick="changeStatus(this, 2)">習得済み</button>
+            </div>
+            
+            <div class="phrase-item">
+                <span>See you later!</span>
+                <button class="status-btn status-practicing" onclick="changeStatus(this, 3)">練習中</button>
+            </div>
+            
+            <div class="phrase-item">
+                <span>Excuse me.</span>
+                <button class="status-btn status-new" onclick="changeStatus(this, 4)">未練習</button>
+            </div>
+            
+            <div class="phrase-item">
+                <span>You're welcome.</span>
+                <button class="status-btn status-new" onclick="changeStatus(this, 5)">未練習</button>
+            </div>
+            
+            <div class="phrase-item">
+                <span>Good morning!</span>
+                <button class="status-btn status-practicing" onclick="changeStatus(this, 6)">練習中</button>
+            </div>
+            
+            <div class="phrase-item">
+                <span>Have a good day!</span>
+                <button class="status-btn status-new" onclick="changeStatus(this, 7)">未練習</button>
+            </div>
+            
+            <div class="phrase-item">
+                <span>What's your name?</span>
+                <button class="status-btn status-new" onclick="changeStatus(this, 8)">未練習</button>
+            </div>
+            
+            <div class="phrase-item">
+                <span>How old are you?</span>
+                <button class="status-btn status-new" onclick="changeStatus(this, 9)">未練習</button>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;" onclick="exportProgress()">
+                📥 進捗をエクスポート
+            </button>
+            <button style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;" onclick="resetProgress()">
+                🔄 進捗をリセット
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const statuses = ['new', 'practicing', 'learned'];
+        const statusTexts = ['未練習', '練習中', '習得済み'];
+        let phraseStatuses = [2, 1, 2, 1, 0, 0, 1, 0, 0, 0]; // 0: new, 1: practicing, 2: learned
+        
+        function changeStatus(button, index) {
+            // 次のステータスに変更
+            phraseStatuses[index] = (phraseStatuses[index] + 1) % 3;
+            
+            const newStatus = phraseStatuses[index];
+            button.className = `status-btn status-${statuses[newStatus]}`;
+            button.textContent = statusTexts[newStatus];
+            
+            updateStats();
+            saveProgress();
+        }
+        
+        function updateStats() {
+            const counts = [0, 0, 0];
+            phraseStatuses.forEach(status => counts[status]++);
+            
+            document.getElementById('newCount').textContent = counts[0];
+            document.getElementById('practicingCount').textContent = counts[1];
+            document.getElementById('learnedCount').textContent = counts[2];
+            
+            const total = phraseStatuses.length;
+            const progress = Math.round((counts[2] / total) * 100);
+            document.getElementById('progressPercent').textContent = `${progress}%`;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+        
+        function saveProgress() {
+            localStorage.setItem('phraseProgress', JSON.stringify(phraseStatuses));
+            localStorage.setItem('lastUpdated', new Date().toISOString());
+        }
+        
+        function loadProgress() {
+            const saved = localStorage.getItem('phraseProgress');
+            if (saved) {
+                phraseStatuses = JSON.parse(saved);
+                updateStats();
+            }
+        }
+        
+        function exportProgress() {
+            const data = {
+                progress: phraseStatuses,
+                lastUpdated: localStorage.getItem('lastUpdated'),
+                totalPhrases: phraseStatuses.length,
+                learned: phraseStatuses.filter(s => s === 2).length
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'english-phrase-progress.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function resetProgress() {
+            if (confirm('進捗をリセットしますか？この操作は元に戻せません。')) {
+                phraseStatuses.fill(0);
+                localStorage.removeItem('phraseProgress');
+                localStorage.removeItem('lastUpdated');
+                location.reload();
+            }
+        }
+        
+        // 初期化
+        loadProgress();
+    </script>
+</body>
+</html>

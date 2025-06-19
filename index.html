@@ -181,6 +181,7 @@
                 </label>
             </div>
 
+            <button id="previewBtn" class="btn btn--secondary">🔍 印刷プレビュー</button>
             <button id="printBtn" class="btn btn--primary">印刷・PDF保存</button>
         </section>
 
@@ -193,6 +194,36 @@
     <footer class="footer no-print">
         <p>&copy; 2025 英語罫線ノート作成ツール</p>
     </footer>
+
+    <!-- 印刷プレビューモーダル -->
+    <div id="printPreviewModal" class="print-preview-modal" style="display: none;">
+        <div class="print-preview-content">
+            <div class="print-preview-header">
+                <h3>🔍 印刷プレビュー</h3>
+                <button id="closePreviewBtn" class="close-btn">&times;</button>
+            </div>
+            
+            <div class="print-preview-body">
+                <div class="preview-info">
+                    <span class="page-size-info">📄 A4サイズ (210×297mm)</span>
+                    <span class="zoom-info">表示倍率: <span id="zoomLevel">60%</span></span>
+                </div>
+                
+                <div class="a4-preview-container">
+                    <div id="a4Preview" class="a4-preview-page">
+                        <!-- プレビュー内容がここに表示される -->
+                    </div>
+                </div>
+                
+                <div class="preview-controls">
+                    <button id="zoomOutBtn" class="btn btn--small">🔍-</button>
+                    <button id="zoomInBtn" class="btn btn--small">🔍+</button>
+                    <button id="printFromPreviewBtn" class="btn btn--primary">🖨️ 印刷実行</button>
+                    <button id="cancelPreviewBtn" class="btn btn--secondary">キャンセル</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="src/quality-validator.js"></script>
     <script src="script.js"></script>

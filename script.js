@@ -1045,6 +1045,7 @@ function setupEventListeners() {
     const phraseCategorySelect = document.getElementById('phraseCategory');
     const showSituationCheckbox = document.getElementById('showSituation');
     const shufflePhrasesBtn = document.getElementById('shufflePhrases');
+    const previewBtn = document.getElementById('previewBtn');
 
     // 更新イベントリスナー
     // practiceMode.addEventListener('change', updatePreview); // 削除（571行目で設定済み）
@@ -1097,6 +1098,11 @@ function setupEventListeners() {
     
     // ボタンイベント
     printBtn.addEventListener('click', printNote);
+    
+    // プレビューボタンのイベント
+    if (previewBtn) {
+        previewBtn.addEventListener('click', showPrintPreview);
+    }
     
     // 練習モード変更時の処理
     practiceMode.addEventListener('change', () => {
@@ -1427,6 +1433,109 @@ function printNote() {
         runLayoutTest();
     }
     window.print();
+}
+
+// 印刷プレビュー機能
+function showPrintPreview() {
+    const modal = document.getElementById('printPreviewModal');
+    const previewPage = document.getElementById('a4Preview');
+    const notePreview = document.getElementById('notePreview');
+    
+    // 現在のプレビュー内容をコピー
+    previewPage.innerHTML = notePreview.innerHTML;
+    
+    // モーダルを表示
+    modal.style.display = 'flex';
+    
+    // ズーム機能の初期化
+    initializePreviewZoom();
+    
+    // モーダルのイベントリスナーを設定
+    setupPreviewModalEvents();
+}
+
+// プレビューのズーム機能
+let currentZoom = 60;
+const zoomLevels = [50, 60, 70, 80, 90, 100];
+
+function initializePreviewZoom() {
+    currentZoom = 60;
+    updateZoomDisplay();
+}
+
+function updateZoomDisplay() {
+    const previewPage = document.getElementById('a4Preview');
+    const zoomLevel = document.getElementById('zoomLevel');
+    
+    // 既存のズームクラスを削除
+    zoomLevels.forEach(level => {
+        previewPage.classList.remove(`zoom-${level}`);
+    });
+    
+    // 新しいズームクラスを追加
+    previewPage.classList.add(`zoom-${currentZoom}`);
+    zoomLevel.textContent = `${currentZoom}%`;
+}
+
+function zoomIn() {
+    const currentIndex = zoomLevels.indexOf(currentZoom);
+    if (currentIndex < zoomLevels.length - 1) {
+        currentZoom = zoomLevels[currentIndex + 1];
+        updateZoomDisplay();
+    }
+}
+
+function zoomOut() {
+    const currentIndex = zoomLevels.indexOf(currentZoom);
+    if (currentIndex > 0) {
+        currentZoom = zoomLevels[currentIndex - 1];
+        updateZoomDisplay();
+    }
+}
+
+function setupPreviewModalEvents() {
+    const modal = document.getElementById('printPreviewModal');
+    const closeBtn = document.getElementById('closePreviewBtn');
+    const cancelBtn = document.getElementById('cancelPreviewBtn');
+    const printBtn = document.getElementById('printFromPreviewBtn');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    
+    // 閉じるボタン
+    const closePreview = () => {
+        modal.style.display = 'none';
+    };
+    
+    closeBtn.onclick = closePreview;
+    cancelBtn.onclick = closePreview;
+    
+    // モーダル外クリックで閉じる
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            closePreview();
+        }
+    };
+    
+    // ESCキーで閉じる
+    const handleKeydown = (e) => {
+        if (e.key === 'Escape') {
+            closePreview();
+            document.removeEventListener('keydown', handleKeydown);
+        }
+    };
+    document.addEventListener('keydown', handleKeydown);
+    
+    // 印刷実行
+    printBtn.onclick = () => {
+        closePreview();
+        setTimeout(() => {
+            printNote();
+        }, 100);
+    };
+    
+    // ズーム
+    zoomInBtn.onclick = zoomIn;
+    zoomOutBtn.onclick = zoomOut;
 }
 
 // PDFレイアウトの自動テスト機能

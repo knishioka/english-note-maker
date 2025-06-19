@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>プレビュー機能比較</title>
+    <style>
+        .comparison { padding: 20px; font-family: Arial, sans-serif; }
+        .preview-types { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .preview-card { border: 2px solid #ddd; border-radius: 10px; padding: 15px; }
+        .current { border-color: #dc3545; }
+        .proposed { border-color: #28a745; }
+        .feature-list { list-style: none; padding: 0; }
+        .feature-list li { margin: 8px 0; }
+        .feature-list .pros { color: #28a745; }
+        .feature-list .cons { color: #dc3545; }
+        .demo-btn { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .current-btn { background: #dc3545; color: white; }
+        .proposed-btn { background: #28a745; color: white; }
+        
+        /* 提案プレビューのデモ */
+        .inline-preview { 
+            border: 1px solid #ccc; 
+            margin: 15px 0; 
+            background: white; 
+            border-radius: 8px; 
+            overflow: hidden; 
+        }
+        .preview-header { 
+            background: #f8f9fa; 
+            padding: 10px; 
+            border-bottom: 1px solid #ddd; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .a4-mini { 
+            width: 150px; 
+            height: 212px; 
+            border: 1px solid #ddd; 
+            margin: 10px auto; 
+            background: white; 
+            position: relative; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        .mini-content { 
+            padding: 8px; 
+            font-size: 6px; 
+            line-height: 1.2; 
+        }
+        .mini-title { font-weight: bold; text-align: center; margin-bottom: 4px; }
+        .mini-phrase { margin: 3px 0; }
+        .mini-line { height: 2px; background: #eee; margin: 1px 0; }
+        .settings-panel { 
+            background: #f8f9fa; 
+            padding: 10px; 
+            border-top: 1px solid #ddd; 
+        }
+        .setting-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin: 5px 0; 
+        }
+    </style>
+</head>
+<body>
+    <div class="comparison">
+        <h2>📊 印刷プレビュー機能の比較</h2>
+        
+        <div class="preview-types">
+            <div class="preview-card current">
+                <h3>🖨️ 現在（ブラウザ標準）</h3>
+                <ul class="feature-list">
+                    <li class="pros">✅ 実際の印刷設定</li>
+                    <li class="pros">✅ すべてのブラウザに標準装備</li>
+                    <li class="cons">❌ 複雑なインターフェース</li>
+                    <li class="cons">❌ 子供には操作が難しい</li>
+                    <li class="cons">❌ 設定変更の度にダイアログを開き直し</li>
+                    <li class="cons">❌ 罫線高さなどの細かい確認が困難</li>
+                </ul>
+                <button class="demo-btn current-btn" onclick="window.print()">標準プレビューを開く</button>
+            </div>
+            
+            <div class="preview-card proposed">
+                <h3>🔍 提案する専用プレビュー</h3>
+                <ul class="feature-list">
+                    <li class="pros">✅ アプリ内でリアルタイム確認</li>
+                    <li class="pros">✅ 子供でも分かりやすい表示</li>
+                    <li class="pros">✅ 設定変更が即座に反映</li>
+                    <li class="pros">✅ A4サイズを正確に再現</li>
+                    <li class="pros">✅ 罫線の細かいチェックが可能</li>
+                    <li class="cons">❌ 追加開発が必要</li>
+                </ul>
+                <button class="demo-btn proposed-btn" onclick="togglePreview()">専用プレビューを表示</button>
+            </div>
+        </div>
+        
+        <!-- 提案する専用プレビューのデモ -->
+        <div id="proposedPreview" class="inline-preview" style="display: none;">
+            <div class="preview-header">
+                <h4>📄 印刷プレビュー - フレーズ練習</h4>
+                <span>A4サイズ（210×297mm）</span>
+            </div>
+            
+            <div class="a4-mini">
+                <div class="mini-content">
+                    <div class="mini-title">Phrase Practice - あいさつ</div>
+                    
+                    <div class="mini-phrase">
+                        <div style="font-weight: bold;">How are you?</div>
+                        <div style="color: #666;">元気ですか？</div>
+                        <div class="mini-line"></div>
+                        <div class="mini-line"></div>
+                        <div class="mini-line"></div>
+                    </div>
+                    
+                    <div class="mini-phrase">
+                        <div style="font-weight: bold;">Nice to meet you.</div>
+                        <div style="color: #666;">はじめまして。</div>
+                        <div class="mini-line"></div>
+                        <div class="mini-line"></div>
+                        <div class="mini-line"></div>
+                    </div>
+                    
+                    <div class="mini-phrase">
+                        <div style="font-weight: bold;">Thank you!</div>
+                        <div style="color: #666;">ありがとう！</div>
+                        <div class="mini-line"></div>
+                        <div class="mini-line"></div>
+                        <div class="mini-line"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-panel">
+                <h5>⚙️ リアルタイム設定調整</h5>
+                <div class="setting-row">
+                    <label>罫線の高さ:</label>
+                    <select onchange="updatePreview()" style="padding: 4px;">
+                        <option>8mm</option>
+                        <option selected>10mm</option>
+                        <option>12mm</option>
+                    </select>
+                </div>
+                <div class="setting-row">
+                    <label>日本語訳:</label>
+                    <input type="checkbox" checked onchange="updatePreview()">
+                </div>
+                <div class="setting-row">
+                    <label>使用場面:</label>
+                    <input type="checkbox" checked onchange="updatePreview()">
+                </div>
+                <div style="margin-top: 15px; text-align: center;">
+                    <button class="demo-btn proposed-btn" onclick="window.print()">🖨️ このレイアウトで印刷</button>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 15px; background: #e7f3ff; border-radius: 8px;">
+            <h4>💡 専用プレビューの利点</h4>
+            <ul>
+                <li><strong>教育現場での使いやすさ</strong>: 子供や初心者でも直感的に操作</li>
+                <li><strong>効率的な確認</strong>: 設定を変えながらリアルタイムでレイアウト確認</li>
+                <li><strong>精密なチェック</strong>: 罫線の間隔や文字の配置を詳細に確認</li>
+                <li><strong>ワークフロー改善</strong>: 印刷前の不安を解消し、失敗印刷を削減</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function togglePreview() {
+            const preview = document.getElementById('proposedPreview');
+            if (preview.style.display === 'none') {
+                preview.style.display = 'block';
+                event.target.textContent = '専用プレビューを非表示';
+            } else {
+                preview.style.display = 'none';
+                event.target.textContent = '専用プレビューを表示';
+            }
+        }
+        
+        function updatePreview() {
+            // 実際の実装では、ここで設定に応じてプレビューを更新
+            console.log('プレビューを更新しました');
+        }
+    </script>
+</body>
+</html>
