@@ -1459,8 +1459,8 @@ function generatePhrasePractice(showTranslation, ageGroup) {
                       PHRASE_DATA[phraseCategory][ageGroup] : 
                       PHRASE_DATA['greetings'][ageGroup] || PHRASE_DATA['greetings']['7-9'];
     
-    // A4に収めるため3つのフレーズに制限（練習行2行ずつ）
-    const phrases = allPhrases.slice(0, 3);
+    // A4に収めるため4つのフレーズに制限（練習行3行ずつ）
+    const phrases = allPhrases.slice(0, 4);
     
     const categoryNames = {
         greetings: 'あいさつ',
@@ -1485,6 +1485,8 @@ function generatePhrasePractice(showTranslation, ageGroup) {
                     ${showSituation ? `<div class="phrase-situation">【${phrase.situation}】</div>` : ''}
                 </div>
                 <div class="phrase-lines">
+                    ${generateBaselineGroup()}
+                    <div class="line-separator-small"></div>
                     ${generateBaselineGroup()}
                     <div class="line-separator-small"></div>
                     ${generateBaselineGroup()}

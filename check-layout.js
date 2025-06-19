@@ -13,7 +13,7 @@ async function checkLayoutHeight() {
     try {
         // ローカルサーバーにアクセス
         console.log('ページを読み込んでいます...');
-        await page.goto('http://localhost:3003?t=' + Date.now(), {
+        await page.goto('http://localhost:3004?t=' + Date.now(), {
             waitUntil: 'networkidle0',
             timeout: 10000
         });

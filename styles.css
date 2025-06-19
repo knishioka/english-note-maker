@@ -369,7 +369,7 @@ body {
         width: 100% !important;
         max-width: none !important;
         margin: 0 !important;
-        padding: 3mm 10mm !important;
+        padding: 5mm 10mm !important;
         min-height: 100vh !important;
         box-shadow: none !important;
     }
@@ -525,7 +525,7 @@ body {
 }
 
 .phrase-item {
-    margin-bottom: 0mm;
+    margin-bottom: 2mm;
 }
 
 /* フレーズヘッダー部分 */

@@ -19,7 +19,7 @@ const puppeteer = require('puppeteer');
     
     // GitHub Pagesにアクセス
     console.log('ページを読み込んでいます...');
-    await page.goto('https://knishioka.github.io/english-note-maker/', {
+    await page.goto('http://localhost:3004/', {
         waitUntil: 'networkidle0',
         timeout: 30000
     });
