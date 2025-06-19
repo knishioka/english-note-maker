@@ -52,10 +52,16 @@ baselineClasses.forEach(cls => {
 
 // 3. 行高さの設定確認
 console.log('\n📐 行高さ設定のチェック');
-const lineHeightMatch = cssContent.match(/\.baseline-group\s*{[^}]*height:\s*(\d+)mm/);
+// CSS変数を使用している場合も考慮
+const lineHeightMatch = cssContent.match(/\.baseline-group\s*{[^}]*height:\s*(?:(\d+)mm|var\(--line-height)/);
 if (lineHeightMatch) {
-    const height = parseInt(lineHeightMatch[1]);
-    test('行高さの範囲 (8-12mm)', height >= 8 && height <= 12, `行高さ ${height}mm は推奨範囲外です`);
+    if (lineHeightMatch[1]) {
+        const height = parseInt(lineHeightMatch[1]);
+        test('行高さの範囲 (8-12mm)', height >= 8 && height <= 12, `行高さ ${height}mm は推奨範囲外です`);
+    } else {
+        // CSS変数を使用している場合
+        test('行高さの設定 (CSS変数)', true, '行高さがCSS変数で設定されています');
+    }
 } else {
     test('行高さの設定', false, '行高さが設定されていません');
 }

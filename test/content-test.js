@@ -65,7 +65,7 @@ test('単語データの構造', wordStructureRegex.test(scriptContent), '単語
 
 // 5. フレーズデータの構造チェック
 console.log('\n💬 フレーズデータ構造のチェック');
-const phraseStructureRegex = /{\s*phrase:\s*["'][^"']+["'],\s*japanese:\s*["'][^"']+["'],\s*situation:\s*["'][^"']+["']\s*}/;
+const phraseStructureRegex = /{\s*english:\s*["'][^"']+["'],\s*japanese:\s*["'][^"']+["'],\s*situation:\s*["'][^"']+["']\s*}/;
 test('フレーズデータの構造', phraseStructureRegex.test(scriptContent), 'フレーズデータの構造が正しくありません');
 
 // 6. 例文データの構造チェック
