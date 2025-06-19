@@ -1455,9 +1455,12 @@ function generatePhrasePractice(showTranslation, ageGroup) {
     const phraseCategory = document.getElementById('phraseCategory').value;
     const showSituation = document.getElementById('showSituation').checked;
     
-    const phrases = PHRASE_DATA[phraseCategory] && PHRASE_DATA[phraseCategory][ageGroup] ? 
-                   PHRASE_DATA[phraseCategory][ageGroup] : 
-                   PHRASE_DATA['greetings'][ageGroup] || PHRASE_DATA['greetings']['7-9'];
+    const allPhrases = PHRASE_DATA[phraseCategory] && PHRASE_DATA[phraseCategory][ageGroup] ? 
+                      PHRASE_DATA[phraseCategory][ageGroup] : 
+                      PHRASE_DATA['greetings'][ageGroup] || PHRASE_DATA['greetings']['7-9'];
+    
+    // A4に収めるため3つのフレーズに制限（練習行2行ずつ）
+    const phrases = allPhrases.slice(0, 3);
     
     const categoryNames = {
         greetings: 'あいさつ',
@@ -1469,7 +1472,7 @@ function generatePhrasePractice(showTranslation, ageGroup) {
         daily_life: '日常生活'
     };
     
-    html += `<h3 style="text-align: center; margin-bottom: 10mm;">Phrase Practice - ${categoryNames[phraseCategory] || phraseCategory}</h3>`;
+    html += `<h3 style="text-align: center; margin-bottom: 1mm; margin-top: 0mm;">Phrase Practice - ${categoryNames[phraseCategory] || phraseCategory}</h3>`;
     
     for (let phrase of phrases) {
         html += `
