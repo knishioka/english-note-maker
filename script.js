@@ -1458,16 +1458,26 @@ function showPrintPreview() {
     const modal = document.getElementById('printPreviewModal');
     const previewPage = document.getElementById('a4Preview');
     const notePreview = document.getElementById('notePreview');
-    
+
+    // 要素の存在確認
+    if (!modal || !previewPage || !notePreview) {
+        console.error('印刷プレビューに必要な要素が見つかりません', {
+            modal: !!modal,
+            previewPage: !!previewPage,
+            notePreview: !!notePreview
+        });
+        return;
+    }
+
     // 現在のプレビュー内容をコピー
     previewPage.innerHTML = notePreview.innerHTML;
-    
+
     // モーダルを表示
     modal.style.display = 'flex';
-    
+
     // ズーム機能の初期化
     initializePreviewZoom();
-    
+
     // モーダルのイベントリスナーを設定
     setupPreviewModalEvents();
 }
@@ -1518,14 +1528,20 @@ function setupPreviewModalEvents() {
     const printBtn = document.getElementById('printFromPreviewBtn');
     const zoomInBtn = document.getElementById('zoomInBtn');
     const zoomOutBtn = document.getElementById('zoomOutBtn');
-    
+
+    // 要素の存在確認
+    if (!modal) {
+        console.error('モーダル要素が見つかりません');
+        return;
+    }
+
     // 閉じるボタン
     const closePreview = () => {
         modal.style.display = 'none';
     };
-    
-    closeBtn.onclick = closePreview;
-    cancelBtn.onclick = closePreview;
+
+    if (closeBtn) closeBtn.onclick = closePreview;
+    if (cancelBtn) cancelBtn.onclick = closePreview;
     
     // モーダル外クリックで閉じる
     modal.onclick = (e) => {
@@ -1544,16 +1560,18 @@ function setupPreviewModalEvents() {
     document.addEventListener('keydown', handleKeydown);
     
     // 印刷実行
-    printBtn.onclick = () => {
-        closePreview();
-        setTimeout(() => {
-            printNote();
-        }, 100);
-    };
-    
+    if (printBtn) {
+        printBtn.onclick = () => {
+            closePreview();
+            setTimeout(() => {
+                printNote();
+            }, 100);
+        };
+    }
+
     // ズーム
-    zoomInBtn.onclick = zoomIn;
-    zoomOutBtn.onclick = zoomOut;
+    if (zoomInBtn) zoomInBtn.onclick = zoomIn;
+    if (zoomOutBtn) zoomOutBtn.onclick = zoomOut;
 }
 
 // PDFレイアウトの自動テスト機能
