@@ -1,18 +1,37 @@
 {
   "name": "english-note-maker",
   "version": "1.0.0",
-  "description": "Web application for creating English lined notebook pages with baseline guides",
+  "description": "英語練習用の4本線ノート作成ウェブアプリ - 美しいアルファベット練習用の印刷可能なノートを生成",
   "main": "index.html",
+  "private": true,
   "scripts": {
-    "dev": "live-server --port=3000",
-    "build": "echo 'Static files ready for deployment'",
-    "test": "npm run test:content && npm run test:layout",
+    "dev": "live-server --port=3000 --host=localhost",
+    "build": "echo 'Static site build - no build step required'",
+    "test": "playwright test",
+    "test:static": "http-server . -p 3000 -c-1 & sleep 2 && playwright test && pkill -f http-server",
     "test:content": "node test/content-test.js",
     "test:layout": "node test/layout-test.js",
-    "lint": "echo 'No linting configured yet'",
-    "typecheck": "echo 'No TypeScript yet'"
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:reporter": "playwright show-report",
+    "test:install": "playwright install",
+    "lint": "echo 'No linter configured - add eslint if needed'",
+    "typecheck": "echo 'No TypeScript - consider adding if needed'",
+    "debug:open": "echo 'Open browser and press Ctrl+Shift+D to open debug panel'",
+    "debug:stats": "echo 'Call displayContentStats() in browser console'",
+    "debug:layout": "echo 'Call window.testPDFLayout() in browser console'",
+    "server:check": "curl -s -o /dev/null -w '%{http_code}' http://localhost:3000"
   },
   "keywords": [
+    "english-learning",
+    "handwriting-practice",
+    "educational-tool",
+    "print-optimization",
+    "4-line-paper",
+    "alphabet-practice",
+    "children-education",
+    "japanese-students",
     "english",
     "handwriting",
     "notebook",
@@ -21,12 +40,54 @@
     "baseline",
     "print"
   ],
-  "author": "",
+  "author": "Ken Nishioka",
   "license": "MIT",
+  "homepage": "https://knishioka.github.io/english-note-maker/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/knishioka/english-note-maker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/knishioka/english-note-maker/issues"
+  },
   "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "http-server": "^14.1.1",
     "live-server": "^1.2.2"
   },
   "dependencies": {
     "puppeteer": "^24.10.2"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
+  "config": {
+    "server": {
+      "port": 3000,
+      "host": "localhost"
+    },
+    "testing": {
+      "browsers": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ],
+      "headless": true,
+      "timeout": 30000
+    },
+    "debugging": {
+      "logLevel": "debug",
+      "enablePerformanceTracing": true,
+      "enableVisualDebugging": true,
+      "debugPanelShortcut": "Ctrl+Shift+D",
+      "layoutTestShortcut": "Ctrl+Shift+T"
+    }
   }
 }

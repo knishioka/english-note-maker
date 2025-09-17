@@ -1120,9 +1120,9 @@ function setupEventListeners() {
     // プレビューボタンのイベント
     if (previewBtn) {
         previewBtn.addEventListener('click', showPrintPreview);
-        console.log('印刷プレビューボタンのイベントリスナーを設定しました');
+        if (window.Debug) Debug.log('INIT', '印刷プレビューボタンのイベントリスナーを設定しました');
     } else {
-        console.error('印刷プレビューボタンが見つかりません');
+        if (window.Debug) Debug.error('INIT', '印刷プレビューボタンが見つかりません', { element: 'previewBtn' });
     }
     
     // 練習モード変更時の処理
@@ -1458,7 +1458,10 @@ function printNote() {
 
 // 印刷プレビュー機能
 function showPrintPreview() {
-    console.log('印刷プレビューボタンがクリックされました');
+    if (window.Debug) {
+        Debug.startTimer('print-preview');
+        Debug.logEvent('click', { id: 'previewBtn' }, { action: 'showPrintPreview' });
+    }
 
     const modal = document.getElementById('printPreviewModal');
     const previewPage = document.getElementById('a4Preview');
@@ -1474,21 +1477,38 @@ function showPrintPreview() {
         return;
     }
 
-    console.log('必要な要素が見つかりました');
+    if (window.Debug) Debug.debug('PRINT_PREVIEW', '必要な要素が見つかりました', { modal: !!modal, notePreview: !!notePreview, previewPage: !!previewPage });
 
-    // 現在のプレビュー内容をコピー
+    // 現在のプレビュー内容をコピーして印刷用にスタイル調整
     previewPage.innerHTML = notePreview.innerHTML;
-    console.log('プレビュー内容をコピーしました');
+
+    // プレビューページに印刷用の余白設定を適用（統一設定を使用）
+    const previewNotePages = previewPage.querySelectorAll('.note-page');
+    const standardMargin = getComputedStyle(document.documentElement).getPropertyValue('--margin-standard').trim();
+
+    previewNotePages.forEach(page => {
+        page.style.padding = standardMargin; // CSS変数から取得した標準余白
+        page.style.boxShadow = 'none'; // 印刷では影なし
+        page.style.maxWidth = 'none'; // 印刷では幅制限なし
+    });
+
+    if (window.Debug) Debug.debug('PRINT_PREVIEW', 'プレビュー内容をコピーし印刷用スタイルを適用しました', {
+        contentLength: previewPage.innerHTML.length,
+        pageCount: previewNotePages.length
+    });
 
     // モーダルを表示（display属性とクラスの両方を使用）
     modal.style.display = 'flex';
     // 少し遅延を入れてからクラスを追加（アニメーション効果のため）
     setTimeout(() => {
         modal.classList.add('modal-visible');
-        console.log('モーダルを表示しました', {
-            display: modal.style.display,
-            classList: modal.classList.toString()
-        });
+        if (window.Debug) {
+            Debug.log('PRINT_PREVIEW', 'モーダルを表示しました', {
+                display: modal.style.display,
+                classList: modal.classList.toString()
+            });
+            Debug.endTimer('print-preview');
+        }
     }, 10);
 
     // ズーム機能の初期化
@@ -1553,7 +1573,7 @@ function setupPreviewModalEvents() {
 
     // 閉じるボタン
     const closePreview = () => {
-        console.log('プレビューモーダルを閉じます');
+        if (window.Debug) Debug.log('PRINT_PREVIEW', 'プレビューモーダルを閉じます');
         modal.style.display = 'none';
         modal.classList.remove('modal-visible');
     };
@@ -1594,17 +1614,19 @@ function setupPreviewModalEvents() {
 
 // PDFレイアウトの自動テスト機能
 function runLayoutTest() {
-    console.group('🧪 PDFレイアウトテスト実行');
-    console.log(`実行時刻: ${new Date().toLocaleString()}`);
+    if (window.Debug) Debug.log('TEST', 'PDFレイアウトテスト実行開始', { timestamp: new Date().toLocaleString() });
     
     const validator = new window.LayoutValidator();
     const report = validator.generateReport();
     
     // テスト結果のサマリー
-    console.log(`\n📊 テスト結果サマリー:`);
-    console.log(`✅ 合格: ${report.summary.passed}項目`);
-    console.log(`❌ 不合格: ${report.summary.failed}項目`);
-    console.log(`⏭️ スキップ: ${report.summary.skipped}項目`);
+    if (window.Debug) {
+        Debug.log('TEST', 'テスト結果サマリー', {
+            passed: report.summary.passed,
+            failed: report.summary.failed,
+            skipped: report.summary.skipped
+        });
+    }
     
     // エラーの詳細
     if (report.errors.length > 0) {
@@ -1612,7 +1634,7 @@ function runLayoutTest() {
         report.errors.forEach(error => {
             console.error(`- ${error.rule}: ${error.actualValue} (期待値: ${error.expectedRange})`);
         });
-        console.groupEnd();
+        // Group end removed - using structured logging instead
     }
     
     // 警告の詳細
@@ -1621,7 +1643,7 @@ function runLayoutTest() {
         report.warnings.forEach(warning => {
             console.warn(`- ${warning.rule}: ${warning.actualValue} (期待値: ${warning.expectedRange})`);
         });
-        console.groupEnd();
+        // Group end removed - using structured logging instead
     }
     
     // ページ高さのチェック結果を強調
@@ -1631,18 +1653,18 @@ function runLayoutTest() {
         pageHeightErrors.forEach(error => {
             console.error(error.message);
         });
-        console.groupEnd();
+        // Group end removed - using structured logging instead
     }
     
     // 最終判定
     const isPassed = report.errors.length === 0;
     if (isPassed) {
-        console.log('\n✅ すべてのレイアウトテストに合格しました！');
+        if (window.Debug) Debug.log('TEST', 'すべてのレイアウトテストに合格しました！', { status: 'success' });
     } else {
-        console.error('\n❌ レイアウトに問題があります。印刷結果を確認してください。');
+        if (window.Debug) Debug.error('TEST', 'レイアウトに問題があります。印刷結果を確認してください。', { errors: report.errors });
     }
     
-    console.groupEnd();
+    // Group end removed - using structured logging instead
     
     return report;
 }
@@ -1655,37 +1677,40 @@ document.addEventListener('DOMContentLoaded', init);
 document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.shiftKey && e.key === 'D') {
         document.body.classList.toggle('debug-mode');
-        console.log('Debug mode toggled');
+        if (window.Debug) Debug.log('DEBUG', 'Debug mode toggled', { enabled: document.body.classList.contains('debug-mode') });
     }
     
     // Ctrl + Shift + T でレイアウトテスト実行
     if (e.ctrlKey && e.shiftKey && e.key === 'T') {
-        console.log('📋 手動レイアウトテストを実行します...');
+        if (window.Debug) Debug.log('TEST', '手動レイアウトテストを実行します...');
         runLayoutTest();
     }
 });
 
 // グローバルに公開（開発者コンソールから実行可能）
 window.testPDFLayout = function() {
-    console.log('🔍 PDFレイアウトテストを開始します...');
+    if (window.Debug) Debug.log('TEST', 'PDFレイアウトテストを開始します...');
     updatePreview(); // プレビューを最新状態に更新
     setTimeout(() => {
         const report = runLayoutTest();
         
         // 追加の診断情報
-        console.group('\n📐 追加診断情報:');
-        console.log(`現在の練習モード: ${document.getElementById('practiceMode').value}`);
-        console.log(`ページ数: ${document.getElementById('pageCount').value}`);
-        console.log(`罫線の高さ: ${document.getElementById('lineHeight').value}mm`);
+        if (window.Debug) {
+            Debug.log('DIAGNOSTICS', '追加診断情報', {
+                practiceMode: document.getElementById('practiceMode').value,
+                pageCount: document.getElementById('pageCount').value,
+                lineHeight: document.getElementById('lineHeight').value + 'mm'
+            });
+        }
         
         // ページごとの高さ情報
         const pages = document.querySelectorAll('.note-page');
         pages.forEach((page, index) => {
             const rect = page.getBoundingClientRect();
             const heightInMm = rect.height / 3.7795275591;
-            console.log(`ページ${index + 1}の高さ: ${heightInMm.toFixed(2)}mm`);
+            if (window.Debug) Debug.debug('DIAGNOSTICS', `ページ${index + 1}の高さ`, { height: `${heightInMm.toFixed(2)}mm` });
         });
-        console.groupEnd();
+        // Group end removed - using structured logging instead
         
         return report;
     }, 100);
@@ -1910,27 +1935,250 @@ function updateContentStats() {
 function displayContentStats() {
     updateContentStats();
     
-    console.group("📊 英語ノートメーカー コンテンツ統計");
-    console.log(`最終更新: ${CONTENT_STATS.lastUpdated}`);
-    
-    console.group("📝 単語コンテンツ");
-    console.log(`総単語数: ${CONTENT_STATS.words.total}`);
-    console.table(CONTENT_STATS.words.byCategory);
-    console.table(CONTENT_STATS.words.byAge);
-    console.groupEnd();
-    
-    console.group("💬 フレーズコンテンツ");
-    console.log(`総フレーズ数: ${CONTENT_STATS.phrases.total}`);
-    console.table(CONTENT_STATS.phrases.byCategory);
-    console.table(CONTENT_STATS.phrases.byAge);
-    console.groupEnd();
-    
-    console.group("📖 例文コンテンツ");
-    console.log(`総例文数: ${CONTENT_STATS.examples.total}`);
-    console.table(CONTENT_STATS.examples.byAge);
-    console.groupEnd();
-    
-    console.log("🔤 アルファベット: 52文字 (大文字26 + 小文字26)");
-    console.groupEnd();
+    if (window.Debug) {
+        Debug.log('CONTENT_STATS', '英語ノートメーカー コンテンツ統計', {
+            lastUpdated: CONTENT_STATS.lastUpdated
+        });
+
+        Debug.log('CONTENT_STATS', '単語コンテンツ', {
+            total: CONTENT_STATS.words.total,
+            byCategory: CONTENT_STATS.words.byCategory,
+            byAge: CONTENT_STATS.words.byAge
+        });
+
+        Debug.log('CONTENT_STATS', 'フレーズコンテンツ', {
+            total: CONTENT_STATS.phrases.total,
+            byCategory: CONTENT_STATS.phrases.byCategory,
+            byAge: CONTENT_STATS.phrases.byAge
+        });
+
+        Debug.log('CONTENT_STATS', '例文コンテンツ', {
+            total: CONTENT_STATS.examples.total,
+            byAge: CONTENT_STATS.examples.byAge
+        });
+
+        Debug.log('CONTENT_STATS', 'アルファベット', {
+            total: 52,
+            detail: '大文字26 + 小文字26'
+        });
+    } else {
+        // Fallback to console for non-debug environments
+        console.log('コンテンツ統計: Debug utilities not loaded');
+    }
 }
+
+// レイアウト整合性チェック関数
+window.checkLayoutConsistency = function() {
+    if (window.Debug) Debug.log('LAYOUT_CHECK', 'レイアウト整合性チェックを開始します...');
+
+    const results = {
+        timestamp: new Date().toLocaleString(),
+        checks: [],
+        warnings: [],
+        errors: []
+    };
+
+    // プレビューと印刷の余白設定をチェック
+    const printMediaQuery = Array.from(document.styleSheets)
+        .flatMap(sheet => {
+            try {
+                return Array.from(sheet.cssRules || []);
+            } catch (e) {
+                return [];
+            }
+        })
+        .find(rule => rule.media && rule.media.mediaText === 'print');
+
+    if (printMediaQuery) {
+        const htmlRule = Array.from(printMediaQuery.cssRules)
+            .find(rule => rule.selectorText === 'html');
+
+        if (htmlRule && htmlRule.style.margin) {
+            results.checks.push({
+                item: '印刷用HTML余白',
+                value: htmlRule.style.margin,
+                status: 'OK'
+            });
+        }
+    }
+
+    // プレビューページのスタイルをチェック
+    const previewModal = document.getElementById('printPreviewModal');
+    if (previewModal) {
+        const previewPages = previewModal.querySelectorAll('.a4-preview-page');
+        previewPages.forEach((page, index) => {
+            const computedStyle = window.getComputedStyle(page);
+            results.checks.push({
+                item: `プレビューページ${index + 1} padding`,
+                value: computedStyle.padding,
+                status: 'OK'
+            });
+        });
+    }
+
+    // ベースライン設定の一貫性チェック
+    const baselineElements = document.querySelectorAll('.baseline');
+    const lineHeightSettings = new Set();
+
+    baselineElements.forEach(baseline => {
+        const parent = baseline.closest('.baseline-group, .line-group');
+        if (parent) {
+            const height = window.getComputedStyle(parent).height;
+            lineHeightSettings.add(height);
+        }
+    });
+
+    if (lineHeightSettings.size > 1) {
+        results.warnings.push('異なる行間設定が検出されました: ' + Array.from(lineHeightSettings).join(', '));
+    } else if (lineHeightSettings.size === 1) {
+        results.checks.push({
+            item: 'ベースライン行間',
+            value: Array.from(lineHeightSettings)[0],
+            status: 'Consistent'
+        });
+    }
+
+    // CSS変数の設定確認
+    const rootStyles = window.getComputedStyle(document.documentElement);
+    const cssVars = ['--line-height', '--baseline-color', '--text-color'];
+    cssVars.forEach(varName => {
+        const value = rootStyles.getPropertyValue(varName);
+        if (value) {
+            results.checks.push({
+                item: `CSS変数 ${varName}`,
+                value: value.trim(),
+                status: 'Set'
+            });
+        } else {
+            results.warnings.push(`CSS変数 ${varName} が設定されていません`);
+        }
+    });
+
+    // 結果をコンソールに出力
+    if (window.Debug) {
+        Debug.log('LAYOUT_CHECK', 'レイアウト整合性チェック完了', results);
+
+        if (results.errors.length > 0) {
+            Debug.error('LAYOUT_CHECK', 'エラーが発見されました', { errors: results.errors });
+        }
+
+        if (results.warnings.length > 0) {
+            Debug.warn('LAYOUT_CHECK', '警告が発見されました', { warnings: results.warnings });
+        }
+
+        if (results.errors.length === 0 && results.warnings.length === 0) {
+            Debug.log('LAYOUT_CHECK', 'レイアウト整合性に問題は見つかりませんでした ✅');
+        }
+    }
+
+    return results;
+};
+
+// 統一設定システムの検証機能
+window.validateConfiguration = function() {
+    if (window.Debug) Debug.log('CONFIG_CHECK', '統一設定システムの検証を開始します...');
+
+    const results = {
+        timestamp: new Date().toLocaleString(),
+        validations: [],
+        warnings: [],
+        errors: [],
+        settings: {}
+    };
+
+    // CSS変数の存在確認
+    const rootStyle = getComputedStyle(document.documentElement);
+    const requiredVars = [
+        'margin-standard', 'margin-debug', 'margin-minimum',
+        'line-height-standard', 'line-height-small', 'line-height-large',
+        'baseline-color-screen', 'baseline-color-print'
+    ];
+
+    requiredVars.forEach(varName => {
+        const value = rootStyle.getPropertyValue(`--${varName}`).trim();
+        if (value) {
+            results.settings[varName] = value;
+            results.validations.push({
+                item: `CSS変数 --${varName}`,
+                value: value,
+                status: '設定済み'
+            });
+        } else {
+            results.errors.push(`必須CSS変数 --${varName} が設定されていません`);
+        }
+    });
+
+    // 余白設定の妥当性チェック
+    const marginStandard = rootStyle.getPropertyValue('--margin-standard').trim();
+    if (marginStandard) {
+        const match = marginStandard.match(/(\d+)mm\s+(\d+)mm/);
+        if (match) {
+            const [, vertical, horizontal] = match;
+            const v = parseInt(vertical);
+            const h = parseInt(horizontal);
+
+            if (v < 3) results.warnings.push(`標準余白の縦方向が小さすぎます: ${v}mm (推奨: 3mm以上)`);
+            if (h < 8) results.warnings.push(`標準余白の横方向が小さすぎます: ${h}mm (推奨: 8mm以上)`);
+            if (v > 20) results.warnings.push(`標準余白の縦方向が大きすぎます: ${v}mm (推奨: 20mm以下)`);
+            if (h > 20) results.warnings.push(`標準余白の横方向が大きすぎます: ${h}mm (推奨: 20mm以下)`);
+
+            results.validations.push({
+                item: '標準余白設定',
+                value: `${v}mm x ${h}mm`,
+                status: (v >= 3 && h >= 8 && v <= 20 && h <= 20) ? '適切' : '要確認'
+            });
+        } else {
+            results.errors.push('標準余白の形式が正しくありません（例: 5mm 10mm）');
+        }
+    }
+
+    // 行高設定の一貫性チェック
+    const lineHeights = ['small', 'standard', 'large'].map(size => {
+        const value = rootStyle.getPropertyValue(`--line-height-${size}`).trim();
+        const match = value.match(/(\d+)mm/);
+        return match ? { size, value: parseInt(match[1]) } : null;
+    }).filter(Boolean);
+
+    if (lineHeights.length === 3) {
+        const [small, standard, large] = lineHeights.map(h => h.value);
+        if (small >= standard) results.warnings.push('小行高が標準行高以上になっています');
+        if (standard >= large) results.warnings.push('標準行高が大行高以上になっています');
+
+        results.validations.push({
+            item: '行高の段階設定',
+            value: `${small}mm → ${standard}mm → ${large}mm`,
+            status: (small < standard && standard < large) ? '正常' : '要確認'
+        });
+    }
+
+    // 設定の統計情報
+    const configStats = {
+        totalVariables: Object.keys(results.settings).length,
+        validCount: results.validations.length,
+        warningCount: results.warnings.length,
+        errorCount: results.errors.length
+    };
+
+    // 結果出力
+    if (window.Debug) {
+        Debug.log('CONFIG_CHECK', '設定検証完了', { stats: configStats });
+
+        if (results.errors.length > 0) {
+            Debug.error('CONFIG_CHECK', '設定エラーが発見されました', { errors: results.errors });
+        }
+
+        if (results.warnings.length > 0) {
+            Debug.warn('CONFIG_CHECK', '設定警告が発見されました', { warnings: results.warnings });
+        }
+
+        if (results.errors.length === 0 && results.warnings.length === 0) {
+            Debug.log('CONFIG_CHECK', '統一設定システムは正常です ✅', { validations: results.validations.length });
+        }
+
+        // 設定値一覧
+        Debug.log('CONFIG_CHECK', '現在の設定値', results.settings);
+    }
+
+    return { ...results, stats: configStats };
+};
 

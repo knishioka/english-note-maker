@@ -5,21 +5,53 @@
     box-sizing: border-box;
 }
 
-/* === CSS変数 === */
+/* === CSS変数（統一設定システム） === */
 :root {
-    --line-height-mm: 10mm;
-    --line-spacing-mm: 2mm;
-    --baseline-color: #d0d0d0;
+    /* === 印刷レイアウト変数 === */
+    --page-width: 210mm;
+    --page-height: 297mm;
+    --margin-standard: 5mm 10mm;
+    --margin-debug: 10mm 15mm;
+    --margin-minimum: 3mm 8mm;
+
+    /* === ベースライン変数 === */
+    --line-height-small: 8mm;
+    --line-height-standard: 10mm;
+    --line-height-large: 12mm;
+    --line-spacing: 2mm;
+    --group-margin: 10mm;
+
+    /* === 色変数 === */
+    --baseline-color-screen: #d0d0d0;
     --baseline-color-print: #c0c0c0;
     --baseline-color-blue: #b3d9ff;
     --baseline-color-green: #b3e5cc;
-    --text-color: #333;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --text-accent: #2563eb;
+
+    /* === 既存互換性のための変数 === */
+    --line-height-mm: var(--line-height-standard);
+    --line-spacing-mm: var(--line-spacing);
+    --baseline-color: var(--baseline-color-screen);
+    --baseline-color-print: var(--baseline-color-print);
+    --text-color: var(--text-primary);
     --background-color: #f5f5f5;
     --bg-color: #f9fafb;
     --border-color: #ddd;
-    --primary-color: #2563eb;
+    --primary-color: var(--text-accent);
     --secondary-color: #6b7280;
     --success-color: #059669;
+
+    /* === フォント変数 === */
+    --font-size-body: 14px;
+    --font-size-title: 24px;
+    --font-size-subtitle: 18px;
+    --font-size-small: 12px;
+    --font-size-tiny: 10px;
+    --font-practice: "Times New Roman", serif;
+    --font-ui: "Segoe UI", "Roboto", sans-serif;
+    --font-japanese: "Hiragino Sans", "Yu Gothic", sans-serif;
 }
 
 /* === 基本スタイル === */
@@ -175,7 +207,7 @@ body {
     max-width: 210mm; /* A4幅 */
     margin: 0 auto;
     background: white;
-    padding: 10mm 10mm;
+    padding: var(--margin-standard); /* 統一設定システムから取得 */
     min-height: 297mm; /* A4高さ */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -370,7 +402,7 @@ body {
         width: 100% !important;
         max-width: none !important;
         margin: 0 !important;
-        padding: 5mm 10mm !important;
+        padding: var(--margin-standard) !important;
         min-height: 100vh !important;
         box-shadow: none !important;
     }
@@ -574,13 +606,14 @@ body {
     font-size: 14px;
 }
 
-/* プレビュー内のスタイル調整 */
+/* プレビュー内のスタイル調整 - 印刷スタイルを模倣 */
 .a4-preview-page .phrase-practice {
     padding: 0;
 }
 
 .a4-preview-page .phrase-item {
     margin-bottom: 2mm;
+    page-break-inside: avoid;
 }
 
 .a4-preview-page .phrase-header {
@@ -597,6 +630,38 @@ body {
 
 .a4-preview-page .phrase-situation {
     font-size: 8pt;
+    background: none;
+    border: 1px solid #ddd;
+}
+
+/* プレビューでのベースライン色調整 */
+.a4-preview-page .baseline--top {
+    border-bottom: 0.8px dashed #a0a0a0;
+}
+
+.a4-preview-page .baseline--upper {
+    border-bottom: 0.5px dotted #a0a0a0;
+}
+
+.a4-preview-page .baseline--lower {
+    border-bottom: 1.5px solid #333;
+}
+
+.a4-preview-page .baseline--bottom {
+    border-bottom: 0.8px solid #808080;
+}
+
+/* プレビューでの文字色調整 */
+.a4-preview-page .guide-letter {
+    color: #e0e0e0;
+}
+
+.a4-preview-page .example-sentence {
+    font-size: 12pt;
+}
+
+.a4-preview-page .example-japanese {
+    font-size: 10pt;
 }
 
 /* === レスポンシブデザイン === */
