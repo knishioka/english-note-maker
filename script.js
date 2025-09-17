@@ -1120,6 +1120,9 @@ function setupEventListeners() {
     // プレビューボタンのイベント
     if (previewBtn) {
         previewBtn.addEventListener('click', showPrintPreview);
+        console.log('印刷プレビューボタンのイベントリスナーを設定しました');
+    } else {
+        console.error('印刷プレビューボタンが見つかりません');
     }
     
     // 練習モード変更時の処理
@@ -1455,6 +1458,8 @@ function printNote() {
 
 // 印刷プレビュー機能
 function showPrintPreview() {
+    console.log('印刷プレビューボタンがクリックされました');
+
     const modal = document.getElementById('printPreviewModal');
     const previewPage = document.getElementById('a4Preview');
     const notePreview = document.getElementById('notePreview');
@@ -1469,11 +1474,22 @@ function showPrintPreview() {
         return;
     }
 
+    console.log('必要な要素が見つかりました');
+
     // 現在のプレビュー内容をコピー
     previewPage.innerHTML = notePreview.innerHTML;
+    console.log('プレビュー内容をコピーしました');
 
-    // モーダルを表示
+    // モーダルを表示（display属性とクラスの両方を使用）
     modal.style.display = 'flex';
+    // 少し遅延を入れてからクラスを追加（アニメーション効果のため）
+    setTimeout(() => {
+        modal.classList.add('modal-visible');
+        console.log('モーダルを表示しました', {
+            display: modal.style.display,
+            classList: modal.classList.toString()
+        });
+    }, 10);
 
     // ズーム機能の初期化
     initializePreviewZoom();
@@ -1537,7 +1553,9 @@ function setupPreviewModalEvents() {
 
     // 閉じるボタン
     const closePreview = () => {
+        console.log('プレビューモーダルを閉じます');
         modal.style.display = 'none';
+        modal.classList.remove('modal-visible');
     };
 
     if (closeBtn) closeBtn.onclick = closePreview;
