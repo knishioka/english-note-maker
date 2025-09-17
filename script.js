@@ -597,7 +597,13 @@ const PHRASE_DATA = {
             { english: "Sorry!", japanese: "ごめんなさい！", situation: "謝るとき" },
             { english: "Hi there!", japanese: "やあ！", situation: "カジュアルなあいさつ" },
             { english: "Welcome!", japanese: "ようこそ！", situation: "お迎えするとき" },
-            { english: "Good afternoon!", japanese: "こんにちは！", situation: "午後のあいさつ" }
+            { english: "Good afternoon!", japanese: "こんにちは！", situation: "午後のあいさつ" },
+            { english: "See you!", japanese: "またね！", situation: "カジュアルな別れ" },
+            { english: "How are you?", japanese: "げんき？", situation: "調子を聞く" },
+            { english: "I'm fine!", japanese: "げんきだよ！", situation: "元気な返事" },
+            { english: "Good job!", japanese: "よくできたね！", situation: "褒めるとき" },
+            { english: "Have fun!", japanese: "楽しんでね！", situation: "遊びに行く時" },
+            { english: "Be careful!", japanese: "気をつけて！", situation: "注意する時" }
         ],
         "7-9": [
             { english: "How are you?", japanese: "元気ですか？", situation: "相手の様子を聞く" },
@@ -609,7 +615,13 @@ const PHRASE_DATA = {
             { english: "How's it going?", japanese: "調子はどう？", situation: "カジュアルな様子聞き" },
             { english: "Have a good day!", japanese: "良い一日を！", situation: "別れ際の励まし" },
             { english: "See you tomorrow!", japanese: "また明日！", situation: "翌日会う約束" },
-            { english: "Take care!", japanese: "気をつけて！", situation: "心配の気持ち" }
+            { english: "Take care!", japanese: "気をつけて！", situation: "心配の気持ち" },
+            { english: "What's up?", japanese: "どうしたの？", situation: "様子を聞く" },
+            { english: "Long time no see!", japanese: "ひさしぶり！", situation: "久々の再会" },
+            { english: "How was your weekend?", japanese: "週末はどうだった？", situation: "月曜の会話" },
+            { english: "That's great!", japanese: "それはすごい！", situation: "相手を褒める" },
+            { english: "Good luck!", japanese: "がんばって！", situation: "応援する時" },
+            { english: "Congratulations!", japanese: "おめでとう！", situation: "お祝い" }
         ],
         "10-12": [
             { english: "How have you been?", japanese: "お元気でしたか？", situation: "久しぶりに会ったとき" },
@@ -621,7 +633,13 @@ const PHRASE_DATA = {
             { english: "Good luck with that!", japanese: "頑張ってください！", situation: "応援の言葉" },
             { english: "I appreciate it.", japanese: "感謝します。", situation: "感謝を伝える" },
             { english: "My pleasure.", japanese: "どういたしまして。", situation: "丁寧なお礼の返事" },
-            { english: "Have a great weekend!", japanese: "良い週末を！", situation: "週末前のあいさつ" }
+            { english: "Have a great weekend!", japanese: "良い週末を！", situation: "週末前のあいさつ" },
+            { english: "Welcome back!", japanese: "おかえりなさい！", situation: "帰ってきた時" },
+            { english: "Hope to see you soon.", japanese: "また近いうちに会えることを願っています。", situation: "別れの挨拶" },
+            { english: "Have a safe trip!", japanese: "気をつけて旅行してください！", situation: "旅立ちの挨拶" },
+            { english: "It's a pleasure to meet you.", japanese: "お会いできて嬉しいです。", situation: "初対面" },
+            { english: "How's everything?", japanese: "調子はどうですか？", situation: "近況を聞く" },
+            { english: "Keep in touch!", japanese: "連絡を取り合いましょう！", situation: "関係継続" }
         ]
     },
     self_introduction: {
