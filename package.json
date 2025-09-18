@@ -26,7 +26,8 @@
     "debug:open": "echo 'Open browser and press Ctrl+Shift+D to open debug panel'",
     "debug:stats": "echo 'Call displayContentStats() in browser console'",
     "debug:layout": "echo 'Call window.testPDFLayout() in browser console'",
-    "server:check": "curl -s -o /dev/null -w '%{http_code}' http://localhost:3000"
+    "server:check": "curl -s -o /dev/null -w '%{http_code}' http://localhost:3000",
+    "prepare": "husky"
   },
   "keywords": [
     "english-learning",
@@ -64,8 +65,11 @@
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.35.0",
     "http-server": "^14.1.1",
+    "husky": "^9.1.7",
     "jsdom": "^27.0.0",
+    "lint-staged": "^16.1.6",
     "live-server": "^1.2.2",
+    "prettier": "^3.6.2",
     "typescript": "^5.9.2",
     "vite": "^7.1.6",
     "vitest": "^3.2.4"
@@ -83,6 +87,15 @@
     "not dead",
     "not ie 11"
   ],
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,scss,md}": [
+      "prettier --write"
+    ]
+  },
   "config": {
     "server": {
       "port": 3000,
