@@ -10,7 +10,7 @@ import {
   createMockExampleSentence,
   createTestContainer,
   cleanupTestContainer,
-  waitForAsync
+  waitForAsync,
 } from '../setup.js';
 
 describe('NoteGeneratorService', () => {
@@ -69,7 +69,7 @@ describe('NoteGeneratorService', () => {
     it('should handle validation errors gracefully', async () => {
       const invalidState = createMockUIState({
         practiceMode: 'invalid-mode',
-        pageCount: 0
+        pageCount: 0,
       });
 
       await expect(service.generateNote(invalidState)).rejects.toThrow();
@@ -91,7 +91,7 @@ describe('NoteGeneratorService', () => {
     it('should generate normal practice mode correctly', async () => {
       const state = createMockUIState({
         practiceMode: 'normal',
-        showExamples: false
+        showExamples: false,
       });
 
       const result = await service.generateNote(state);
@@ -104,7 +104,7 @@ describe('NoteGeneratorService', () => {
       const state = createMockUIState({
         practiceMode: 'sentence',
         showExamples: true,
-        showTranslation: true
+        showTranslation: true,
       });
 
       const result = await service.generateNote(state);
@@ -119,8 +119,8 @@ describe('NoteGeneratorService', () => {
         selectedCategories: {
           word: 'animals',
           sentence: 'daily',
-          phrase: 'greetings'
-        }
+          phrase: 'greetings',
+        },
       });
 
       const result = await service.generateNote(state);
@@ -132,7 +132,7 @@ describe('NoteGeneratorService', () => {
     it('should generate alphabet practice mode', async () => {
       const state = createMockUIState({
         practiceMode: 'alphabet',
-        showAlphabetExample: true
+        showAlphabetExample: true,
       });
 
       const result = await service.generateNote(state);
@@ -146,7 +146,7 @@ describe('NoteGeneratorService', () => {
       const state = createMockUIState({
         practiceMode: 'phrase',
         showTranslation: true,
-        showSituation: true
+        showSituation: true,
       });
 
       const result = await service.generateNote(state);
@@ -245,12 +245,12 @@ describe('NoteGeneratorService', () => {
         selectedCategories: {
           word: '', // Invalid empty category
           sentence: 'daily',
-          phrase: 'greetings'
-        }
+          phrase: 'greetings',
+        },
       });
 
       const result = await service.generateNote(state);
-      expect(result.validation.some(v => v.severity === 'error')).toBe(true);
+      expect(result.validation.some((v) => v.severity === 'error')).toBe(true);
     });
 
     it('should handle extreme page counts', async () => {
@@ -289,13 +289,13 @@ describe('NoteGeneratorService', () => {
       const promises = [
         service.generateNote(state1),
         service.generateNote(state2),
-        service.generateNote(state3)
+        service.generateNote(state3),
       ];
 
       const results = await Promise.all(promises);
 
       expect(results).toHaveLength(3);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.html).toBeDefined();
         expect(result.validation).toBeDefined();
         expect(result.performance).toBeDefined();
@@ -354,7 +354,7 @@ describe('NoteGeneratorService', () => {
     it('should provide appropriate labels', async () => {
       const state = createMockUIState({
         practiceMode: 'word',
-        showHeader: true
+        showHeader: true,
       });
 
       const result = await service.generateNote(state);

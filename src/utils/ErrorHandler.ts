@@ -37,7 +37,10 @@ export class ErrorHandler {
   /**
    * Create standardized application error
    */
-  private createApplicationError(error: unknown, context?: Record<string, unknown>): ApplicationError {
+  private createApplicationError(
+    error: unknown,
+    context?: Record<string, unknown>
+  ): ApplicationError {
     const timestamp = new Date().toISOString();
     const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown';
 
@@ -50,11 +53,11 @@ export class ErrorHandler {
         context: {
           ...context,
           originalMessage: error.message,
-          handlerContext: this.context
+          handlerContext: this.context,
         },
         userAgent,
         timestamp,
-        stack: this.sanitizeStackTrace(error.stack)
+        stack: this.sanitizeStackTrace(error.stack),
       };
     }
 
@@ -67,11 +70,11 @@ export class ErrorHandler {
       context: {
         ...context,
         originalError: String(error),
-        handlerContext: this.context
+        handlerContext: this.context,
       },
       userAgent,
       timestamp,
-      stack: new Error().stack?.slice(0, this.maxStackTraceLength)
+      stack: new Error().stack?.slice(0, this.maxStackTraceLength),
     };
   }
 
@@ -81,24 +84,24 @@ export class ErrorHandler {
   private getUserFriendlyMessage(error: Error): string {
     const messageMap: Record<string, string> = {
       // Network errors
-      'NetworkError': 'インターネット接続を確認してください',
-      'TypeError': '入力データに問題があります',
+      NetworkError: 'インターネット接続を確認してください',
+      TypeError: '入力データに問題があります',
 
       // Validation errors
-      'ValidationError': '入力内容を確認してください',
-      'RangeError': '設定値が適切な範囲にありません',
+      ValidationError: '入力内容を確認してください',
+      RangeError: '設定値が適切な範囲にありません',
 
       // Print errors
-      'PrintError': '印刷中にエラーが発生しました',
-      'LayoutError': 'レイアウトの生成に失敗しました',
+      PrintError: '印刷中にエラーが発生しました',
+      LayoutError: 'レイアウトの生成に失敗しました',
 
       // Permission errors
-      'SecurityError': 'アクセス権限がありません',
-      'NotAllowedError': 'この操作は許可されていません',
+      SecurityError: 'アクセス権限がありません',
+      NotAllowedError: 'この操作は許可されていません',
 
       // Resource errors
-      'QuotaExceededError': 'ストレージ容量が不足しています',
-      'MemoryError': 'メモリ不足です。ページを再読み込みしてください'
+      QuotaExceededError: 'ストレージ容量が不足しています',
+      MemoryError: 'メモリ不足です。ページを再読み込みしてください',
     };
 
     // Check for specific error patterns
@@ -133,25 +136,13 @@ export class ErrorHandler {
    */
   private determineSeverity(error: Error): ApplicationError['severity'] {
     // Critical errors that break core functionality
-    const criticalErrors = [
-      'ReferenceError',
-      'SyntaxError',
-      'SecurityError'
-    ];
+    const criticalErrors = ['ReferenceError', 'SyntaxError', 'SecurityError'];
 
     // High severity errors that impact user experience
-    const highSeverityErrors = [
-      'TypeError',
-      'RangeError',
-      'NetworkError',
-      'PrintError'
-    ];
+    const highSeverityErrors = ['TypeError', 'RangeError', 'NetworkError', 'PrintError'];
 
     // Medium severity errors that are recoverable
-    const mediumSeverityErrors = [
-      'ValidationError',
-      'LayoutError'
-    ];
+    const mediumSeverityErrors = ['ValidationError', 'LayoutError'];
 
     if (criticalErrors.includes(error.name)) {
       return 'critical';
@@ -186,7 +177,7 @@ export class ErrorHandler {
         context: error.context,
         timestamp: error.timestamp,
         severity: error.severity,
-        stack: error.stack
+        stack: error.stack,
       });
     }
   }
@@ -254,7 +245,7 @@ export class ErrorHandler {
       userAgent: error.userAgent,
       context: error.context,
       // Don't include full stack trace in production logs
-      stackHash: this.hashString(error.stack || '')
+      stackHash: this.hashString(error.stack || ''),
     };
   }
 
@@ -266,7 +257,7 @@ export class ErrorHandler {
       low: 'info',
       medium: 'warn',
       high: 'error',
-      critical: 'error'
+      critical: 'error',
     };
     return map[severity];
   }
@@ -288,7 +279,7 @@ export class ErrorHandler {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash);

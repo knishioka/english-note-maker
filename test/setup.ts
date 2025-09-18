@@ -13,7 +13,7 @@ beforeAll(() => {
   const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
     url: 'http://localhost:3000',
     pretendToBeVisual: true,
-    resources: 'usable'
+    resources: 'usable',
   });
 
   // Set global DOM
@@ -32,18 +32,18 @@ beforeAll(() => {
       getPropertyValue: vi.fn((property: string) => {
         // Mock common CSS property values for testing
         const mockValues: Record<string, string> = {
-          'height': '10mm',
-          'width': '210mm',
-          'padding': '10mm',
-          'margin': '5mm',
+          height: '10mm',
+          width: '210mm',
+          padding: '10mm',
+          margin: '5mm',
           'font-size': '14pt',
-          'border-bottom-width': '1px'
+          'border-bottom-width': '1px',
         };
         return mockValues[property] || '';
       }),
       height: '10mm',
       width: '210mm',
-      padding: '10mm'
+      padding: '10mm',
     } as any;
   });
 
@@ -54,7 +54,7 @@ beforeAll(() => {
     measure: vi.fn(),
     getEntriesByName: vi.fn(() => []),
     clearMarks: vi.fn(),
-    clearMeasures: vi.fn()
+    clearMeasures: vi.fn(),
   } as any;
 
   // Mock console methods with spies
@@ -64,7 +64,7 @@ beforeAll(() => {
     warn: vi.fn(),
     error: vi.fn(),
     info: vi.fn(),
-    debug: vi.fn()
+    debug: vi.fn(),
   };
 
   // Mock localStorage
@@ -74,7 +74,7 @@ beforeAll(() => {
     removeItem: vi.fn(),
     clear: vi.fn(),
     key: vi.fn(),
-    length: 0
+    length: 0,
   };
   global.localStorage = localStorageMock;
 
@@ -120,7 +120,7 @@ afterEach(() => {
   vi.clearAllTimers();
 
   // Clean up any pending promises
-  return new Promise(resolve => setImmediate(resolve));
+  return new Promise((resolve) => setImmediate(resolve));
 });
 
 afterAll(() => {
@@ -166,9 +166,9 @@ export function createMockUIState(overrides: Partial<any> = {}): any {
     selectedCategories: {
       sentence: 'daily',
       word: 'animals',
-      phrase: 'greetings'
+      phrase: 'greetings',
     },
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -182,7 +182,7 @@ export function createMockExampleSentence(overrides: Partial<any> = {}): any {
     category: 'daily',
     difficulty: 2,
     custom: false,
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -195,7 +195,7 @@ export function createMockWordData(overrides: Partial<any> = {}): any {
     japanese: 'ねこ',
     syllables: 'cat',
     difficulty: 1,
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -210,7 +210,7 @@ export function createMockValidationResult(overrides: Partial<any> = {}): any {
     expectedRange: '8-12',
     severity: 'info',
     message: 'Test validation passed',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -218,7 +218,7 @@ export function createMockValidationResult(overrides: Partial<any> = {}): any {
  * Wait for async operations to complete
  */
 export function waitForAsync(): Promise<void> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setImmediate(() => {
       process.nextTick(resolve);
     });
@@ -240,10 +240,7 @@ export function simulateEvent(
 /**
  * Simulate user input
  */
-export function simulateInput(
-  element: HTMLInputElement | HTMLSelectElement,
-  value: string
-): void {
+export function simulateInput(element: HTMLInputElement | HTMLSelectElement, value: string): void {
   element.value = value;
   simulateEvent(element, 'input');
   simulateEvent(element, 'change');
@@ -266,7 +263,7 @@ export function mockFetch(mockResponse: any = {}): void {
       json: () => Promise.resolve(mockResponse),
       text: () => Promise.resolve(JSON.stringify(mockResponse)),
       status: 200,
-      statusText: 'OK'
+      statusText: 'OK',
     } as Response)
   );
 }
@@ -301,7 +298,7 @@ export function mockMediaQuery(query: string, matches: boolean = true): void {
     onchange: vi.fn(),
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn()
+    dispatchEvent: vi.fn(),
   };
 
   global.matchMedia = vi.fn(() => mediaQuery);
@@ -314,7 +311,7 @@ export function mockIntersectionObserver(): void {
   global.IntersectionObserver = vi.fn(() => ({
     observe: vi.fn(),
     disconnect: vi.fn(),
-    unobserve: vi.fn()
+    unobserve: vi.fn(),
   }));
 }
 
@@ -325,17 +322,14 @@ export function mockResizeObserver(): void {
   global.ResizeObserver = vi.fn(() => ({
     observe: vi.fn(),
     disconnect: vi.fn(),
-    unobserve: vi.fn()
+    unobserve: vi.fn(),
   }));
 }
 
 /**
  * Create error with stack trace for testing
  */
-export function createTestError(
-  message: string = 'Test error',
-  name: string = 'TestError'
-): Error {
+export function createTestError(message: string = 'Test error', name: string = 'TestError'): Error {
   const error = new Error(message);
   error.name = name;
   error.stack = `${name}: ${message}\n    at test (test.js:1:1)`;

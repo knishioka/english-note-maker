@@ -24,11 +24,7 @@ export default defineConfig({
   },
 
   // Reporter configuration
-  reporter: [
-    ['html'],
-    ['json', { outputFile: 'test-results/results.json' }],
-    ['list']
-  ],
+  reporter: [['html'], ['json', { outputFile: 'test-results/results.json' }], ['list']],
 
   // Shared settings for all tests
   use: {

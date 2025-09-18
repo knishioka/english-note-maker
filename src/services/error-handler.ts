@@ -3,12 +3,7 @@
  * エラーハンドリングとロギングシステム
  */
 
-import {
-  ErrorType,
-  ErrorSeverity,
-  AppError,
-  Result
-} from '@/types';
+import { ErrorType, ErrorSeverity, AppError, Result } from '@/types';
 
 /**
  * Error messages in Japanese for user-friendly experience
@@ -52,28 +47,18 @@ export class ErrorHandler {
   private setupGlobalHandlers(): void {
     // Window error handler
     window.addEventListener('error', (event) => {
-      this.handleError(
-        ErrorType.UNKNOWN,
-        ErrorSeverity.HIGH,
-        event.message,
-        {
-          filename: event.filename,
-          lineno: event.lineno,
-          colno: event.colno,
-        }
-      );
+      this.handleError(ErrorType.UNKNOWN, ErrorSeverity.HIGH, event.message, {
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno,
+      });
     });
 
     // Unhandled promise rejection
     window.addEventListener('unhandledrejection', (event) => {
-      this.handleError(
-        ErrorType.UNKNOWN,
-        ErrorSeverity.HIGH,
-        'Unhandled Promise Rejection',
-        {
-          reason: event.reason,
-        }
-      );
+      this.handleError(ErrorType.UNKNOWN, ErrorSeverity.HIGH, 'Unhandled Promise Rejection', {
+        reason: event.reason,
+      });
       event.preventDefault();
     });
   }
@@ -160,7 +145,7 @@ export class ErrorHandler {
    * Notify error listeners
    */
   private notifyListeners(error: AppError): void {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener(error);
       } catch (e) {
@@ -322,18 +307,16 @@ export class ErrorHandler {
     let filtered = [...this.errors];
 
     if (filter?.type) {
-      filtered = filtered.filter(e => e.type === filter.type);
+      filtered = filtered.filter((e) => e.type === filter.type);
     }
 
     if (filter?.severity) {
-      filtered = filtered.filter(e => e.severity === filter.severity);
+      filtered = filtered.filter((e) => e.severity === filter.severity);
     }
 
     if (filter?.since) {
       const sinceTime = filter.since.getTime();
-      filtered = filtered.filter(e =>
-        new Date(e.timestamp).getTime() >= sinceTime
-      );
+      filtered = filtered.filter((e) => new Date(e.timestamp).getTime() >= sinceTime);
     }
 
     return filtered;
@@ -364,7 +347,7 @@ export class ErrorHandler {
     };
 
     // Count by type and severity
-    this.errors.forEach(error => {
+    this.errors.forEach((error) => {
       stats.byType[error.type] = (stats.byType[error.type] || 0) + 1;
       stats.bySeverity[error.severity] = (stats.bySeverity[error.severity] || 0) + 1;
     });

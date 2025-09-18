@@ -9,7 +9,7 @@ import type {
   ValidationReport,
   UIState,
   MillimeterValue,
-  PixelValue
+  PixelValue,
 } from '../types/index.js';
 
 export class ValidationService {
@@ -46,7 +46,7 @@ export class ValidationService {
     // Validate category selections
     results.push(...this.validateCategorySelections(state));
 
-    return results.filter(result => !result.passed);
+    return results.filter((result) => !result.passed);
   }
 
   /**
@@ -70,12 +70,11 @@ export class ValidationService {
       }
 
       // Additional layout-specific validations
-      results.push(...await this.validatePageDimensions(tempDiv));
-      results.push(...await this.validateBaselineConsistency(tempDiv));
-      results.push(...await this.validatePrintOptimization(tempDiv));
+      results.push(...(await this.validatePageDimensions(tempDiv)));
+      results.push(...(await this.validateBaselineConsistency(tempDiv)));
+      results.push(...(await this.validatePrintOptimization(tempDiv)));
 
       return results;
-
     } finally {
       document.body.removeChild(tempDiv);
     }
@@ -85,20 +84,20 @@ export class ValidationService {
    * Generate comprehensive validation report
    */
   public generateValidationReport(results: ValidationResult[]): ValidationReport {
-    const errors = results.filter(r => r.severity === 'error');
-    const warnings = results.filter(r => r.severity === 'warning');
-    const info = results.filter(r => r.severity === 'info');
+    const errors = results.filter((r) => r.severity === 'error');
+    const warnings = results.filter((r) => r.severity === 'warning');
+    const info = results.filter((r) => r.severity === 'info');
 
     return {
       timestamp: new Date().toISOString(),
       summary: {
-        passed: results.filter(r => r.passed).length,
-        failed: results.filter(r => !r.passed).length,
-        skipped: 0
+        passed: results.filter((r) => r.passed).length,
+        failed: results.filter((r) => !r.passed).length,
+        skipped: 0,
       },
       errors,
       warnings,
-      info
+      info,
     };
   }
 
@@ -114,7 +113,7 @@ export class ValidationService {
         min: 8,
         max: 12,
         unit: 'mm',
-        severity: 'error'
+        severity: 'error',
       },
       {
         name: 'lineSpacing',
@@ -123,7 +122,7 @@ export class ValidationService {
         min: 1,
         max: 5,
         unit: 'mm',
-        severity: 'warning'
+        severity: 'warning',
       },
       {
         name: 'baselineThickness',
@@ -132,7 +131,7 @@ export class ValidationService {
         min: 1,
         max: 2.5,
         unit: 'px',
-        severity: 'error'
+        severity: 'error',
       },
       {
         name: 'pageMargin',
@@ -141,7 +140,7 @@ export class ValidationService {
         min: 3,
         max: 20,
         unit: 'mm',
-        severity: 'error'
+        severity: 'error',
       },
       {
         name: 'fontSize',
@@ -150,7 +149,7 @@ export class ValidationService {
         min: 12,
         max: 18,
         unit: 'pt',
-        severity: 'warning'
+        severity: 'warning',
       },
       {
         name: 'pageWidth',
@@ -159,17 +158,20 @@ export class ValidationService {
         min: 190,
         max: 220,
         unit: 'mm',
-        severity: 'error'
-      }
+        severity: 'error',
+      },
     ];
 
-    rules.forEach(rule => this.rules.set(rule.name, rule));
+    rules.forEach((rule) => this.rules.set(rule.name, rule));
   }
 
   /**
    * Validate individual rule against DOM element
    */
-  private async validateRule(rule: ValidationRule, container: Element): Promise<ValidationResult | null> {
+  private async validateRule(
+    rule: ValidationRule,
+    container: Element
+  ): Promise<ValidationResult | null> {
     const elements = container.querySelectorAll(rule.selector);
 
     if (elements.length === 0) {
@@ -179,14 +181,17 @@ export class ValidationService {
         actualValue: 'N/A',
         expectedRange: `${rule.min}-${rule.max}${rule.unit}`,
         severity: rule.severity,
-        message: `No elements found for selector: ${rule.selector}`
+        message: `No elements found for selector: ${rule.selector}`,
       };
     }
 
     for (const element of elements) {
       const htmlElement = element as HTMLElement;
       const computedStyle = window.getComputedStyle(htmlElement);
-      const value = this.extractNumericValue(computedStyle.getPropertyValue(rule.property), rule.unit);
+      const value = this.extractNumericValue(
+        computedStyle.getPropertyValue(rule.property),
+        rule.unit
+      );
 
       if (value < rule.min || value > rule.max) {
         return {
@@ -196,7 +201,7 @@ export class ValidationService {
           expectedRange: `${rule.min}-${rule.max}${rule.unit}`,
           severity: rule.severity,
           message: `${rule.name} value ${value}${rule.unit} is outside expected range`,
-          element: htmlElement
+          element: htmlElement,
         };
       }
     }
@@ -217,7 +222,8 @@ export class ValidationService {
       const heightInMm = rect.height / 3.7795275591; // px to mm conversion
 
       // Check if page height exceeds A4
-      if (heightInMm > this.A4_HEIGHT_MM * 1.05) { // 5% tolerance
+      if (heightInMm > this.A4_HEIGHT_MM * 1.05) {
+        // 5% tolerance
         results.push({
           rule: 'pageHeight',
           passed: false,
@@ -225,13 +231,14 @@ export class ValidationService {
           expectedRange: `<${this.A4_HEIGHT_MM}mm`,
           severity: 'error',
           message: `Page height ${Math.round(heightInMm)}mm exceeds A4 size`,
-          element: htmlPage
+          element: htmlPage,
         });
       }
 
       // Check if page width is reasonable
       const widthInMm = rect.width / 3.7795275591;
-      if (widthInMm > this.A4_WIDTH_MM * 1.1) { // 10% tolerance for margins
+      if (widthInMm > this.A4_WIDTH_MM * 1.1) {
+        // 10% tolerance for margins
         results.push({
           rule: 'pageWidth',
           passed: false,
@@ -239,7 +246,7 @@ export class ValidationService {
           expectedRange: `<${this.A4_WIDTH_MM * 1.1}mm`,
           severity: 'warning',
           message: `Page width ${Math.round(widthInMm)}mm may cause printing issues`,
-          element: htmlPage
+          element: htmlPage,
         });
       }
     }
@@ -273,7 +280,7 @@ export class ValidationService {
         actualValue: Array.from(heights).join(', '),
         expectedRange: 'Consistent heights',
         severity: 'warning',
-        message: `Inconsistent baseline heights detected: ${Array.from(heights).join('px, ')}px`
+        message: `Inconsistent baseline heights detected: ${Array.from(heights).join('px, ')}px`,
       });
     }
 
@@ -288,7 +295,7 @@ export class ValidationService {
           expectedRange: '4 baselines',
           severity: 'error',
           message: `Baseline group should contain exactly 4 lines, found ${baselines.length}`,
-          element: group as HTMLElement
+          element: group as HTMLElement,
         });
       }
     }
@@ -309,8 +316,8 @@ export class ValidationService {
     for (const sheet of styleSheets) {
       try {
         const rules = Array.from(sheet.cssRules || []);
-        hasPrintStyles = rules.some(rule =>
-          rule instanceof CSSMediaRule && rule.media.mediaText.includes('print')
+        hasPrintStyles = rules.some(
+          (rule) => rule instanceof CSSMediaRule && rule.media.mediaText.includes('print')
         );
         if (hasPrintStyles) break;
       } catch (e) {
@@ -326,7 +333,7 @@ export class ValidationService {
         actualValue: 'Missing',
         expectedRange: 'Present',
         severity: 'warning',
-        message: 'Print-specific CSS styles not detected'
+        message: 'Print-specific CSS styles not detected',
       });
     }
 
@@ -341,7 +348,7 @@ export class ValidationService {
         actualValue: pageBreaks.length,
         expectedRange: `>0 for ${pages.length} pages`,
         severity: 'warning',
-        message: 'Multi-page document missing page break directives'
+        message: 'Multi-page document missing page break directives',
       });
     }
 
@@ -361,7 +368,7 @@ export class ValidationService {
       actualValue: mode,
       expectedRange: validModes.join(' | '),
       severity: 'error',
-      message: isValid ? 'Valid practice mode' : `Invalid practice mode: ${mode}`
+      message: isValid ? 'Valid practice mode' : `Invalid practice mode: ${mode}`,
     };
   }
 
@@ -375,7 +382,7 @@ export class ValidationService {
       actualValue: ageGroup,
       expectedRange: validGroups.join(' | '),
       severity: 'error',
-      message: isValid ? 'Valid age group' : `Invalid age group: ${ageGroup}`
+      message: isValid ? 'Valid age group' : `Invalid age group: ${ageGroup}`,
     };
   }
 
@@ -388,7 +395,7 @@ export class ValidationService {
       actualValue: count,
       expectedRange: '1-10',
       severity: 'error',
-      message: isValid ? 'Valid page count' : `Invalid page count: ${count}`
+      message: isValid ? 'Valid page count' : `Invalid page count: ${count}`,
     };
   }
 
@@ -402,7 +409,7 @@ export class ValidationService {
       actualValue: height,
       expectedRange: validHeights.join(' | '),
       severity: 'error',
-      message: isValid ? 'Valid line height' : `Invalid line height: ${height}`
+      message: isValid ? 'Valid line height' : `Invalid line height: ${height}`,
     };
   }
 
@@ -416,7 +423,7 @@ export class ValidationService {
       actualValue: color,
       expectedRange: validColors.join(' | '),
       severity: 'warning',
-      message: isValid ? 'Valid line color' : `Invalid line color: ${color}`
+      message: isValid ? 'Valid line color' : `Invalid line color: ${color}`,
     };
   }
 
@@ -433,7 +440,7 @@ export class ValidationService {
             actualValue: 'undefined',
             expectedRange: 'Required for sentence mode',
             severity: 'error',
-            message: 'Sentence category is required for sentence practice mode'
+            message: 'Sentence category is required for sentence practice mode',
           });
         }
         break;
@@ -446,7 +453,7 @@ export class ValidationService {
             actualValue: 'undefined',
             expectedRange: 'Required for word mode',
             severity: 'error',
-            message: 'Word category is required for word practice mode'
+            message: 'Word category is required for word practice mode',
           });
         }
         break;
@@ -459,7 +466,7 @@ export class ValidationService {
             actualValue: 'undefined',
             expectedRange: 'Required for phrase mode',
             severity: 'error',
-            message: 'Phrase category is required for phrase practice mode'
+            message: 'Phrase category is required for phrase practice mode',
           });
         }
         break;
@@ -496,10 +503,10 @@ export class ValidationService {
    * Sanitize validation results for safe display
    */
   public sanitizeValidationResults(results: ValidationResult[]): ValidationResult[] {
-    return results.map(result => ({
+    return results.map((result) => ({
       ...result,
       actualValue: this.sanitizeValue(result.actualValue),
-      message: this.sanitizeMessage(result.message)
+      message: this.sanitizeMessage(result.message),
     }));
   }
 

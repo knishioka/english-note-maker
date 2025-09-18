@@ -17,6 +17,7 @@
 ### 旧来の手法 vs 新しい手法
 
 **従来の console.log デバッグ:**
+
 ```javascript
 // 問題のあるアプローチ
 console.log('ボタンがクリックされました');
@@ -24,6 +25,7 @@ console.log('要素の状態:', element.style.display);
 ```
 
 **新しい構造化デバッグ:**
+
 ```javascript
 // 改善されたアプローチ
 Debug.logEvent('click', { id: 'previewBtn' }, { action: 'showPrintPreview' });
@@ -59,25 +61,29 @@ Debug.debug('CATEGORY', 'デバッグ情報', { state: currentState });
 ### カテゴリー別ログの例
 
 **初期化ログ:**
+
 ```javascript
 Debug.log('INIT', 'アプリケーション初期化完了');
 ```
 
 **UI インタラクションログ:**
+
 ```javascript
 Debug.logEvent('click', { id: 'previewBtn' }, { action: 'showPrintPreview' });
 Debug.logElement('#printPreviewModal', '印刷プレビューモーダル');
 ```
 
 **印刷関連ログ:**
+
 ```javascript
 Debug.log('PRINT_PREVIEW', 'プレビュー生成開始', {
-    pageCount: 1,
-    lineHeight: '10mm'
+  pageCount: 1,
+  lineHeight: '10mm',
 });
 ```
 
 **パフォーマンス測定:**
+
 ```javascript
 Debug.startTimer('print-preview');
 // 処理実行
@@ -88,13 +94,13 @@ Debug.endTimer('print-preview'); // 自動的に時間が記録される
 
 ```javascript
 try {
-    // 何らかの処理
+  // 何らかの処理
 } catch (error) {
-    Debug.error('OPERATION', '処理中にエラーが発生', {
-        error: error.message,
-        stack: error.stack,
-        context: { pageMode: 'preview' }
-    });
+  Debug.error('OPERATION', '処理中にエラーが発生', {
+    error: error.message,
+    stack: error.stack,
+    context: { pageMode: 'preview' },
+  });
 }
 ```
 
@@ -108,21 +114,25 @@ try {
 ### デバッグパネルの機能
 
 **ページ状態の確認:**
+
 - 現在の練習モード
 - 罫線の高さ設定
 - ページ数設定
 
 **アクティブ要素の監視:**
+
 - モーダルの表示状態
 - プレビュー要素の数
 - 現在フォーカスされている要素
 
 **パフォーマンス情報:**
+
 - メモリ使用量
 - DOM ノード数
 - 処理時間
 
 **エラー・警告の一覧:**
+
 - 収集されたエラーメッセージ
 - 警告の詳細
 - ログのエクスポート機能
@@ -151,6 +161,7 @@ npm run server:check
 ### テストの実行方法
 
 **基本的なテスト実行:**
+
 ```bash
 # すべてのテストを実行
 npm run test
@@ -166,6 +177,7 @@ npm run test:headed
 ```
 
 **特定のテストファイルの実行:**
+
 ```bash
 # 印刷プレビューのデバッグテストのみ実行
 npx playwright test tests/e2e/debug-print-preview.spec.js
@@ -200,7 +212,7 @@ Debug.endTimer('operation-name');
 // 閾値チェック付きの測定
 const duration = Debug.endTimer('slow-operation');
 if (duration > 100) {
-    Debug.warn('PERFORMANCE', '処理が遅いです', { duration });
+  Debug.warn('PERFORMANCE', '処理が遅いです', { duration });
 }
 ```
 
@@ -209,11 +221,11 @@ if (duration > 100) {
 ```javascript
 // ページロード完了時に自動実行
 window.addEventListener('load', () => {
-    const perfData = performance.getEntriesByType('navigation')[0];
-    Debug.log('PERFORMANCE', 'ページロード完了', {
-        domContentLoaded: perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
-        loadComplete: perfData.loadEventEnd - perfData.loadEventStart
-    });
+  const perfData = performance.getEntriesByType('navigation')[0];
+  Debug.log('PERFORMANCE', 'ページロード完了', {
+    domContentLoaded: perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
+    loadComplete: perfData.loadEventEnd - perfData.loadEventStart,
+  });
 });
 ```
 
@@ -222,10 +234,10 @@ window.addEventListener('load', () => {
 ```javascript
 // メモリ使用量の確認（Chrome のみ）
 if (performance.memory) {
-    Debug.log('PERFORMANCE', 'メモリ使用量', {
-        used: (performance.memory.usedJSHeapSize / 1048576).toFixed(2) + 'MB',
-        total: (performance.memory.totalJSHeapSize / 1048576).toFixed(2) + 'MB'
-    });
+  Debug.log('PERFORMANCE', 'メモリ使用量', {
+    used: (performance.memory.usedJSHeapSize / 1048576).toFixed(2) + 'MB',
+    total: (performance.memory.totalJSHeapSize / 1048576).toFixed(2) + 'MB',
+  });
 }
 ```
 
@@ -234,17 +246,19 @@ if (performance.memory) {
 ### よくある問題と解決方法
 
 **1. デバッグパネルが表示されない**
+
 ```javascript
 // 手動でデバッグパネルを初期化
 if (window.Debug) {
-    Debug.panel.init();
-    Debug.panel.show();
+  Debug.panel.init();
+  Debug.panel.show();
 } else {
-    console.error('Debug utilities not loaded');
+  console.error('Debug utilities not loaded');
 }
 ```
 
 **2. ログが表示されない**
+
 ```javascript
 // デバッグユーティリティの状態確認
 console.log('Debug available:', !!window.Debug);
@@ -252,6 +266,7 @@ console.log('Development mode:', window.Debug?.logger?.isDevelopment);
 ```
 
 **3. Playwright テストが失敗する**
+
 ```bash
 # サーバーが起動しているか確認
 npm run server:check
@@ -261,6 +276,7 @@ npx playwright install --with-deps
 ```
 
 **4. パフォーマンス測定が動作しない**
+
 ```javascript
 // Performance API の対応確認
 console.log('Performance API:', !!window.performance);
@@ -270,27 +286,29 @@ console.log('Performance memory:', !!performance.memory);
 ### デバッグ情報の収集
 
 **システム情報の確認:**
+
 ```javascript
 Debug.log('SYSTEM', 'ブラウザ情報', {
-    userAgent: navigator.userAgent,
-    viewport: {
-        width: window.innerWidth,
-        height: window.innerHeight
-    },
-    url: window.location.href
+  userAgent: navigator.userAgent,
+  viewport: {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  },
+  url: window.location.href,
 });
 ```
 
 **エラーの詳細ログ:**
+
 ```javascript
 window.addEventListener('error', (e) => {
-    Debug.error('SYSTEM', 'JavaScript エラー', {
-        message: e.message,
-        filename: e.filename,
-        lineno: e.lineno,
-        colno: e.colno,
-        stack: e.error?.stack
-    });
+  Debug.error('SYSTEM', 'JavaScript エラー', {
+    message: e.message,
+    filename: e.filename,
+    lineno: e.lineno,
+    colno: e.colno,
+    stack: e.error?.stack,
+  });
 });
 ```
 
@@ -312,9 +330,9 @@ Debug.log('DEBUG', '何かが起こった');
 ```javascript
 // Good: 有用な情報を含む
 Debug.log('USER_ACTION', 'フレーズカテゴリー変更', {
-    oldCategory: 'greetings',
-    newCategory: 'school',
-    timestamp: Date.now()
+  oldCategory: 'greetings',
+  newCategory: 'school',
+  timestamp: Date.now(),
 });
 
 // Bad: 情報が不足
@@ -331,7 +349,7 @@ const duration = Debug.endTimer('note-generation');
 
 // 閾値チェック
 if (duration > 500) {
-    Debug.warn('PERFORMANCE', 'ノート生成が遅い', { duration });
+  Debug.warn('PERFORMANCE', 'ノート生成が遅い', { duration });
 }
 ```
 
@@ -340,18 +358,18 @@ if (duration > 500) {
 ```javascript
 // Good: 一貫したエラーハンドリング
 function handlePrintPreview() {
-    try {
-        Debug.startTimer('print-preview');
-        showPrintPreview();
-        Debug.endTimer('print-preview');
-    } catch (error) {
-        Debug.error('PRINT_PREVIEW', '印刷プレビューエラー', {
-            error: error.message,
-            stack: error.stack,
-            context: getCurrentState()
-        });
-        throw error; // 必要に応じて再スロー
-    }
+  try {
+    Debug.startTimer('print-preview');
+    showPrintPreview();
+    Debug.endTimer('print-preview');
+  } catch (error) {
+    Debug.error('PRINT_PREVIEW', '印刷プレビューエラー', {
+      error: error.message,
+      stack: error.stack,
+      context: getCurrentState(),
+    });
+    throw error; // 必要に応じて再スロー
+  }
 }
 ```
 
@@ -360,7 +378,7 @@ function handlePrintPreview() {
 ```javascript
 // デバッグコードは開発環境でのみ実行
 if (window.Debug?.logger?.isDevelopment) {
-    Debug.debug('INTERNAL', '詳細なデバッグ情報', largeObject);
+  Debug.debug('INTERNAL', '詳細なデバッグ情報', largeObject);
 }
 
 // または条件付きログ
@@ -374,14 +392,14 @@ Debug.log('USER_ACTION', 'アクション実行', productionSafeData);
 ```javascript
 // 特定機能用のカスタムログ関数
 const PhraseDebug = {
-    log: (message, data) => Debug.log('PHRASE_PRACTICE', message, data),
-    error: (message, data) => Debug.error('PHRASE_PRACTICE', message, data),
-    performance: (operation, fn) => {
-        Debug.startTimer(operation);
-        const result = fn();
-        Debug.endTimer(operation);
-        return result;
-    }
+  log: (message, data) => Debug.log('PHRASE_PRACTICE', message, data),
+  error: (message, data) => Debug.error('PHRASE_PRACTICE', message, data),
+  performance: (operation, fn) => {
+    Debug.startTimer(operation);
+    const result = fn();
+    Debug.endTimer(operation);
+    return result;
+  },
 };
 
 // 使用例
@@ -393,17 +411,17 @@ PhraseDebug.log('フレーズ選択完了', { category: 'greetings', count: 5 })
 ```javascript
 // ローカルストレージへのログ保存
 const persistentLogger = {
-    save: () => {
-        const logs = Debug.logger.exportLogs();
-        localStorage.setItem('debug-logs', JSON.stringify(logs));
-    },
-    load: () => {
-        const stored = localStorage.getItem('debug-logs');
-        return stored ? JSON.parse(stored) : null;
-    },
-    clear: () => {
-        localStorage.removeItem('debug-logs');
-    }
+  save: () => {
+    const logs = Debug.logger.exportLogs();
+    localStorage.setItem('debug-logs', JSON.stringify(logs));
+  },
+  load: () => {
+    const stored = localStorage.getItem('debug-logs');
+    return stored ? JSON.parse(stored) : null;
+  },
+  clear: () => {
+    localStorage.removeItem('debug-logs');
+  },
 };
 ```
 
@@ -412,18 +430,20 @@ const persistentLogger = {
 ```javascript
 // テスト用のデバッグ情報露出
 window.testUtils = {
-    getDebugLogs: () => Debug.logger.exportLogs(),
-    getElementState: (selector) => {
-        const element = document.querySelector(selector);
-        return element ? {
-            visible: window.getComputedStyle(element).display !== 'none',
-            rect: element.getBoundingClientRect(),
-            classes: element.className
-        } : null;
-    },
-    simulateError: () => {
-        Debug.error('TEST', 'テスト用エラー', { test: true });
-    }
+  getDebugLogs: () => Debug.logger.exportLogs(),
+  getElementState: (selector) => {
+    const element = document.querySelector(selector);
+    return element
+      ? {
+          visible: window.getComputedStyle(element).display !== 'none',
+          rect: element.getBoundingClientRect(),
+          classes: element.className,
+        }
+      : null;
+  },
+  simulateError: () => {
+    Debug.error('TEST', 'テスト用エラー', { test: true });
+  },
 };
 ```
 

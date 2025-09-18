@@ -14,12 +14,14 @@ npm install
 ### 2. テストの実行
 
 **ターミナル1でサーバーを起動:**
+
 ```bash
 cd test
 npm run serve
 ```
 
 **ターミナル2でテストを実行:**
+
 ```bash
 cd test
 npm test
@@ -84,6 +86,7 @@ node node_modules/puppeteer/install.js
 ```
 
 エラーがある場合：
+
 ```
    ⚠️  Validation: 1 errors, 2 warnings
       ❌ lineHeight: 7.5mm (期待値: 8-12mm)

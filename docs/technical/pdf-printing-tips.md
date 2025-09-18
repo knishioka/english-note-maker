@@ -28,6 +28,7 @@ pageDiv.style.padding = '20mm 15mm'; // 英語ノート用余白
 ```
 
 **ポイント**:
+
 - 英語練習に適した余白設定（上下20mm、左右15mm）
 - 4本線ベースラインのための高さ計算
 
@@ -39,9 +40,9 @@ pageDiv.style.padding = '20mm 15mm'; // 英語ノート用余白
 @media print {
   @page {
     size: A4;
-    margin: 0;  /* ブラウザのデフォルトマージンを無効化 */
+    margin: 0; /* ブラウザのデフォルトマージンを無効化 */
   }
-  
+
   html {
     margin: 20mm 15mm; /* 英語ノート専用余白 */
   }
@@ -65,10 +66,18 @@ pageDiv.style.padding = '20mm 15mm'; // 英語ノート用余白
   border-bottom: 0.5px solid #d0d0d0;
 }
 
-.baseline--top { top: 0; }
-.baseline--upper { top: 25%; /* 大文字用 */ }
-.baseline--lower { top: 75%; /* ベースライン */ }
-.baseline--bottom { top: 100%; /* 下降文字用 */ }
+.baseline--top {
+  top: 0;
+}
+.baseline--upper {
+  top: 25%; /* 大文字用 */
+}
+.baseline--lower {
+  top: 75%; /* ベースライン */
+}
+.baseline--bottom {
+  top: 100%; /* 下降文字用 */
+}
 
 /* 印刷時の最適化 */
 @media print {
@@ -89,12 +98,12 @@ pageDiv.style.padding = '20mm 15mm'; // 英語ノート用余白
 }
 
 .example-english {
-  font-family: "Times New Roman", serif;
+  font-family: 'Times New Roman', serif;
   margin-bottom: 1mm;
 }
 
 .example-japanese {
-  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
   font-size: 9pt;
   color: #888;
 }
@@ -103,7 +112,7 @@ pageDiv.style.padding = '20mm 15mm'; // 英語ノート用余白
   .example-sentence {
     font-size: 9pt !important;
   }
-  
+
   .example-japanese {
     font-size: 8pt !important;
   }
@@ -121,24 +130,25 @@ const ENGLISH_NOTE_CONFIG = {
   lineSpacing: 2, // mm (行間)
   baselineRatio: {
     top: 0,
-    upper: 0.25,    // 大文字の高さ
-    lower: 0.75,    // ベースライン
-    bottom: 1.0     // 下降文字の底
+    upper: 0.25, // 大文字の高さ
+    lower: 0.75, // ベースライン
+    bottom: 1.0, // 下降文字の底
   },
   pageMargin: {
-    top: 20,    // mm
+    top: 20, // mm
     bottom: 20, // mm
-    left: 15,   // mm
-    right: 15   // mm
-  }
+    left: 15, // mm
+    right: 15, // mm
+  },
 };
 
 // A4サイズでの最適な行数計算
 const calculateOptimalLines = () => {
   const pageHeight = 297; // mm (A4高さ)
-  const usableHeight = pageHeight - ENGLISH_NOTE_CONFIG.pageMargin.top - ENGLISH_NOTE_CONFIG.pageMargin.bottom;
+  const usableHeight =
+    pageHeight - ENGLISH_NOTE_CONFIG.pageMargin.top - ENGLISH_NOTE_CONFIG.pageMargin.bottom;
   const lineWithSpacing = ENGLISH_NOTE_CONFIG.lineHeight + ENGLISH_NOTE_CONFIG.lineSpacing;
-  
+
   return Math.floor(usableHeight / lineWithSpacing);
 };
 ```
@@ -149,20 +159,21 @@ const calculateOptimalLines = () => {
 // 例文を適切な間隔で配置
 const distributeExamples = (totalLines, examples) => {
   if (!examples || examples.length === 0) return [];
-  
+
   const examplePositions = [];
   const interval = Math.floor(totalLines / examples.length);
-  
+
   for (let i = 0; i < examples.length; i++) {
     const position = i * interval;
-    if (position < totalLines - 2) { // 最低2行の練習スペースを確保
+    if (position < totalLines - 2) {
+      // 最低2行の練習スペースを確保
       examplePositions.push({
         lineIndex: position,
-        example: examples[i]
+        example: examples[i],
       });
     }
   }
-  
+
   return examplePositions;
 };
 ```
@@ -197,12 +208,16 @@ const generateAlphabetPracticeLine = (letter) => {
 const generateSentencePracticeLine = (sentence, showTranslation) => {
   return `
     <div class="sentence-practice-group">
-      ${sentence ? `
+      ${
+        sentence
+          ? `
         <div class="example-sentence">
           <div class="example-english">${sentence.english}</div>
           ${showTranslation ? `<div class="example-japanese">${sentence.japanese}</div>` : ''}
         </div>
-      ` : ''}
+      `
+          : ''
+      }
       
       <div class="baseline-group">
         <div class="baseline baseline--top"></div>
@@ -223,19 +238,19 @@ const generateSentencePracticeLine = (sentence, showTranslation) => {
 // 文字列連結でHTMLを構築し、最後に一度だけDOM操作
 const generateNotePage = (options) => {
   let pageHTML = '';
-  
+
   // ヘッダー
   pageHTML += generateHeader(options);
-  
+
   // 罫線グループ
   for (let i = 0; i < options.lineCount; i++) {
     const hasExample = options.examples && options.examples[i];
     pageHTML += generateLineGroup(hasExample ? options.examples[i] : null, options.showTranslation);
   }
-  
+
   // フッター
   pageHTML += generateFooter(options);
-  
+
   return pageHTML;
 };
 ```
@@ -247,10 +262,10 @@ const generateNotePage = (options) => {
 const cleanupAfterPrint = () => {
   const printContainer = document.getElementById('english-note-print-container');
   const styleEl = document.getElementById('print-styles');
-  
+
   if (printContainer) printContainer.remove();
   if (styleEl) styleEl.remove();
-  
+
   // タイトルを元に戻す
   document.title = originalTitle;
 };
@@ -263,6 +278,7 @@ const cleanupAfterPrint = () => {
 **原因**: CSS の position や height 設定の問題
 
 **解決策**:
+
 ```css
 .baseline-group {
   position: relative;
@@ -284,6 +300,7 @@ const cleanupAfterPrint = () => {
 **原因**: page-break-inside の設定不足
 
 **解決策**:
+
 ```css
 .example-sentence,
 .baseline-group {
@@ -298,10 +315,11 @@ const cleanupAfterPrint = () => {
 ### 3. 日本語フォントの印刷品質
 
 **対策**:
+
 ```css
 @media print {
   .example-japanese {
-    font-family: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+    font-family: 'Noto Sans JP', 'Yu Gothic', 'Hiragino Kaku Gothic ProN', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -317,10 +335,10 @@ const cleanupAfterPrint = () => {
 const printNotePage = () => {
   // 印刷用スタイルを適用
   applyPrintStyles();
-  
+
   // 印刷ダイアログを開く
   window.print();
-  
+
   // 印刷後のクリーンアップ
   window.addEventListener('afterprint', cleanupAfterPrint);
 };
@@ -334,10 +352,18 @@ const printNotePage = () => {
   border-bottom: 1px solid red !important;
 }
 
-.debug-mode .baseline--top { border-color: red !important; }
-.debug-mode .baseline--upper { border-color: blue !important; }
-.debug-mode .baseline--lower { border-color: green !important; }
-.debug-mode .baseline--bottom { border-color: orange !important; }
+.debug-mode .baseline--top {
+  border-color: red !important;
+}
+.debug-mode .baseline--upper {
+  border-color: blue !important;
+}
+.debug-mode .baseline--lower {
+  border-color: green !important;
+}
+.debug-mode .baseline--bottom {
+  border-color: orange !important;
+}
 ```
 
 ### 3. ユーザビリティの配慮

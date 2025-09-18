@@ -8,7 +8,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'cow', japanese: 'うし', syllables: 'cow' },
       { english: 'pig', japanese: 'ぶた', syllables: 'pig' },
       { english: 'sheep', japanese: 'ひつじ', syllables: 'sheep' },
-      { english: 'duck', japanese: 'あひる', syllables: 'duck' }
+      { english: 'duck', japanese: 'あひる', syllables: 'duck' },
     ],
     '7-9': [
       // 既存5個に追加
@@ -16,7 +16,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'zebra', japanese: 'シマウマ', syllables: 'ze-bra' },
       { english: 'koala', japanese: 'コアラ', syllables: 'ko-a-la' },
       { english: 'panda', japanese: 'パンダ', syllables: 'pan-da' },
-      { english: 'octopus', japanese: 'タコ', syllables: 'oc-to-pus' }
+      { english: 'octopus', japanese: 'タコ', syllables: 'oc-to-pus' },
     ],
     '10-12': [
       // 既存5個に追加
@@ -24,8 +24,8 @@ const WORD_LISTS_EXPANSION = {
       { english: 'orangutan', japanese: 'オランウータン', syllables: 'o-rang-u-tan' },
       { english: 'peacock', japanese: 'クジャク', syllables: 'pea-cock' },
       { english: 'flamingo', japanese: 'フラミンゴ', syllables: 'fla-min-go' },
-      { english: 'hamster', japanese: 'ハムスター', syllables: 'ham-ster' }
-    ]
+      { english: 'hamster', japanese: 'ハムスター', syllables: 'ham-ster' },
+    ],
   },
   food: {
     '4-6': [
@@ -34,7 +34,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'cheese', japanese: 'チーズ', syllables: 'cheese' },
       { english: 'juice', japanese: 'ジュース', syllables: 'juice' },
       { english: 'cookie', japanese: 'クッキー', syllables: 'cook-ie' },
-      { english: 'candy', japanese: 'あめ', syllables: 'can-dy' }
+      { english: 'candy', japanese: 'あめ', syllables: 'can-dy' },
     ],
     '7-9': [
       // 既存5個に追加
@@ -42,7 +42,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'yogurt', japanese: 'ヨーグルト', syllables: 'yo-gurt' },
       { english: 'cereal', japanese: 'シリアル', syllables: 'ce-re-al' },
       { english: 'pancake', japanese: 'パンケーキ', syllables: 'pan-cake' },
-      { english: 'noodles', japanese: 'めん', syllables: 'noo-dles' }
+      { english: 'noodles', japanese: 'めん', syllables: 'noo-dles' },
     ],
     '10-12': [
       // 既存5個に追加
@@ -50,8 +50,8 @@ const WORD_LISTS_EXPANSION = {
       { english: 'protein', japanese: 'タンパク質', syllables: 'pro-tein' },
       { english: 'nutrition', japanese: '栄養', syllables: 'nu-tri-tion' },
       { english: 'ingredient', japanese: '材料', syllables: 'in-gre-di-ent' },
-      { english: 'cuisine', japanese: '料理', syllables: 'cui-sine' }
-    ]
+      { english: 'cuisine', japanese: '料理', syllables: 'cui-sine' },
+    ],
   },
   colors: {
     '4-6': [
@@ -60,7 +60,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'orange', japanese: 'オレンジ', syllables: 'or-ange' },
       { english: 'brown', japanese: 'ちゃいろ', syllables: 'brown' },
       { english: 'gray', japanese: 'はいいろ', syllables: 'gray' },
-      { english: 'gold', japanese: 'きんいろ', syllables: 'gold' }
+      { english: 'gold', japanese: 'きんいろ', syllables: 'gold' },
     ],
     '7-9': [
       // 既存5個に追加
@@ -68,7 +68,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'navy', japanese: 'ネイビー', syllables: 'na-vy' },
       { english: 'turquoise', japanese: 'ターコイズ', syllables: 'tur-quoise' },
       { english: 'violet', japanese: 'むらさき', syllables: 'vi-o-let' },
-      { english: 'maroon', japanese: 'えびちゃ', syllables: 'ma-roon' }
+      { english: 'maroon', japanese: 'えびちゃ', syllables: 'ma-roon' },
     ],
     '10-12': [
       // 既存5個に追加
@@ -76,8 +76,8 @@ const WORD_LISTS_EXPANSION = {
       { english: 'indigo', japanese: '藍色', syllables: 'in-di-go' },
       { english: 'coral', japanese: '珊瑚色', syllables: 'cor-al' },
       { english: 'azure', japanese: '空色', syllables: 'az-ure' },
-      { english: 'amber', japanese: '琥珀色', syllables: 'am-ber' }
-    ]
+      { english: 'amber', japanese: '琥珀色', syllables: 'am-ber' },
+    ],
   },
   numbers: {
     '4-6': [
@@ -86,7 +86,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'seven', japanese: 'なな', syllables: 'sev-en' },
       { english: 'eight', japanese: 'はち', syllables: 'eight' },
       { english: 'nine', japanese: 'きゅう', syllables: 'nine' },
-      { english: 'ten', japanese: 'じゅう', syllables: 'ten' }
+      { english: 'ten', japanese: 'じゅう', syllables: 'ten' },
     ],
     '7-9': [
       // 既存5個に追加
@@ -94,7 +94,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'thirty', japanese: 'さんじゅう', syllables: 'thir-ty' },
       { english: 'forty', japanese: 'よんじゅう', syllables: 'for-ty' },
       { english: 'fifty', japanese: 'ごじゅう', syllables: 'fif-ty' },
-      { english: 'sixty', japanese: 'ろくじゅう', syllables: 'six-ty' }
+      { english: 'sixty', japanese: 'ろくじゅう', syllables: 'six-ty' },
     ],
     '10-12': [
       // 既存5個に追加
@@ -102,8 +102,8 @@ const WORD_LISTS_EXPANSION = {
       { english: 'fraction', japanese: '分数', syllables: 'frac-tion' },
       { english: 'percentage', japanese: 'パーセント', syllables: 'per-cent-age' },
       { english: 'equation', japanese: '方程式', syllables: 'e-qua-tion' },
-      { english: 'calculate', japanese: '計算する', syllables: 'cal-cu-late' }
-    ]
+      { english: 'calculate', japanese: '計算する', syllables: 'cal-cu-late' },
+    ],
   },
   calendar: {
     '4-6': [
@@ -112,7 +112,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'tomorrow', japanese: 'あした', syllables: 'to-mor-row' },
       { english: 'yesterday', japanese: 'きのう', syllables: 'yes-ter-day' },
       { english: 'morning', japanese: 'あさ', syllables: 'morn-ing' },
-      { english: 'night', japanese: 'よる', syllables: 'night' }
+      { english: 'night', japanese: 'よる', syllables: 'night' },
     ],
     '7-9': [
       // 既存5個に追加
@@ -120,7 +120,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'February', japanese: 'にがつ', syllables: 'Feb-ru-ar-y' },
       { english: 'March', japanese: 'さんがつ', syllables: 'March' },
       { english: 'April', japanese: 'しがつ', syllables: 'A-pril' },
-      { english: 'May', japanese: 'ごがつ', syllables: 'May' }
+      { english: 'May', japanese: 'ごがつ', syllables: 'May' },
     ],
     '10-12': [
       // 既存5個に追加
@@ -128,8 +128,8 @@ const WORD_LISTS_EXPANSION = {
       { english: 'schedule', japanese: 'スケジュール', syllables: 'sched-ule' },
       { english: 'appointment', japanese: '約束', syllables: 'ap-point-ment' },
       { english: 'deadline', japanese: '締切', syllables: 'dead-line' },
-      { english: 'holiday', japanese: '休日', syllables: 'hol-i-day' }
-    ]
+      { english: 'holiday', japanese: '休日', syllables: 'hol-i-day' },
+    ],
   },
   school_items: {
     '4-6': [
@@ -138,7 +138,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'glue', japanese: 'のり', syllables: 'glue' },
       { english: 'paper', japanese: 'かみ', syllables: 'pa-per' },
       { english: 'chair', japanese: 'いす', syllables: 'chair' },
-      { english: 'desk', japanese: 'つくえ', syllables: 'desk' }
+      { english: 'desk', japanese: 'つくえ', syllables: 'desk' },
     ],
     '7-9': [
       // 既存5個に追加
@@ -146,7 +146,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'folder', japanese: 'フォルダー', syllables: 'fold-er' },
       { english: 'binder', japanese: 'バインダー', syllables: 'bind-er' },
       { english: 'stapler', japanese: 'ホッチキス', syllables: 'sta-pler' },
-      { english: 'clipboard', japanese: 'クリップボード', syllables: 'clip-board' }
+      { english: 'clipboard', japanese: 'クリップボード', syllables: 'clip-board' },
     ],
     '10-12': [
       // 既存5個に追加
@@ -154,8 +154,8 @@ const WORD_LISTS_EXPANSION = {
       { english: 'whiteboard', japanese: 'ホワイトボード', syllables: 'white-board' },
       { english: 'laptop', japanese: 'ノートパソコン', syllables: 'lap-top' },
       { english: 'printer', japanese: 'プリンター', syllables: 'print-er' },
-      { english: 'scanner', japanese: 'スキャナー', syllables: 'scan-ner' }
-    ]
+      { english: 'scanner', japanese: 'スキャナー', syllables: 'scan-ner' },
+    ],
   },
   body_parts: {
     '4-6': [
@@ -164,7 +164,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'mouth', japanese: 'くち', syllables: 'mouth' },
       { english: 'teeth', japanese: 'は', syllables: 'teeth' },
       { english: 'hair', japanese: 'かみ', syllables: 'hair' },
-      { english: 'tummy', japanese: 'おなか', syllables: 'tum-my' }
+      { english: 'tummy', japanese: 'おなか', syllables: 'tum-my' },
     ],
     '7-9': [
       // 既存5個に追加
@@ -172,7 +172,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'wrist', japanese: 'てくび', syllables: 'wrist' },
       { english: 'ankle', japanese: 'あしくび', syllables: 'an-kle' },
       { english: 'chest', japanese: 'むね', syllables: 'chest' },
-      { english: 'thumb', japanese: 'おやゆび', syllables: 'thumb' }
+      { english: 'thumb', japanese: 'おやゆび', syllables: 'thumb' },
     ],
     '10-12': [
       // 既存5個に追加
@@ -180,8 +180,8 @@ const WORD_LISTS_EXPANSION = {
       { english: 'muscle', japanese: '筋肉', syllables: 'mus-cle' },
       { english: 'organ', japanese: '臓器', syllables: 'or-gan' },
       { english: 'tissue', japanese: '組織', syllables: 'tis-sue' },
-      { english: 'nerve', japanese: '神経', syllables: 'nerve' }
-    ]
+      { english: 'nerve', japanese: '神経', syllables: 'nerve' },
+    ],
   },
   weather: {
     '4-6': [
@@ -190,7 +190,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'cold', japanese: 'さむい', syllables: 'cold' },
       { english: 'warm', japanese: 'あたたかい', syllables: 'warm' },
       { english: 'cool', japanese: 'すずしい', syllables: 'cool' },
-      { english: 'wet', japanese: 'ぬれた', syllables: 'wet' }
+      { english: 'wet', japanese: 'ぬれた', syllables: 'wet' },
     ],
     '7-9': [
       // 既存5個に追加
@@ -198,7 +198,7 @@ const WORD_LISTS_EXPANSION = {
       { english: 'thunder', japanese: 'かみなり', syllables: 'thun-der' },
       { english: 'lightning', japanese: 'いなずま', syllables: 'light-ning' },
       { english: 'rainbow', japanese: 'にじ', syllables: 'rain-bow' },
-      { english: 'fog', japanese: 'きり', syllables: 'fog' }
+      { english: 'fog', japanese: 'きり', syllables: 'fog' },
     ],
     '10-12': [
       // 既存5個に追加
@@ -206,9 +206,9 @@ const WORD_LISTS_EXPANSION = {
       { english: 'atmosphere', japanese: '大気', syllables: 'at-mos-phere' },
       { english: 'humidity', japanese: '湿度', syllables: 'hu-mid-i-ty' },
       { english: 'pressure', japanese: '気圧', syllables: 'pres-sure' },
-      { english: 'forecast', japanese: '予報', syllables: 'fore-cast' }
-    ]
-  }
+      { english: 'forecast', japanese: '予報', syllables: 'fore-cast' },
+    ],
+  },
 };
 
 // 新規カテゴリーの追加（インターナショナルスクール向け）
@@ -225,7 +225,7 @@ const NEW_WORD_CATEGORIES = {
       { english: 'stairs', japanese: 'かいだん', syllables: 'stairs' },
       { english: 'elevator', japanese: 'エレベーター', syllables: 'el-e-va-tor' },
       { english: 'entrance', japanese: 'いりぐち', syllables: 'en-trance' },
-      { english: 'exit', japanese: 'でぐち', syllables: 'ex-it' }
+      { english: 'exit', japanese: 'でぐち', syllables: 'ex-it' },
     ],
     '7-9': [
       { english: 'gymnasium', japanese: 'たいいくかん', syllables: 'gym-na-si-um' },
@@ -234,23 +234,31 @@ const NEW_WORD_CATEGORIES = {
       { english: 'science lab', japanese: 'りかしつ', syllables: 'sci-ence lab' },
       { english: 'art room', japanese: 'びじゅつしつ', syllables: 'art room' },
       { english: 'music room', japanese: 'おんがくしつ', syllables: 'mu-sic room' },
-      { english: 'nurse\'s office', japanese: 'ほけんしつ', syllables: 'nurse\'s of-fice' },
+      { english: "nurse's office", japanese: 'ほけんしつ', syllables: "nurse's of-fice" },
       { english: 'locker room', japanese: 'ロッカールーム', syllables: 'lock-er room' },
-      { english: 'counselor\'s office', japanese: 'そうだんしつ', syllables: 'coun-sel-or\'s of-fice' },
-      { english: 'reception', japanese: 'じゅつけ', syllables: 're-cep-tion' }
+      {
+        english: "counselor's office",
+        japanese: 'そうだんしつ',
+        syllables: "coun-sel-or's of-fice",
+      },
+      { english: 'reception', japanese: 'じゅつけ', syllables: 're-cep-tion' },
     ],
     '10-12': [
       { english: 'laboratory', japanese: '実験室', syllables: 'lab-o-ra-to-ry' },
       { english: 'conference room', japanese: '会議室', syllables: 'con-fer-ence room' },
       { english: 'faculty room', japanese: '職員室', syllables: 'fac-ul-ty room' },
-      { english: 'multimedia room', japanese: 'マルチメディア室', syllables: 'mul-ti-me-di-a room' },
+      {
+        english: 'multimedia room',
+        japanese: 'マルチメディア室',
+        syllables: 'mul-ti-me-di-a room',
+      },
       { english: 'theater', japanese: '劇場', syllables: 'the-a-ter' },
       { english: 'observatory', japanese: '天文台', syllables: 'ob-serv-a-to-ry' },
       { english: 'archive', japanese: '資料室', syllables: 'ar-chive' },
       { english: 'workshop', japanese: '作業場', syllables: 'work-shop' },
       { english: 'studio', japanese: 'スタジオ', syllables: 'stu-di-o' },
-      { english: 'amphitheater', japanese: '円形劇場', syllables: 'am-phi-the-a-ter' }
-    ]
+      { english: 'amphitheater', japanese: '円形劇場', syllables: 'am-phi-the-a-ter' },
+    ],
   },
   // 授業活動
   classroom_activities: {
@@ -264,7 +272,7 @@ const NEW_WORD_CATEGORIES = {
       { english: 'share', japanese: 'わける', syllables: 'share' },
       { english: 'help', japanese: 'たすける', syllables: 'help' },
       { english: 'wait', japanese: 'まつ', syllables: 'wait' },
-      { english: 'try', japanese: 'やってみる', syllables: 'try' }
+      { english: 'try', japanese: 'やってみる', syllables: 'try' },
     ],
     '7-9': [
       { english: 'presentation', japanese: 'はっぴょう', syllables: 'pres-en-ta-tion' },
@@ -276,7 +284,7 @@ const NEW_WORD_CATEGORIES = {
       { english: 'homework', japanese: 'しゅくだい', syllables: 'home-work' },
       { english: 'review', japanese: 'ふくしゅう', syllables: 're-view' },
       { english: 'practice', japanese: 'れんしゅう', syllables: 'prac-tice' },
-      { english: 'report', japanese: 'レポート', syllables: 're-port' }
+      { english: 'report', japanese: 'レポート', syllables: 're-port' },
     ],
     '10-12': [
       { english: 'analyze', japanese: '分析する', syllables: 'an-a-lyze' },
@@ -288,8 +296,8 @@ const NEW_WORD_CATEGORIES = {
       { english: 'methodology', japanese: '方法論', syllables: 'meth-od-ol-o-gy' },
       { english: 'bibliography', japanese: '参考文献', syllables: 'bib-li-og-ra-phy' },
       { english: 'peer review', japanese: '相互評価', syllables: 'peer re-view' },
-      { english: 'thesis', japanese: '論文', syllables: 'the-sis' }
-    ]
+      { english: 'thesis', japanese: '論文', syllables: 'the-sis' },
+    ],
   },
   // 国籍
   nationalities: {
@@ -303,7 +311,7 @@ const NEW_WORD_CATEGORIES = {
       { english: 'Australian', japanese: 'オーストラリアじん', syllables: 'Aus-tra-li-an' },
       { english: 'Indian', japanese: 'インドじん', syllables: 'In-di-an' },
       { english: 'French', japanese: 'フランスじん', syllables: 'French' },
-      { english: 'German', japanese: 'ドイツじん', syllables: 'Ger-man' }
+      { english: 'German', japanese: 'ドイツじん', syllables: 'Ger-man' },
     ],
     '7-9': [
       { english: 'Brazilian', japanese: 'ブラジルじん', syllables: 'Bra-zil-ian' },
@@ -315,7 +323,7 @@ const NEW_WORD_CATEGORIES = {
       { english: 'Vietnamese', japanese: 'ベトナムじん', syllables: 'Vi-et-nam-ese' },
       { english: 'Filipino', japanese: 'フィリピンじん', syllables: 'Fil-i-pi-no' },
       { english: 'Indonesian', japanese: 'インドネシアじん', syllables: 'In-do-ne-sian' },
-      { english: 'Malaysian', japanese: 'マレーシアじん', syllables: 'Ma-lay-sian' }
+      { english: 'Malaysian', japanese: 'マレーシアじん', syllables: 'Ma-lay-sian' },
     ],
     '10-12': [
       { english: 'European', japanese: 'ヨーロッパ人', syllables: 'Eu-ro-pe-an' },
@@ -327,8 +335,8 @@ const NEW_WORD_CATEGORIES = {
       { english: 'expatriate', japanese: '駐在員', syllables: 'ex-pa-tri-ate' },
       { english: 'immigrant', japanese: '移民', syllables: 'im-mi-grant' },
       { english: 'bilingual', japanese: 'バイリンガル', syllables: 'bi-lin-gual' },
-      { english: 'multilingual', japanese: '多言語話者', syllables: 'mul-ti-lin-gual' }
-    ]
+      { english: 'multilingual', japanese: '多言語話者', syllables: 'mul-ti-lin-gual' },
+    ],
   },
   // 国際料理
   international_foods: {
@@ -342,7 +350,7 @@ const NEW_WORD_CATEGORIES = {
       { english: 'fried rice', japanese: 'チャーハン', syllables: 'fried rice' },
       { english: 'pasta', japanese: 'パスタ', syllables: 'pas-ta' },
       { english: 'sandwich', japanese: 'サンドイッチ', syllables: 'sand-wich' },
-      { english: 'salad', japanese: 'サラダ', syllables: 'sal-ad' }
+      { english: 'salad', japanese: 'サラダ', syllables: 'sal-ad' },
     ],
     '7-9': [
       { english: 'dim sum', japanese: 'テンシン', syllables: 'dim sum' },
@@ -354,7 +362,7 @@ const NEW_WORD_CATEGORIES = {
       { english: 'baguette', japanese: 'バゲット', syllables: 'ba-guette' },
       { english: 'croissant', japanese: 'クロワッサン', syllables: 'crois-sant' },
       { english: 'burrito', japanese: 'ブリート', syllables: 'bur-ri-to' },
-      { english: 'lasagna', japanese: 'ラザニア', syllables: 'la-sa-gna' }
+      { english: 'lasagna', japanese: 'ラザニア', syllables: 'la-sa-gna' },
     ],
     '10-12': [
       { english: 'cuisine', japanese: '料理', syllables: 'cui-sine' },
@@ -366,8 +374,8 @@ const NEW_WORD_CATEGORIES = {
       { english: 'seasoning', japanese: '調味料', syllables: 'sea-son-ing' },
       { english: 'authentic', japanese: '本格的な', syllables: 'au-then-tic' },
       { english: 'fusion', japanese: 'フュージョン', syllables: 'fu-sion' },
-      { english: 'culinary', japanese: '料理の', syllables: 'cu-li-nar-y' }
-    ]
+      { english: 'culinary', japanese: '料理の', syllables: 'cu-li-nar-y' },
+    ],
   },
   // 時間表現
   time_expressions: {
@@ -381,7 +389,7 @@ const NEW_WORD_CATEGORIES = {
       { english: 'after', japanese: 'あとに', syllables: 'af-ter' },
       { english: 'always', japanese: 'いつも', syllables: 'al-ways' },
       { english: 'never', japanese: 'ぜったいない', syllables: 'nev-er' },
-      { english: 'sometimes', japanese: 'ときどき', syllables: 'some-times' }
+      { english: 'sometimes', japanese: 'ときどき', syllables: 'some-times' },
     ],
     '7-9': [
       { english: 'usually', japanese: 'たいてい', syllables: 'u-su-al-ly' },
@@ -393,7 +401,7 @@ const NEW_WORD_CATEGORIES = {
       { english: 'yet', japanese: 'まだ', syllables: 'yet' },
       { english: 'eventually', japanese: 'けっきょく', syllables: 'e-ven-tu-al-ly' },
       { english: 'meanwhile', japanese: 'そのあいだ', syllables: 'mean-while' },
-      { english: 'immediately', japanese: 'すぐに', syllables: 'im-me-di-ate-ly' }
+      { english: 'immediately', japanese: 'すぐに', syllables: 'im-me-di-ate-ly' },
     ],
     '10-12': [
       { english: 'frequently', japanese: '頻繁に', syllables: 'fre-quent-ly' },
@@ -405,9 +413,9 @@ const NEW_WORD_CATEGORIES = {
       { english: 'periodically', japanese: '定期的に', syllables: 'pe-ri-od-i-cal-ly' },
       { english: 'chronologically', japanese: '年代順に', syllables: 'chron-o-log-i-cal-ly' },
       { english: 'instantaneous', japanese: '瞬間的な', syllables: 'in-stan-ta-ne-ous' },
-      { english: 'duration', japanese: '期間', syllables: 'du-ra-tion' }
-    ]
-  }
+      { english: 'duration', japanese: '期間', syllables: 'du-ra-tion' },
+    ],
+  },
 };
 
 module.exports = { WORD_LISTS_EXPANSION, NEW_WORD_CATEGORIES };

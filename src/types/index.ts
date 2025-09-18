@@ -33,13 +33,7 @@ export type DifficultyLevel = 1 | 2 | 3;
 /**
  * Content categories for examples
  */
-export type ContentCategory =
-  | 'daily'
-  | 'school'
-  | 'family'
-  | 'hobby'
-  | 'animals'
-  | 'all';
+export type ContentCategory = 'daily' | 'school' | 'family' | 'hobby' | 'animals' | 'all';
 
 /**
  * Word categories for vocabulary practice
@@ -282,7 +276,7 @@ export enum ErrorType {
   RENDERING = 'RENDERING',
   DATA_LOADING = 'DATA_LOADING',
   PRINT = 'PRINT',
-  UNKNOWN = 'UNKNOWN'
+  UNKNOWN = 'UNKNOWN',
 }
 
 /**
@@ -292,7 +286,7 @@ export enum ErrorSeverity {
   CRITICAL = 'critical',
   HIGH = 'high',
   MEDIUM = 'medium',
-  LOW = 'low'
+  LOW = 'low',
 }
 
 /**
@@ -390,27 +384,30 @@ export interface ContentStats {
  * Type guard for AgeGroup
  */
 export function isAgeGroup(value: unknown): value is AgeGroup {
-  return typeof value === 'string' &&
-    ['4-6', '7-9', '10-12'].includes(value);
+  return typeof value === 'string' && ['4-6', '7-9', '10-12'].includes(value);
 }
 
 /**
  * Type guard for PracticeMode
  */
 export function isPracticeMode(value: unknown): value is PracticeMode {
-  return typeof value === 'string' &&
-    ['normal', 'sentence', 'word', 'alphabet', 'phrase'].includes(value);
+  return (
+    typeof value === 'string' &&
+    ['normal', 'sentence', 'word', 'alphabet', 'phrase'].includes(value)
+  );
 }
 
 /**
  * Type guard for validation error
  */
 export function isValidationError(error: unknown): error is ValidationError {
-  return typeof error === 'object' &&
+  return (
+    typeof error === 'object' &&
     error !== null &&
     'rule' in error &&
     'message' in error &&
-    'severity' in error;
+    'severity' in error
+  );
 }
 
 // ============= Utility Types =============
@@ -435,9 +432,7 @@ export type Nullable<T> = T | null;
 /**
  * Result type for operations that can fail
  */
-export type Result<T, E = Error> =
-  | { success: true; data: T }
-  | { success: false; error: E };
+export type Result<T, E = Error> = { success: true; data: T } | { success: false; error: E };
 
 // ============= DOM Type Extensions =============
 

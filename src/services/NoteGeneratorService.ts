@@ -12,7 +12,7 @@ import type {
   PhraseData,
   LineHeight,
   MillimeterValue,
-  ValidationResult
+  ValidationResult,
 } from '../types/index.js';
 import { ErrorHandler } from '../utils/ErrorHandler.js';
 import { ValidationService } from './ValidationService.js';
@@ -52,7 +52,7 @@ export class NoteGeneratorService {
         return {
           html: cached,
           validation: [],
-          performance: this.performanceMonitor.getMetrics()
+          performance: this.performanceMonitor.getMetrics(),
         };
       }
 
@@ -69,7 +69,7 @@ export class NoteGeneratorService {
       const validation = await this.validator.validateGeneratedHTML(html);
 
       // Cache result if valid
-      if (validation.every(v => v.severity !== 'error')) {
+      if (validation.every((v) => v.severity !== 'error')) {
         this.cache.set(cacheKey, html);
       }
 
@@ -78,14 +78,13 @@ export class NoteGeneratorService {
       return {
         html,
         validation,
-        performance: this.performanceMonitor.getMetrics()
+        performance: this.performanceMonitor.getMetrics(),
       };
-
     } catch (error) {
       this.performanceMonitor.endTiming(performanceId);
       throw this.errorHandler.handleError(error, {
         method: 'generateNote',
-        state: this.sanitizeStateForLogging(state)
+        state: this.sanitizeStateForLogging(state),
       });
     }
   }
@@ -132,12 +131,11 @@ export class NoteGeneratorService {
 
       html += '</div>';
       return html;
-
     } catch (error) {
       throw this.errorHandler.handleError(error, {
         method: 'generateSinglePage',
         pageNumber,
-        practiceMode: state.practiceMode
+        practiceMode: state.practiceMode,
       });
     }
   }
@@ -222,7 +220,11 @@ export class NoteGeneratorService {
     let examples: ExampleSentence[] = [];
     if (state.showExamples) {
       const neededExamples = Math.floor(maxLines / 4);
-      examples = await this.getExamplesForAge(state.ageGroup, neededExamples, state.selectedCategories.sentence);
+      examples = await this.getExamplesForAge(
+        state.ageGroup,
+        neededExamples,
+        state.selectedCategories.sentence
+      );
     }
 
     for (let i = 0; i < maxLines; i++) {
@@ -251,7 +253,11 @@ export class NoteGeneratorService {
     const baseMaxExamples = state.showTranslation ? 4 : 5;
     const maxExamples = this.calculateMaxLines(baseMaxExamples, lineHeight);
 
-    const examples = await this.getExamplesForAge(state.ageGroup, maxExamples, state.selectedCategories.sentence);
+    const examples = await this.getExamplesForAge(
+      state.ageGroup,
+      maxExamples,
+      state.selectedCategories.sentence
+    );
 
     let html = '';
     for (const example of examples) {
@@ -328,12 +334,16 @@ export class NoteGeneratorService {
         <div class="alphabet-grid-item">
           <div class="alphabet-header">
             <span class="alphabet-letter">${this.escapeHtml(item.letter)}</span>
-            ${state.showAlphabetExample ? `
+            ${
+              state.showAlphabetExample
+                ? `
               <div class="alphabet-example">
                 <span class="example-word">${this.escapeHtml(item.example)}</span>
                 <span class="example-meaning">(${this.escapeHtml(item.japanese)})</span>
               </div>
-            ` : ''}
+            `
+                : ''
+            }
           </div>
           <div class="alphabet-lines">
             ${this.generateBaselineGroup()}
@@ -350,7 +360,10 @@ export class NoteGeneratorService {
    * Generate phrase practice mode content
    */
   private async generatePhrasePractice(state: UIState): Promise<string> {
-    const phrases = await this.getPhrasesForCategory(state.selectedCategories.phrase, state.ageGroup);
+    const phrases = await this.getPhrasesForCategory(
+      state.selectedCategories.phrase,
+      state.ageGroup
+    );
     const shuffledPhrases = this.shuffleArray([...phrases]).slice(0, 4);
 
     const categoryNames = this.getPhraseCategoryNames();
@@ -414,9 +427,11 @@ export class NoteGeneratorService {
    * Utility methods
    */
   private calculateMaxLines(baseLines: number, lineHeight: LineHeight): number {
-    return lineHeight === 12 ? Math.floor(baseLines * 0.8) :
-           lineHeight === 8 ? Math.floor(baseLines * 1.2) :
-           baseLines;
+    return lineHeight === 12
+      ? Math.floor(baseLines * 0.8)
+      : lineHeight === 8
+        ? Math.floor(baseLines * 1.2)
+        : baseLines;
   }
 
   private escapeHtml(text: string): string {
@@ -443,7 +458,7 @@ export class NoteGeneratorService {
       practiceMode: state.practiceMode,
       ageGroup: state.ageGroup,
       pageCount: state.pageCount,
-      lineHeight: state.lineHeight
+      lineHeight: state.lineHeight,
     };
   }
 
@@ -460,7 +475,11 @@ export class NoteGeneratorService {
   }
 
   // Placeholder methods for data access - these would be implemented based on actual data sources
-  private async getExamplesForAge(ageGroup: string, count: number, category: string): Promise<ExampleSentence[]> {
+  private async getExamplesForAge(
+    ageGroup: string,
+    count: number,
+    category: string
+  ): Promise<ExampleSentence[]> {
     // Implementation would fetch from data service
     return [];
   }

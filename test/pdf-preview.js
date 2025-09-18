@@ -12,8 +12,8 @@ const TEST_CONFIGS = [
       lineHeight: '10',
       lineColor: 'gray',
       showHeader: false,
-      pageCount: 1
-    }
+      pageCount: 1,
+    },
   },
   {
     name: 'normal-practice-with-examples',
@@ -24,8 +24,8 @@ const TEST_CONFIGS = [
       lineHeight: '10',
       lineColor: 'gray',
       showHeader: true,
-      pageCount: 1
-    }
+      pageCount: 1,
+    },
   },
   {
     name: 'sentence-practice-no-translation',
@@ -37,8 +37,8 @@ const TEST_CONFIGS = [
       lineHeight: '10',
       lineColor: 'blue',
       showHeader: true,
-      pageCount: 1
-    }
+      pageCount: 1,
+    },
   },
   {
     name: 'sentence-practice-with-translation',
@@ -50,8 +50,8 @@ const TEST_CONFIGS = [
       lineHeight: '12',
       lineColor: 'green',
       showHeader: true,
-      pageCount: 1
-    }
+      pageCount: 1,
+    },
   },
   {
     name: 'word-practice',
@@ -61,8 +61,8 @@ const TEST_CONFIGS = [
       lineHeight: '10',
       lineColor: 'gray',
       showHeader: true,
-      pageCount: 1
-    }
+      pageCount: 1,
+    },
   },
   {
     name: 'multi-page-test',
@@ -72,8 +72,8 @@ const TEST_CONFIGS = [
       lineHeight: '10',
       lineColor: 'gray',
       showHeader: true,
-      pageCount: 3
-    }
+      pageCount: 3,
+    },
   },
   {
     name: 'small-line-height',
@@ -83,8 +83,8 @@ const TEST_CONFIGS = [
       lineHeight: '8',
       lineColor: 'gray',
       showHeader: false,
-      pageCount: 1
-    }
+      pageCount: 1,
+    },
   },
   {
     name: 'large-line-height',
@@ -95,9 +95,9 @@ const TEST_CONFIGS = [
       lineHeight: '12',
       lineColor: 'blue',
       showHeader: true,
-      pageCount: 1
-    }
-  }
+      pageCount: 1,
+    },
+  },
 ];
 
 async function generatePDFPreview() {
@@ -112,7 +112,7 @@ async function generatePDFPreview() {
   // ブラウザを起動
   const browser = await puppeteer.launch({
     headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
   console.log('📋 Starting PDF generation tests...\n');
@@ -132,21 +132,25 @@ async function generatePDFPreview() {
         const element = await page.$(selector);
 
         if (element) {
-          const tagName = await element.evaluate(el => el.tagName.toLowerCase());
+          const tagName = await element.evaluate((el) => el.tagName.toLowerCase());
 
           if (tagName === 'select') {
             await page.select(selector, value);
           } else if (tagName === 'input') {
-            const type = await element.evaluate(el => el.type);
+            const type = await element.evaluate((el) => el.type);
             if (type === 'checkbox') {
-              const isChecked = await element.evaluate(el => el.checked);
+              const isChecked = await element.evaluate((el) => el.checked);
               if ((value === true && !isChecked) || (value === false && isChecked)) {
                 await element.click();
               }
             } else {
-              await page.evaluate((sel, val) => {
-                document.querySelector(sel).value = val;
-              }, selector, value);
+              await page.evaluate(
+                (sel, val) => {
+                  document.querySelector(sel).value = val;
+                },
+                selector,
+                value
+              );
             }
           }
         }
@@ -170,14 +174,14 @@ async function generatePDFPreview() {
         path: pdfPath,
         format: 'A4',
         printBackground: true,
-        margin: { top: 0, right: 0, bottom: 0, left: 0 }
+        margin: { top: 0, right: 0, bottom: 0, left: 0 },
       });
 
       // スクリーンショットも保存
       const screenshotPath = path.join(outputDir, `${config.name}.png`);
       await page.screenshot({
         path: screenshotPath,
-        fullPage: true
+        fullPage: true,
       });
 
       console.log(`   ✅ PDF saved: ${pdfPath}`);
@@ -191,7 +195,7 @@ async function generatePDFPreview() {
         if (errors > 0 || warnings > 0) {
           console.log(`   ⚠️  Validation: ${errors} errors, ${warnings} warnings`);
           if (errors > 0) {
-            validationResult.errors.forEach(err => {
+            validationResult.errors.forEach((err) => {
               console.log(`      ❌ ${err.message}`);
             });
           }
@@ -202,7 +206,6 @@ async function generatePDFPreview() {
 
       console.log('');
       await page.close();
-
     } catch (error) {
       console.error(`   ❌ Error generating ${config.name}: ${error.message}\n`);
     }

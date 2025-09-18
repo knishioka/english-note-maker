@@ -16,9 +16,17 @@ if (!phraseDataMatch) {
 console.log('📊 フレーズカテゴリー別の数量:\n');
 
 const categories = [
-  'greetings', 'self_introduction', 'school', 'shopping',
-  'travel', 'feelings', 'daily_life', 'classroom_english',
-  'friend_making', 'cultural_exchange', 'emergency_situations'
+  'greetings',
+  'self_introduction',
+  'school',
+  'shopping',
+  'travel',
+  'feelings',
+  'daily_life',
+  'classroom_english',
+  'friend_making',
+  'cultural_exchange',
+  'emergency_situations',
 ];
 
 const ageGroups = ['4-6', '7-9', '10-12'];
@@ -27,9 +35,9 @@ let totalPhrases = 0;
 let displayedPhrases = 0;
 const maxDisplayed = 4; // 現在の表示上限
 
-categories.forEach(category => {
+categories.forEach((category) => {
   console.log(`\n【${category}】`);
-  ageGroups.forEach(age => {
+  ageGroups.forEach((age) => {
     // カテゴリーと年齢でフレーズを検索
     const pattern = new RegExp(`${category}:[\\s\\S]*?"${age}":\\s*\\[([\\s\\S]*?)\\]`, 'g');
     const matches = scriptContent.match(pattern);
@@ -37,7 +45,9 @@ categories.forEach(category => {
     if (matches) {
       // フレーズ数をカウント（english:の出現回数）
       const phrasePattern = new RegExp('english:\\s*"[^"]+"', 'g');
-      const fullMatch = scriptContent.match(new RegExp(`${category}:[\\s\\S]*?"${age}":\\s*\\[([\\s\\S]*?)\\]`));
+      const fullMatch = scriptContent.match(
+        new RegExp(`${category}:[\\s\\S]*?"${age}":\\s*\\[([\\s\\S]*?)\\]`)
+      );
       if (fullMatch) {
         const phraseMatches = fullMatch[1].match(phrasePattern);
         const count = phraseMatches ? phraseMatches.length : 0;

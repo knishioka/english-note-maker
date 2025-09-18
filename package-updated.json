@@ -89,23 +89,14 @@
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "not ie 11"
-  ],
+  "browserslist": ["> 1%", "last 2 versions", "not dead", "not ie 11"],
   "config": {
     "server": {
       "port": 3000,
       "host": "localhost"
     },
     "testing": {
-      "browsers": [
-        "chromium",
-        "firefox",
-        "webkit"
-      ],
+      "browsers": ["chromium", "firefox", "webkit"],
       "headless": true,
       "timeout": 30000,
       "coverage": {

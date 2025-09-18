@@ -1,896 +1,935 @@
 /* === リセットCSS === */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 /* === CSS変数（統一設定システム） === */
 :root {
-    /* === 印刷レイアウト変数 === */
-    --page-width: 210mm;
-    --page-height: 297mm;
-    --margin-standard: 5mm 10mm;
-    --margin-debug: 10mm 15mm;
-    --margin-minimum: 3mm 8mm;
+  /* === 印刷レイアウト変数 === */
+  --page-width: 210mm;
+  --page-height: 297mm;
+  --margin-standard: 5mm 10mm;
+  --margin-debug: 10mm 15mm;
+  --margin-minimum: 3mm 8mm;
 
-    /* === ベースライン変数 === */
-    --line-height-small: 8mm;
-    --line-height-standard: 10mm;
-    --line-height-large: 12mm;
-    --line-spacing: 2mm;
-    --group-margin: 10mm;
+  /* === ベースライン変数 === */
+  --line-height-small: 8mm;
+  --line-height-standard: 10mm;
+  --line-height-large: 12mm;
+  --line-spacing: 2mm;
+  --group-margin: 10mm;
 
-    /* === 色変数 === */
-    --baseline-color-screen: #d0d0d0;
-    --baseline-color-print: #c0c0c0;
-    --baseline-color-blue: #b3d9ff;
-    --baseline-color-green: #b3e5cc;
-    --text-primary: #333;
-    --text-secondary: #666;
-    --text-accent: #2563eb;
+  /* === 色変数 === */
+  --baseline-color-screen: #d0d0d0;
+  --baseline-color-print: #c0c0c0;
+  --baseline-color-blue: #b3d9ff;
+  --baseline-color-green: #b3e5cc;
+  --text-primary: #333;
+  --text-secondary: #666;
+  --text-accent: #2563eb;
 
-    /* === 既存互換性のための変数 === */
-    --line-height-mm: var(--line-height-standard);
-    --line-spacing-mm: var(--line-spacing);
-    --baseline-color: var(--baseline-color-screen);
-    --baseline-color-print: var(--baseline-color-print);
-    --text-color: var(--text-primary);
-    --background-color: #f5f5f5;
-    --bg-color: #f9fafb;
-    --border-color: #ddd;
-    --primary-color: var(--text-accent);
-    --secondary-color: #6b7280;
-    --success-color: #059669;
+  /* === 既存互換性のための変数 === */
+  --line-height-mm: var(--line-height-standard);
+  --line-spacing-mm: var(--line-spacing);
+  --baseline-color: var(--baseline-color-screen);
+  --baseline-color-print: var(--baseline-color-print);
+  --text-color: var(--text-primary);
+  --background-color: #f5f5f5;
+  --bg-color: #f9fafb;
+  --border-color: #ddd;
+  --primary-color: var(--text-accent);
+  --secondary-color: #6b7280;
+  --success-color: #059669;
 
-    /* === フォント変数 === */
-    --font-size-body: 14px;
-    --font-size-title: 24px;
-    --font-size-subtitle: 18px;
-    --font-size-small: 12px;
-    --font-size-tiny: 10px;
-    --font-practice: "Times New Roman", serif;
-    --font-ui: "Segoe UI", "Roboto", sans-serif;
-    --font-japanese: "Hiragino Sans", "Yu Gothic", sans-serif;
+  /* === フォント変数 === */
+  --font-size-body: 14px;
+  --font-size-title: 24px;
+  --font-size-subtitle: 18px;
+  --font-size-small: 12px;
+  --font-size-tiny: 10px;
+  --font-practice: 'Times New Roman', serif;
+  --font-ui: 'Segoe UI', 'Roboto', sans-serif;
+  --font-japanese: 'Hiragino Sans', 'Yu Gothic', sans-serif;
 }
 
 /* === 基本スタイル === */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background-color: var(--background-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: var(--background-color);
 }
 
 /* === ヘッダー === */
 .header {
-    background: white;
-    padding: 2rem 1rem;
-    text-align: center;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 2rem;
+  background: white;
+  padding: 2rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 2rem;
 }
 
 .header__title {
-    font-size: 2rem;
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
 }
 
 .header__description {
-    color: var(--secondary-color);
-    font-size: 1.1rem;
+  color: var(--secondary-color);
+  font-size: 1.1rem;
 }
 
 /* === メインコンテンツ === */
 .main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
 }
 
 /* === コントロールパネル === */
 .controls {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    height: fit-content;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  height: fit-content;
 }
 
 .controls__group {
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .controls__subtitle {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--primary-color);
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
 }
 
 .controls__label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--text-color);
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
 }
 
 .controls__input,
 .controls__select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 1rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
 .controls__input:focus,
 .controls__select:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .controls__checkbox {
-    width: auto;
-    margin-right: 0.5rem;
+  width: auto;
+  margin-right: 0.5rem;
 }
 
 /* === ボタン === */
 .btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    width: 100%;
-    margin-bottom: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-bottom: 0.5rem;
 }
 
 .btn--primary {
-    background-color: var(--primary-color);
-    color: white;
+  background-color: var(--primary-color);
+  color: white;
 }
 
 .btn--primary:hover:not(:disabled) {
-    background-color: #1d4ed8;
+  background-color: #1d4ed8;
 }
 
 .btn--secondary {
-    background-color: var(--secondary-color);
-    color: white;
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
+  background-color: var(--secondary-color);
+  color: white;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
 }
 
 .btn--secondary:hover:not(:disabled) {
-    background-color: #4b5563;
+  background-color: #4b5563;
 }
 
 .btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* === プレビューエリア === */
 .preview {
-    background: white;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    overflow: hidden;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
 }
 
 .note-preview {
-    width: 100%;
-    min-height: 600px;
-    padding: 2rem;
+  width: 100%;
+  min-height: 600px;
+  padding: 2rem;
 }
 
 .note-preview__placeholder {
-    text-align: center;
-    color: var(--secondary-color);
-    font-style: italic;
-    padding: 4rem 2rem;
+  text-align: center;
+  color: var(--secondary-color);
+  font-style: italic;
+  padding: 4rem 2rem;
 }
 
 /* === 英語ノートページ === */
 .note-page {
-    width: 100%;
-    max-width: 210mm; /* A4幅 */
-    margin: 0 auto;
-    background: white;
-    padding: var(--margin-standard); /* 統一設定システムから取得 */
-    min-height: 297mm; /* A4高さ */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 210mm; /* A4幅 */
+  margin: 0 auto;
+  background: white;
+  padding: var(--margin-standard); /* 統一設定システムから取得 */
+  min-height: 297mm; /* A4高さ */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .note-page__header {
-    text-align: center;
-    margin-bottom: 10mm;
-    padding-bottom: 5mm;
+  text-align: center;
+  margin-bottom: 10mm;
+  padding-bottom: 5mm;
 }
 
 .note-page__title {
-    font-size: 18pt;
-    font-weight: bold;
-    margin-bottom: 2mm;
+  font-size: 18pt;
+  font-weight: bold;
+  margin-bottom: 2mm;
 }
 
 .note-page__subtitle {
-    font-size: 12pt;
-    color: var(--secondary-color);
+  font-size: 12pt;
+  color: var(--secondary-color);
 }
 
 /* === 4本線ベースライン === */
 .baseline-group {
-    height: var(--line-height-mm, 10mm);
-    position: relative;
-    margin-bottom: var(--line-spacing-mm, 2mm);
-    page-break-inside: avoid;
+  height: var(--line-height-mm, 10mm);
+  position: relative;
+  margin-bottom: var(--line-spacing-mm, 2mm);
+  page-break-inside: avoid;
 }
 
 .baseline {
-    position: absolute;
-    width: 100%;
-    height: 0;
-    left: 0;
+  position: absolute;
+  width: 100%;
+  height: 0;
+  left: 0;
 }
 
 .baseline--top {
-    top: 0;
-    border-bottom: 1px dashed #d0d0d0;  /* 破線 */
+  top: 0;
+  border-bottom: 1px dashed #d0d0d0; /* 破線 */
 }
 
 .baseline--upper {
-    top: 31.25%;  /* 5/16 = 31.25% */
-    border-bottom: 1px dotted #d0d0d0;  /* 点線 */
+  top: 31.25%; /* 5/16 = 31.25% */
+  border-bottom: 1px dotted #d0d0d0; /* 点線 */
 }
 
 .baseline--lower {
-    top: 68.75%;  /* (5+6)/16 = 68.75% - ベースライン */
-    border-bottom: 2px solid #666;  /* 太い実線 */
+  top: 68.75%; /* (5+6)/16 = 68.75% - ベースライン */
+  border-bottom: 2px solid #666; /* 太い実線 */
 }
 
 .baseline--bottom {
-    top: 100%;
-    border-bottom: 1px solid #b0b0b0;  /* 細い実線 */
+  top: 100%;
+  border-bottom: 1px solid #b0b0b0; /* 細い実線 */
 }
 
 /* === 色のバリエーション === */
-.line-color-blue .baseline--top { border-bottom-color: #99ccff; }
-.line-color-blue .baseline--upper { border-bottom-color: #99ccff; }
-.line-color-blue .baseline--lower { border-bottom-color: #0066cc; }
-.line-color-blue .baseline--bottom { border-bottom-color: #99ccff; }
+.line-color-blue .baseline--top {
+  border-bottom-color: #99ccff;
+}
+.line-color-blue .baseline--upper {
+  border-bottom-color: #99ccff;
+}
+.line-color-blue .baseline--lower {
+  border-bottom-color: #0066cc;
+}
+.line-color-blue .baseline--bottom {
+  border-bottom-color: #99ccff;
+}
 
-.line-color-green .baseline--top { border-bottom-color: #99d6b3; }
-.line-color-green .baseline--upper { border-bottom-color: #99d6b3; }
-.line-color-green .baseline--lower { border-bottom-color: #009933; }
-.line-color-green .baseline--bottom { border-bottom-color: #99d6b3; }
+.line-color-green .baseline--top {
+  border-bottom-color: #99d6b3;
+}
+.line-color-green .baseline--upper {
+  border-bottom-color: #99d6b3;
+}
+.line-color-green .baseline--lower {
+  border-bottom-color: #009933;
+}
+.line-color-green .baseline--bottom {
+  border-bottom-color: #99d6b3;
+}
 
 /* === 例文表示 === */
 .example-sentence {
-    margin-bottom: 2mm;
-    font-size: 14pt;
-    color: #666;
-    page-break-inside: avoid;
+  margin-bottom: 2mm;
+  font-size: 14pt;
+  color: #666;
+  page-break-inside: avoid;
 }
 
 .example-english {
-    font-family: "Times New Roman", serif;
-    margin-bottom: 0.5mm;
-    font-weight: 500;
+  font-family: 'Times New Roman', serif;
+  margin-bottom: 0.5mm;
+  font-weight: 500;
 }
 
 .example-japanese {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
-    font-size: 11pt;
-    color: #888;
-    margin-bottom: 2mm;
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+  font-size: 11pt;
+  color: #888;
+  margin-bottom: 2mm;
 }
-
 
 /* === 文章練習モード === */
 .sentence-practice-group {
-    margin-bottom: var(--sentence-group-margin, 10mm);
-    page-break-inside: avoid;
+  margin-bottom: var(--sentence-group-margin, 10mm);
+  page-break-inside: avoid;
 }
 
 /* === ヘッダー情報 === */
 .note-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5mm;
-    padding-bottom: 3mm;
-    border-bottom: 2px solid var(--text-color);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5mm;
+  padding-bottom: 3mm;
+  border-bottom: 2px solid var(--text-color);
 }
 
 .note-header__item {
-    display: flex;
-    align-items: center;
-    gap: 5mm;
+  display: flex;
+  align-items: center;
+  gap: 5mm;
 }
 
 .note-header__label {
-    font-weight: 600;
-    font-size: 11pt;
+  font-weight: 600;
+  font-size: 11pt;
 }
 
 .note-header__input {
-    border: none;
-    border-bottom: 1px solid var(--text-color);
-    min-width: 50mm;
-    font-size: 11pt;
-    padding: 1mm 2mm;
+  border: none;
+  border-bottom: 1px solid var(--text-color);
+  min-width: 50mm;
+  font-size: 11pt;
+  padding: 1mm 2mm;
 }
 
 .practice-lines {
-    position: relative;
+  position: relative;
 }
 
 .line-separator {
-    height: var(--line-separator-height, 4mm);
-    border-bottom: none;
+  height: var(--line-separator-height, 4mm);
+  border-bottom: none;
 }
 
 /* 通常練習モードの行グループ区切り */
 .line-group-separator {
-    height: var(--line-group-separator-height, 3mm);
-    border-bottom: none;
+  height: var(--line-group-separator-height, 3mm);
+  border-bottom: none;
 }
 
 /* 通常練習モードの1行ごとの区切り */
 .line-separator-small {
-    height: var(--line-separator-small-height, 4mm);
-    border-bottom: none;
+  height: var(--line-separator-small-height, 4mm);
+  border-bottom: none;
 }
 
 /* === フッター === */
 .footer {
-    text-align: center;
-    padding: 2rem;
-    margin-top: 4rem;
-    color: var(--secondary-color);
-    border-top: 1px solid var(--border-color);
+  text-align: center;
+  padding: 2rem;
+  margin-top: 4rem;
+  color: var(--secondary-color);
+  border-top: 1px solid var(--border-color);
 }
 
 /* === 印刷用スタイル === */
 @media print {
-    /* ページ設定 */
-    @page {
-        size: A4;
-        margin: 0;
-    }
+  /* ページ設定 */
+  @page {
+    size: A4;
+    margin: 0;
+  }
 
-    /* 印刷時非表示 */
-    .no-print,
-    .controls,
-    .header,
-    .footer,
-    .page-separator {
-        display: none !important;
-    }
+  /* htmlとbodyの余白を明示的に制御 */
+  html {
+    margin: 0;
+    padding: 0;
+  }
 
-    /* メインレイアウト調整 */
-    .main {
-        display: block !important;
-        max-width: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
+  body {
+    margin: 0;
+    padding: 0;
+  }
 
-    .preview {
-        border: none !important;
-        border-radius: 0 !important;
-        background: white !important;
-    }
+  /* 印刷時非表示 */
+  .no-print,
+  .controls,
+  .header,
+  .footer,
+  .page-separator {
+    display: none !important;
+  }
 
-    .note-preview {
-        padding: 0 !important;
-        min-height: auto !important;
-    }
+  /* メインレイアウト調整 */
+  .main {
+    display: block !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 
-    /* ノートページ */
-    .note-page {
-        width: 100% !important;
-        max-width: none !important;
-        margin: 0 !important;
-        padding: var(--margin-standard) !important;
-        min-height: 100vh !important;
-        box-shadow: none !important;
-    }
+  .preview {
+    border: none !important;
+    border-radius: 0 !important;
+    background: white !important;
+  }
 
-    /* ベースライン - 印刷時の線種維持 */
-    .baseline--top {
-        border-bottom: 0.8px dashed #a0a0a0 !important;  /* 破線 */
-    }
-    
-    .baseline--upper {
-        border-bottom: 0.5px dotted #a0a0a0 !important;  /* 点線 */
-    }
-    
-    .baseline--lower {
-        border-bottom: 1.5px solid #333 !important;  /* 太い実線 */
-    }
-    
-    .baseline--bottom {
-        border-bottom: 0.8px solid #808080 !important;  /* 細い実線 */
-    }
+  .note-preview {
+    padding: 0 !important;
+    min-height: auto !important;
+  }
 
-    /* 例文 */
-    .example-sentence {
-        font-size: 12pt !important;
-    }
+  /* ノートページ */
+  .note-page {
+    width: 210mm !important; /* A4幅を明示 */
+    height: 297mm !important; /* A4高さを明示 */
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 5mm 10mm !important; /* 変数ではなく直接指定 */
+    box-sizing: border-box !important; /* パディングを含めたサイズ計算 */
+    box-shadow: none !important;
+  }
 
-    .example-japanese {
-        font-size: 10pt !important;
-    }
+  /* ベースライン - 印刷時の線種維持 */
+  .baseline--top {
+    border-bottom: 0.8px dashed #a0a0a0 !important; /* 破線 */
+  }
 
-    /* 文字色調整 */
-    .guide-letter {
-        color: #e0e0e0 !important;
-    }
+  .baseline--upper {
+    border-bottom: 0.5px dotted #a0a0a0 !important; /* 点線 */
+  }
 
-    /* ページ内改行制御 */
-    .baseline-group,
-    .sentence-practice-group,
-    .example-sentence,
-    .phrase-item {
-        page-break-inside: avoid !important;
-    }
-    
-    /* フレーズ練習の印刷時調整 */
-    .phrase-situation {
-        background: none !important;
-        border: 1px solid #ddd !important;
-        font-size: 8pt !important;
-    }
-    
-    /* 印刷時のページ番号スタイル調整 */
-    .page-number {
-        background: none !important;
-        box-shadow: none !important;
-        border: 1px solid #ddd !important;
-    }
-    
-    /* 複数ページの影を削除 */
-    .note-page:not(:first-child) {
-        margin-top: 0 !important;
-        box-shadow: none !important;
-    }
+  .baseline--lower {
+    border-bottom: 1.5px solid #333 !important; /* 太い実線 */
+  }
+
+  .baseline--bottom {
+    border-bottom: 0.8px solid #808080 !important; /* 細い実線 */
+  }
+
+  /* 例文 */
+  .example-sentence {
+    font-size: 12pt !important;
+  }
+
+  .example-japanese {
+    font-size: 10pt !important;
+  }
+
+  /* 文字色調整 */
+  .guide-letter {
+    color: #e0e0e0 !important;
+  }
+
+  /* ページ内改行制御 */
+  .baseline-group,
+  .sentence-practice-group,
+  .example-sentence,
+  .phrase-item {
+    page-break-inside: avoid !important;
+  }
+
+  /* フレーズ練習の印刷時調整 */
+  .phrase-situation {
+    background: none !important;
+    border: 1px solid #ddd !important;
+    font-size: 8pt !important;
+  }
+
+  /* 印刷時のページ番号スタイル調整 */
+  .page-number {
+    background: none !important;
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+
+  /* 複数ページの影を削除 */
+  .note-page:not(:first-child) {
+    margin-top: 0 !important;
+    box-shadow: none !important;
+  }
 }
 
 /* === 印刷プレビューモーダル === */
 .print-preview-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 1000;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .print-preview-modal.modal-visible {
-    display: flex !important;
-    opacity: 1;
+  display: flex !important;
+  opacity: 1;
 }
 
 .print-preview-content {
-    background: white;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 1000px;
-    height: 90%;
-    max-height: 800px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 1000px;
+  height: 90%;
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .print-preview-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-    background: var(--bg-color);
-    border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-color);
+  border-radius: 12px 12px 0 0;
 }
 
 .print-preview-header h3 {
-    margin: 0;
-    color: var(--text-color);
+  margin: 0;
+  color: var(--text-color);
 }
 
 .close-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--secondary-color);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--secondary-color);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
 }
 
 .close-btn:hover {
-    background: var(--border-color);
-    color: var(--text-color);
+  background: var(--border-color);
+  color: var(--text-color);
 }
 
 .print-preview-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  overflow: hidden;
 }
 
 .preview-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding: 0.5rem;
-    background: var(--bg-color);
-    border-radius: 6px;
-    font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: var(--bg-color);
+  border-radius: 6px;
+  font-size: 14px;
 }
 
 .page-size-info {
-    color: var(--secondary-color);
+  color: var(--secondary-color);
 }
 
 .zoom-info {
-    color: var(--text-color);
+  color: var(--text-color);
 }
 
 .a4-preview-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: auto;
-    background: #f5f5f5;
-    border-radius: 8px;
-    padding: 2rem;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 2rem;
 }
 
 .a4-preview-page {
-    width: 210mm;
-    height: 297mm;
-    background: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-radius: 4px;
-    padding: 5mm 10mm;
-    transform: scale(0.6);
-    transform-origin: center;
-    overflow: hidden;
-    position: relative;
+  width: 210mm;
+  height: 297mm;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  padding: 5mm 10mm;
+  transform: scale(0.6);
+  transform-origin: center;
+  overflow: hidden;
+  position: relative;
 }
 
-.a4-preview-page.zoom-50 { transform: scale(0.5); }
-.a4-preview-page.zoom-60 { transform: scale(0.6); }
-.a4-preview-page.zoom-70 { transform: scale(0.7); }
-.a4-preview-page.zoom-80 { transform: scale(0.8); }
-.a4-preview-page.zoom-90 { transform: scale(0.9); }
-.a4-preview-page.zoom-100 { transform: scale(1); }
+.a4-preview-page.zoom-50 {
+  transform: scale(0.5);
+}
+.a4-preview-page.zoom-60 {
+  transform: scale(0.6);
+}
+.a4-preview-page.zoom-70 {
+  transform: scale(0.7);
+}
+.a4-preview-page.zoom-80 {
+  transform: scale(0.8);
+}
+.a4-preview-page.zoom-90 {
+  transform: scale(0.9);
+}
+.a4-preview-page.zoom-100 {
+  transform: scale(1);
+}
 
 .preview-controls {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    padding: 1rem 0;
-    border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border-color);
 }
 
 .btn--small {
-    padding: 0.5rem 1rem;
-    font-size: 14px;
+  padding: 0.5rem 1rem;
+  font-size: 14px;
 }
 
 /* プレビュー内のスタイル調整 - 印刷スタイルを模倣 */
 .a4-preview-page .phrase-practice {
-    padding: 0;
+  padding: 0;
 }
 
 .a4-preview-page .phrase-item {
-    margin-bottom: 2mm;
-    page-break-inside: avoid;
+  margin-bottom: 2mm;
+  page-break-inside: avoid;
 }
 
 .a4-preview-page .phrase-header {
-    margin-bottom: 1mm;
+  margin-bottom: 1mm;
 }
 
 .a4-preview-page .phrase-english {
-    font-size: 13pt;
+  font-size: 13pt;
 }
 
 .a4-preview-page .phrase-japanese {
-    font-size: 10pt;
+  font-size: 10pt;
 }
 
 .a4-preview-page .phrase-situation {
-    font-size: 8pt;
-    background: none;
-    border: 1px solid #ddd;
+  font-size: 8pt;
+  background: none;
+  border: 1px solid #ddd;
 }
 
 /* プレビューでのベースライン色調整 */
 .a4-preview-page .baseline--top {
-    border-bottom: 0.8px dashed #a0a0a0;
+  border-bottom: 0.8px dashed #a0a0a0;
 }
 
 .a4-preview-page .baseline--upper {
-    border-bottom: 0.5px dotted #a0a0a0;
+  border-bottom: 0.5px dotted #a0a0a0;
 }
 
 .a4-preview-page .baseline--lower {
-    border-bottom: 1.5px solid #333;
+  border-bottom: 1.5px solid #333;
 }
 
 .a4-preview-page .baseline--bottom {
-    border-bottom: 0.8px solid #808080;
+  border-bottom: 0.8px solid #808080;
 }
 
 /* プレビューでの文字色調整 */
 .a4-preview-page .guide-letter {
-    color: #e0e0e0;
+  color: #e0e0e0;
 }
 
 .a4-preview-page .example-sentence {
-    font-size: 12pt;
+  font-size: 12pt;
 }
 
 .a4-preview-page .example-japanese {
-    font-size: 10pt;
+  font-size: 10pt;
 }
 
 /* === レスポンシブデザイン === */
 @media (max-width: 768px) {
-    .main {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
+  .main {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 
-    .controls {
-        order: 2;
-    }
+  .controls {
+    order: 2;
+  }
 
-    .preview {
-        order: 1;
-    }
+  .preview {
+    order: 1;
+  }
 
-    .note-page {
-        transform: scale(0.8);
-        transform-origin: top center;
-    }
+  .note-page {
+    transform: scale(0.8);
+    transform-origin: top center;
+  }
 }
 
 /* === 新しい練習モード用スタイル === */
 
 /* アルファベット練習 */
 .alphabet-practice {
-    padding: 5mm 0;
+  padding: 5mm 0;
 }
 
 /* アルファベット2列グリッドレイアウト */
 .alphabet-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10mm 15mm;
-    margin-top: 5mm;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10mm 15mm;
+  margin-top: 5mm;
 }
 
 .alphabet-grid-item {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .alphabet-header {
-    display: flex;
-    align-items: baseline;
-    gap: 5mm;
-    margin-bottom: 3mm;
-    min-height: 10mm;
+  display: flex;
+  align-items: baseline;
+  gap: 5mm;
+  margin-bottom: 3mm;
+  min-height: 10mm;
 }
 
 .alphabet-letter {
-    font-size: 28pt;
-    font-weight: bold;
-    color: var(--primary-color);
-    min-width: 15mm;
+  font-size: 28pt;
+  font-weight: bold;
+  color: var(--primary-color);
+  min-width: 15mm;
 }
 
 .alphabet-example {
-    display: flex;
-    align-items: baseline;
-    gap: 3mm;
-    flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 3mm;
+  flex: 1;
 }
 
 .example-word {
-    font-size: 12pt;
-    color: #666;
+  font-size: 12pt;
+  color: #666;
 }
 
 .example-meaning {
-    font-size: 10pt;
-    color: #999;
+  font-size: 10pt;
+  color: #999;
 }
 
 .alphabet-lines {
-    flex: 1;
+  flex: 1;
 }
 
 .alphabet-note {
-    text-align: center;
-    margin-top: 10mm;
-    font-size: 10pt;
-    color: #666;
-    font-style: italic;
+  text-align: center;
+  margin-top: 10mm;
+  font-size: 10pt;
+  color: #666;
+  font-style: italic;
 }
 
 /* フレーズ練習 */
 .phrase-practice {
-    padding: 0mm 0;
+  padding: 0mm 0;
 }
 
 .phrase-item {
-    margin-bottom: 2mm;
+  margin-bottom: 2mm;
 }
 
 /* フレーズヘッダー部分 */
 .phrase-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 6mm;
-    margin-bottom: 1mm;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 6mm;
+  margin-bottom: 1mm;
 }
 
 .phrase-main {
-    flex: 1;
+  flex: 1;
 }
 
 .phrase-english {
-    font-size: 13pt;
-    font-weight: bold;
-    color: var(--text-color);
-    line-height: 1.2;
+  font-size: 13pt;
+  font-weight: bold;
+  color: var(--text-color);
+  line-height: 1.2;
 }
 
 .phrase-japanese {
-    font-size: 10pt;
-    color: #666;
-    margin-top: 1mm;
-    line-height: 1.1;
+  font-size: 10pt;
+  color: #666;
+  margin-top: 1mm;
+  line-height: 1.1;
 }
 
 /* 使用場面 - 右側に配置 */
 .phrase-situation {
-    font-size: 8pt;
-    color: #999;
-    background: #f8f8f8;
-    padding: 1px 4px;
-    border-radius: 2px;
-    white-space: nowrap;
-    align-self: flex-start;
-    flex-shrink: 0;
+  font-size: 8pt;
+  color: #999;
+  background: #f8f8f8;
+  padding: 1px 4px;
+  border-radius: 2px;
+  white-space: nowrap;
+  align-self: flex-start;
+  flex-shrink: 0;
 }
 
 /* 練習用罫線部分 */
 .phrase-lines {
-    margin-top: 0mm;
+  margin-top: 0mm;
 }
 
 /* 練習モード共通のタイトル */
 .practice-title {
-    text-align: center;
-    font-size: 16pt;
-    font-weight: bold;
-    margin-bottom: 10mm;
-    color: var(--text-color);
+  text-align: center;
+  font-size: 16pt;
+  font-weight: bold;
+  margin-bottom: 10mm;
+  color: var(--text-color);
 }
 
 /* === ページ区切りとページ番号のスタイル === */
 
 /* ページ区切り（プレビュー用） */
 .page-separator {
-    display: flex;
-    align-items: center;
-    margin: 30px 0;
-    padding: 20px 0;
-    position: relative;
+  display: flex;
+  align-items: center;
+  margin: 30px 0;
+  padding: 20px 0;
+  position: relative;
 }
 
 .page-separator-line {
-    flex: 1;
-    height: 2px;
-    background: linear-gradient(to right, transparent, #ddd, transparent);
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #ddd, transparent);
 }
 
 .page-separator-text {
-    padding: 0 20px;
-    font-size: 14px;
-    color: #666;
-    background: var(--background-color);
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  padding: 0 20px;
+  font-size: 14px;
+  color: #666;
+  background: var(--background-color);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* ページ番号 */
 .page-number {
-    position: absolute;
-    bottom: 10mm;
-    right: 15mm;
-    padding: 5px 10px;
-    background: #f0f0f0;
-    border-radius: 15px;
-    font-size: 12pt;
-    color: #666;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 10mm;
+  right: 15mm;
+  padding: 5px 10px;
+  background: #f0f0f0;
+  border-radius: 15px;
+  font-size: 12pt;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .page-number-current {
-    font-weight: bold;
-    color: var(--primary-color);
-    font-size: 14pt;
+  font-weight: bold;
+  color: var(--primary-color);
+  font-size: 14pt;
 }
 
 .page-number-separator {
-    color: #999;
+  color: #999;
 }
 
 .page-number-total {
-    color: #666;
+  color: #666;
 }
 
 /* 複数ページの場合、各ページに影をつける */
 .note-page:not(:first-child) {
-    margin-top: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* === デバッグモード（開発時のみ） === */
 .debug-mode .baseline {
-    border-bottom: 1px solid red !important;
+  border-bottom: 1px solid red !important;
 }
 
 .debug-mode .baseline--top {
-    border-color: red !important;
+  border-color: red !important;
 }
 
 .debug-mode .baseline--upper {
-    border-color: blue !important;
+  border-color: blue !important;
 }
 
 .debug-mode .baseline--lower {
-    border-color: green !important;
+  border-color: green !important;
 }
 
 .debug-mode .baseline--bottom {
-    border-color: orange !important;
+  border-color: orange !important;
 }

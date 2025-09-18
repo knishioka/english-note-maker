@@ -11,16 +11,16 @@ export default [
       'no-unused-vars': 'warn',
 
       // 等価演算子の統一
-      'eqeqeq': 'error',
+      eqeqeq: 'error',
 
       // セミコロンの強制
-      'semi': ['error', 'always'],
+      semi: ['error', 'always'],
 
       // インデント（2スペース）
-      'indent': ['error', 2],
+      indent: ['error', 2],
 
       // 引用符の統一（シングルクォート）
-      'quotes': ['error', 'single'],
+      quotes: ['error', 'single'],
 
       // 関数の前のスペース
       'space-before-function-paren': ['error', 'never'],
@@ -38,16 +38,16 @@ export default [
       'eol-last': 'error',
 
       // カンマ後のスペース
-      'comma-spacing': ['error', { 'before': false, 'after': true }],
+      'comma-spacing': ['error', { before: false, after: true }],
 
       // キーワード後のスペース
-      'keyword-spacing': ['error', { 'before': true, 'after': true }],
+      'keyword-spacing': ['error', { before: true, after: true }],
 
       // ブロック内のスペース
       'space-in-parens': ['error', 'never'],
 
       // 演算子周りのスペース
-      'space-infix-ops': 'error'
+      'space-infix-ops': 'error',
     },
     languageOptions: {
       ecmaVersion: 2022,
@@ -67,9 +67,9 @@ export default [
         Event: 'readonly',
         CustomEvent: 'readonly',
         HTMLElement: 'readonly',
-        DOMContentLoaded: 'readonly'
-      }
-    }
+        DOMContentLoaded: 'readonly',
+      },
+    },
   },
   {
     files: ['src/**/*.js', 'script.js'],
@@ -77,7 +77,7 @@ export default [
       // アプリケーション固有のルール
       'no-var': 'error',
       'prefer-const': 'warn',
-      'prefer-arrow-callback': 'warn'
-    }
-  }
+      'prefer-arrow-callback': 'warn',
+    },
+  },
 ];

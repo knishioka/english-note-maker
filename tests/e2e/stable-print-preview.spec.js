@@ -7,7 +7,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Stable Print Preview Tests', () => {
-  test.beforeEach(async({ page }) => {
+  test.beforeEach(async ({ page }) => {
     // Navigate to the application
     await page.goto('/');
 
@@ -18,19 +18,19 @@ test.describe('Stable Print Preview Tests', () => {
     await page.waitForFunction(() => window.Debug !== undefined, { timeout: 10000 });
 
     // Capture console messages for debugging
-    page.on('console', msg => {
+    page.on('console', (msg) => {
       if (msg.type() === 'error') {
         console.error(`Browser error: ${msg.text()}`);
       }
     });
 
     // Capture page errors
-    page.on('pageerror', error => {
+    page.on('pageerror', (error) => {
       console.error(`Page error: ${error.message}`);
     });
   });
 
-  test('print preview modal shows and hides correctly', async({ page }) => {
+  test('print preview modal shows and hides correctly', async ({ page }) => {
     // Verify initial state
     const modal = page.locator('#printPreviewModal');
     await expect(modal).not.toBeVisible();
@@ -44,13 +44,16 @@ test.describe('Stable Print Preview Tests', () => {
     await previewBtn.click();
 
     // Wait for modal animation to complete
-    await page.waitForFunction(() => {
-      const modal = document.querySelector('#printPreviewModal');
-      if (!modal) return false;
+    await page.waitForFunction(
+      () => {
+        const modal = document.querySelector('#printPreviewModal');
+        if (!modal) return false;
 
-      const styles = window.getComputedStyle(modal);
-      return styles.display === 'flex' && parseFloat(styles.opacity) > 0.9;
-    }, { timeout: 5000 });
+        const styles = window.getComputedStyle(modal);
+        return styles.display === 'flex' && parseFloat(styles.opacity) > 0.9;
+      },
+      { timeout: 5000 }
+    );
 
     // Verify modal is visible
     await expect(modal).toBeVisible();
@@ -67,25 +70,28 @@ test.describe('Stable Print Preview Tests', () => {
     await closeBtn.click();
 
     // Wait for modal to be hidden
-    await page.waitForFunction(() => {
-      const modal = document.querySelector('#printPreviewModal');
-      if (!modal) return true;
+    await page.waitForFunction(
+      () => {
+        const modal = document.querySelector('#printPreviewModal');
+        if (!modal) return true;
 
-      const styles = window.getComputedStyle(modal);
-      return styles.display === 'none' || parseFloat(styles.opacity) === 0;
-    }, { timeout: 5000 });
+        const styles = window.getComputedStyle(modal);
+        return styles.display === 'none' || parseFloat(styles.opacity) === 0;
+      },
+      { timeout: 5000 }
+    );
 
     // Verify modal is hidden
     await expect(modal).not.toBeVisible();
   });
 
-  test('debug utilities are functioning correctly', async({ page }) => {
+  test('debug utilities are functioning correctly', async ({ page }) => {
     // Verify Debug utilities are loaded
     const debugAvailable = await page.evaluate(() => {
       return {
         debugExists: typeof window.Debug !== 'undefined',
         loggerExists: window.Debug?.logger !== undefined,
-        panelExists: window.Debug?.panel !== undefined
+        panelExists: window.Debug?.panel !== undefined,
       };
     });
 
@@ -108,7 +114,7 @@ test.describe('Stable Print Preview Tests', () => {
     expect(Array.isArray(logs.warnings)).toBeTruthy();
   });
 
-  test('page navigation and controls work correctly', async({ page }) => {
+  test('page navigation and controls work correctly', async ({ page }) => {
     // Test practice mode selection
     const practiceModeSelect = page.locator('#practiceMode');
     await expect(practiceModeSelect).toBeVisible();
@@ -138,15 +144,18 @@ test.describe('Stable Print Preview Tests', () => {
     await expect(notePreview).toBeVisible();
   });
 
-  test('keyboard shortcuts work correctly', async({ page }) => {
+  test('keyboard shortcuts work correctly', async ({ page }) => {
     // Test debug panel shortcut (Ctrl+Shift+D)
     await page.keyboard.press('Control+Shift+KeyD');
 
     // Wait for debug panel to appear
-    await page.waitForFunction(() => {
-      const panel = document.querySelector('#debug-panel');
-      return panel && window.getComputedStyle(panel).display !== 'none';
-    }, { timeout: 3000 });
+    await page.waitForFunction(
+      () => {
+        const panel = document.querySelector('#debug-panel');
+        return panel && window.getComputedStyle(panel).display !== 'none';
+      },
+      { timeout: 3000 }
+    );
 
     const debugPanel = page.locator('#debug-panel');
     await expect(debugPanel).toBeVisible();
@@ -156,7 +165,7 @@ test.describe('Stable Print Preview Tests', () => {
     await expect(debugPanel).not.toBeVisible();
   });
 
-  test('performance monitoring works', async({ page }) => {
+  test('performance monitoring works', async ({ page }) => {
     // Start performance measurement
     await page.evaluate(() => {
       window.Debug.startTimer('test-operation');
@@ -178,7 +187,7 @@ test.describe('Stable Print Preview Tests', () => {
     await page.click('#closePreviewBtn');
   });
 
-  test('error handling and logging', async({ page }) => {
+  test('error handling and logging', async ({ page }) => {
     let errorCaught = false;
 
     // Listen for page errors
@@ -191,7 +200,7 @@ test.describe('Stable Print Preview Tests', () => {
     await page.evaluate(() => {
       window.Debug.error('TEST', 'Test error message', {
         testError: true,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     });
 
@@ -202,16 +211,14 @@ test.describe('Stable Print Preview Tests', () => {
 
     expect(logs.errors.length).toBeGreaterThan(0);
 
-    const testError = logs.errors.find(error =>
-      error.data && error.data.testError === true
-    );
+    const testError = logs.errors.find((error) => error.data && error.data.testError === true);
     expect(testError).toBeDefined();
   });
 });
 
 test.describe('Cross-browser compatibility', () => {
-  ['chromium', 'firefox', 'webkit'].forEach(browserName => {
-    test(`print preview works in ${browserName}`, async({ page, browserName: currentBrowser }) => {
+  ['chromium', 'firefox', 'webkit'].forEach((browserName) => {
+    test(`print preview works in ${browserName}`, async ({ page, browserName: currentBrowser }) => {
       test.skip(currentBrowser !== browserName, `Skipping ${browserName} test`);
 
       await page.goto('/');
@@ -223,7 +230,7 @@ test.describe('Cross-browser compatibility', () => {
       // Wait for modal with longer timeout for slower browsers
       await page.waitForSelector('#printPreviewModal', {
         state: 'visible',
-        timeout: 10000
+        timeout: 10000,
       });
 
       await expect(page.locator('#printPreviewModal')).toBeVisible();

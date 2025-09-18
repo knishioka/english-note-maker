@@ -19,7 +19,7 @@ class DebugLogger {
       info: 1,
       warn: 2,
       error: 3,
-      critical: 4
+      critical: 4,
     };
 
     // Performance tracking
@@ -30,13 +30,13 @@ class DebugLogger {
     this.warnings = [];
 
     // Initialize in development mode only
-    this.isDevelopment = window.location.hostname === 'localhost' ||
-                            window.location.hostname === '127.0.0.1';
+    this.isDevelopment =
+      window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   }
 
   /**
-     * Core logging method with structured output
-     */
+   * Core logging method with structured output
+   */
   log(level, category, message, data = {}) {
     if (!this.enabled || !this.isDevelopment) return;
 
@@ -53,7 +53,7 @@ class DebugLogger {
       message,
       data,
       url: window.location.href,
-      userAgent: navigator.userAgent
+      userAgent: navigator.userAgent,
     };
 
     // Store errors and warnings for Playwright
@@ -80,8 +80,8 @@ class DebugLogger {
   }
 
   /**
-     * Convenience methods for different log levels
-     */
+   * Convenience methods for different log levels
+   */
   debug(category, message, data) {
     this.log('debug', category, message, data);
   }
@@ -103,8 +103,8 @@ class DebugLogger {
   }
 
   /**
-     * Performance measurement utilities
-     */
+   * Performance measurement utilities
+   */
   startPerformance(markName) {
     this.performanceMarks.set(markName, performance.now());
     this.debug('PERFORMANCE', `Started measuring: ${markName}`);
@@ -122,15 +122,15 @@ class DebugLogger {
 
     this.info('PERFORMANCE', `${markName} completed`, {
       duration: `${duration.toFixed(2)}ms`,
-      threshold: duration > 100 ? 'SLOW' : 'OK'
+      threshold: duration > 100 ? 'SLOW' : 'OK',
     });
 
     return duration;
   }
 
   /**
-     * Element state debugging
-     */
+   * Element state debugging
+   */
   logElementState(selector, elementName) {
     const element = document.querySelector(selector);
     if (!element) {
@@ -150,90 +150,89 @@ class DebugLogger {
         width: rect.width,
         height: rect.height,
         top: rect.top,
-        left: rect.left
+        left: rect.left,
       },
       classes: element.className,
-      id: element.id
+      id: element.id,
     });
   }
 
   /**
-     * Event debugging
-     */
+   * Event debugging
+   */
   logEvent(eventType, target, detail = {}) {
     this.debug('EVENT', `${eventType} triggered`, {
       target: target.id || target.className || target.tagName,
       detail,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
   /**
-     * Print layout debugging
-     */
+   * Print layout debugging
+   */
   logPrintLayout() {
-    const printStyles = Array.from(document.styleSheets)
-      .filter(sheet => {
-        try {
-          return Array.from(sheet.cssRules).some(rule =>
-            rule.cssText && rule.cssText.includes('@media print')
-          );
-        } catch (e) {
-          return false;
-        }
-      });
+    const printStyles = Array.from(document.styleSheets).filter((sheet) => {
+      try {
+        return Array.from(sheet.cssRules).some(
+          (rule) => rule.cssText && rule.cssText.includes('@media print')
+        );
+      } catch (e) {
+        return false;
+      }
+    });
 
     this.info('PRINT', 'Print layout analysis', {
       printStylesheets: printStyles.length,
       pageSize: this.getPageSize(),
-      margins: this.getPageMargins()
+      margins: this.getPageMargins(),
     });
   }
 
   /**
-     * Get print page size from CSS
-     */
+   * Get print page size from CSS
+   */
   getPageSize() {
     // This would need actual CSS parsing in production
     return 'A4';
   }
 
   /**
-     * Get print margins from CSS
-     */
+   * Get print margins from CSS
+   */
   getPageMargins() {
     // This would need actual CSS parsing in production
     return '10mm';
   }
 
   /**
-     * Color coding for log levels
-     */
+   * Color coding for log levels
+   */
   getColorForLevel(level) {
     const colors = {
       debug: '#888',
       info: '#2196F3',
       warn: '#FF9800',
       error: '#F44336',
-      critical: '#B71C1C'
+      critical: '#B71C1C',
     };
     return colors[level] || '#000';
   }
 
   /**
-     * Export logs for Playwright or testing
-     */
+   * Export logs for Playwright or testing
+   */
   exportLogs() {
     return {
       errors: this.errors,
       warnings: this.warnings,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
   /**
-     * Clear collected logs
-     */
+   * Clear collected logs
+   */
   clearLogs() {
     this.errors = [];
     this.warnings = [];
@@ -251,8 +250,8 @@ class DebugPanel {
   }
 
   /**
-     * Create and inject debug panel into page
-     */
+   * Create and inject debug panel into page
+   */
   init() {
     if (!this.logger.isDevelopment) return;
 
@@ -405,7 +404,9 @@ class DebugPanel {
 
     // Bind events
     document.getElementById('debug-panel-close').addEventListener('click', () => this.hide());
-    document.getElementById('debug-refresh-state').addEventListener('click', () => this.refreshState());
+    document
+      .getElementById('debug-refresh-state')
+      .addEventListener('click', () => this.refreshState());
     document.getElementById('debug-export-logs').addEventListener('click', () => this.exportLogs());
     document.getElementById('debug-clear-logs').addEventListener('click', () => this.clearLogs());
   }
@@ -484,9 +485,9 @@ class DebugPanel {
     const perfDiv = document.getElementById('debug-performance');
     if (!perfDiv) return;
 
-    const memory = performance.memory ?
-      `${(performance.memory.usedJSHeapSize / 1048576).toFixed(2)}MB` :
-      'N/A';
+    const memory = performance.memory
+      ? `${(performance.memory.usedJSHeapSize / 1048576).toFixed(2)}MB`
+      : 'N/A';
 
     perfDiv.innerHTML = `
             <div>Memory Usage: ${memory}</div>
@@ -501,10 +502,10 @@ class DebugPanel {
     const logs = this.logger.exportLogs();
 
     let html = '';
-    logs.errors.forEach(error => {
+    logs.errors.forEach((error) => {
       html += `<div class="debug-error">❌ ${error.message}</div>`;
     });
-    logs.warnings.forEach(warning => {
+    logs.warnings.forEach((warning) => {
       html += `<div class="debug-warning">⚠️ ${warning.message}</div>`;
     });
 
@@ -540,7 +541,7 @@ const debugLogger = new DebugLogger({
   enabled: true,
   level: 'debug',
   timestamp: true,
-  stackTrace: false
+  stackTrace: false,
 });
 
 const debugPanel = new DebugPanel(debugLogger);
@@ -567,7 +568,7 @@ window.Debug = {
   logEvent: (type, target, detail) => debugLogger.logEvent(type, target, detail),
 
   // Initialize debug panel
-  init: () => debugPanel.init()
+  init: () => debugPanel.init(),
 };
 
 // Auto-initialize in development

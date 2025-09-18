@@ -32,7 +32,7 @@ export class Analytics {
       collectPerformance: true,
       collectErrors: true,
       collectUserInteractions: true,
-      ...config
+      ...config,
     };
 
     this.sessionId = this.generateSessionId();
@@ -67,8 +67,12 @@ export class Analytics {
       timestamp: new Date().toISOString(),
       sessionId: this.sessionId,
       userId: this.config.anonymizeData ? this.hashUserId(this.userId) : this.userId,
-      url: this.config.anonymizeData ? this.anonymizeUrl(window.location.href) : window.location.href,
-      userAgent: this.config.anonymizeData ? this.anonymizeUserAgent(navigator.userAgent) : navigator.userAgent
+      url: this.config.anonymizeData
+        ? this.anonymizeUrl(window.location.href)
+        : window.location.href,
+      userAgent: this.config.anonymizeData
+        ? this.anonymizeUserAgent(navigator.userAgent)
+        : navigator.userAgent,
     };
 
     this.queueEvent(event);
@@ -86,10 +90,12 @@ export class Analytics {
       type: 'pageview',
       path: path || window.location.pathname,
       title: title || document.title,
-      referrer: this.config.anonymizeData ? this.anonymizeUrl(document.referrer) : document.referrer,
+      referrer: this.config.anonymizeData
+        ? this.anonymizeUrl(document.referrer)
+        : document.referrer,
       timestamp: new Date().toISOString(),
       sessionId: this.sessionId,
-      userId: this.config.anonymizeData ? this.hashUserId(this.userId) : this.userId
+      userId: this.config.anonymizeData ? this.hashUserId(this.userId) : this.userId,
     };
 
     this.queueEvent(event);
@@ -109,10 +115,10 @@ export class Analytics {
         name: metric.name,
         value: metric.value,
         unit: metric.unit,
-        status: metric.status
+        status: metric.status,
       },
       timestamp: new Date().toISOString(),
-      sessionId: this.sessionId
+      sessionId: this.sessionId,
     };
 
     this.queueEvent(event);
@@ -131,12 +137,14 @@ export class Analytics {
       error: {
         name: error.name,
         message: error.message,
-        stack: this.config.anonymizeData ? this.anonymizeStackTrace(error.stack) : error.stack
+        stack: this.config.anonymizeData ? this.anonymizeStackTrace(error.stack) : error.stack,
       },
       context: this.config.anonymizeData ? this.anonymizeData(context) : context,
       timestamp: new Date().toISOString(),
       sessionId: this.sessionId,
-      url: this.config.anonymizeData ? this.anonymizeUrl(window.location.href) : window.location.href
+      url: this.config.anonymizeData
+        ? this.anonymizeUrl(window.location.href)
+        : window.location.href,
     };
 
     this.queueEvent(event);
@@ -180,11 +188,11 @@ export class Analytics {
       type: 'user_property',
       property: {
         key,
-        value: this.config.anonymizeData ? this.anonymizeValue(value) : value
+        value: this.config.anonymizeData ? this.anonymizeValue(value) : value,
       },
       timestamp: new Date().toISOString(),
       sessionId: this.sessionId,
-      userId: this.config.anonymizeData ? this.hashUserId(this.userId) : this.userId
+      userId: this.config.anonymizeData ? this.hashUserId(this.userId) : this.userId,
     };
 
     this.queueEvent(event);
@@ -252,7 +260,7 @@ export class Analytics {
       this.trackError(event.error || new Error(event.message), {
         filename: event.filename,
         lineno: event.lineno,
-        colno: event.colno
+        colno: event.colno,
       });
     });
 
@@ -320,16 +328,16 @@ export class Analytics {
       await fetch(this.config.endpoint, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           events,
           meta: {
             timestamp: new Date().toISOString(),
             sessionId: this.sessionId,
-            version: process.env.npm_package_version || '1.0.0'
-          }
-        })
+            version: process.env.npm_package_version || '1.0.0',
+          },
+        }),
       });
     } catch (error) {
       console.error('Failed to send analytics events:', error);
@@ -350,10 +358,12 @@ export class Analytics {
 
     return {
       sessionDuration,
-      pageViews: this.eventQueue.filter(e => e.type === 'pageview').length,
-      interactions: this.eventQueue.filter(e => e.type === 'event' && e.category === 'interaction').length,
-      errors: this.eventQueue.filter(e => e.type === 'error').length,
-      timestamp: new Date().toISOString()
+      pageViews: this.eventQueue.filter((e) => e.type === 'pageview').length,
+      interactions: this.eventQueue.filter(
+        (e) => e.type === 'event' && e.category === 'interaction'
+      ).length,
+      errors: this.eventQueue.filter((e) => e.type === 'error').length,
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -382,7 +392,7 @@ export class Analytics {
     let hash = 0;
     for (let i = 0; i < userId.length; i++) {
       const char = userId.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return `user_${Math.abs(hash).toString(16)}`;
@@ -401,7 +411,7 @@ export class Analytics {
     // Keep only browser and version info, remove detailed system info
     const simplified = userAgent
       .replace(/\([^)]*\)/g, '') // Remove parenthetical info
-      .replace(/\s+/g, ' ')      // Normalize whitespace
+      .replace(/\s+/g, ' ') // Normalize whitespace
       .trim();
 
     return simplified.slice(0, 100); // Limit length
@@ -412,8 +422,8 @@ export class Analytics {
 
     return stack
       .replace(/file:\/\/\/.*?\/([^\/]+\.js)/g, '$1') // Remove file paths
-      .replace(/http:\/\/.*?\/([^\/]+\.js)/g, '$1')   // Remove HTTP paths
-      .replace(/https:\/\/.*?\/([^\/]+\.js)/g, '$1')  // Remove HTTPS paths
+      .replace(/http:\/\/.*?\/([^\/]+\.js)/g, '$1') // Remove HTTP paths
+      .replace(/https:\/\/.*?\/([^\/]+\.js)/g, '$1') // Remove HTTPS paths
       .slice(0, 500); // Limit length
   }
 
@@ -453,13 +463,21 @@ export class Analytics {
 
   private isSensitiveKey(key: string): boolean {
     const sensitiveKeys = [
-      'email', 'password', 'token', 'secret', 'key', 'auth',
-      'ssn', 'social', 'credit', 'card', 'account', 'personal'
+      'email',
+      'password',
+      'token',
+      'secret',
+      'key',
+      'auth',
+      'ssn',
+      'social',
+      'credit',
+      'card',
+      'account',
+      'personal',
     ];
 
-    return sensitiveKeys.some(sensitive =>
-      key.toLowerCase().includes(sensitive)
-    );
+    return sensitiveKeys.some((sensitive) => key.toLowerCase().includes(sensitive));
   }
 
   private isSensitiveValue(value: string): boolean {
@@ -468,17 +486,17 @@ export class Analytics {
       /\b[\w._%+-]+@[\w.-]+\.[A-Z|a-z]{2,}\b/i, // Email
       /\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b/, // Credit card
       /\b\d{3}-?\d{2}-?\d{4}\b/, // SSN
-      /^[a-zA-Z0-9]{32,}$/ // Long random strings (tokens)
+      /^[a-zA-Z0-9]{32,}$/, // Long random strings (tokens)
     ];
 
-    return patterns.some(pattern => pattern.test(value));
+    return patterns.some((pattern) => pattern.test(value));
   }
 
   private hashString(str: string): string {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
     return `hashed_${Math.abs(hash).toString(16)}`;
@@ -501,5 +519,5 @@ export class Analytics {
 export const analytics = new Analytics({
   enabled: process.env.NODE_ENV === 'production',
   endpoint: process.env.VITE_ANALYTICS_ENDPOINT,
-  anonymizeData: true
+  anonymizeData: true,
 });

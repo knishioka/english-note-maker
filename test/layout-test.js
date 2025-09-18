@@ -12,7 +12,7 @@ const testResults = {
   passed: 0,
   failed: 0,
   warnings: 0,
-  errors: []
+  errors: [],
 };
 
 // テスト関数
@@ -40,24 +40,42 @@ function extractCSSValue(pattern) {
 
 // 1. A4サイズ設定の確認
 console.log('\n📄 A4サイズ設定のチェック');
-test('@page size: A4 の設定', cssContent.includes('size: A4'), '@page で A4 サイズが設定されていません');
-test('印刷時の余白設定', cssContent.includes('@page') && cssContent.includes('margin:'), '印刷時の余白が設定されていません');
+test(
+  '@page size: A4 の設定',
+  cssContent.includes('size: A4'),
+  '@page で A4 サイズが設定されていません'
+);
+test(
+  '印刷時の余白設定',
+  cssContent.includes('@page') && cssContent.includes('margin:'),
+  '印刷時の余白が設定されていません'
+);
 
 // 2. 4本線ベースラインの設定確認
 console.log('\n📏 4本線ベースラインのチェック');
 const baselineClasses = ['baseline--top', 'baseline--upper', 'baseline--lower', 'baseline--bottom'];
-baselineClasses.forEach(cls => {
-  test(`ベースライン "${cls}" の定義`, cssContent.includes(`.${cls}`), `${cls} が定義されていません`);
+baselineClasses.forEach((cls) => {
+  test(
+    `ベースライン "${cls}" の定義`,
+    cssContent.includes(`.${cls}`),
+    `${cls} が定義されていません`
+  );
 });
 
 // 3. 行高さの設定確認
 console.log('\n📐 行高さ設定のチェック');
 // CSS変数を使用している場合も考慮
-const lineHeightMatch = cssContent.match(/\.baseline-group\s*{[^}]*height:\s*(?:(\d+)mm|var\(--line-height)/);
+const lineHeightMatch = cssContent.match(
+  /\.baseline-group\s*{[^}]*height:\s*(?:(\d+)mm|var\(--line-height)/
+);
 if (lineHeightMatch) {
   if (lineHeightMatch[1]) {
     const height = parseInt(lineHeightMatch[1]);
-    test('行高さの範囲 (8-12mm)', height >= 8 && height <= 12, `行高さ ${height}mm は推奨範囲外です`);
+    test(
+      '行高さの範囲 (8-12mm)',
+      height >= 8 && height <= 12,
+      `行高さ ${height}mm は推奨範囲外です`
+    );
   } else {
     // CSS変数を使用している場合
     test('行高さの設定 (CSS変数)', true, '行高さがCSS変数で設定されています');
@@ -68,12 +86,24 @@ if (lineHeightMatch) {
 
 // 4. 印刷用スタイルの確認
 console.log('\n🖨️ 印刷用スタイルのチェック');
-test('@media print の存在', cssContent.includes('@media print'), '印刷用スタイルが定義されていません');
-test('.no-print クラスの非表示設定', cssContent.includes('.no-print') && cssContent.includes('display: none'), '.no-print の非表示設定がありません');
+test(
+  '@media print の存在',
+  cssContent.includes('@media print'),
+  '印刷用スタイルが定義されていません'
+);
+test(
+  '.no-print クラスの非表示設定',
+  cssContent.includes('.no-print') && cssContent.includes('display: none'),
+  '.no-print の非表示設定がありません'
+);
 
 // 5. レスポンシブデザインの確認
 console.log('\n📱 レスポンシブデザインのチェック');
-test('@media (max-width の存在', cssContent.includes('@media (max-width'), 'レスポンシブデザインが設定されていません');
+test(
+  '@media (max-width の存在',
+  cssContent.includes('@media (max-width'),
+  'レスポンシブデザインが設定されていません'
+);
 
 // 6. 必須CSSクラスの存在確認
 console.log('\n🎨 必須CSSクラスのチェック');
@@ -86,24 +116,41 @@ const requiredClasses = [
   'example-japanese',
   'controls',
   'preview',
-  'btn--primary'
+  'btn--primary',
 ];
 
-requiredClasses.forEach(cls => {
-  test(`CSS クラス ".${cls}"`, cssContent.includes(`.${cls}`), `必須クラス .${cls} が見つかりません`);
+requiredClasses.forEach((cls) => {
+  test(
+    `CSS クラス ".${cls}"`,
+    cssContent.includes(`.${cls}`),
+    `必須クラス .${cls} が見つかりません`
+  );
 });
 
 // 7. 色の設定確認
 console.log('\n🎨 色設定のチェック');
-test('CSS変数 --baseline-color', cssContent.includes('--baseline-color'), 'ベースライン色の変数が設定されていません');
-test('CSS変数 --primary-color', cssContent.includes('--primary-color'), 'プライマリ色の変数が設定されていません');
+test(
+  'CSS変数 --baseline-color',
+  cssContent.includes('--baseline-color'),
+  'ベースライン色の変数が設定されていません'
+);
+test(
+  'CSS変数 --primary-color',
+  cssContent.includes('--primary-color'),
+  'プライマリ色の変数が設定されていません'
+);
 
 // 8. フォントサイズの確認
 console.log('\n📝 フォントサイズのチェック');
 const exampleFontMatch = cssContent.match(/\.example-english\s*{[^}]*font-size:\s*(\d+)pt/);
 if (exampleFontMatch) {
   const fontSize = parseInt(exampleFontMatch[1]);
-  test('例文フォントサイズ (12-18pt)', fontSize >= 12 && fontSize <= 18, `フォントサイズ ${fontSize}pt は推奨範囲外です`, true);
+  test(
+    '例文フォントサイズ (12-18pt)',
+    fontSize >= 12 && fontSize <= 18,
+    `フォントサイズ ${fontSize}pt は推奨範囲外です`,
+    true
+  );
 }
 
 // 9. 余白設定の確認
@@ -116,16 +163,32 @@ if (marginMatch) {
 
 // 10. アルファベット練習用グリッドの確認
 console.log('\n🔤 アルファベット練習レイアウトのチェック');
-test('alphabet-grid クラス', cssContent.includes('.alphabet-grid'), 'アルファベットグリッドが定義されていません');
-test('グリッドレイアウトの使用', cssContent.includes('display: grid') && cssContent.includes('grid-template-columns'), 'グリッドレイアウトが設定されていません');
+test(
+  'alphabet-grid クラス',
+  cssContent.includes('.alphabet-grid'),
+  'アルファベットグリッドが定義されていません'
+);
+test(
+  'グリッドレイアウトの使用',
+  cssContent.includes('display: grid') && cssContent.includes('grid-template-columns'),
+  'グリッドレイアウトが設定されていません'
+);
 
 // 11. ページ区切りの設定
 console.log('\n📃 ページ区切り設定のチェック');
-test('page-break-inside: avoid', cssContent.includes('page-break-inside: avoid'), 'ページ内改行防止が設定されていません');
+test(
+  'page-break-inside: avoid',
+  cssContent.includes('page-break-inside: avoid'),
+  'ページ内改行防止が設定されていません'
+);
 
 // 12. 線の太さ設定
 console.log('\n✏️ 線の太さ設定のチェック');
-test('ベースライン太線の設定', cssContent.includes('baseline--lower') && cssContent.includes('2px'), 'ベースラインの太線が設定されていません');
+test(
+  'ベースライン太線の設定',
+  cssContent.includes('baseline--lower') && cssContent.includes('2px'),
+  'ベースラインの太線が設定されていません'
+);
 
 // テスト結果のサマリー
 console.log('\n📊 テスト結果サマリー');
@@ -136,7 +199,7 @@ console.log(`合計: ${testResults.passed + testResults.failed + testResults.war
 
 if (testResults.failed > 0) {
   console.log('\n❌ 失敗したテスト:');
-  testResults.errors.forEach(error => {
+  testResults.errors.forEach((error) => {
     console.log(`  - ${error.test}: ${error.error}`);
   });
   process.exit(1);

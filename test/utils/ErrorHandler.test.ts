@@ -68,10 +68,10 @@ describe('ErrorHandler', () => {
       const errors = [
         new ReferenceError('Reference error'),
         new SyntaxError('Syntax error'),
-        { name: 'SecurityError', message: 'Security error' }
+        { name: 'SecurityError', message: 'Security error' },
       ];
 
-      errors.forEach(error => {
+      errors.forEach((error) => {
         const result = errorHandler.handleError(error);
         expect(result.severity).toBe('critical');
       });
@@ -82,10 +82,10 @@ describe('ErrorHandler', () => {
         new TypeError('Type error'),
         new RangeError('Range error'),
         { name: 'NetworkError', message: 'Network error' },
-        { name: 'PrintError', message: 'Print error' }
+        { name: 'PrintError', message: 'Print error' },
       ];
 
-      errors.forEach(error => {
+      errors.forEach((error) => {
         const result = errorHandler.handleError(error);
         expect(result.severity).toBe('high');
       });
@@ -94,10 +94,10 @@ describe('ErrorHandler', () => {
     it('should classify medium severity errors correctly', () => {
       const errors = [
         { name: 'ValidationError', message: 'Validation error' },
-        { name: 'LayoutError', message: 'Layout error' }
+        { name: 'LayoutError', message: 'Layout error' },
       ];
 
-      errors.forEach(error => {
+      errors.forEach((error) => {
         const result = errorHandler.handleError(error);
         expect(result.severity).toBe('medium');
       });
@@ -118,7 +118,7 @@ describe('ErrorHandler', () => {
         { name: 'NetworkError', expected: 'インターネット接続を確認してください' },
         { name: 'TypeError', expected: '入力データに問題があります' },
         { name: 'ValidationError', expected: '入力内容を確認してください' },
-        { name: 'SecurityError', expected: 'アクセス権限がありません' }
+        { name: 'SecurityError', expected: 'アクセス権限がありません' },
       ];
 
       testCases.forEach(({ name, expected }) => {
@@ -131,8 +131,11 @@ describe('ErrorHandler', () => {
     it('should detect error patterns in messages', () => {
       const testCases = [
         { message: 'fetch failed', expected: 'サーバーとの通信に失敗しました' },
-        { message: 'localStorage access denied', expected: 'ブラウザのストレージにアクセスできません' },
-        { message: 'print operation failed', expected: '印刷機能が利用できません' }
+        {
+          message: 'localStorage access denied',
+          expected: 'ブラウザのストレージにアクセスできません',
+        },
+        { message: 'print operation failed', expected: '印刷機能が利用できません' },
       ];
 
       testCases.forEach(({ message, expected }) => {
@@ -234,7 +237,7 @@ describe('ErrorHandler', () => {
           expect.objectContaining({
             name: 'Error',
             message: expect.any(String),
-            severity: expect.any(String)
+            severity: expect.any(String),
           })
         );
       });
@@ -243,10 +246,7 @@ describe('ErrorHandler', () => {
         const successfulComponent = vi.fn();
         const fallbackSpy = vi.fn();
 
-        const boundComponent = ErrorHandler.createErrorBoundary(
-          successfulComponent,
-          fallbackSpy
-        );
+        const boundComponent = ErrorHandler.createErrorBoundary(successfulComponent, fallbackSpy);
 
         boundComponent();
 
@@ -311,7 +311,7 @@ describe('ErrorHandler', () => {
         timestamp: result.timestamp,
         userAgent: result.userAgent,
         context: result.context,
-        stackHash: expect.any(Number)
+        stackHash: expect.any(Number),
       });
     });
 

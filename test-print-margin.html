@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>印刷余白テスト - 英語罫線ノート</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* テスト用の追加スタイル */
+      .test-info {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: yellow;
+        padding: 10px;
+        border: 2px solid red;
+        z-index: 1000;
+        font-weight: bold;
+      }
+
+      @media print {
+        .test-info {
+          display: none !important;
+        }
+      }
+
+      /* 余白を可視化するための枠線 */
+      .note-page {
+        border: 2px dashed red !important;
+      }
+
+      .margin-indicator {
+        position: absolute;
+        background: rgba(255, 0, 0, 0.1);
+        pointer-events: none;
+      }
+
+      .margin-indicator.top {
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5mm;
+      }
+
+      .margin-indicator.bottom {
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 5mm;
+      }
+
+      .margin-indicator.left {
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 10mm;
+      }
+
+      .margin-indicator.right {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 10mm;
+      }
+
+      @media print {
+        .margin-indicator {
+          display: block !important;
+          background: rgba(255, 0, 0, 0.05);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test-info no-print">
+      🔍 印刷余白テストページ<br>
+      赤い枠線 = ページ境界<br>
+      薄赤色 = 余白領域<br>
+      Ctrl+P で印刷プレビューを確認
+    </div>
+
+    <div class="main">
+      <div class="preview">
+        <div id="notePreview" class="note-preview">
+          <div class="note-page">
+            <!-- 余白インジケーター -->
+            <div class="margin-indicator top"></div>
+            <div class="margin-indicator bottom"></div>
+            <div class="margin-indicator left"></div>
+            <div class="margin-indicator right"></div>
+
+            <div class="practice-title">印刷余白テスト - フレーズ練習</div>
+
+            <!-- テスト用のフレーズ -->
+            <div class="phrase-practice">
+              <div class="phrase-item">
+                <div class="phrase-header">
+                  <div class="phrase-main">
+                    <div class="phrase-english">Good morning!</div>
+                    <div class="phrase-japanese">おはよう！</div>
+                  </div>
+                  <div class="phrase-situation">挨拶</div>
+                </div>
+                <div class="phrase-lines">
+                  <div class="baseline-group">
+                    <div class="baseline baseline--top"></div>
+                    <div class="baseline baseline--upper"></div>
+                    <div class="baseline baseline--lower"></div>
+                    <div class="baseline baseline--bottom"></div>
+                  </div>
+                  <div class="baseline-group">
+                    <div class="baseline baseline--top"></div>
+                    <div class="baseline baseline--upper"></div>
+                    <div class="baseline baseline--lower"></div>
+                    <div class="baseline baseline--bottom"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="phrase-item">
+                <div class="phrase-header">
+                  <div class="phrase-main">
+                    <div class="phrase-english">Thank you very much!</div>
+                    <div class="phrase-japanese">本当にありがとう！</div>
+                  </div>
+                  <div class="phrase-situation">感謝</div>
+                </div>
+                <div class="phrase-lines">
+                  <div class="baseline-group">
+                    <div class="baseline baseline--top"></div>
+                    <div class="baseline baseline--upper"></div>
+                    <div class="baseline baseline--lower"></div>
+                    <div class="baseline baseline--bottom"></div>
+                  </div>
+                  <div class="baseline-group">
+                    <div class="baseline baseline--top"></div>
+                    <div class="baseline baseline--upper"></div>
+                    <div class="baseline baseline--lower"></div>
+                    <div class="baseline baseline--bottom"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="phrase-item">
+                <div class="phrase-header">
+                  <div class="phrase-main">
+                    <div class="phrase-english">How are you?</div>
+                    <div class="phrase-japanese">元気ですか？</div>
+                  </div>
+                  <div class="phrase-situation">挨拶</div>
+                </div>
+                <div class="phrase-lines">
+                  <div class="baseline-group">
+                    <div class="baseline baseline--top"></div>
+                    <div class="baseline baseline--upper"></div>
+                    <div class="baseline baseline--lower"></div>
+                    <div class="baseline baseline--bottom"></div>
+                  </div>
+                  <div class="baseline-group">
+                    <div class="baseline baseline--top"></div>
+                    <div class="baseline baseline--upper"></div>
+                    <div class="baseline baseline--lower"></div>
+                    <div class="baseline baseline--bottom"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- A4サイズインジケーター -->
+            <div style="position: absolute; bottom: 10mm; left: 10mm; font-size: 8pt; color: red;" class="no-print">
+              A4サイズ: 210mm × 297mm<br>
+              設定余白: 上下5mm, 左右10mm
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 印刷時の余白測定スクリプト
+      function measurePrintMargins() {
+        const notePage = document.querySelector('.note-page');
+        if (!notePage) return;
+
+        const style = window.getComputedStyle(notePage);
+        const padding = {
+          top: style.paddingTop,
+          right: style.paddingRight,
+          bottom: style.paddingBottom,
+          left: style.paddingLeft,
+        };
+
+        console.log('=== 印刷余白設定 ===');
+        console.log('上余白:', padding.top);
+        console.log('右余白:', padding.right);
+        console.log('下余白:', padding.bottom);
+        console.log('左余白:', padding.left);
+
+        // mmに変換（96dpiを想定）
+        const pxToMm = (px) => {
+          const val = parseFloat(px);
+          return (val * 25.4 / 96).toFixed(1) + 'mm';
+        };
+
+        console.log('=== mm単位 ===');
+        console.log('上余白:', pxToMm(padding.top));
+        console.log('右余白:', pxToMm(padding.right));
+        console.log('下余白:', pxToMm(padding.bottom));
+        console.log('左余白:', pxToMm(padding.left));
+      }
+
+      // ページ読み込み時に測定
+      window.addEventListener('load', measurePrintMargins);
+
+      // 印刷プレビュー開始時に測定
+      window.addEventListener('beforeprint', () => {
+        console.log('📄 印刷プレビューを開始します...');
+        measurePrintMargins();
+      });
+
+      // 印刷プレビュー終了時
+      window.addEventListener('afterprint', () => {
+        console.log('📄 印刷プレビューを終了しました');
+      });
+    </script>
+  </body>
+</html>

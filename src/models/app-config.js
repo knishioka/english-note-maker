@@ -7,11 +7,11 @@ export const CONFIG = {
   lineHeight: 10, // mm
   lineSpacing: 2, // mm
   pageMargin: {
-    top: 10,    // mm
+    top: 10, // mm
     bottom: 10, // mm
-    left: 10,   // mm
-    right: 10   // mm
-  }
+    left: 10, // mm
+    right: 10, // mm
+  },
 };
 
 export const CONTENT_STATS = {
@@ -19,17 +19,17 @@ export const CONTENT_STATS = {
   words: {
     total: 0,
     byCategory: {},
-    byAge: { '4-6': 0, '7-9': 0, '10-12': 0 }
+    byAge: { '4-6': 0, '7-9': 0, '10-12': 0 },
   },
   phrases: {
     total: 0,
     byCategory: {},
-    byAge: { '4-6': 0, '7-9': 0, '10-12': 0 }
+    byAge: { '4-6': 0, '7-9': 0, '10-12': 0 },
   },
   examples: {
     total: 0,
-    byAge: { '4-6': 0, '7-9': 0, '10-12': 0 }
-  }
+    byAge: { '4-6': 0, '7-9': 0, '10-12': 0 },
+  },
 };
 
 // アプリケーション状態管理

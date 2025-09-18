@@ -1,11 +1,11 @@
 const puppeteer = require('puppeteer');
 
-(async() => {
+(async () => {
   console.log('Puppeteerでスクリーンショットを撮影します...');
 
   const browser = await puppeteer.launch({
     headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
   const page = await browser.newPage();
@@ -14,30 +14,30 @@ const puppeteer = require('puppeteer');
   await page.setViewport({
     width: 1280,
     height: 900,
-    deviceScaleFactor: 2 // Retina対応で高解像度
+    deviceScaleFactor: 2, // Retina対応で高解像度
   });
 
   // GitHub Pagesにアクセス
   console.log('ページを読み込んでいます...');
   await page.goto('http://localhost:3004/', {
     waitUntil: 'networkidle0',
-    timeout: 30000
+    timeout: 30000,
   });
 
   // ページが完全に読み込まれるまで待機
-  await new Promise(resolve => setTimeout(resolve, 2000));
+  await new Promise((resolve) => setTimeout(resolve, 2000));
 
   // フレーズ練習モードを選択
   console.log('フレーズ練習モードを選択しています...');
   await page.select('#practiceMode', 'phrase');
 
   // 少し待機
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   // 日本語訳を表示をチェック
   const translationCheckbox = await page.$('#showTranslation');
   if (translationCheckbox) {
-    const isChecked = await page.evaluate(el => el.checked, translationCheckbox);
+    const isChecked = await page.evaluate((el) => el.checked, translationCheckbox);
     if (!isChecked) {
       await translationCheckbox.click();
     }
@@ -46,20 +46,20 @@ const puppeteer = require('puppeteer');
   // 使用場面を表示をチェック
   const situationCheckbox = await page.$('#showSituation');
   if (situationCheckbox) {
-    const isChecked = await page.evaluate(el => el.checked, situationCheckbox);
+    const isChecked = await page.evaluate((el) => el.checked, situationCheckbox);
     if (!isChecked) {
       await situationCheckbox.click();
     }
   }
 
   // プレビューが更新されるまで待機
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
   // スクリーンショットを撮影（フルページ）
   console.log('スクリーンショットを撮影しています...');
   await page.screenshot({
     path: 'screenshot-phrase-practice-full.png',
-    fullPage: true
+    fullPage: true,
   });
 
   // ヘッダーを含む上部のみのスクリーンショットも撮影
@@ -69,8 +69,8 @@ const puppeteer = require('puppeteer');
       x: 0,
       y: 0,
       width: 1280,
-      height: 820
-    }
+      height: 820,
+    },
   });
 
   console.log('スクリーンショットを保存しました:');

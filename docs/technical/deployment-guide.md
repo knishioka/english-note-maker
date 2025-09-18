@@ -3,6 +3,7 @@
 ## 🌐 GitHub Pages デプロイメント
 
 ### 前提条件
+
 - **フロントエンドのみで完結**: サーバーサイド処理なし
 - **静的ファイルのみ**: HTML, CSS, JavaScript
 - **外部API不要**: 完全オフライン動作可能
@@ -10,6 +11,7 @@
 ### デプロイ手順
 
 1. **リポジトリ設定**
+
 ```bash
 # GitHub Pages を有効化
 # Settings → Pages → Source → Deploy from a branch
@@ -17,11 +19,13 @@
 ```
 
 2. **公開URL**
+
 ```
 https://knishioka.github.io/english-note-maker/
 ```
 
 3. **更新方法**
+
 ```bash
 # mainブランチにプッシュすると自動デプロイ
 git add .
@@ -32,12 +36,14 @@ git push origin main
 ### デプロイ時の注意事項
 
 #### ✅ 必須確認項目
+
 - [ ] 相対パスの使用（絶対パスは避ける）
 - [ ] HTTPSリソースのみ参照
 - [ ] 外部依存なし（CDN不使用）
 - [ ] ローカルストレージのみ使用
 
 #### ❌ 避けるべきこと
+
 - サーバーサイドAPI呼び出し
 - 環境変数の使用
 - 認証機能
@@ -46,6 +52,7 @@ git push origin main
 ## 🖥️ 開発環境の管理
 
 ### ポート管理
+
 ```javascript
 // package.json で明示的にポート指定
 {
@@ -57,6 +64,7 @@ git push origin main
 ```
 
 ### サーバー起動確認スクリプト
+
 ```bash
 #!/bin/bash
 # check-server.sh
@@ -82,6 +90,7 @@ fi
 ```
 
 ### 開発時のチェックリスト
+
 1. **サーバー起動前**
    - [ ] 既存プロセスの確認: `lsof -i :3000`
    - [ ] ポート競合の解決: `kill -9 $(lsof -t -i:3000)`
@@ -94,205 +103,208 @@ fi
 ## 🔍 品質管理の自動化
 
 ### レイアウト検証スクリプト
+
 ```javascript
 // layout-validator.js
 
 const validateLayout = () => {
-    const checks = {
-        lineHeight: {
-            min: 8,  // mm
-            max: 12, // mm
-            current: null,
-            status: 'pending'
-        },
-        lineSpacing: {
-            min: 1,  // mm
-            max: 5,  // mm
-            current: null,
-            status: 'pending'
-        },
-        pageMargin: {
-            min: 5,  // mm
-            max: 20, // mm
-            current: null,
-            status: 'pending'
-        },
-        linesPerPage: {
-            min: 10,
-            max: 30,
-            current: null,
-            status: 'pending'
-        }
-    };
+  const checks = {
+    lineHeight: {
+      min: 8, // mm
+      max: 12, // mm
+      current: null,
+      status: 'pending',
+    },
+    lineSpacing: {
+      min: 1, // mm
+      max: 5, // mm
+      current: null,
+      status: 'pending',
+    },
+    pageMargin: {
+      min: 5, // mm
+      max: 20, // mm
+      current: null,
+      status: 'pending',
+    },
+    linesPerPage: {
+      min: 10,
+      max: 30,
+      current: null,
+      status: 'pending',
+    },
+  };
 
-    // 実際の値を測定
-    const measureLayout = () => {
-        const baselineGroup = document.querySelector('.baseline-group');
-        const notePage = document.querySelector('.note-page');
-        
-        if (baselineGroup) {
-            const computedStyle = window.getComputedStyle(baselineGroup);
-            checks.lineHeight.current = parseFloat(computedStyle.height);
-            checks.lineSpacing.current = parseFloat(computedStyle.marginBottom);
-        }
-        
-        if (notePage) {
-            const computedStyle = window.getComputedStyle(notePage);
-            checks.pageMargin.current = parseFloat(computedStyle.padding);
-        }
-        
-        const lineCount = document.querySelectorAll('.baseline-group').length;
-        checks.linesPerPage.current = lineCount;
-    };
+  // 実際の値を測定
+  const measureLayout = () => {
+    const baselineGroup = document.querySelector('.baseline-group');
+    const notePage = document.querySelector('.note-page');
 
-    // 検証実行
-    const validate = () => {
-        measureLayout();
-        
-        Object.keys(checks).forEach(key => {
-            const check = checks[key];
-            if (check.current !== null) {
-                if (check.current >= check.min && check.current <= check.max) {
-                    check.status = 'pass';
-                } else {
-                    check.status = 'fail';
-                }
-            }
-        });
-        
-        return checks;
-    };
+    if (baselineGroup) {
+      const computedStyle = window.getComputedStyle(baselineGroup);
+      checks.lineHeight.current = parseFloat(computedStyle.height);
+      checks.lineSpacing.current = parseFloat(computedStyle.marginBottom);
+    }
 
-    return validate();
+    if (notePage) {
+      const computedStyle = window.getComputedStyle(notePage);
+      checks.pageMargin.current = parseFloat(computedStyle.padding);
+    }
+
+    const lineCount = document.querySelectorAll('.baseline-group').length;
+    checks.linesPerPage.current = lineCount;
+  };
+
+  // 検証実行
+  const validate = () => {
+    measureLayout();
+
+    Object.keys(checks).forEach((key) => {
+      const check = checks[key];
+      if (check.current !== null) {
+        if (check.current >= check.min && check.current <= check.max) {
+          check.status = 'pass';
+        } else {
+          check.status = 'fail';
+        }
+      }
+    });
+
+    return checks;
+  };
+
+  return validate();
 };
 
 // 自動検証の実行
 window.addEventListener('load', () => {
-    const results = validateLayout();
-    console.table(results);
-    
-    // 問題があれば警告
-    const hasFailure = Object.values(results).some(r => r.status === 'fail');
-    if (hasFailure) {
-        console.warn('⚠️ レイアウト検証で問題が見つかりました');
-    }
+  const results = validateLayout();
+  console.table(results);
+
+  // 問題があれば警告
+  const hasFailure = Object.values(results).some((r) => r.status === 'fail');
+  if (hasFailure) {
+    console.warn('⚠️ レイアウト検証で問題が見つかりました');
+  }
 });
 ```
 
 ### 印刷品質チェッカー
+
 ```javascript
 // print-quality-checker.js
 
 const checkPrintQuality = () => {
-    const issues = [];
-    
-    // 1. 細すぎる線のチェック
-    const lines = document.querySelectorAll('.baseline');
-    lines.forEach((line, index) => {
-        const style = window.getComputedStyle(line);
-        const borderWidth = parseFloat(style.borderBottomWidth);
-        
-        if (borderWidth < 0.5) {
-            issues.push({
-                type: 'warning',
-                element: `baseline-${index}`,
-                message: '線が細すぎる可能性があります（< 0.5px）'
-            });
-        }
-    });
-    
-    // 2. 余白チェック
-    const notePage = document.querySelector('.note-page');
-    if (notePage) {
-        const style = window.getComputedStyle(notePage);
-        const padding = parseFloat(style.padding);
-        
-        if (padding < 10) {
-            issues.push({
-                type: 'error',
-                element: 'note-page',
-                message: '余白が小さすぎます（< 10mm）'
-            });
-        } else if (padding > 25) {
-            issues.push({
-                type: 'warning',
-                element: 'note-page',
-                message: '余白が大きすぎる可能性があります（> 25mm）'
-            });
-        }
+  const issues = [];
+
+  // 1. 細すぎる線のチェック
+  const lines = document.querySelectorAll('.baseline');
+  lines.forEach((line, index) => {
+    const style = window.getComputedStyle(line);
+    const borderWidth = parseFloat(style.borderBottomWidth);
+
+    if (borderWidth < 0.5) {
+      issues.push({
+        type: 'warning',
+        element: `baseline-${index}`,
+        message: '線が細すぎる可能性があります（< 0.5px）',
+      });
     }
-    
-    // 3. フォントサイズチェック
-    const examples = document.querySelectorAll('.example-english');
-    examples.forEach((example, index) => {
-        const style = window.getComputedStyle(example);
-        const fontSize = parseFloat(style.fontSize);
-        
-        if (fontSize < 10) {
-            issues.push({
-                type: 'error',
-                element: `example-${index}`,
-                message: 'フォントが小さすぎます（< 10pt）'
-            });
-        }
-    });
-    
-    // 4. ページ溢れチェック
-    const pageHeight = 297; // A4 height in mm
-    const contentHeight = document.querySelector('.note-page').scrollHeight / 3.7795275591; // px to mm
-    
-    if (contentHeight > pageHeight) {
-        issues.push({
-            type: 'error',
-            element: 'page',
-            message: `コンテンツがA4サイズを超えています（${Math.round(contentHeight)}mm）`
-        });
+  });
+
+  // 2. 余白チェック
+  const notePage = document.querySelector('.note-page');
+  if (notePage) {
+    const style = window.getComputedStyle(notePage);
+    const padding = parseFloat(style.padding);
+
+    if (padding < 10) {
+      issues.push({
+        type: 'error',
+        element: 'note-page',
+        message: '余白が小さすぎます（< 10mm）',
+      });
+    } else if (padding > 25) {
+      issues.push({
+        type: 'warning',
+        element: 'note-page',
+        message: '余白が大きすぎる可能性があります（> 25mm）',
+      });
     }
-    
-    return issues;
+  }
+
+  // 3. フォントサイズチェック
+  const examples = document.querySelectorAll('.example-english');
+  examples.forEach((example, index) => {
+    const style = window.getComputedStyle(example);
+    const fontSize = parseFloat(style.fontSize);
+
+    if (fontSize < 10) {
+      issues.push({
+        type: 'error',
+        element: `example-${index}`,
+        message: 'フォントが小さすぎます（< 10pt）',
+      });
+    }
+  });
+
+  // 4. ページ溢れチェック
+  const pageHeight = 297; // A4 height in mm
+  const contentHeight = document.querySelector('.note-page').scrollHeight / 3.7795275591; // px to mm
+
+  if (contentHeight > pageHeight) {
+    issues.push({
+      type: 'error',
+      element: 'page',
+      message: `コンテンツがA4サイズを超えています（${Math.round(contentHeight)}mm）`,
+    });
+  }
+
+  return issues;
 };
 
 // 印刷前の自動チェック
 window.addEventListener('beforeprint', () => {
-    const issues = checkPrintQuality();
-    
-    if (issues.length > 0) {
-        console.group('🖨️ 印刷品質チェック結果');
-        issues.forEach(issue => {
-            if (issue.type === 'error') {
-                console.error(`❌ ${issue.element}: ${issue.message}`);
-            } else {
-                console.warn(`⚠️ ${issue.element}: ${issue.message}`);
-            }
-        });
-        console.groupEnd();
-        
-        // エラーがある場合は確認
-        const hasErrors = issues.some(i => i.type === 'error');
-        if (hasErrors) {
-            if (!confirm('印刷品質に問題がある可能性があります。続行しますか？')) {
-                event.preventDefault();
-                event.stopPropagation();
-                return false;
-            }
-        }
-    } else {
-        console.log('✅ 印刷品質チェック: 問題なし');
+  const issues = checkPrintQuality();
+
+  if (issues.length > 0) {
+    console.group('🖨️ 印刷品質チェック結果');
+    issues.forEach((issue) => {
+      if (issue.type === 'error') {
+        console.error(`❌ ${issue.element}: ${issue.message}`);
+      } else {
+        console.warn(`⚠️ ${issue.element}: ${issue.message}`);
+      }
+    });
+    console.groupEnd();
+
+    // エラーがある場合は確認
+    const hasErrors = issues.some((i) => i.type === 'error');
+    if (hasErrors) {
+      if (!confirm('印刷品質に問題がある可能性があります。続行しますか？')) {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+      }
     }
+  } else {
+    console.log('✅ 印刷品質チェック: 問題なし');
+  }
 });
 ```
 
 ## 📸 印刷プレビュー機能
 
 ### 仮想印刷プレビュー実装
+
 ```javascript
 // print-preview.js
 
 const createPrintPreview = () => {
-    // プレビューモーダルの作成
-    const modal = document.createElement('div');
-    modal.id = 'print-preview-modal';
-    modal.innerHTML = `
+  // プレビューモーダルの作成
+  const modal = document.createElement('div');
+  modal.id = 'print-preview-modal';
+  modal.innerHTML = `
         <div class="print-preview-container">
             <div class="print-preview-header">
                 <h3>印刷プレビュー</h3>
@@ -309,10 +321,10 @@ const createPrintPreview = () => {
             </div>
         </div>
     `;
-    
-    // スタイル追加
-    const style = document.createElement('style');
-    style.textContent = `
+
+  // スタイル追加
+  const style = document.createElement('style');
+  style.textContent = `
         #print-preview-modal {
             position: fixed;
             top: 0;
@@ -367,37 +379,37 @@ const createPrintPreview = () => {
             color: #666;
         }
     `;
-    
-    document.head.appendChild(style);
-    document.body.appendChild(modal);
-    
-    // イベントハンドラ
-    document.getElementById('close-preview').addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-    
-    document.getElementById('actual-print').addEventListener('click', () => {
-        modal.style.display = 'none';
-        window.print();
-    });
-    
-    return {
-        show: () => {
-            // プレビュー用のコンテンツを生成
-            const printContent = document.querySelector('.note-preview').innerHTML;
-            const printStyles = Array.from(document.styleSheets)
-                .map(sheet => {
-                    try {
-                        return Array.from(sheet.cssRules)
-                            .map(rule => rule.cssText)
-                            .join('\n');
-                    } catch (e) {
-                        return '';
-                    }
-                })
-                .join('\n');
-            
-            const previewHTML = `
+
+  document.head.appendChild(style);
+  document.body.appendChild(modal);
+
+  // イベントハンドラ
+  document.getElementById('close-preview').addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  document.getElementById('actual-print').addEventListener('click', () => {
+    modal.style.display = 'none';
+    window.print();
+  });
+
+  return {
+    show: () => {
+      // プレビュー用のコンテンツを生成
+      const printContent = document.querySelector('.note-preview').innerHTML;
+      const printStyles = Array.from(document.styleSheets)
+        .map((sheet) => {
+          try {
+            return Array.from(sheet.cssRules)
+              .map((rule) => rule.cssText)
+              .join('\n');
+          } catch (e) {
+            return '';
+          }
+        })
+        .join('\n');
+
+      const previewHTML = `
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -414,32 +426,33 @@ const createPrintPreview = () => {
                 </body>
                 </html>
             `;
-            
-            const iframe = document.getElementById('print-preview-frame');
-            iframe.srcdoc = previewHTML;
-            
-            modal.style.display = 'block';
-        }
-    };
+
+      const iframe = document.getElementById('print-preview-frame');
+      iframe.srcdoc = previewHTML;
+
+      modal.style.display = 'block';
+    },
+  };
 };
 
 // 印刷ボタンの置き換え
 document.addEventListener('DOMContentLoaded', () => {
-    const printPreview = createPrintPreview();
-    const printBtn = document.getElementById('printBtn');
-    
-    if (printBtn) {
-        printBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            printPreview.show();
-        });
-    }
+  const printPreview = createPrintPreview();
+  const printBtn = document.getElementById('printBtn');
+
+  if (printBtn) {
+    printBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      printPreview.show();
+    });
+  }
 });
 ```
 
 ## 🚨 運用時の注意事項
 
 ### デプロイ前チェックリスト
+
 - [ ] ローカルでの動作確認
 - [ ] 印刷プレビューの確認
 - [ ] レイアウト自動検証の実行
@@ -447,6 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
 - [ ] コンソールエラーなし
 
 ### 監視項目
+
 1. **GitHub Pages ステータス**
    - Actions の成功確認
    - デプロイ完了通知
@@ -456,8 +470,9 @@ document.addEventListener('DOMContentLoaded', () => {
    - 印刷品質の定期確認
 
 ### トラブルシューティング
-| 問題 | 原因 | 対処法 |
-|------|------|--------|
-| ページが表示されない | パス設定ミス | 相対パスに修正 |
-| 印刷レイアウト崩れ | CSS未適用 | @media print 確認 |
-| 文字化け | フォント未対応 | Webフォント追加 |
+
+| 問題                 | 原因           | 対処法            |
+| -------------------- | -------------- | ----------------- |
+| ページが表示されない | パス設定ミス   | 相対パスに修正    |
+| 印刷レイアウト崩れ   | CSS未適用      | @media print 確認 |
+| 文字化け             | フォント未対応 | Webフォント追加   |

@@ -8,12 +8,12 @@ async function testPrintPreview() {
 
   try {
     await page.goto('http://localhost:3004', {
-      waitUntil: 'networkidle0'
+      waitUntil: 'networkidle0',
     });
 
     // フレーズ練習モードを選択
     await page.select('#practiceMode', 'phrase');
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     console.log('✅ フレーズ練習モードを選択');
 
@@ -26,11 +26,11 @@ async function testPrintPreview() {
 
     console.log('🔍 プレビューボタンをクリック...');
     await previewBtn.click();
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     // プレビューモーダルが表示されているかチェック
     const modal = await page.$('#printPreviewModal');
-    const modalVisible = await page.evaluate(el => {
+    const modalVisible = await page.evaluate((el) => {
       return el && window.getComputedStyle(el).display !== 'none';
     }, modal);
 
@@ -43,7 +43,7 @@ async function testPrintPreview() {
         return {
           hasContent: preview && preview.innerHTML.length > 0,
           hasPhrases: preview && preview.querySelectorAll('.phrase-item').length > 0,
-          hasBaselines: preview && preview.querySelectorAll('.baseline-group').length > 0
+          hasBaselines: preview && preview.querySelectorAll('.baseline-group').length > 0,
         };
       });
 
@@ -57,9 +57,9 @@ async function testPrintPreview() {
       const zoomInBtn = await page.$('#zoomInBtn');
       if (zoomInBtn) {
         await zoomInBtn.click();
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
-        const zoomLevel = await page.$eval('#zoomLevel', el => el.textContent);
+        const zoomLevel = await page.$eval('#zoomLevel', (el) => el.textContent);
         console.log(`✅ ズームイン成功: ${zoomLevel}`);
       }
 
@@ -72,22 +72,20 @@ async function testPrintPreview() {
       const closeBtn = await page.$('#closePreviewBtn');
       if (closeBtn) {
         await closeBtn.click();
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
-        const modalVisibleAfterClose = await page.evaluate(el => {
+        const modalVisibleAfterClose = await page.evaluate((el) => {
           return el && window.getComputedStyle(el).display !== 'none';
         }, modal);
 
         console.log(`✅ モーダル閉じる: ${!modalVisibleAfterClose ? '成功' : '失敗'}`);
       }
-
     } else {
       console.error('❌ プレビューモーダルが表示されていません');
     }
 
     console.log('\n⏸️  ブラウザで確認してください。Enterを押すと終了します...');
-    await new Promise(resolve => process.stdin.once('data', resolve));
-
+    await new Promise((resolve) => process.stdin.once('data', resolve));
   } catch (error) {
     console.error('エラー:', error);
   } finally {

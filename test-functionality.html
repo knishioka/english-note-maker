@@ -1,61 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>機能テスト</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>英語罫線ノート - 機能確認テスト</h1>
     <div id="test-results"></div>
 
     <script type="module">
-        const results = [];
+      const results = [];
 
-        // Test 1: モジュールのインポート確認
-        try {
-            const { EXAMPLE_SENTENCES_BY_AGE } = await import('./src/data/example-sentences.js');
-            const { WORD_LISTS } = await import('./src/data/word-lists.js');
-            const { ALPHABET_DATA } = await import('./src/data/alphabet-data.js');
-            const { PHRASE_DATA } = await import('./src/data/phrase-data.js');
+      // Test 1: モジュールのインポート確認
+      try {
+        const { EXAMPLE_SENTENCES_BY_AGE } = await import('./src/data/example-sentences.js');
+        const { WORD_LISTS } = await import('./src/data/word-lists.js');
+        const { ALPHABET_DATA } = await import('./src/data/alphabet-data.js');
+        const { PHRASE_DATA } = await import('./src/data/phrase-data.js');
 
-            results.push('✅ モジュールインポート: 成功');
-            results.push(`  - 例文データ: ${Object.keys(EXAMPLE_SENTENCES_BY_AGE).length} 年齢グループ`);
-            results.push(`  - 単語リスト: ${Object.keys(WORD_LISTS).length} カテゴリー`);
-            results.push(`  - アルファベット: ${Object.keys(ALPHABET_DATA).length} タイプ`);
-            results.push(`  - フレーズ: ${Object.keys(PHRASE_DATA).length} カテゴリー`);
-        } catch (error) {
-            results.push(`❌ モジュールインポートエラー: ${error.message}`);
+        results.push('✅ モジュールインポート: 成功');
+        results.push(
+          `  - 例文データ: ${Object.keys(EXAMPLE_SENTENCES_BY_AGE).length} 年齢グループ`
+        );
+        results.push(`  - 単語リスト: ${Object.keys(WORD_LISTS).length} カテゴリー`);
+        results.push(`  - アルファベット: ${Object.keys(ALPHABET_DATA).length} タイプ`);
+        results.push(`  - フレーズ: ${Object.keys(PHRASE_DATA).length} カテゴリー`);
+      } catch (error) {
+        results.push(`❌ モジュールインポートエラー: ${error.message}`);
+      }
+
+      // Test 2: DOM要素の存在確認
+      const requiredElements = [
+        'practiceMode',
+        'showExamples',
+        'showTranslation',
+        'ageGroup',
+        'lineHeight',
+        'preview',
+        'printBtn',
+      ];
+
+      const missingElements = [];
+      requiredElements.forEach((id) => {
+        if (!document.getElementById(id)) {
+          missingElements.push(id);
         }
+      });
 
-        // Test 2: DOM要素の存在確認
-        const requiredElements = [
-            'practiceMode',
-            'showExamples',
-            'showTranslation',
-            'ageGroup',
-            'lineHeight',
-            'preview',
-            'printBtn'
-        ];
+      if (missingElements.length === 0) {
+        results.push('✅ DOM要素: すべて存在');
+      } else {
+        results.push(`⚠️ DOM要素: ${missingElements.length}個が見つかりません`);
+        missingElements.forEach((id) => results.push(`  - ${id}`));
+      }
 
-        const missingElements = [];
-        requiredElements.forEach(id => {
-            if (!document.getElementById(id)) {
-                missingElements.push(id);
-            }
-        });
-
-        if (missingElements.length === 0) {
-            results.push('✅ DOM要素: すべて存在');
-        } else {
-            results.push(`⚠️ DOM要素: ${missingElements.length}個が見つかりません`);
-            missingElements.forEach(id => results.push(`  - ${id}`));
-        }
-
-        // Test 3: メイン機能の動作確認
-        try {
-            // ノート生成のテスト
-            const testHTML = `
+      // Test 3: メイン機能の動作確認
+      try {
+        // ノート生成のテスト
+        const testHTML = `
                 <div class="baseline-group">
                     <div class="baseline baseline--top"></div>
                     <div class="baseline baseline--upper"></div>
@@ -64,49 +66,45 @@
                 </div>
             `;
 
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = testHTML;
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = testHTML;
 
-            const baselines = tempDiv.querySelectorAll('.baseline');
-            if (baselines.length === 4) {
-                results.push('✅ ベースライン生成: 正常');
-            } else {
-                results.push(`⚠️ ベースライン生成: ${baselines.length}/4本`);
-            }
-        } catch (error) {
-            results.push(`❌ 機能テストエラー: ${error.message}`);
-        }
-
-        // Test 4: CSS変数の確認
-        const computedStyle = getComputedStyle(document.documentElement);
-        const cssVars = [
-            '--baseline-height-8mm',
-            '--baseline-height-10mm',
-            '--baseline-height-12mm'
-        ];
-
-        const missingVars = [];
-        cssVars.forEach(varName => {
-            const value = computedStyle.getPropertyValue(varName);
-            if (!value) {
-                missingVars.push(varName);
-            }
-        });
-
-        if (missingVars.length === 0) {
-            results.push('✅ CSS変数: すべて定義済み');
+        const baselines = tempDiv.querySelectorAll('.baseline');
+        if (baselines.length === 4) {
+          results.push('✅ ベースライン生成: 正常');
         } else {
-            results.push(`⚠️ CSS変数: ${missingVars.length}個が未定義`);
-            missingVars.forEach(varName => results.push(`  - ${varName}`));
+          results.push(`⚠️ ベースライン生成: ${baselines.length}/4本`);
         }
+      } catch (error) {
+        results.push(`❌ 機能テストエラー: ${error.message}`);
+      }
 
-        // 結果を表示
-        const resultDiv = document.getElementById('test-results');
-        resultDiv.innerHTML = '<pre>' + results.join('\n') + '</pre>';
+      // Test 4: CSS変数の確認
+      const computedStyle = getComputedStyle(document.documentElement);
+      const cssVars = ['--baseline-height-8mm', '--baseline-height-10mm', '--baseline-height-12mm'];
 
-        // コンソールにも出力
-        console.log('=== 機能確認テスト結果 ===');
-        results.forEach(result => console.log(result));
+      const missingVars = [];
+      cssVars.forEach((varName) => {
+        const value = computedStyle.getPropertyValue(varName);
+        if (!value) {
+          missingVars.push(varName);
+        }
+      });
+
+      if (missingVars.length === 0) {
+        results.push('✅ CSS変数: すべて定義済み');
+      } else {
+        results.push(`⚠️ CSS変数: ${missingVars.length}個が未定義`);
+        missingVars.forEach((varName) => results.push(`  - ${varName}`));
+      }
+
+      // 結果を表示
+      const resultDiv = document.getElementById('test-results');
+      resultDiv.innerHTML = '<pre>' + results.join('\n') + '</pre>';
+
+      // コンソールにも出力
+      console.log('=== 機能確認テスト結果 ===');
+      results.forEach((result) => console.log(result));
     </script>
-</body>
+  </body>
 </html>

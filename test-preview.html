@@ -1,53 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>印刷プレビューテスト</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>印刷プレビューテスト</h1>
     <button onclick="testPreview()">プレビューボタンをクリック</button>
     <div id="result"></div>
 
     <script>
-        async function testPreview() {
-            const result = document.getElementById('result');
-            result.innerHTML = 'テスト中...';
+      async function testPreview() {
+        const result = document.getElementById('result');
+        result.innerHTML = 'テスト中...';
 
-            try {
-                // メインページに移動
-                window.location.href = 'http://localhost:3000/';
+        try {
+          // メインページに移動
+          window.location.href = 'http://localhost:3000/';
 
-                // ページが読み込まれるまで待機
-                setTimeout(() => {
-                    // プレビューボタンをクリック
-                    const btn = document.getElementById('previewBtn');
-                    if (btn) {
-                        console.log('プレビューボタンを見つけました');
-                        btn.click();
+          // ページが読み込まれるまで待機
+          setTimeout(() => {
+            // プレビューボタンをクリック
+            const btn = document.getElementById('previewBtn');
+            if (btn) {
+              console.log('プレビューボタンを見つけました');
+              btn.click();
 
-                        // モーダルが表示されているか確認
-                        setTimeout(() => {
-                            const modal = document.getElementById('printPreviewModal');
-                            if (modal && modal.style.display !== 'none') {
-                                console.log('✅ モーダルが表示されました！');
-                            } else {
-                                console.error('❌ モーダルが表示されていません');
-                            }
-                        }, 500);
-                    } else {
-                        console.error('プレビューボタンが見つかりません');
-                    }
-                }, 1000);
-            } catch (error) {
-                result.innerHTML = `エラー: ${error.message}`;
+              // モーダルが表示されているか確認
+              setTimeout(() => {
+                const modal = document.getElementById('printPreviewModal');
+                if (modal && modal.style.display !== 'none') {
+                  console.log('✅ モーダルが表示されました！');
+                } else {
+                  console.error('❌ モーダルが表示されていません');
+                }
+              }, 500);
+            } else {
+              console.error('プレビューボタンが見つかりません');
             }
+          }, 1000);
+        } catch (error) {
+          result.innerHTML = `エラー: ${error.message}`;
         }
+      }
 
-        // 自動でメインページに移動してテスト
-        if (window.location.pathname === '/test-preview.html') {
-            result.innerHTML = '<a href="http://localhost:3000/">メインページに移動してテストしてください</a>';
-        }
+      // 自動でメインページに移動してテスト
+      if (window.location.pathname === '/test-preview.html') {
+        result.innerHTML =
+          '<a href="http://localhost:3000/">メインページに移動してテストしてください</a>';
+      }
     </script>
-</body>
+  </body>
 </html>

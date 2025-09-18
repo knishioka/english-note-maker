@@ -10,7 +10,7 @@ export const PRINT_LAYOUT = {
   // A4ページ設定
   pageSize: {
     width: '210mm',
-    height: '297mm'
+    height: '297mm',
   },
 
   // 余白設定（印刷品質の要）
@@ -20,7 +20,7 @@ export const PRINT_LAYOUT = {
     // デバッグ/テスト用
     debug: '10mm 15mm',
     // 最小推奨余白
-    minimum: '3mm 8mm'
+    minimum: '3mm 8mm',
   },
 
   // ベースライン設定
@@ -29,13 +29,13 @@ export const PRINT_LAYOUT = {
     lineHeight: {
       small: '8mm',
       standard: '10mm',
-      large: '12mm'
+      large: '12mm',
     },
     // 行間隔
     spacing: '2mm',
     // グループ間隔
-    groupMargin: '10mm'
-  }
+    groupMargin: '10mm',
+  },
 };
 
 // === 色設定 ===
@@ -47,17 +47,17 @@ export const COLORS = {
     print: '#c0c0c0',
     // カラーオプション
     blue: '#b3d9ff',
-    green: '#b3e5cc'
+    green: '#b3e5cc',
   },
   text: {
     primary: '#333',
     secondary: '#666',
-    accent: '#2563eb'
+    accent: '#2563eb',
   },
   background: {
     page: '#f5f5f5',
-    content: '#ffffff'
-  }
+    content: '#ffffff',
+  },
 };
 
 // === フォント設定 ===
@@ -68,7 +68,7 @@ export const FONTS = {
     title: '24px',
     subtitle: '18px',
     small: '12px',
-    tiny: '10px'
+    tiny: '10px',
   },
   families: {
     // 英語練習用フォント
@@ -76,8 +76,8 @@ export const FONTS = {
     // UI用フォント
     ui: '"Segoe UI", "Roboto", sans-serif',
     // 日本語用フォント
-    japanese: '"Hiragino Sans", "Yu Gothic", sans-serif'
-  }
+    japanese: '"Hiragino Sans", "Yu Gothic", sans-serif',
+  },
 };
 
 // === CSS変数生成関数 ===
@@ -146,13 +146,14 @@ export class ConfigManager {
       if (match) {
         const [, vertical, horizontal] = match;
         if (parseInt(vertical) < 3) issues.push(`${key} 余白の縦方向が小さすぎます: ${vertical}mm`);
-        if (parseInt(horizontal) < 8) issues.push(`${key} 余白の横方向が小さすぎます: ${horizontal}mm`);
+        if (parseInt(horizontal) < 8)
+          issues.push(`${key} 余白の横方向が小さすぎます: ${horizontal}mm`);
       }
     });
 
     return {
       valid: issues.length === 0,
-      issues
+      issues,
     };
   }
 
@@ -162,7 +163,7 @@ export class ConfigManager {
       PRINT_LAYOUT,
       COLORS,
       FONTS,
-      validation: this.validateConfig()
+      validation: this.validateConfig(),
     };
   }
 }

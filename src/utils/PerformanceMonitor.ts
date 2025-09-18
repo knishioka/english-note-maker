@@ -65,7 +65,7 @@ export class PerformanceMonitor {
       value: duration,
       unit: 'ms',
       threshold: this.getThreshold(operationName),
-      status: this.getPerformanceStatus(operationName, duration)
+      status: this.getPerformanceStatus(operationName, duration),
     });
 
     return duration;
@@ -134,7 +134,7 @@ export class PerformanceMonitor {
       metrics,
       renderTime: this.getAverageMetric('generateNote'),
       memoryUsage: this.getCurrentMemoryUsage(),
-      bundleSize: this.estimateBundleSize()
+      bundleSize: this.estimateBundleSize(),
     };
   }
 
@@ -182,10 +182,10 @@ export class PerformanceMonitor {
 
     // Categorize resources
     const categories = {
-      scripts: resourceEntries.filter(entry => entry.name.includes('.js')),
-      styles: resourceEntries.filter(entry => entry.name.includes('.css')),
-      images: resourceEntries.filter(entry => /\.(png|jpg|jpeg|gif|svg|webp)/.test(entry.name)),
-      fonts: resourceEntries.filter(entry => /\.(woff|woff2|ttf|otf)/.test(entry.name))
+      scripts: resourceEntries.filter((entry) => entry.name.includes('.js')),
+      styles: resourceEntries.filter((entry) => entry.name.includes('.css')),
+      images: resourceEntries.filter((entry) => /\.(png|jpg|jpeg|gif|svg|webp)/.test(entry.name)),
+      fonts: resourceEntries.filter((entry) => /\.(woff|woff2|ttf|otf)/.test(entry.name)),
     };
 
     // Calculate metrics for each category
@@ -221,7 +221,7 @@ export class PerformanceMonitor {
         value: usagePercent,
         unit: '%',
         threshold: 80,
-        status: usagePercent > 90 ? 'critical' : usagePercent > 80 ? 'warning' : 'good'
+        status: usagePercent > 90 ? 'critical' : usagePercent > 80 ? 'warning' : 'good',
       });
 
       // Schedule garbage collection if usage is high
@@ -247,13 +247,15 @@ export class PerformanceMonitor {
     }
 
     // Optimize based on memory usage
-    if (report.memoryUsage > 50 * 1024 * 1024) { // 50MB
+    if (report.memoryUsage > 50 * 1024 * 1024) {
+      // 50MB
       console.warn('High memory usage detected. Clearing caches.');
       this.clearCaches();
     }
 
     // Optimize based on bundle size
-    if (report.bundleSize > 2 * 1024 * 1024) { // 2MB
+    if (report.bundleSize > 2 * 1024 * 1024) {
+      // 2MB
       console.warn('Large bundle size detected. Consider code splitting.');
     }
   }
@@ -268,23 +270,20 @@ export class PerformanceMonitor {
     // Observe performance entries
     if (typeof PerformanceObserver !== 'undefined') {
       this.observePerformance('measure', (entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           this.recordMetric({
             name: entry.name,
             value: entry.duration,
             unit: 'ms',
             threshold: this.getThreshold(entry.name),
-            status: this.getPerformanceStatus(entry.name, entry.duration)
+            status: this.getPerformanceStatus(entry.name, entry.duration),
           });
         });
       });
     }
   }
 
-  private observePerformance(
-    type: string,
-    callback: (entries: PerformanceEntry[]) => void
-  ): void {
+  private observePerformance(type: string, callback: (entries: PerformanceEntry[]) => void): void {
     try {
       const observer = new PerformanceObserver((list) => {
         callback(list.getEntries());
@@ -299,18 +298,21 @@ export class PerformanceMonitor {
 
   private getThreshold(operationName: string): number {
     const thresholds: Record<string, number> = {
-      generateNote: 500,    // 500ms for note generation
-      validation: 100,      // 100ms for validation
-      print: 1000,         // 1s for print operations
-      render: 16,          // 16ms for smooth 60fps
-      interaction: 100,    // 100ms for user interactions
-      default: 200
+      generateNote: 500, // 500ms for note generation
+      validation: 100, // 100ms for validation
+      print: 1000, // 1s for print operations
+      render: 16, // 16ms for smooth 60fps
+      interaction: 100, // 100ms for user interactions
+      default: 200,
     };
 
     return thresholds[operationName] || thresholds.default;
   }
 
-  private getPerformanceStatus(operationName: string, duration: number): PerformanceMetric['status'] {
+  private getPerformanceStatus(
+    operationName: string,
+    duration: number
+  ): PerformanceMetric['status'] {
     const threshold = this.getThreshold(operationName);
 
     if (duration > threshold * 2) {
@@ -323,8 +325,9 @@ export class PerformanceMonitor {
   }
 
   private getAverageMetric(metricName: string): number {
-    const relevantMetrics = Array.from(this.metrics.values())
-      .filter(metric => metric.name === metricName);
+    const relevantMetrics = Array.from(this.metrics.values()).filter(
+      (metric) => metric.name === metricName
+    );
 
     if (relevantMetrics.length === 0) {
       return 0;
@@ -349,7 +352,7 @@ export class PerformanceMonitor {
 
   private getFirstPaintTime(): number {
     const paintEntries = performance.getEntriesByType('paint');
-    const firstPaint = paintEntries.find(entry => entry.name === 'first-paint');
+    const firstPaint = paintEntries.find((entry) => entry.name === 'first-paint');
     return firstPaint ? firstPaint.startTime : 0;
   }
 
@@ -361,8 +364,8 @@ export class PerformanceMonitor {
 
     // Clear browser caches if available
     if ('caches' in window) {
-      caches.keys().then(names => {
-        names.forEach(name => {
+      caches.keys().then((names) => {
+        names.forEach((name) => {
           caches.delete(name);
         });
       });
@@ -374,7 +377,7 @@ export class PerformanceMonitor {
    */
   public dispose(): void {
     // Disconnect all observers
-    this.observers.forEach(observer => {
+    this.observers.forEach((observer) => {
       observer.disconnect();
     });
     this.observers.clear();

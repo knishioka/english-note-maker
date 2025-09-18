@@ -30,7 +30,7 @@ export const ALPHABET_DATA = {
     { letter: 'W', example: 'Water', japanese: 'みず' },
     { letter: 'X', example: 'Box', japanese: 'はこ' },
     { letter: 'Y', example: 'Yellow', japanese: 'きいろ' },
-    { letter: 'Z', example: 'Zoo', japanese: 'どうぶつえん' }
+    { letter: 'Z', example: 'Zoo', japanese: 'どうぶつえん' },
   ],
   lowercase: [
     { letter: 'a', example: 'apple', japanese: 'りんご' },
@@ -58,6 +58,6 @@ export const ALPHABET_DATA = {
     { letter: 'w', example: 'water', japanese: 'みず' },
     { letter: 'x', example: 'box', japanese: 'はこ' },
     { letter: 'y', example: 'yellow', japanese: 'きいろ' },
-    { letter: 'z', example: 'zoo', japanese: 'どうぶつえん' }
-  ]
+    { letter: 'z', example: 'zoo', japanese: 'どうぶつえん' },
+  ],
 };

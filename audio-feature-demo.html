@@ -1,84 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
     <title>音声機能デモ</title>
     <style>
-        .audio-demo { padding: 20px; font-family: Arial, sans-serif; }
-        .phrase-with-audio { 
-            display: flex; 
-            align-items: center; 
-            margin: 10px 0; 
-            padding: 10px; 
-            border: 1px solid #ddd; 
-            border-radius: 5px; 
-        }
-        .speak-btn { 
-            margin-left: 10px; 
-            padding: 5px 10px; 
-            background: #007bff; 
-            color: white; 
-            border: none; 
-            border-radius: 3px; 
-            cursor: pointer; 
-        }
-        .speak-btn:hover { background: #0056b3; }
-        .speak-btn:disabled { background: #ccc; cursor: not-allowed; }
+      .audio-demo {
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .phrase-with-audio {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .speak-btn {
+        margin-left: 10px;
+        padding: 5px 10px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .speak-btn:hover {
+        background: #0056b3;
+      }
+      .speak-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="audio-demo">
-        <h2>🔊 音声機能デモ</h2>
-        <p>各フレーズの発音を聞くことができます</p>
-        
-        <div class="phrase-with-audio">
-            <span>How are you? (元気ですか？)</span>
-            <button class="speak-btn" onclick="speak('How are you?')">🔊</button>
-        </div>
-        
-        <div class="phrase-with-audio">
-            <span>Nice to meet you. (はじめまして。)</span>
-            <button class="speak-btn" onclick="speak('Nice to meet you.')">🔊</button>
-        </div>
-        
-        <div class="phrase-with-audio">
-            <span>Thank you very much. (ありがとうございます。)</span>
-            <button class="speak-btn" onclick="speak('Thank you very much.')">🔊</button>
-        </div>
-        
-        <div style="margin-top: 20px;">
-            <label>
-                速度: 
-                <input type="range" id="speed" min="0.5" max="2" step="0.1" value="0.8">
-                <span id="speedValue">0.8</span>
-            </label>
-        </div>
+      <h2>🔊 音声機能デモ</h2>
+      <p>各フレーズの発音を聞くことができます</p>
+
+      <div class="phrase-with-audio">
+        <span>How are you? (元気ですか？)</span>
+        <button class="speak-btn" onclick="speak('How are you?')">🔊</button>
+      </div>
+
+      <div class="phrase-with-audio">
+        <span>Nice to meet you. (はじめまして。)</span>
+        <button class="speak-btn" onclick="speak('Nice to meet you.')">🔊</button>
+      </div>
+
+      <div class="phrase-with-audio">
+        <span>Thank you very much. (ありがとうございます。)</span>
+        <button class="speak-btn" onclick="speak('Thank you very much.')">🔊</button>
+      </div>
+
+      <div style="margin-top: 20px">
+        <label>
+          速度:
+          <input type="range" id="speed" min="0.5" max="2" step="0.1" value="0.8" />
+          <span id="speedValue">0.8</span>
+        </label>
+      </div>
     </div>
 
     <script>
-        let speechSynthesis = window.speechSynthesis;
-        
-        function speak(text) {
-            if (!speechSynthesis) {
-                alert('お使いのブラウザは音声機能に対応していません');
-                return;
-            }
-            
-            // 再生中の音声を停止
-            speechSynthesis.cancel();
-            
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = parseFloat(document.getElementById('speed').value);
-            utterance.pitch = 1;
-            utterance.volume = 1;
-            
-            speechSynthesis.speak(utterance);
+      let speechSynthesis = window.speechSynthesis;
+
+      function speak(text) {
+        if (!speechSynthesis) {
+          alert('お使いのブラウザは音声機能に対応していません');
+          return;
         }
-        
-        // 速度表示を更新
-        document.getElementById('speed').addEventListener('input', function() {
-            document.getElementById('speedValue').textContent = this.value;
-        });
+
+        // 再生中の音声を停止
+        speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = parseFloat(document.getElementById('speed').value);
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        speechSynthesis.speak(utterance);
+      }
+
+      // 速度表示を更新
+      document.getElementById('speed').addEventListener('input', function () {
+        document.getElementById('speedValue').textContent = this.value;
+      });
     </script>
-</body>
+  </body>
 </html>

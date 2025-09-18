@@ -14,7 +14,7 @@ async function checkPrintLayout() {
     console.log('ページを読み込んでいます...');
     await page.goto('http://localhost:3004?t=' + Date.now(), {
       waitUntil: 'networkidle0',
-      timeout: 10000
+      timeout: 10000,
     });
 
     // フレーズ練習モードを選択
@@ -22,12 +22,12 @@ async function checkPrintLayout() {
     await page.select('#practiceMode', 'phrase');
 
     // 少し待機
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // 日本語訳と使用場面を表示
     const translationCheckbox = await page.$('#showTranslation');
     if (translationCheckbox) {
-      const isChecked = await page.evaluate(el => el.checked, translationCheckbox);
+      const isChecked = await page.evaluate((el) => el.checked, translationCheckbox);
       if (!isChecked) {
         await translationCheckbox.click();
       }
@@ -35,14 +35,14 @@ async function checkPrintLayout() {
 
     const situationCheckbox = await page.$('#showSituation');
     if (situationCheckbox) {
-      const isChecked = await page.evaluate(el => el.checked, situationCheckbox);
+      const isChecked = await page.evaluate((el) => el.checked, situationCheckbox);
       if (!isChecked) {
         await situationCheckbox.click();
       }
     }
 
     // プレビューが更新されるまで待機
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // 印刷メディアでの実際の測定
     const printMeasurements = await page.evaluate(() => {
@@ -77,7 +77,7 @@ async function checkPrintLayout() {
           widthPx: pageWidth,
           heightPx: pageHeight,
           widthMm: pageWidth * pxToMm,
-          heightMm: pageHeight * pxToMm
+          heightMm: pageHeight * pxToMm,
         },
         notePage: {
           widthPx: notePageRect.width,
@@ -85,15 +85,15 @@ async function checkPrintLayout() {
           widthMm: notePageRect.width * pxToMm,
           heightMm: notePageRect.height * pxToMm,
           topPx: notePageRect.top,
-          topMm: notePageRect.top * pxToMm
+          topMm: notePageRect.top * pxToMm,
         },
         content: {
           totalHeightPx: notePreviewRect.height,
           totalHeightMm: notePreviewRect.height * pxToMm,
           scrollHeightPx: notePreview.scrollHeight,
-          scrollHeightMm: notePreview.scrollHeight * pxToMm
+          scrollHeightMm: notePreview.scrollHeight * pxToMm,
         },
-        elements: []
+        elements: [],
       };
 
       // タイトル測定
@@ -104,7 +104,7 @@ async function checkPrintLayout() {
           heightPx: titleRect.height,
           heightMm: titleRect.height * pxToMm,
           topPx: titleRect.top,
-          topMm: titleRect.top * pxToMm
+          topMm: titleRect.top * pxToMm,
         });
       }
 
@@ -124,12 +124,12 @@ async function checkPrintLayout() {
           linesHeightPx: lines ? lines.getBoundingClientRect().height : 0,
           linesHeightMm: lines ? lines.getBoundingClientRect().height * pxToMm : 0,
           topPx: itemRect.top,
-          topMm: itemRect.top * pxToMm
+          topMm: itemRect.top * pxToMm,
         });
       });
 
       // 余白計算
-      const contentEndPx = Math.max(...measurements.elements.map(e => e.topPx + e.totalHeightPx));
+      const contentEndPx = Math.max(...measurements.elements.map((e) => e.topPx + e.totalHeightPx));
       const pageBottomPx = notePageRect.bottom;
       const remainingSpacePx = pageBottomPx - contentEndPx;
 
@@ -140,7 +140,7 @@ async function checkPrintLayout() {
         pageBottomMm: pageBottomPx * pxToMm,
         remainingSpacePx: remainingSpacePx,
         remainingSpaceMm: remainingSpacePx * pxToMm,
-        remainingPercentage: (remainingSpacePx / notePageRect.height) * 100
+        remainingPercentage: (remainingSpacePx / notePageRect.height) * 100,
       };
 
       return measurements;
@@ -152,15 +152,23 @@ async function checkPrintLayout() {
     }
 
     console.log('\n📏 印刷レイアウト測定結果:');
-    console.log(`ページサイズ: ${printMeasurements.pageSize.widthMm.toFixed(1)}mm × ${printMeasurements.pageSize.heightMm.toFixed(1)}mm`);
-    console.log(`ノートページ: ${printMeasurements.notePage.widthMm.toFixed(1)}mm × ${printMeasurements.notePage.heightMm.toFixed(1)}mm`);
+    console.log(
+      `ページサイズ: ${printMeasurements.pageSize.widthMm.toFixed(1)}mm × ${printMeasurements.pageSize.heightMm.toFixed(1)}mm`
+    );
+    console.log(
+      `ノートページ: ${printMeasurements.notePage.widthMm.toFixed(1)}mm × ${printMeasurements.notePage.heightMm.toFixed(1)}mm`
+    );
 
     console.log('\n📝 要素詳細:');
-    printMeasurements.elements.forEach(element => {
+    printMeasurements.elements.forEach((element) => {
       if (element.type === 'title') {
-        console.log(`タイトル: ${element.heightMm.toFixed(1)}mm (位置: ${element.topMm.toFixed(1)}mm)`);
+        console.log(
+          `タイトル: ${element.heightMm.toFixed(1)}mm (位置: ${element.topMm.toFixed(1)}mm)`
+        );
       } else if (element.type === 'phrase') {
-        console.log(`フレーズ${element.index}: ${element.totalHeightMm.toFixed(1)}mm (位置: ${element.topMm.toFixed(1)}mm)`);
+        console.log(
+          `フレーズ${element.index}: ${element.totalHeightMm.toFixed(1)}mm (位置: ${element.topMm.toFixed(1)}mm)`
+        );
         console.log(`  - ヘッダー: ${element.headerHeightMm.toFixed(1)}mm`);
         console.log(`  - 罫線: ${element.linesHeightMm.toFixed(1)}mm`);
       }
@@ -188,10 +196,9 @@ async function checkPrintLayout() {
     console.log('\n⏸️  ブラウザを手動で確認してください。Enterを押すと終了します...');
 
     // ユーザーの確認を待つ（headless: falseの場合）
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       process.stdin.once('data', resolve);
     });
-
   } catch (error) {
     console.error('エラーが発生しました:', error);
   } finally {

@@ -9,7 +9,7 @@ class LayoutValidator {
         min: 8,
         max: 12,
         unit: 'mm',
-        severity: 'error'
+        severity: 'error',
       },
       lineSpacing: {
         selector: '.line-separator-small',
@@ -17,7 +17,7 @@ class LayoutValidator {
         min: 1,
         max: 5,
         unit: 'mm',
-        severity: 'warning'
+        severity: 'warning',
       },
       baselineThickness: {
         selector: '.baseline--lower',
@@ -25,7 +25,7 @@ class LayoutValidator {
         min: 1,
         max: 2.5,
         unit: 'px',
-        severity: 'error'
+        severity: 'error',
       },
       pageMargin: {
         selector: '.note-page',
@@ -33,7 +33,7 @@ class LayoutValidator {
         min: 10,
         max: 20,
         unit: 'mm',
-        severity: 'error'
+        severity: 'error',
       },
       fontSize: {
         selector: '.example-english',
@@ -41,13 +41,13 @@ class LayoutValidator {
         min: 12,
         max: 18,
         unit: 'pt',
-        severity: 'warning'
-      }
+        severity: 'warning',
+      },
     };
 
     this.results = [];
     this.A4_HEIGHT_MM = 297; // A4の高さ
-    this.A4_WIDTH_MM = 210;  // A4の幅
+    this.A4_WIDTH_MM = 210; // A4の幅
   }
 
   // ピクセルをミリメートルに変換
@@ -68,12 +68,12 @@ class LayoutValidator {
       return {
         rule: ruleName,
         status: 'skip',
-        message: `要素が見つかりません: ${rule.selector}`
+        message: `要素が見つかりません: ${rule.selector}`,
       };
     }
 
     const values = [];
-    elements.forEach(element => {
+    elements.forEach((element) => {
       const computed = window.getComputedStyle(element);
       let value = parseFloat(computed[rule.property]);
 
@@ -98,7 +98,7 @@ class LayoutValidator {
       expectedRange: `${rule.min}-${rule.max}${rule.unit}`,
       message: isValid
         ? `✅ ${ruleName}: ${avgValue.toFixed(2)}${rule.unit}`
-        : `❌ ${ruleName}: ${avgValue.toFixed(2)}${rule.unit} (期待値: ${rule.min}-${rule.max}${rule.unit})`
+        : `❌ ${ruleName}: ${avgValue.toFixed(2)}${rule.unit} (期待値: ${rule.min}-${rule.max}${rule.unit})`,
     };
   }
 
@@ -120,7 +120,7 @@ class LayoutValidator {
         expectedRange: `0-${this.A4_HEIGHT_MM}mm`,
         message: isValid
           ? `✅ ページ${index + 1}高さ: ${heightInMm.toFixed(2)}mm (A4内)`
-          : `❌ ページ${index + 1}高さ: ${heightInMm.toFixed(2)}mm (A4超過: +${(heightInMm - this.A4_HEIGHT_MM).toFixed(2)}mm)`
+          : `❌ ページ${index + 1}高さ: ${heightInMm.toFixed(2)}mm (A4超過: +${(heightInMm - this.A4_HEIGHT_MM).toFixed(2)}mm)`,
       });
     });
 
@@ -146,8 +146,8 @@ class LayoutValidator {
   // レポート生成
   generateReport() {
     const results = this.validate();
-    const errors = results.filter(r => r.status === 'fail' && r.severity === 'error');
-    const warnings = results.filter(r => r.status === 'fail' && r.severity === 'warning');
+    const errors = results.filter((r) => r.status === 'fail' && r.severity === 'error');
+    const warnings = results.filter((r) => r.status === 'fail' && r.severity === 'warning');
 
     console.group('📋 レイアウト検証レポート');
     console.log(`検証日時: ${new Date().toLocaleString()}`);
@@ -157,13 +157,13 @@ class LayoutValidator {
 
     if (errors.length > 0) {
       console.group('❌ エラー');
-      errors.forEach(e => console.error(e.message));
+      errors.forEach((e) => console.error(e.message));
       console.groupEnd();
     }
 
     if (warnings.length > 0) {
       console.group('⚠️ 警告');
-      warnings.forEach(w => console.warn(w.message));
+      warnings.forEach((w) => console.warn(w.message));
       console.groupEnd();
     }
 
@@ -174,13 +174,13 @@ class LayoutValidator {
       timestamp: new Date().toISOString(),
       summary: {
         total: results.length,
-        passed: results.filter(r => r.status === 'pass').length,
-        failed: results.filter(r => r.status === 'fail').length,
-        skipped: results.filter(r => r.status === 'skip').length
+        passed: results.filter((r) => r.status === 'pass').length,
+        failed: results.filter((r) => r.status === 'fail').length,
+        skipped: results.filter((r) => r.status === 'skip').length,
       },
       errors,
       warnings,
-      details: results
+      details: results,
     };
   }
 }

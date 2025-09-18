@@ -35,7 +35,7 @@ export class Logger {
       enableStackTrace: false,
       enableTimestamps: true,
       environment: 'development',
-      ...config
+      ...config,
     };
   }
 
@@ -120,11 +120,11 @@ export class Logger {
 
       if (result instanceof Promise) {
         return result
-          .then(value => {
+          .then((value) => {
             this.endTimer(name);
             return value;
           })
-          .catch(error => {
+          .catch((error) => {
             this.endTimer(name);
             this.error(`Timed operation failed: ${name}`, { error: error.message });
             throw error;
@@ -158,7 +158,7 @@ export class Logger {
             this.contextStack.pop();
             this.info(`Completed: ${name}`);
           })
-          .catch(error => {
+          .catch((error) => {
             this.contextStack.pop();
             this.error(`Failed: ${name}`, { error: error.message });
             throw error;
@@ -264,23 +264,23 @@ export class Logger {
       await fetch(this.config.remoteEndpoint, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           logs,
           meta: {
             environment: this.config.environment,
             timestamp: new Date().toISOString(),
-            userAgent: navigator.userAgent
-          }
-        })
+            userAgent: navigator.userAgent,
+          },
+        }),
       });
 
       this.clearLogs();
       this.debug('Logs flushed to remote endpoint');
     } catch (error) {
       this.error('Failed to flush logs to remote endpoint', {
-        error: (error as Error).message
+        error: (error as Error).message,
       });
     }
   }
@@ -300,7 +300,7 @@ export class Logger {
       message,
       timestamp: this.config.enableTimestamps ? new Date().toISOString() : '',
       context: this.buildContext(context),
-      stack: this.config.enableStackTrace ? this.getStackTrace() : undefined
+      stack: this.config.enableStackTrace ? this.getStackTrace() : undefined,
     };
 
     // Store in memory
@@ -327,7 +327,7 @@ export class Logger {
       debug: 0,
       info: 1,
       warn: 2,
-      error: 3
+      error: 3,
     };
 
     return levels[level] >= levels[this.config.level];
@@ -353,7 +353,7 @@ export class Logger {
     if (this.config.enablePerformanceLogging && typeof performance !== 'undefined') {
       context._perf = {
         now: Math.round(performance.now()),
-        memory: this.getMemoryInfo()
+        memory: this.getMemoryInfo(),
       };
     }
 
@@ -377,7 +377,7 @@ export class Logger {
     return {
       used: Math.round(memory.usedJSHeapSize / 1024 / 1024), // MB
       total: Math.round(memory.totalJSHeapSize / 1024 / 1024), // MB
-      limit: Math.round(memory.jsHeapSizeLimit / 1024 / 1024) // MB
+      limit: Math.round(memory.jsHeapSizeLimit / 1024 / 1024), // MB
     };
   }
 
@@ -471,9 +471,9 @@ export class Logger {
 // Create global logger instance
 export const logger = new Logger({
   level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-  environment: process.env.NODE_ENV as any || 'development',
+  environment: (process.env.NODE_ENV as any) || 'development',
   enableRemoteLogging: process.env.NODE_ENV === 'production',
-  remoteEndpoint: process.env.VITE_LOGGING_ENDPOINT
+  remoteEndpoint: process.env.VITE_LOGGING_ENDPOINT,
 });
 
 // Export logger creation function for custom loggers
