@@ -16,7 +16,7 @@
     "test:headed": "playwright test --headed",
     "test:reporter": "playwright show-report",
     "test:install": "playwright install",
-    "lint": "echo 'No linter configured - add eslint if needed'",
+    "lint": "eslint . --ext .js",
     "typecheck": "echo 'No TypeScript - consider adding if needed'",
     "debug:open": "echo 'Open browser and press Ctrl+Shift+D to open debug panel'",
     "debug:stats": "echo 'Call displayContentStats() in browser console'",
@@ -51,7 +51,9 @@
     "url": "https://github.com/knishioka/english-note-maker/issues"
   },
   "devDependencies": {
+    "@eslint/js": "^9.35.0",
     "@playwright/test": "^1.40.0",
+    "eslint": "^9.35.0",
     "http-server": "^14.1.1",
     "live-server": "^1.2.2"
   },
