@@ -7,7 +7,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Stable Print Preview Tests', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async({ page }) => {
     // Navigate to the application
     await page.goto('/');
 
@@ -30,7 +30,7 @@ test.describe('Stable Print Preview Tests', () => {
     });
   });
 
-  test('print preview modal shows and hides correctly', async ({ page }) => {
+  test('print preview modal shows and hides correctly', async({ page }) => {
     // Verify initial state
     const modal = page.locator('#printPreviewModal');
     await expect(modal).not.toBeVisible();
@@ -79,7 +79,7 @@ test.describe('Stable Print Preview Tests', () => {
     await expect(modal).not.toBeVisible();
   });
 
-  test('debug utilities are functioning correctly', async ({ page }) => {
+  test('debug utilities are functioning correctly', async({ page }) => {
     // Verify Debug utilities are loaded
     const debugAvailable = await page.evaluate(() => {
       return {
@@ -108,7 +108,7 @@ test.describe('Stable Print Preview Tests', () => {
     expect(Array.isArray(logs.warnings)).toBeTruthy();
   });
 
-  test('page navigation and controls work correctly', async ({ page }) => {
+  test('page navigation and controls work correctly', async({ page }) => {
     // Test practice mode selection
     const practiceModeSelect = page.locator('#practiceMode');
     await expect(practiceModeSelect).toBeVisible();
@@ -138,7 +138,7 @@ test.describe('Stable Print Preview Tests', () => {
     await expect(notePreview).toBeVisible();
   });
 
-  test('keyboard shortcuts work correctly', async ({ page }) => {
+  test('keyboard shortcuts work correctly', async({ page }) => {
     // Test debug panel shortcut (Ctrl+Shift+D)
     await page.keyboard.press('Control+Shift+KeyD');
 
@@ -156,7 +156,7 @@ test.describe('Stable Print Preview Tests', () => {
     await expect(debugPanel).not.toBeVisible();
   });
 
-  test('performance monitoring works', async ({ page }) => {
+  test('performance monitoring works', async({ page }) => {
     // Start performance measurement
     await page.evaluate(() => {
       window.Debug.startTimer('test-operation');
@@ -178,7 +178,7 @@ test.describe('Stable Print Preview Tests', () => {
     await page.click('#closePreviewBtn');
   });
 
-  test('error handling and logging', async ({ page }) => {
+  test('error handling and logging', async({ page }) => {
     let errorCaught = false;
 
     // Listen for page errors
@@ -211,7 +211,7 @@ test.describe('Stable Print Preview Tests', () => {
 
 test.describe('Cross-browser compatibility', () => {
   ['chromium', 'firefox', 'webkit'].forEach(browserName => {
-    test(`print preview works in ${browserName}`, async ({ page, browserName: currentBrowser }) => {
+    test(`print preview works in ${browserName}`, async({ page, browserName: currentBrowser }) => {
       test.skip(currentBrowser !== browserName, `Skipping ${browserName} test`);
 
       await page.goto('/');

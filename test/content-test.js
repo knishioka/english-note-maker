@@ -9,21 +9,21 @@ const scriptContent = fs.readFileSync(scriptPath, 'utf8');
 
 // テスト結果を格納
 const testResults = {
-    passed: 0,
-    failed: 0,
-    errors: []
+  passed: 0,
+  failed: 0,
+  errors: []
 };
 
 // テスト関数
 function test(name, condition, errorMessage) {
-    if (condition) {
-        testResults.passed++;
-        console.log(`✅ ${name}`);
-    } else {
-        testResults.failed++;
-        testResults.errors.push({ test: name, error: errorMessage });
-        console.log(`❌ ${name}: ${errorMessage}`);
-    }
+  if (condition) {
+    testResults.passed++;
+    console.log(`✅ ${name}`);
+  } else {
+    testResults.failed++;
+    testResults.errors.push({ test: name, error: errorMessage });
+    console.log(`❌ ${name}: ${errorMessage}`);
+  }
 }
 
 // 1. 必須データ構造の存在確認
@@ -37,25 +37,25 @@ test('ALPHABET_DATA の存在', scriptContent.includes('const ALPHABET_DATA'), '
 console.log('\n👶 年齢グループの一貫性チェック');
 const ageGroups = ['4-6', '7-9', '10-12'];
 ageGroups.forEach(age => {
-    test(`年齢グループ "${age}" の存在`, scriptContent.includes(`"${age}"`), `年齢グループ ${age} が見つかりません`);
+  test(`年齢グループ "${age}" の存在`, scriptContent.includes(`"${age}"`), `年齢グループ ${age} が見つかりません`);
 });
 
 // 3. 必須関数の存在確認
 console.log('\n🔧 必須関数のチェック');
 const requiredFunctions = [
-    'updatePreview',
-    'generateNormalPractice',
-    'generateSentencePractice',
-    'generateWordPractice',
-    'generateAlphabetPractice',
-    'generatePhrasePractice',
-    'updateOptionsVisibility'
+  'updatePreview',
+  'generateNormalPractice',
+  'generateSentencePractice',
+  'generateWordPractice',
+  'generateAlphabetPractice',
+  'generatePhrasePractice',
+  'updateOptionsVisibility'
 ];
 
 requiredFunctions.forEach(func => {
-    test(`関数 ${func} の存在`, 
-        scriptContent.includes(`function ${func}`) || scriptContent.includes(`const ${func}`),
-        `関数 ${func} が見つかりません`);
+  test(`関数 ${func} の存在`,
+    scriptContent.includes(`function ${func}`) || scriptContent.includes(`const ${func}`),
+    `関数 ${func} が見つかりません`);
 });
 
 // 4. 単語データの構造チェック
@@ -79,43 +79,43 @@ const expectedWordCategories = ['animals', 'food', 'colors', 'numbers', 'calenda
 const expectedPhraseCategories = ['greetings', 'self_introduction', 'school', 'shopping', 'travel', 'feelings', 'daily_life'];
 
 expectedWordCategories.forEach(cat => {
-    test(`単語カテゴリー "${cat}"`, scriptContent.includes(`${cat}:`), `単語カテゴリー ${cat} が見つかりません`);
+  test(`単語カテゴリー "${cat}"`, scriptContent.includes(`${cat}:`), `単語カテゴリー ${cat} が見つかりません`);
 });
 
 expectedPhraseCategories.forEach(cat => {
-    test(`フレーズカテゴリー "${cat}"`, scriptContent.includes(`${cat}:`), `フレーズカテゴリー ${cat} が見つかりません`);
+  test(`フレーズカテゴリー "${cat}"`, scriptContent.includes(`${cat}:`), `フレーズカテゴリー ${cat} が見つかりません`);
 });
 
 // 8. イベントリスナーの確認
 console.log('\n🎯 イベントリスナーのチェック');
 const eventListeners = [
-    'practiceMode',
-    'ageGroup',
-    'showExamples',
-    'wordCategory',
-    'phraseCategory',
-    'printBtn'
+  'practiceMode',
+  'ageGroup',
+  'showExamples',
+  'wordCategory',
+  'phraseCategory',
+  'printBtn'
 ];
 
 eventListeners.forEach(id => {
-    test(`イベントリスナー "${id}"`, 
-        scriptContent.includes(`getElementById('${id}')`) && scriptContent.includes('addEventListener'),
-        `${id} のイベントリスナーが設定されていません`);
+  test(`イベントリスナー "${id}"`,
+    scriptContent.includes(`getElementById('${id}')`) && scriptContent.includes('addEventListener'),
+    `${id} のイベントリスナーが設定されていません`);
 });
 
 // 9. CSS クラスの使用確認
 console.log('\n🎨 CSS クラスの使用確認');
 const cssClasses = [
-    'note-page',
-    'baseline-group',
-    'baseline',
-    'example-sentence',
-    'alphabet-grid',
-    'phrase-item'
+  'note-page',
+  'baseline-group',
+  'baseline',
+  'example-sentence',
+  'alphabet-grid',
+  'phrase-item'
 ];
 
 cssClasses.forEach(cls => {
-    test(`CSS クラス "${cls}" の使用`, scriptContent.includes(cls), `CSS クラス ${cls} が使用されていません`);
+  test(`CSS クラス "${cls}" の使用`, scriptContent.includes(cls), `CSS クラス ${cls} が使用されていません`);
 });
 
 // 10. 設定値の妥当性チェック
@@ -130,12 +130,12 @@ console.log(`失敗: ${testResults.failed}`);
 console.log(`合計: ${testResults.passed + testResults.failed}`);
 
 if (testResults.failed > 0) {
-    console.log('\n❌ 失敗したテスト:');
-    testResults.errors.forEach(error => {
-        console.log(`  - ${error.test}: ${error.error}`);
-    });
-    process.exit(1);
+  console.log('\n❌ 失敗したテスト:');
+  testResults.errors.forEach(error => {
+    console.log(`  - ${error.test}: ${error.error}`);
+  });
+  process.exit(1);
 } else {
-    console.log('\n✅ すべてのテストに合格しました！');
-    process.exit(0);
+  console.log('\n✅ すべてのテストに合格しました！');
+  process.exit(0);
 }

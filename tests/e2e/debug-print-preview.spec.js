@@ -8,7 +8,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Print Preview Debugging', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async({ page }) => {
     // Navigate to the application
     await page.goto('/');
 
@@ -23,7 +23,7 @@ test.describe('Print Preview Debugging', () => {
     });
   });
 
-  test('debug print preview button visibility and interaction', async ({ page }) => {
+  test('debug print preview button visibility and interaction', async({ page }) => {
     // Take initial screenshot
     await page.screenshot({ path: 'test-results/initial-state.png', fullPage: true });
 
@@ -94,7 +94,7 @@ test.describe('Print Preview Debugging', () => {
     await expect(modal).not.toBeVisible();
   });
 
-  test('debug CSS variables and styles', async ({ page }) => {
+  test('debug CSS variables and styles', async({ page }) => {
     // Check if required CSS variables are defined
     const cssVariables = await page.evaluate(() => {
       const root = getComputedStyle(document.documentElement);
@@ -133,7 +133,7 @@ test.describe('Print Preview Debugging', () => {
     console.log('Has print styles:', hasPrintStyles);
   });
 
-  test('debug event listeners', async ({ page }) => {
+  test('debug event listeners', async({ page }) => {
     // Check all event listeners on the print preview button
     const eventListeners = await page.evaluate(() => {
       const btn = document.getElementById('previewBtn');
@@ -172,7 +172,7 @@ test.describe('Print Preview Debugging', () => {
     console.log('Event Listeners:', eventListeners);
   });
 
-  test('debug modal animation and transitions', async ({ page }) => {
+  test('debug modal animation and transitions', async({ page }) => {
     const modal = page.locator('#printPreviewModal');
 
     // Get transition/animation properties
@@ -207,7 +207,7 @@ test.describe('Print Preview Debugging', () => {
     }
   });
 
-  test('capture network requests during interaction', async ({ page }) => {
+  test('capture network requests during interaction', async({ page }) => {
     // Monitor network requests
     const requests = [];
     page.on('request', request => {
@@ -225,7 +225,7 @@ test.describe('Print Preview Debugging', () => {
     console.log('Network Requests:', requests);
   });
 
-  test('validate print layout structure', async ({ page }) => {
+  test('validate print layout structure', async({ page }) => {
     // Generate print preview
     await page.click('#previewBtn');
     await page.waitForSelector('.print-preview-modal.modal-visible');
@@ -252,7 +252,7 @@ test.describe('Print Preview Debugging', () => {
 });
 
 test.describe('Performance Debugging', () => {
-  test('measure rendering performance', async ({ page }) => {
+  test('measure rendering performance', async({ page }) => {
     await page.goto('/');
 
     // Measure page load performance
@@ -292,7 +292,7 @@ test.describe('Performance Debugging', () => {
     console.log('Preview Render Time:', measurements);
   });
 
-  test('debug memory usage', async ({ page }) => {
+  test('debug memory usage', async({ page }) => {
     await page.goto('/');
 
     // Check initial memory usage

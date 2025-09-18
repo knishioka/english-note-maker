@@ -60,8 +60,8 @@ function setupEventListeners() {
         updatePreview();
     });
     ageGroupSelect.addEventListener('change', () => {
-        currentExampleIndices = {};
-        currentExamples = []; // 年齢変更時に例文をリセット
+        setCurrentExampleIndices({});
+        setCurrentExamples([]); // 年齢変更時に例文をリセット
         updatePreview();
     });
     
@@ -73,7 +73,7 @@ function setupEventListeners() {
     
     // Phase 2追加機能のイベントリスナー
     exampleCategorySelect.addEventListener('change', () => {
-        currentExamples = [];
+        setCurrentExamples([]);
         updatePreview();
     });
     wordCategorySelect.addEventListener('change', updatePreview);
@@ -120,7 +120,7 @@ function setupEventListeners() {
 
 // オプションの表示/非表示を更新
 function updateOptionsVisibility() {
-    const practiceMode = document.getElementById('practiceMode').value;
+    const practiceModeValue = document.getElementById('practiceMode').value;
     const exampleOptions = document.getElementById('exampleOptions');
     const translationOptions = document.getElementById('translationOptions');
     const ageOptions = document.getElementById('ageOptions');
@@ -138,22 +138,22 @@ function updateOptionsVisibility() {
     alphabetOptions.style.display = 'none';
     phraseOptions.style.display = 'none';
     
-    if (practiceMode === 'sentence') {
+    if (practiceModeValue === 'sentence') {
         ageOptions.style.display = 'block';
         exampleOptions.style.display = 'block';
         translationOptions.style.display = 'block';
         customExampleOptions.style.display = 'block';
         document.getElementById('showExamples').checked = true;
-    } else if (practiceMode === 'word') {
+    } else if (practiceModeValue === 'word') {
         ageOptions.style.display = 'block';
         wordOptions.style.display = 'block';
         document.getElementById('showExamples').checked = false;
         document.getElementById('showTranslation').checked = false;
-    } else if (practiceMode === 'alphabet') {
+    } else if (practiceModeValue === 'alphabet') {
         alphabetOptions.style.display = 'block';
         document.getElementById('showExamples').checked = false;
         document.getElementById('showTranslation').checked = false;
-    } else if (practiceMode === 'phrase') {
+    } else if (practiceModeValue === 'phrase') {
         ageOptions.style.display = 'block';
         phraseOptions.style.display = 'block';
         translationOptions.style.display = 'block';
@@ -409,7 +409,7 @@ function generateExampleSentence(sentence, showTranslation) {
 // 例文を確保
 function ensureExamples(count, ageGroup) {
     if (currentExamples.length !== count) {
-        currentExamples = getRandomExamples(count, ageGroup);
+        setCurrentExamples(getRandomExamples(count, ageGroup));
     }
 }
 
@@ -430,7 +430,7 @@ function getRandomExamples(count, ageGroup) {
 
 // 現在の例文をシャッフル
 function shuffleCurrentExamples() {
-    currentExamples = [];
+    setCurrentExamples([]);
 }
 
 // 印刷機能
@@ -862,7 +862,7 @@ function addCustomExample(english, japanese, category, ageGroup) {
         difficulty: 2,
         custom: true
     });
-    currentExamples = [];
+    setCurrentExamples([]);
     updatePreview();
 }
 

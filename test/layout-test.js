@@ -9,33 +9,33 @@ const cssContent = fs.readFileSync(cssPath, 'utf8');
 
 // テスト結果
 const testResults = {
-    passed: 0,
-    failed: 0,
-    warnings: 0,
-    errors: []
+  passed: 0,
+  failed: 0,
+  warnings: 0,
+  errors: []
 };
 
 // テスト関数
 function test(name, condition, errorMessage, isWarning = false) {
-    if (condition) {
-        testResults.passed++;
-        console.log(`✅ ${name}`);
+  if (condition) {
+    testResults.passed++;
+    console.log(`✅ ${name}`);
+  } else {
+    if (isWarning) {
+      testResults.warnings++;
+      console.log(`⚠️  ${name}: ${errorMessage}`);
     } else {
-        if (isWarning) {
-            testResults.warnings++;
-            console.log(`⚠️  ${name}: ${errorMessage}`);
-        } else {
-            testResults.failed++;
-            testResults.errors.push({ test: name, error: errorMessage });
-            console.log(`❌ ${name}: ${errorMessage}`);
-        }
+      testResults.failed++;
+      testResults.errors.push({ test: name, error: errorMessage });
+      console.log(`❌ ${name}: ${errorMessage}`);
     }
+  }
 }
 
 // CSSから値を抽出する関数
 function extractCSSValue(pattern) {
-    const match = cssContent.match(pattern);
-    return match ? match[1] : null;
+  const match = cssContent.match(pattern);
+  return match ? match[1] : null;
 }
 
 // 1. A4サイズ設定の確認
@@ -47,7 +47,7 @@ test('印刷時の余白設定', cssContent.includes('@page') && cssContent.incl
 console.log('\n📏 4本線ベースラインのチェック');
 const baselineClasses = ['baseline--top', 'baseline--upper', 'baseline--lower', 'baseline--bottom'];
 baselineClasses.forEach(cls => {
-    test(`ベースライン "${cls}" の定義`, cssContent.includes(`.${cls}`), `${cls} が定義されていません`);
+  test(`ベースライン "${cls}" の定義`, cssContent.includes(`.${cls}`), `${cls} が定義されていません`);
 });
 
 // 3. 行高さの設定確認
@@ -55,15 +55,15 @@ console.log('\n📐 行高さ設定のチェック');
 // CSS変数を使用している場合も考慮
 const lineHeightMatch = cssContent.match(/\.baseline-group\s*{[^}]*height:\s*(?:(\d+)mm|var\(--line-height)/);
 if (lineHeightMatch) {
-    if (lineHeightMatch[1]) {
-        const height = parseInt(lineHeightMatch[1]);
-        test('行高さの範囲 (8-12mm)', height >= 8 && height <= 12, `行高さ ${height}mm は推奨範囲外です`);
-    } else {
-        // CSS変数を使用している場合
-        test('行高さの設定 (CSS変数)', true, '行高さがCSS変数で設定されています');
-    }
+  if (lineHeightMatch[1]) {
+    const height = parseInt(lineHeightMatch[1]);
+    test('行高さの範囲 (8-12mm)', height >= 8 && height <= 12, `行高さ ${height}mm は推奨範囲外です`);
+  } else {
+    // CSS変数を使用している場合
+    test('行高さの設定 (CSS変数)', true, '行高さがCSS変数で設定されています');
+  }
 } else {
-    test('行高さの設定', false, '行高さが設定されていません');
+  test('行高さの設定', false, '行高さが設定されていません');
 }
 
 // 4. 印刷用スタイルの確認
@@ -78,19 +78,19 @@ test('@media (max-width の存在', cssContent.includes('@media (max-width'), '�
 // 6. 必須CSSクラスの存在確認
 console.log('\n🎨 必須CSSクラスのチェック');
 const requiredClasses = [
-    'note-page',
-    'baseline-group',
-    'baseline',
-    'example-sentence',
-    'example-english',
-    'example-japanese',
-    'controls',
-    'preview',
-    'btn--primary'
+  'note-page',
+  'baseline-group',
+  'baseline',
+  'example-sentence',
+  'example-english',
+  'example-japanese',
+  'controls',
+  'preview',
+  'btn--primary'
 ];
 
 requiredClasses.forEach(cls => {
-    test(`CSS クラス ".${cls}"`, cssContent.includes(`.${cls}`), `必須クラス .${cls} が見つかりません`);
+  test(`CSS クラス ".${cls}"`, cssContent.includes(`.${cls}`), `必須クラス .${cls} が見つかりません`);
 });
 
 // 7. 色の設定確認
@@ -102,16 +102,16 @@ test('CSS変数 --primary-color', cssContent.includes('--primary-color'), 'プ�
 console.log('\n📝 フォントサイズのチェック');
 const exampleFontMatch = cssContent.match(/\.example-english\s*{[^}]*font-size:\s*(\d+)pt/);
 if (exampleFontMatch) {
-    const fontSize = parseInt(exampleFontMatch[1]);
-    test('例文フォントサイズ (12-18pt)', fontSize >= 12 && fontSize <= 18, `フォントサイズ ${fontSize}pt は推奨範囲外です`, true);
+  const fontSize = parseInt(exampleFontMatch[1]);
+  test('例文フォントサイズ (12-18pt)', fontSize >= 12 && fontSize <= 18, `フォントサイズ ${fontSize}pt は推奨範囲外です`, true);
 }
 
 // 9. 余白設定の確認
 console.log('\n📏 余白設定のチェック');
 const marginMatch = cssContent.match(/\.note-page\s*{[^}]*padding:\s*(\d+)mm/);
 if (marginMatch) {
-    const margin = parseInt(marginMatch[1]);
-    test('ページ余白 (10-20mm)', margin >= 10 && margin <= 20, `余白 ${margin}mm は推奨範囲外です`);
+  const margin = parseInt(marginMatch[1]);
+  test('ページ余白 (10-20mm)', margin >= 10 && margin <= 20, `余白 ${margin}mm は推奨範囲外です`);
 }
 
 // 10. アルファベット練習用グリッドの確認
@@ -135,15 +135,15 @@ console.log(`警告: ${testResults.warnings}`);
 console.log(`合計: ${testResults.passed + testResults.failed + testResults.warnings}`);
 
 if (testResults.failed > 0) {
-    console.log('\n❌ 失敗したテスト:');
-    testResults.errors.forEach(error => {
-        console.log(`  - ${error.test}: ${error.error}`);
-    });
-    process.exit(1);
+  console.log('\n❌ 失敗したテスト:');
+  testResults.errors.forEach(error => {
+    console.log(`  - ${error.test}: ${error.error}`);
+  });
+  process.exit(1);
 } else if (testResults.warnings > 0) {
-    console.log('\n⚠️  警告はありますが、テストは合格です');
-    process.exit(0);
+  console.log('\n⚠️  警告はありますが、テストは合格です');
+  process.exit(0);
 } else {
-    console.log('\n✅ すべてのテストに合格しました！');
-    process.exit(0);
+  console.log('\n✅ すべてのテストに合格しました！');
+  process.exit(0);
 }
