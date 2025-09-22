@@ -6,17 +6,9 @@ import { WORD_LISTS } from './src/data/word-lists.js';
 import { ALPHABET_DATA } from './src/data/alphabet-data.js';
 import { PHRASE_DATA } from './src/data/phrase-data.js';
 import {
-  CONFIG,
-  CONTENT_STATS,
-  customExamples,
   currentExamples,
-  currentExampleIndices,
-  setCustomExamples,
   setCurrentExamples,
   setCurrentExampleIndices,
-  getCustomExamples,
-  getCurrentExamples,
-  getCurrentExampleIndices,
 } from './src/models/app-config.js';
 function init() {
   setupEventListeners();
@@ -369,7 +361,7 @@ function generateWordPractice(ageGroup) {
   const maxWords = lineHeight === 12 ? 3 : lineHeight === 8 ? 5 : 4;
   const displayWords = words.slice(0, maxWords);
 
-  for (let word of displayWords) {
+  for (const word of displayWords) {
     html += `
             <div class="word-practice-item" style="margin-bottom: ${lineHeight === 12 ? '18mm' : lineHeight === 8 ? '10mm' : '12mm'};">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 2mm;">
@@ -711,7 +703,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 // グローバルに公開（開発者コンソールから実行可能）
-window.testPDFLayout = function () {
+window.testPDFLayout = function() {
   if (window.Debug) Debug.log('TEST', 'PDFレイアウトテストを開始します...');
   updatePreview(); // プレビューを最新状態に更新
   setTimeout(() => {
@@ -823,15 +815,15 @@ function generateAlphabetPractice(pageNumber) {
                 <div class="alphabet-header">
                     <span class="alphabet-letter">${item.letter}</span>
                     ${
-                      showExample
-                        ? `
+  showExample
+    ? `
                         <div class="alphabet-example">
                             <span class="example-word">${item.example}</span>
                             <span class="example-meaning">(${item.japanese})</span>
                         </div>
                     `
-                        : ''
-                    }
+    : ''
+}
                 </div>
                 <div class="alphabet-lines">
                     ${generateBaselineGroup()}
@@ -851,10 +843,26 @@ function generatePhrasePractice(showTranslation, ageGroup) {
   const phraseCategory = document.getElementById('phraseCategory').value;
   const showSituation = document.getElementById('showSituation').checked;
 
-  const allPhrases =
-    PHRASE_DATA[phraseCategory] && PHRASE_DATA[phraseCategory][ageGroup]
-      ? PHRASE_DATA[phraseCategory][ageGroup]
-      : PHRASE_DATA['greetings'][ageGroup] || PHRASE_DATA['greetings']['7-9'];
+  // カテゴリーの存在を確認してデータを取得
+  let allPhrases;
+  if (PHRASE_DATA[phraseCategory]) {
+    // 選択したカテゴリーが存在する場合
+    if (PHRASE_DATA[phraseCategory][ageGroup]) {
+      // 年齢グループも存在する場合
+      allPhrases = PHRASE_DATA[phraseCategory][ageGroup];
+    } else {
+      // 年齢グループが存在しない場合は、そのカテゴリーの別の年齢グループを使用
+      const availableAges = Object.keys(PHRASE_DATA[phraseCategory]);
+      if (availableAges.includes('7-9')) {
+        allPhrases = PHRASE_DATA[phraseCategory]['7-9'];
+      } else {
+        allPhrases = PHRASE_DATA[phraseCategory][availableAges[0]];
+      }
+    }
+  } else {
+    // カテゴリーが存在しない場合のフォールバック
+    allPhrases = PHRASE_DATA['greetings'][ageGroup] || PHRASE_DATA['greetings']['7-9'];
+  }
 
   // A4に収めるため4つのフレーズに制限（練習行3行ずつ）
   // ランダムに4つ選択して、全てのフレーズが練習できるようにする
@@ -877,7 +885,7 @@ function generatePhrasePractice(showTranslation, ageGroup) {
 
   html += `<h3 style="text-align: center; margin-bottom: 1mm; margin-top: 0mm;">Phrase Practice - ${categoryNames[phraseCategory] || phraseCategory}</h3>`;
 
-  for (let phrase of phrases) {
+  for (const phrase of phrases) {
     html += `
             <div class="phrase-item">
                 <div class="phrase-header">
@@ -1004,7 +1012,7 @@ function displayContentStats() {
 }
 
 // レイアウト整合性チェック関数
-window.checkLayoutConsistency = function () {
+window.checkLayoutConsistency = function() {
   if (window.Debug) Debug.log('LAYOUT_CHECK', 'レイアウト整合性チェックを開始します...');
 
   const results = {
@@ -1114,7 +1122,7 @@ window.checkLayoutConsistency = function () {
 };
 
 // 統一設定システムの検証機能
-window.validateConfiguration = function () {
+window.validateConfiguration = function() {
   if (window.Debug) Debug.log('CONFIG_CHECK', '統一設定システムの検証を開始します...');
 
   const results = {

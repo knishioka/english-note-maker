@@ -15,7 +15,7 @@ export const PHRASE_DATA = {
     '7-9': [
       { english: 'How are you?', japanese: '元気ですか？', situation: '相手の様子を聞くとき' },
       {
-        english: "I'm fine, thank you.",
+        english: 'I\'m fine, thank you.',
         japanese: '元気です、ありがとう。',
         situation: '返事をするとき',
       },
@@ -35,7 +35,7 @@ export const PHRASE_DATA = {
         situation: '丁寧な別れの挨拶',
       },
       {
-        english: "It's been a while.",
+        english: 'It\'s been a while.',
         japanese: 'お久しぶりです。',
         situation: '久しぶりに会ったとき',
       },
@@ -45,7 +45,7 @@ export const PHRASE_DATA = {
         situation: '心配して別れるとき',
       },
       {
-        english: "I'm looking forward to seeing you again.",
+        english: 'I\'m looking forward to seeing you again.',
         japanese: 'また会えるのを楽しみにしています。',
         situation: '再会を期待するとき',
       },
@@ -71,8 +71,8 @@ export const PHRASE_DATA = {
       },
     ],
     '7-9': [
-      { english: "I'm from Japan.", japanese: '私は日本出身です。', situation: '出身地を言うとき' },
-      { english: "I'm in third grade.", japanese: '私は3年生です。', situation: '学年を言うとき' },
+      { english: 'I\'m from Japan.', japanese: '私は日本出身です。', situation: '出身地を言うとき' },
+      { english: 'I\'m in third grade.', japanese: '私は3年生です。', situation: '学年を言うとき' },
       {
         english: 'My hobby is reading.',
         japanese: '私の趣味は読書です。',
@@ -86,7 +86,7 @@ export const PHRASE_DATA = {
     ],
     '10-12': [
       {
-        english: "I'm interested in science.",
+        english: 'I\'m interested in science.',
         japanese: '私は科学に興味があります。',
         situation: '興味を表現するとき',
       },
@@ -96,12 +96,12 @@ export const PHRASE_DATA = {
         situation: '将来の夢を語るとき',
       },
       {
-        english: "I've been studying English for three years.",
+        english: 'I\'ve been studying English for three years.',
         japanese: '私は3年間英語を勉強しています。',
         situation: '学習歴を説明するとき',
       },
       {
-        english: "I'm good at playing the piano.",
+        english: 'I\'m good at playing the piano.',
         japanese: '私はピアノを弾くのが得意です。',
         situation: '特技を紹介するとき',
       },
@@ -120,7 +120,7 @@ export const PHRASE_DATA = {
         situation: '先生について話すとき',
       },
       {
-        english: "Let's play together.",
+        english: 'Let\'s play together.',
         japanese: '一緒に遊びましょう。',
         situation: '友達を誘うとき',
       },
@@ -183,7 +183,7 @@ export const PHRASE_DATA = {
         japanese: '私は歯を磨きます。',
         situation: '歯磨きについて話すとき',
       },
-      { english: "It's time to eat.", japanese: '食事の時間です。', situation: '食事時間のとき' },
+      { english: 'It\'s time to eat.', japanese: '食事の時間です。', situation: '食事時間のとき' },
       {
         english: 'I help my mom.',
         japanese: '私はお母さんを手伝います。',
@@ -207,7 +207,7 @@ export const PHRASE_DATA = {
         situation: '天気について話すとき',
       },
       {
-        english: "I'm going to the park.",
+        english: 'I\'m going to the park.',
         japanese: '私は公園に行く予定です。',
         situation: '外出予定を言うとき',
       },
@@ -224,12 +224,12 @@ export const PHRASE_DATA = {
         situation: '運動習慣について話すとき',
       },
       {
-        english: "We're planning a family trip.",
+        english: 'We\'re planning a family trip.',
         japanese: '私たちは家族旅行を計画しています。',
         situation: '旅行の計画について話すとき',
       },
       {
-        english: "I'm trying to eat more vegetables.",
+        english: 'I\'m trying to eat more vegetables.',
         japanese: '私はもっと野菜を食べるようにしています。',
         situation: '食生活の改善について話すとき',
       },
