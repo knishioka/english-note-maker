@@ -42,7 +42,7 @@ export const EXAMPLE_SENTENCES_BY_AGE = {
       difficulty: 1,
     },
     {
-      english: "Let's play together.",
+      english: 'Let\'s play together.',
       japanese: 'いっしょに あそびましょう。',
       category: 'hobby',
       difficulty: 1,
@@ -92,7 +92,7 @@ export const EXAMPLE_SENTENCES_BY_AGE = {
       difficulty: 2,
     },
     {
-      english: "Let's study English together.",
+      english: 'Let\'s study English together.',
       japanese: 'いっしょに 英語を 勉強しましょう。',
       category: 'school',
       difficulty: 2,
@@ -160,7 +160,7 @@ export const EXAMPLE_SENTENCES_BY_AGE = {
       difficulty: 3,
     },
     {
-      english: "Time flies when you're having fun.",
+      english: 'Time flies when you\'re having fun.',
       japanese: '楽しい時間はあっという間に過ぎる。',
       category: 'daily',
       difficulty: 3,

@@ -10,6 +10,18 @@ import {
   setCurrentExamples,
   setCurrentExampleIndices,
 } from './src/models/app-config.js';
+
+// カスタム例文を保存する配列
+const customExamples = [];
+
+// コンテンツ統計
+const CONTENT_STATS = {
+  lastUpdated: '2025年1月',
+  words: { total: 0, byCategory: {}, byAge: {} },
+  phrases: { total: 0, byCategory: {}, byAge: {} },
+  examples: { total: 0, byAge: {} },
+};
+
 function init() {
   setupEventListeners();
   updateOptionsVisibility();
@@ -79,7 +91,14 @@ function setupEventListeners() {
     showAlphabetExampleCheckbox.addEventListener('change', updatePreview);
   }
   if (phraseCategorySelect) {
-    phraseCategorySelect.addEventListener('change', updatePreview);
+    phraseCategorySelect.addEventListener('change', () => {
+      if (window.Debug) {
+        window.Debug.log('PHRASE_CATEGORY', 'フレーズカテゴリーが変更されました', {
+          newCategory: phraseCategorySelect.value
+        });
+      }
+      updatePreview();
+    });
   }
   if (showSituationCheckbox) {
     showSituationCheckbox.addEventListener('change', updatePreview);
@@ -88,6 +107,11 @@ function setupEventListeners() {
   // フレーズシャッフルボタン
   if (shufflePhrasesBtn) {
     shufflePhrasesBtn.addEventListener('click', () => {
+      if (window.Debug) {
+        window.Debug.log('PHRASE_SHUFFLE', 'フレーズをシャッフルします', {
+          currentCategory: document.getElementById('phraseCategory').value
+        });
+      }
       updatePreview();
     });
   }
@@ -98,10 +122,10 @@ function setupEventListeners() {
   // プレビューボタンのイベント
   if (previewBtn) {
     previewBtn.addEventListener('click', showPrintPreview);
-    if (window.Debug) Debug.log('INIT', '印刷プレビューボタンのイベントリスナーを設定しました');
+    if (window.Debug) window.Debug.log('INIT', '印刷プレビューボタンのイベントリスナーを設定しました');
   } else {
     if (window.Debug)
-      Debug.error('INIT', '印刷プレビューボタンが見つかりません', { element: 'previewBtn' });
+      window.Debug.error('INIT', '印刷プレビューボタンが見つかりません', { element: 'previewBtn' });
   }
 
   // 練習モード変更時の処理
@@ -450,8 +474,8 @@ function printNote() {
 // 印刷プレビュー機能
 function showPrintPreview() {
   if (window.Debug) {
-    Debug.startTimer('print-preview');
-    Debug.logEvent('click', { id: 'previewBtn' }, { action: 'showPrintPreview' });
+    window.Debug.startTimer('print-preview');
+    window.Debug.logEvent('click', { id: 'previewBtn' }, { action: 'showPrintPreview' });
   }
 
   const modal = document.getElementById('printPreviewModal');
@@ -461,7 +485,7 @@ function showPrintPreview() {
   // 要素の存在確認
   if (!modal || !previewPage || !notePreview) {
     if (window.Debug)
-      Debug.error('PRINT_PREVIEW', '印刷プレビューに必要な要素が見つかりません', {
+      window.Debug.error('PRINT_PREVIEW', '印刷プレビューに必要な要素が見つかりません', {
         modal: !!modal,
         previewPage: !!previewPage,
         notePreview: !!notePreview,
@@ -470,7 +494,7 @@ function showPrintPreview() {
   }
 
   if (window.Debug)
-    Debug.debug('PRINT_PREVIEW', '必要な要素が見つかりました', {
+    window.Debug.debug('PRINT_PREVIEW', '必要な要素が見つかりました', {
       modal: !!modal,
       notePreview: !!notePreview,
       previewPage: !!previewPage,
@@ -492,7 +516,7 @@ function showPrintPreview() {
   });
 
   if (window.Debug)
-    Debug.debug('PRINT_PREVIEW', 'プレビュー内容をコピーし印刷用スタイルを適用しました', {
+    window.Debug.debug('PRINT_PREVIEW', 'プレビュー内容をコピーし印刷用スタイルを適用しました', {
       contentLength: previewPage.innerHTML.length,
       pageCount: previewNotePages.length,
     });
@@ -503,11 +527,11 @@ function showPrintPreview() {
   setTimeout(() => {
     modal.classList.add('modal-visible');
     if (window.Debug) {
-      Debug.log('PRINT_PREVIEW', 'モーダルを表示しました', {
+      window.Debug.log('PRINT_PREVIEW', 'モーダルを表示しました', {
         display: modal.style.display,
         classList: modal.classList.toString(),
       });
-      Debug.endTimer('print-preview');
+      window.Debug.endTimer('print-preview');
     }
   }, 10);
 
@@ -567,13 +591,13 @@ function setupPreviewModalEvents() {
 
   // 要素の存在確認
   if (!modal) {
-    if (window.Debug) Debug.error('PRINT_PREVIEW', 'モーダル要素が見つかりません');
+    if (window.Debug) window.Debug.error('PRINT_PREVIEW', 'モーダル要素が見つかりません');
     return;
   }
 
   // 閉じるボタン
   const closePreview = () => {
-    if (window.Debug) Debug.log('PRINT_PREVIEW', 'プレビューモーダルを閉じます');
+    if (window.Debug) window.Debug.log('PRINT_PREVIEW', 'プレビューモーダルを閉じます');
     modal.style.display = 'none';
     modal.classList.remove('modal-visible');
   };
@@ -615,14 +639,14 @@ function setupPreviewModalEvents() {
 // PDFレイアウトの自動テスト機能
 function runLayoutTest() {
   if (window.Debug)
-    Debug.log('TEST', 'PDFレイアウトテスト実行開始', { timestamp: new Date().toLocaleString() });
+    window.Debug.log('TEST', 'PDFレイアウトテスト実行開始', { timestamp: new Date().toLocaleString() });
 
   const validator = new window.LayoutValidator();
   const report = validator.generateReport();
 
   // テスト結果のサマリー
   if (window.Debug) {
-    Debug.log('TEST', 'テスト結果サマリー', {
+    window.Debug.log('TEST', 'テスト結果サマリー', {
       passed: report.summary.passed,
       failed: report.summary.failed,
       skipped: report.summary.skipped,
@@ -634,7 +658,7 @@ function runLayoutTest() {
     console.group('\n❌ エラー詳細:');
     report.errors.forEach((error) => {
       if (window.Debug)
-        Debug.error(
+        window.Debug.error(
           'LAYOUT_VALIDATION',
           `- ${error.rule}: ${error.actualValue} (期待値: ${error.expectedRange})`
         );
@@ -647,7 +671,7 @@ function runLayoutTest() {
     console.group('\n⚠️ 警告詳細:');
     report.warnings.forEach((warning) => {
       if (window.Debug)
-        Debug.warn(
+        window.Debug.warn(
           'LAYOUT_VALIDATION',
           `- ${warning.rule}: ${warning.actualValue} (期待値: ${warning.expectedRange})`
         );
@@ -660,7 +684,7 @@ function runLayoutTest() {
   if (pageHeightErrors.length > 0) {
     console.group('\n📏 ページ高さエラー:');
     pageHeightErrors.forEach((error) => {
-      if (window.Debug) Debug.error('LAYOUT_VALIDATION', error.message);
+      if (window.Debug) window.Debug.error('LAYOUT_VALIDATION', error.message);
     });
     // Group end removed - using structured logging instead
   }
@@ -669,10 +693,10 @@ function runLayoutTest() {
   const isPassed = report.errors.length === 0;
   if (isPassed) {
     if (window.Debug)
-      Debug.log('TEST', 'すべてのレイアウトテストに合格しました！', { status: 'success' });
+      window.Debug.log('TEST', 'すべてのレイアウトテストに合格しました！', { status: 'success' });
   } else {
     if (window.Debug)
-      Debug.error('TEST', 'レイアウトに問題があります。印刷結果を確認してください。', {
+      window.Debug.error('TEST', 'レイアウトに問題があります。印刷結果を確認してください。', {
         errors: report.errors,
       });
   }
@@ -690,28 +714,28 @@ document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && e.shiftKey && e.key === 'D') {
     document.body.classList.toggle('debug-mode');
     if (window.Debug)
-      Debug.log('DEBUG', 'Debug mode toggled', {
+      window.Debug.log('DEBUG', 'Debug mode toggled', {
         enabled: document.body.classList.contains('debug-mode'),
       });
   }
 
   // Ctrl + Shift + T でレイアウトテスト実行
   if (e.ctrlKey && e.shiftKey && e.key === 'T') {
-    if (window.Debug) Debug.log('TEST', '手動レイアウトテストを実行します...');
+    if (window.Debug) window.Debug.log('TEST', '手動レイアウトテストを実行します...');
     runLayoutTest();
   }
 });
 
 // グローバルに公開（開発者コンソールから実行可能）
 window.testPDFLayout = function() {
-  if (window.Debug) Debug.log('TEST', 'PDFレイアウトテストを開始します...');
+  if (window.Debug) window.Debug.log('TEST', 'PDFレイアウトテストを開始します...');
   updatePreview(); // プレビューを最新状態に更新
   setTimeout(() => {
     const report = runLayoutTest();
 
     // 追加の診断情報
     if (window.Debug) {
-      Debug.log('DIAGNOSTICS', '追加診断情報', {
+      window.Debug.log('DIAGNOSTICS', '追加診断情報', {
         practiceMode: document.getElementById('practiceMode').value,
         pageCount: document.getElementById('pageCount').value,
         lineHeight: document.getElementById('lineHeight').value + 'mm',
@@ -724,7 +748,7 @@ window.testPDFLayout = function() {
       const rect = page.getBoundingClientRect();
       const heightInMm = rect.height / 3.7795275591;
       if (window.Debug)
-        Debug.debug('DIAGNOSTICS', `ページ${index + 1}の高さ`, {
+        window.Debug.debug('DIAGNOSTICS', `ページ${index + 1}の高さ`, {
           height: `${heightInMm.toFixed(2)}mm`,
         });
     });
@@ -785,7 +809,7 @@ function generateAlphabetPractice(pageNumber) {
     const pageCountInput = document.getElementById('pageCount');
     if (pageCountInput && parseInt(pageCountInput.value) < neededPages) {
       if (window.Debug)
-        Debug.info('ALPHABET_PRACTICE', `アルファベット練習（両方）: ${neededPages}ページ必要です`);
+        window.Debug.info('ALPHABET_PRACTICE', `アルファベット練習（両方）: ${neededPages}ページ必要です`);
       // ユーザーに通知
       setTimeout(() => {
         if (
@@ -840,8 +864,18 @@ function generateAlphabetPractice(pageNumber) {
 // フレーズ練習モード生成
 function generatePhrasePractice(showTranslation, ageGroup) {
   let html = '<div class="phrase-practice">';
-  const phraseCategory = document.getElementById('phraseCategory').value;
+  const phraseCategory = document.getElementById('phraseCategory').value || 'greetings';
   const showSituation = document.getElementById('showSituation').checked;
+
+  // デバッグ情報を出力
+  if (window.Debug) {
+    window.Debug.log('PHRASE_PRACTICE', 'フレーズ練習生成開始', {
+      category: phraseCategory,
+      ageGroup: ageGroup,
+      showTranslation: showTranslation,
+      showSituation: showSituation
+    });
+  }
 
   // カテゴリーの存在を確認してデータを取得
   let allPhrases;
@@ -858,16 +892,42 @@ function generatePhrasePractice(showTranslation, ageGroup) {
       } else {
         allPhrases = PHRASE_DATA[phraseCategory][availableAges[0]];
       }
+      if (window.Debug) {
+        window.Debug.warn('PHRASE_PRACTICE', `年齢グループ${ageGroup}のデータが見つからないため、代替を使用`, {
+          requestedAge: ageGroup,
+          usingAge: availableAges.includes('7-9') ? '7-9' : availableAges[0]
+        });
+      }
     }
   } else {
     // カテゴリーが存在しない場合のフォールバック
     allPhrases = PHRASE_DATA['greetings'][ageGroup] || PHRASE_DATA['greetings']['7-9'];
+    if (window.Debug) {
+      window.Debug.error('PHRASE_PRACTICE', `カテゴリー${phraseCategory}が見つからないため、greetingsを使用`);
+    }
+  }
+
+  // 取得したフレーズを確認
+  if (window.Debug) {
+    window.Debug.log('PHRASE_PRACTICE', 'フレーズデータ取得完了', {
+      category: phraseCategory,
+      phraseCount: allPhrases ? allPhrases.length : 0,
+      firstPhrase: allPhrases && allPhrases[0] ? allPhrases[0].english : 'N/A'
+    });
   }
 
   // A4に収めるため4つのフレーズに制限（練習行3行ずつ）
   // ランダムに4つ選択して、全てのフレーズが練習できるようにする
   const shuffled = [...allPhrases].sort(() => 0.5 - Math.random());
-  const phrases = shuffled.slice(0, 4);
+  const phrases = shuffled.slice(0, Math.min(4, shuffled.length));
+
+  // 選択されたフレーズを確認
+  if (window.Debug) {
+    window.Debug.log('PHRASE_PRACTICE', '表示するフレーズを選択', {
+      selectedCount: phrases.length,
+      phrases: phrases.map(p => p.english.substring(0, 30) + '...')
+    });
+  }
 
   const categoryNames = {
     greetings: 'あいさつ',
@@ -980,28 +1040,28 @@ function displayContentStats() {
   updateContentStats();
 
   if (window.Debug) {
-    Debug.log('CONTENT_STATS', '英語ノートメーカー コンテンツ統計', {
+    window.Debug.log('CONTENT_STATS', '英語ノートメーカー コンテンツ統計', {
       lastUpdated: CONTENT_STATS.lastUpdated,
     });
 
-    Debug.log('CONTENT_STATS', '単語コンテンツ', {
+    window.Debug.log('CONTENT_STATS', '単語コンテンツ', {
       total: CONTENT_STATS.words.total,
       byCategory: CONTENT_STATS.words.byCategory,
       byAge: CONTENT_STATS.words.byAge,
     });
 
-    Debug.log('CONTENT_STATS', 'フレーズコンテンツ', {
+    window.Debug.log('CONTENT_STATS', 'フレーズコンテンツ', {
       total: CONTENT_STATS.phrases.total,
       byCategory: CONTENT_STATS.phrases.byCategory,
       byAge: CONTENT_STATS.phrases.byAge,
     });
 
-    Debug.log('CONTENT_STATS', '例文コンテンツ', {
+    window.Debug.log('CONTENT_STATS', '例文コンテンツ', {
       total: CONTENT_STATS.examples.total,
       byAge: CONTENT_STATS.examples.byAge,
     });
 
-    Debug.log('CONTENT_STATS', 'アルファベット', {
+    window.Debug.log('CONTENT_STATS', 'アルファベット', {
       total: 52,
       detail: '大文字26 + 小文字26',
     });
@@ -1013,7 +1073,7 @@ function displayContentStats() {
 
 // レイアウト整合性チェック関数
 window.checkLayoutConsistency = function() {
-  if (window.Debug) Debug.log('LAYOUT_CHECK', 'レイアウト整合性チェックを開始します...');
+  if (window.Debug) window.Debug.log('LAYOUT_CHECK', 'レイアウト整合性チェックを開始します...');
 
   const results = {
     timestamp: new Date().toLocaleString(),
@@ -1103,18 +1163,18 @@ window.checkLayoutConsistency = function() {
 
   // 結果をコンソールに出力
   if (window.Debug) {
-    Debug.log('LAYOUT_CHECK', 'レイアウト整合性チェック完了', results);
+    window.Debug.log('LAYOUT_CHECK', 'レイアウト整合性チェック完了', results);
 
     if (results.errors.length > 0) {
-      Debug.error('LAYOUT_CHECK', 'エラーが発見されました', { errors: results.errors });
+      window.Debug.error('LAYOUT_CHECK', 'エラーが発見されました', { errors: results.errors });
     }
 
     if (results.warnings.length > 0) {
-      Debug.warn('LAYOUT_CHECK', '警告が発見されました', { warnings: results.warnings });
+      window.Debug.warn('LAYOUT_CHECK', '警告が発見されました', { warnings: results.warnings });
     }
 
     if (results.errors.length === 0 && results.warnings.length === 0) {
-      Debug.log('LAYOUT_CHECK', 'レイアウト整合性に問題は見つかりませんでした ✅');
+      window.Debug.log('LAYOUT_CHECK', 'レイアウト整合性に問題は見つかりませんでした ✅');
     }
   }
 
@@ -1123,7 +1183,7 @@ window.checkLayoutConsistency = function() {
 
 // 統一設定システムの検証機能
 window.validateConfiguration = function() {
-  if (window.Debug) Debug.log('CONFIG_CHECK', '統一設定システムの検証を開始します...');
+  if (window.Debug) window.Debug.log('CONFIG_CHECK', '統一設定システムの検証を開始します...');
 
   const results = {
     timestamp: new Date().toLocaleString(),
@@ -1215,24 +1275,24 @@ window.validateConfiguration = function() {
 
   // 結果出力
   if (window.Debug) {
-    Debug.log('CONFIG_CHECK', '設定検証完了', { stats: configStats });
+    window.Debug.log('CONFIG_CHECK', '設定検証完了', { stats: configStats });
 
     if (results.errors.length > 0) {
-      Debug.error('CONFIG_CHECK', '設定エラーが発見されました', { errors: results.errors });
+      window.Debug.error('CONFIG_CHECK', '設定エラーが発見されました', { errors: results.errors });
     }
 
     if (results.warnings.length > 0) {
-      Debug.warn('CONFIG_CHECK', '設定警告が発見されました', { warnings: results.warnings });
+      window.Debug.warn('CONFIG_CHECK', '設定警告が発見されました', { warnings: results.warnings });
     }
 
     if (results.errors.length === 0 && results.warnings.length === 0) {
-      Debug.log('CONFIG_CHECK', '統一設定システムは正常です ✅', {
+      window.Debug.log('CONFIG_CHECK', '統一設定システムは正常です ✅', {
         validations: results.validations.length,
       });
     }
 
     // 設定値一覧
-    Debug.log('CONFIG_CHECK', '現在の設定値', results.settings);
+    window.Debug.log('CONFIG_CHECK', '現在の設定値', results.settings);
   }
 
   return { ...results, stats: configStats };

@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 
-(async () => {
+(async() => {
   console.log('Puppeteerでスクリーンショットを撮影します...');
 
   const browser = await puppeteer.launch({

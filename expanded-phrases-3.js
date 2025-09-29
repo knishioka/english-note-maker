@@ -4,12 +4,12 @@ const EXPANDED_PHRASE_DATA_3 = {
     '4-6': [
       // 遊びの誘い
       { english: 'Do you want to play?', japanese: '一緒に遊ぶ？', situation: '遊びに誘う' },
-      { english: "Let's play together!", japanese: '一緒に遊ぼう！', situation: '共同遊び提案' },
+      { english: 'Let\'s play together!', japanese: '一緒に遊ぼう！', situation: '共同遊び提案' },
       { english: 'Can I play too?', japanese: '私も遊んでいい？', situation: '参加希望' },
-      { english: "Let's be friends!", japanese: '友達になろう！', situation: '友達になる' },
+      { english: 'Let\'s be friends!', japanese: '友達になろう！', situation: '友達になる' },
       { english: 'Want to play tag?', japanese: '鬼ごっこする？', situation: '特定の遊び提案' },
       {
-        english: "Let's play hide and seek!",
+        english: 'Let\'s play hide and seek!',
         japanese: 'かくれんぼしよう！',
         situation: 'かくれんぼ提案',
       },
@@ -17,15 +17,15 @@ const EXPANDED_PHRASE_DATA_3 = {
       // 共有と協力
       { english: 'Want to share my snack?', japanese: 'おやつを分ける？', situation: '分け合い' },
       {
-        english: "Let's share toys!",
+        english: 'Let\'s share toys!',
         japanese: 'おもちゃを共有しよう！',
         situation: 'おもちゃ共有',
       },
       { english: 'Can I sit with you?', japanese: '一緒に座ってもいい？', situation: '席を共有' },
-      { english: "Let's help each other!", japanese: '助け合おう！', situation: '相互援助' },
+      { english: 'Let\'s help each other!', japanese: '助け合おう！', situation: '相互援助' },
       { english: 'We can take turns.', japanese: '順番にできるよ。', situation: '順番制提案' },
       // 興味と好み
-      { english: "What's your favorite color?", japanese: '好きな色は何？', situation: '好み質問' },
+      { english: 'What\'s your favorite color?', japanese: '好きな色は何？', situation: '好み質問' },
       { english: 'Do you like animals?', japanese: '動物は好き？', situation: '興味確認' },
       {
         english: 'What games do you like?',
@@ -34,14 +34,14 @@ const EXPANDED_PHRASE_DATA_3 = {
       },
       { english: 'Do you have pets?', japanese: 'ペット飼ってる？', situation: 'ペットの話' },
       // 褒め言葉
-      { english: "You're nice!", japanese: 'あなたは優しいね！', situation: '優しさを褒める' },
-      { english: "You're funny!", japanese: '面白いね！', situation: 'ユーモアを褒める' },
+      { english: 'You\'re nice!', japanese: 'あなたは優しいね！', situation: '優しさを褒める' },
+      { english: 'You\'re funny!', japanese: '面白いね！', situation: 'ユーモアを褒める' },
       {
         english: 'I like your drawing!',
         japanese: 'あなたの絵が好き！',
         situation: '作品を褒める',
       },
-      { english: "You're good at this!", japanese: 'これが上手だね！', situation: '能力を褒める' },
+      { english: 'You\'re good at this!', japanese: 'これが上手だね！', situation: '能力を褒める' },
       {
         english: 'Your toy is cool!',
         japanese: 'おもちゃがかっこいい！',
@@ -49,7 +49,7 @@ const EXPANDED_PHRASE_DATA_3 = {
       },
       // 約束と継続
       {
-        english: "Let's play again tomorrow!",
+        english: 'Let\'s play again tomorrow!',
         japanese: '明日また遊ぼう！',
         situation: '次の約束',
       },
@@ -65,14 +65,14 @@ const EXPANDED_PHRASE_DATA_3 = {
         situation: 'パーティー招待',
       },
       // 仲良しアピール
-      { english: "You're my best friend!", japanese: 'あなたは親友だよ！', situation: '親友宣言' },
+      { english: 'You\'re my best friend!', japanese: 'あなたは親友だよ！', situation: '親友宣言' },
       {
-        english: "I'm happy we're friends!",
+        english: 'I\'m happy we\'re friends!',
         japanese: '友達になれて嬉しい！',
         situation: '友情の喜び',
       },
       {
-        english: "Let's always be friends!",
+        english: 'Let\'s always be friends!',
         japanese: 'ずっと友達でいよう！',
         situation: '永遠の友情',
       },
@@ -87,7 +87,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         situation: '楽しさの共有',
       },
       {
-        english: "We're a good team!",
+        english: 'We\'re a good team!',
         japanese: '私たちは良いチームだ！',
         situation: 'チームワーク称賛',
       },
@@ -99,13 +99,13 @@ const EXPANDED_PHRASE_DATA_3 = {
         japanese: '私たちのグループに入る？',
         situation: 'グループに誘う',
       },
-      { english: "Let's make a team!", japanese: 'チームを作ろう！', situation: 'チーム結成' },
+      { english: 'Let\'s make a team!', japanese: 'チームを作ろう！', situation: 'チーム結成' },
       {
         english: 'Want to be partners?',
         japanese: 'パートナーになる？',
         situation: 'パートナー提案',
       },
-      { english: "Let's work together!", japanese: '一緒に作業しよう！', situation: '協働提案' },
+      { english: 'Let\'s work together!', japanese: '一緒に作業しよう！', situation: '協働提案' },
       {
         english: 'We need one more player.',
         japanese: 'もう一人必要だよ。',
@@ -114,7 +114,7 @@ const EXPANDED_PHRASE_DATA_3 = {
       // 共通の興味
       { english: 'Do you like this book?', japanese: 'この本好き？', situation: '読書の話' },
       {
-        english: "What's your favorite subject?",
+        english: 'What\'s your favorite subject?',
         japanese: '好きな教科は何？',
         situation: '教科の好み',
       },
@@ -129,7 +129,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         situation: '音楽の好み',
       },
       { english: 'Do you watch this show?', japanese: 'この番組見てる？', situation: 'TV番組の話' },
-      { english: "What's your hobby?", japanese: '趣味は何？', situation: '趣味を聞く' },
+      { english: 'What\'s your hobby?', japanese: '趣味は何？', situation: '趣味を聞く' },
       // 学校での交流
       {
         english: 'Want to eat lunch together?',
@@ -137,13 +137,13 @@ const EXPANDED_PHRASE_DATA_3 = {
         situation: '昼食の誘い',
       },
       {
-        english: "Let's sit together in class.",
+        english: 'Let\'s sit together in class.',
         japanese: 'クラスで一緒に座ろう。',
         situation: '席の相談',
       },
       { english: 'Want to study together?', japanese: '一緒に勉強しない？', situation: '勉強仲間' },
       {
-        english: "Let's do homework together.",
+        english: 'Let\'s do homework together.',
         japanese: '一緒に宿題しよう。',
         situation: '宿題協力',
       },
@@ -158,14 +158,14 @@ const EXPANDED_PHRASE_DATA_3 = {
         japanese: '放課後遊ばない？',
         situation: '放課後の誘い',
       },
-      { english: "Let's go to the park!", japanese: '公園に行こう！', situation: '公園への誘い' },
+      { english: 'Let\'s go to the park!', japanese: '公園に行こう！', situation: '公園への誘い' },
       {
         english: 'Want to come to my house?',
         japanese: '私の家に来ない？',
         situation: '家への招待',
       },
       {
-        english: "Let's ride bikes together!",
+        english: 'Let\'s ride bikes together!',
         japanese: '一緒に自転車に乗ろう！',
         situation: '自転車遊び',
       },
@@ -177,18 +177,18 @@ const EXPANDED_PHRASE_DATA_3 = {
       // 励ましと支援
       { english: 'You can do it!', japanese: 'きっとできるよ！', situation: '励まし' },
       {
-        english: "Don't worry, I'll help you.",
+        english: 'Don\'t worry, I\'ll help you.',
         japanese: '心配しないで、手伝うよ。',
         situation: '支援申し出',
       },
       { english: 'That was amazing!', japanese: 'すごかった！', situation: '成果を褒める' },
       {
-        english: "You're really good at this!",
+        english: 'You\'re really good at this!',
         japanese: '本当に上手だね！',
         situation: '能力を認める',
       },
       {
-        english: "I'm glad you're my friend.",
+        english: 'I\'m glad you\'re my friend.',
         japanese: '友達でよかった。',
         situation: '友情への感謝',
       },
@@ -209,7 +209,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         japanese: '同じものが好きだ！',
         situation: '好みの一致',
       },
-      { english: "Let's keep in touch!", japanese: '連絡を取り合おう！', situation: '連絡継続' },
+      { english: 'Let\'s keep in touch!', japanese: '連絡を取り合おう！', situation: '連絡継続' },
     ],
     '10-12': [
       // 深い友情
@@ -219,7 +219,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         situation: '友情の価値',
       },
       {
-        english: "You're a true friend.",
+        english: 'You\'re a true friend.',
         japanese: 'あなたは本当の友達です。',
         situation: '真の友情',
       },
@@ -254,15 +254,15 @@ const EXPANDED_PHRASE_DATA_3 = {
         japanese: 'あなたの要点を理解します。',
         situation: '理解表明',
       },
-      { english: "Let's talk about it.", japanese: 'それについて話そう。', situation: '対話提案' },
+      { english: 'Let\'s talk about it.', japanese: 'それについて話そう。', situation: '対話提案' },
       {
-        english: "I'm here if you need me.",
+        english: 'I\'m here if you need me.',
         japanese: '必要な時はここにいるよ。',
         situation: '支援の申し出',
       },
       // 活動計画
       {
-        english: "Let's plan something fun.",
+        english: 'Let\'s plan something fun.',
         japanese: '楽しいことを計画しよう。',
         situation: '計画立案',
       },
@@ -272,7 +272,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         situation: '共同プロジェクト',
       },
       {
-        english: "Let's join the club together.",
+        english: 'Let\'s join the club together.',
         japanese: '一緒にクラブに入ろう。',
         situation: 'クラブ活動',
       },
@@ -282,7 +282,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         situation: '試験準備',
       },
       {
-        english: "Let's form a study group.",
+        english: 'Let\'s form a study group.',
         japanese: '勉強グループを作ろう。',
         situation: 'グループ学習',
       },
@@ -294,20 +294,20 @@ const EXPANDED_PHRASE_DATA_3 = {
         situation: '頼れる存在',
       },
       {
-        english: "Let's support each other.",
+        english: 'Let\'s support each other.',
         japanese: 'お互いを支え合おう。',
         situation: '相互支援',
       },
-      { english: "I've got your back.", japanese: 'あなたを支えるよ。', situation: '後ろ盾' },
-      { english: "We're in this together.", japanese: '一緒にいるよ。', situation: '団結' },
+      { english: 'I\'ve got your back.', japanese: 'あなたを支えるよ。', situation: '後ろ盾' },
+      { english: 'We\'re in this together.', japanese: '一緒にいるよ。', situation: '団結' },
       // 成長と発展
       {
-        english: "You've helped me grow.",
+        english: 'You\'ve helped me grow.',
         japanese: 'あなたは私を成長させてくれた。',
         situation: '成長への感謝',
       },
       {
-        english: "Let's achieve our goals together.",
+        english: 'Let\'s achieve our goals together.',
         japanese: '一緒に目標を達成しよう。',
         situation: '共同目標',
       },
@@ -328,17 +328,17 @@ const EXPANDED_PHRASE_DATA_3 = {
       },
       // 長期的な関係
       {
-        english: "Let's stay friends forever.",
+        english: 'Let\'s stay friends forever.',
         japanese: '永遠に友達でいよう。',
         situation: '永続的友情',
       },
       {
-        english: "Distance won't change our friendship.",
+        english: 'Distance won\'t change our friendship.',
         japanese: '距離は友情を変えない。',
         situation: '距離を超えた友情',
       },
       {
-        english: "I'll always remember this.",
+        english: 'I\'ll always remember this.',
         japanese: 'これをずっと覚えているよ。',
         situation: '思い出作り',
       },
@@ -358,7 +358,7 @@ const EXPANDED_PHRASE_DATA_3 = {
     '4-6': [
       // 基本的な質問
       { english: 'Can you help me?', japanese: '手伝ってくれる？', situation: '助けを求める' },
-      { english: "I don't understand.", japanese: 'わかりません。', situation: '理解できない' },
+      { english: 'I don\'t understand.', japanese: 'わかりません。', situation: '理解できない' },
       {
         english: 'What does this mean?',
         japanese: 'これはどういう意味？',
@@ -367,7 +367,7 @@ const EXPANDED_PHRASE_DATA_3 = {
       { english: 'Can you say it again?', japanese: 'もう一度言って？', situation: '聞き返す' },
       { english: 'Is this right?', japanese: 'これで合ってる？', situation: '確認' },
       // 作業関連
-      { english: "I'm finished!", japanese: '終わった！', situation: '完了報告' },
+      { english: 'I\'m finished!', japanese: '終わった！', situation: '完了報告' },
       { english: 'I need more time.', japanese: 'もっと時間が必要。', situation: '時間延長' },
       { english: 'Can I start?', japanese: '始めてもいい？', situation: '開始許可' },
       { english: 'What should I do?', japanese: '何をすればいい？', situation: '指示を求める' },
@@ -379,7 +379,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         japanese: 'クレヨン使ってもいい？',
         situation: '道具使用許可',
       },
-      { english: "Where's my book?", japanese: '私の本はどこ？', situation: '教材探し' },
+      { english: 'Where\'s my book?', japanese: '私の本はどこ？', situation: '教材探し' },
       { english: 'I lost my pencil.', japanese: '鉛筆をなくした。', situation: '紛失報告' },
       {
         english: 'Can I sharpen my pencil?',
@@ -396,20 +396,20 @@ const EXPANDED_PHRASE_DATA_3 = {
       { english: 'Can I sit here?', japanese: 'ここに座ってもいい？', situation: '着席許可' },
       { english: 'Can I move my desk?', japanese: '机を動かしてもいい？', situation: '机移動' },
       // 視聴覚の問題
-      { english: "I can't see.", japanese: '見えません。', situation: '視界問題' },
-      { english: "I can't hear.", japanese: '聞こえません。', situation: '聴覚問題' },
-      { english: "It's too loud.", japanese: 'うるさすぎます。', situation: '音量問題' },
+      { english: 'I can\'t see.', japanese: '見えません。', situation: '視界問題' },
+      { english: 'I can\'t hear.', japanese: '聞こえません。', situation: '聴覚問題' },
+      { english: 'It\'s too loud.', japanese: 'うるさすぎます。', situation: '音量問題' },
       { english: 'Can you write it?', japanese: '書いてくれる？', situation: '板書依頼' },
       // 発表・参加
       { english: 'Can I try?', japanese: 'やってみてもいい？', situation: '挑戦希望' },
       { english: 'I know!', japanese: 'わかった！', situation: '理解表明' },
       { english: 'Pick me!', japanese: '私を選んで！', situation: '指名希望' },
-      { english: "It's my turn!", japanese: '私の番！', situation: '順番主張' },
+      { english: 'It\'s my turn!', japanese: '私の番！', situation: '順番主張' },
       { english: 'Can I show you?', japanese: '見せてもいい？', situation: '披露希望' },
       // 協力とマナー
-      { english: "Let's clean up!", japanese: '片付けよう！', situation: '片付け提案' },
+      { english: 'Let\'s clean up!', japanese: '片付けよう！', situation: '片付け提案' },
       { english: 'Be quiet please.', japanese: '静かにしてください。', situation: '静粛要請' },
-      { english: "Let's line up!", japanese: '並ぼう！', situation: '整列提案' },
+      { english: 'Let\'s line up!', japanese: '並ぼう！', situation: '整列提案' },
     ],
     '7-9': [
       // 理解確認
@@ -513,7 +513,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         situation: '詳細説明',
       },
       {
-        english: "What's the main concept?",
+        english: 'What\'s the main concept?',
         japanese: '主要な概念は何ですか？',
         situation: '概念確認',
       },
@@ -527,7 +527,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         japanese: '目的を明確にしてもらえますか？',
         situation: '目的確認',
       },
-      { english: "What's the criteria?", japanese: '基準は何ですか？', situation: '基準確認' },
+      { english: 'What\'s the criteria?', japanese: '基準は何ですか？', situation: '基準確認' },
       // 批判的思考
       {
         english: 'I respectfully disagree.',
@@ -557,7 +557,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         japanese: '黒板を使ってもいいですか？',
         situation: '黒板使用',
       },
-      { english: "I'd like to demonstrate.", japanese: '実演したいです。', situation: '実演希望' },
+      { english: 'I\'d like to demonstrate.', japanese: '実演したいです。', situation: '実演希望' },
       { english: 'May I continue?', japanese: '続けてもいいですか？', situation: '継続確認' },
       {
         english: 'Are there any questions?',
@@ -576,7 +576,7 @@ const EXPANDED_PHRASE_DATA_3 = {
       { english: 'The hypothesis is...', japanese: '仮説は...', situation: '仮説提示' },
       // 協働学習
       {
-        english: "Let's divide the tasks.",
+        english: 'Let\'s divide the tasks.',
         japanese: 'タスクを分けましょう。',
         situation: '作業分担',
       },
@@ -586,7 +586,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         situation: '相互評価',
       },
       {
-        english: "Let's brainstorm together.",
+        english: 'Let\'s brainstorm together.',
         japanese: '一緒にブレインストーミングしましょう。',
         situation: 'アイデア出し',
       },
@@ -595,7 +595,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         japanese: 'これで協力できますか？',
         situation: '協力提案',
       },
-      { english: "I'll take notes.", japanese: 'メモを取ります。', situation: '記録係' },
+      { english: 'I\'ll take notes.', japanese: 'メモを取ります。', situation: '記録係' },
       // 評価とフィードバック
       {
         english: 'How will this be assessed?',
@@ -603,7 +603,7 @@ const EXPANDED_PHRASE_DATA_3 = {
         situation: '評価方法',
       },
       {
-        english: "What's the rubric?",
+        english: 'What\'s the rubric?',
         japanese: '評価基準は何ですか？',
         situation: 'ルーブリック',
       },

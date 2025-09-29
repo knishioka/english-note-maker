@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>フレーズカテゴリー確認テスト</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .category-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .phrase-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .phrase-item {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            min-width: 200px;
+        }
+        .english {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .japanese {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #efe;
+            color: #0a0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>フレーズカテゴリー確認テスト</h1>
+    <div id="results"></div>
+
+    <script type="module">
+        import { PHRASE_DATA } from './src/data/phrase-data.js';
+
+        const resultsDiv = document.getElementById('results');
+        let allTestsPass = true;
+
+        // カテゴリー定義
+        const categories = [
+            { key: 'greetings', name: 'あいさつ', expectedPhrases: ['Hello', 'Good morning', 'How are you'] },
+            { key: 'self_introduction', name: '自己紹介', expectedPhrases: ['My name', 'I am', 'from'] },
+            { key: 'school', name: '学校生活', expectedPhrases: ['school', 'teacher', 'homework', 'class'] },
+            { key: 'shopping', name: '買い物', expectedPhrases: ['How much', 'buy', 'want'] },
+            { key: 'travel', name: '旅行・移動', expectedPhrases: ['Where', 'go', 'ticket'] },
+            { key: 'feelings', name: '感情表現', expectedPhrases: ['happy', 'sad', 'tired'] },
+            { key: 'daily_life', name: '日常生活', expectedPhrases: ['wake up', 'eat', 'sleep'] },
+            { key: 'classroom_english', name: '教室での英語', expectedPhrases: ['understand', 'repeat', 'listen'] },
+            { key: 'friend_making', name: '友達作り', expectedPhrases: ['play', 'together', 'friend'] },
+            { key: 'cultural_exchange', name: '文化交流', expectedPhrases: ['culture', 'country', 'festival'] },
+            { key: 'emergency_situations', name: '緊急時の表現', expectedPhrases: ['help', 'lost', 'emergency'] }
+        ];
+
+        // 各カテゴリーをテスト
+        categories.forEach(category => {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+
+            const title = document.createElement('div');
+            title.className = 'category-title';
+            title.textContent = `${category.name} (${category.key})`;
+            section.appendChild(title);
+
+            if (!PHRASE_DATA[category.key]) {
+                const error = document.createElement('div');
+                error.className = 'error';
+                error.textContent = `❌ カテゴリー "${category.key}" が存在しません`;
+                section.appendChild(error);
+                allTestsPass = false;
+            } else {
+                // 年齢グループごとにチェック
+                const ageGroups = ['4-6', '7-9', '10-12'];
+
+                ageGroups.forEach(age => {
+                    const ageDiv = document.createElement('div');
+                    ageDiv.style.marginTop = '10px';
+                    ageDiv.innerHTML = `<strong>年齢 ${age}:</strong>`;
+
+                    if (!PHRASE_DATA[category.key][age]) {
+                        ageDiv.innerHTML += ` <span style="color: orange;">⚠️ データなし</span>`;
+                    } else {
+                        const phrases = PHRASE_DATA[category.key][age];
+                        const phraseList = document.createElement('div');
+                        phraseList.className = 'phrase-list';
+
+                        // 最初の3つのフレーズを表示
+                        phrases.slice(0, 3).forEach(phrase => {
+                            const item = document.createElement('div');
+                            item.className = 'phrase-item';
+                            item.innerHTML = `
+                                <div class="english">${phrase.english}</div>
+                                <div class="japanese">${phrase.japanese}</div>
+                            `;
+                            phraseList.appendChild(item);
+                        });
+
+                        ageDiv.appendChild(phraseList);
+
+                        // 期待されるフレーズが含まれているかチェック
+                        const allPhrasesText = phrases.map(p => p.english).join(' ');
+                        const hasExpected = category.expectedPhrases.some(expected =>
+                            allPhrasesText.toLowerCase().includes(expected.toLowerCase())
+                        );
+
+                        if (!hasExpected) {
+                            const warning = document.createElement('div');
+                            warning.style.color = 'orange';
+                            warning.textContent = `⚠️ 期待されるフレーズが見つかりません: ${category.expectedPhrases.join(', ')}`;
+                            ageDiv.appendChild(warning);
+                        }
+                    }
+
+                    section.appendChild(ageDiv);
+                });
+            }
+
+            resultsDiv.appendChild(section);
+        });
+
+        // 総合結果
+        const summary = document.createElement('div');
+        summary.className = allTestsPass ? 'success' : 'error';
+        summary.innerHTML = `
+            <h2>テスト結果</h2>
+            ${allTestsPass ? '✅ 全カテゴリーが正常に定義されています' : '❌ 一部のカテゴリーに問題があります'}
+        `;
+        resultsDiv.insertBefore(summary, resultsDiv.firstChild);
+
+        // 実際のフレーズ選択ロジックのテスト
+        console.log('=== フレーズ選択ロジックのテスト ===');
+
+        // script.jsの該当部分をシミュレート
+        function testPhraseSelection(categoryValue, ageGroup) {
+            let allPhrases;
+
+            if (PHRASE_DATA[categoryValue]) {
+                if (PHRASE_DATA[categoryValue][ageGroup]) {
+                    allPhrases = PHRASE_DATA[categoryValue][ageGroup];
+                } else {
+                    const availableAges = Object.keys(PHRASE_DATA[categoryValue]);
+                    if (availableAges.includes('7-9')) {
+                        allPhrases = PHRASE_DATA[categoryValue]['7-9'];
+                    } else {
+                        allPhrases = PHRASE_DATA[categoryValue][availableAges[0]];
+                    }
+                }
+            } else {
+                allPhrases = PHRASE_DATA['greetings'][ageGroup] || PHRASE_DATA['greetings']['7-9'];
+            }
+
+            return allPhrases;
+        }
+
+        // 各カテゴリーをテスト
+        categories.forEach(cat => {
+            const result = testPhraseSelection(cat.key, '7-9');
+            console.log(`${cat.name}: `, result ? result[0].english : 'ERROR');
+        });
+    </script>
+</body>
+</html>
