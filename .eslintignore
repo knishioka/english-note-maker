@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# Test results
+test-results/
+playwright-report/
+
+# TypeScript files (handled by TypeScript compiler)
+*.ts
+*.tsx
+
+# Config files that don't need linting
+*.d.ts
+
+# Legacy files
+*.backup
+expanded-phrases*.js
+*-expansion.js
+word-expansion.js
+phrase-expansion.js
+check-all-layouts.js
+check-layout.js
+capture-screenshot.js
+
+# Generated files
+**/.turbo/

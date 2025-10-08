@@ -3,7 +3,7 @@
  * 各カテゴリーが正しく表示されることを確認
  */
 
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 test.describe('フレーズカテゴリー切り替えテスト', () => {
   test.beforeEach(async({ page }) => {

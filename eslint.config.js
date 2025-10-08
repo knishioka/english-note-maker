@@ -1,6 +1,29 @@
 import js from '@eslint/js';
 
 export default [
+  {
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/coverage/**',
+      '**/.turbo/**',
+      'test-results/**',
+      'playwright-report/**',
+      '**/*.ts',
+      '**/*.tsx',
+      '**/*.d.ts',
+      '**/*-expansion.js',
+      '**/*expansion*.js',
+      'check-*.js',
+      'capture-*.js',
+      '**/*.backup',
+      'eslint.config.js',
+      'playwright.config.js',
+      'vite.config.ts',
+      'vitest.config.ts',
+    ],
+  },
   js.configs.recommended,
   {
     rules: {
@@ -17,7 +40,7 @@ export default [
       semi: ['error', 'always'],
 
       // インデント（2スペース）
-      indent: ['error', 2],
+      indent: ['error', 2, { SwitchCase: 1 }],
 
       // 引用符の統一（シングルクォート）
       quotes: ['error', 'single'],
@@ -48,6 +71,9 @@ export default [
 
       // 演算子周りのスペース
       'space-infix-ops': 'error',
+
+      // case文内での変数宣言
+      'no-case-declarations': 'error',
     },
     languageOptions: {
       ecmaVersion: 2022,
@@ -68,6 +94,12 @@ export default [
         CustomEvent: 'readonly',
         HTMLElement: 'readonly',
         DOMContentLoaded: 'readonly',
+        getComputedStyle: 'readonly',
+        MouseEvent: 'readonly',
+        fetch: 'readonly',
+        alert: 'readonly',
+        confirm: 'readonly',
+        prompt: 'readonly',
       },
     },
   },
@@ -78,6 +110,92 @@ export default [
       'no-var': 'error',
       'prefer-const': 'warn',
       'prefer-arrow-callback': 'warn',
+    },
+  },
+  // Node.js環境のファイル（テストやビルドスクリプト）
+  {
+    files: [
+      '*.config.js',
+      '*.config.ts',
+      'test/**/*.js',
+      'tests/**/*.js',
+      'check-*.js',
+      'capture-*.js',
+      '*-expansion.js',
+      'expanded-*.js',
+      'word-expansion.js',
+      'phrase-expansion.js',
+    ],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'commonjs',
+      globals: {
+        require: 'readonly',
+        module: 'readonly',
+        exports: 'writable',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly',
+        console: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  // Playwright テストファイル
+  {
+    files: ['tests/e2e/**/*.spec.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        test: 'readonly',
+        expect: 'readonly',
+        describe: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        console: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  // Vitest テストファイル
+  {
+    files: ['test/**/*.test.ts', 'test/**/*.test.js', 'src/**/*.test.ts'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        vi: 'readonly',
+        vitest: 'readonly',
+      },
+    },
+  },
+  // TypeScript設定ファイル
+  {
+    files: ['*.config.ts', 'vite.config.ts', 'vitest.config.ts'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        __dirname: 'readonly',
+        process: 'readonly',
+      },
     },
   },
 ];

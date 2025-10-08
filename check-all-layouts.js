@@ -70,43 +70,43 @@ async function checkAllLayouts() {
           const info = { mode: practiceMode, items: [] };
 
           switch (practiceMode) {
-          case 'normal':
-            const normalGroups = document.querySelectorAll('.baseline-group');
-            info.itemCount = normalGroups.length;
-            info.itemType = '罫線';
-            break;
+            case 'normal':
+              const normalGroups = document.querySelectorAll('.baseline-group');
+              info.itemCount = normalGroups.length;
+              info.itemType = '罫線';
+              break;
 
-          case 'sentence':
-            const sentences = document.querySelectorAll('.example-sentence');
-            info.itemCount = sentences.length;
-            info.itemType = '例文';
-            sentences.forEach((s, i) => {
-              const lines = s.nextElementSibling?.querySelectorAll('.baseline-group').length || 0;
-              info.items.push({ index: i + 1, lines });
-            });
-            break;
+            case 'sentence':
+              const sentences = document.querySelectorAll('.example-sentence');
+              info.itemCount = sentences.length;
+              info.itemType = '例文';
+              sentences.forEach((s, i) => {
+                const lines = s.nextElementSibling?.querySelectorAll('.baseline-group').length || 0;
+                info.items.push({ index: i + 1, lines });
+              });
+              break;
 
-          case 'word':
-            const words = document.querySelectorAll('.word-practice-item');
-            info.itemCount = words.length;
-            info.itemType = '単語';
-            break;
+            case 'word':
+              const words = document.querySelectorAll('.word-practice-item');
+              info.itemCount = words.length;
+              info.itemType = '単語';
+              break;
 
-          case 'alphabet':
-            const letters = document.querySelectorAll('.alphabet-grid-item');
-            info.itemCount = letters.length;
-            info.itemType = '文字';
-            break;
+            case 'alphabet':
+              const letters = document.querySelectorAll('.alphabet-grid-item');
+              info.itemCount = letters.length;
+              info.itemType = '文字';
+              break;
 
-          case 'phrase':
-            const phrases = document.querySelectorAll('.phrase-item');
-            info.itemCount = phrases.length;
-            info.itemType = 'フレーズ';
-            phrases.forEach((p, i) => {
-              const lines = p.querySelectorAll('.baseline-group').length;
-              info.items.push({ index: i + 1, lines });
-            });
-            break;
+            case 'phrase':
+              const phrases = document.querySelectorAll('.phrase-item');
+              info.itemCount = phrases.length;
+              info.itemType = 'フレーズ';
+              phrases.forEach((p, i) => {
+                const lines = p.querySelectorAll('.baseline-group').length;
+                info.items.push({ index: i + 1, lines });
+              });
+              break;
           }
 
           return info;
