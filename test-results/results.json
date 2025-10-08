@@ -129,89 +129,20 @@
   },
   "suites": [
     {
-      "title": "normal-practice-test.spec.js",
-      "file": "normal-practice-test.spec.js",
+      "title": "numbers-math-test.spec.js",
+      "file": "numbers-math-test.spec.js",
       "column": 0,
       "line": 0,
-      "specs": [
-        {
-          "title": "通常練習モードの全体統合テスト",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 60000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [
-                {
-                  "workerIndex": 4,
-                  "parallelIndex": 4,
-                  "status": "passed",
-                  "duration": 702,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2025-10-08T09:58:09.793Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "18c0abf758c118047e72-a67db963ec0c039fabff",
-          "file": "normal-practice-test.spec.js",
-          "line": 151,
-          "column": 5
-        },
-        {
-          "title": "レスポンシブデザインの確認",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 60000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [
-                {
-                  "workerIndex": 2,
-                  "parallelIndex": 2,
-                  "status": "passed",
-                  "duration": 1148,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2025-10-08T09:58:09.793Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "18c0abf758c118047e72-079b1207966478b49eaa",
-          "file": "normal-practice-test.spec.js",
-          "line": 183,
-          "column": 5
-        }
-      ],
+      "specs": [],
       "suites": [
         {
-          "title": "通常練習モードテスト",
-          "file": "normal-practice-test.spec.js",
-          "line": 8,
+          "title": "数と算数カテゴリーテスト",
+          "file": "numbers-math-test.spec.js",
+          "line": 3,
           "column": 6,
           "specs": [
             {
-              "title": "4本線ベースラインが表示される",
+              "title": "数と算数カテゴリーが選択できる",
               "ok": true,
               "tags": [],
               "tests": [
@@ -226,12 +157,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 789,
+                      "duration": 1015,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-08T09:58:07.243Z",
+                      "startTime": "2025-10-08T22:00:49.163Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -239,13 +170,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "18c0abf758c118047e72-abc82101f80cf156b417",
-              "file": "normal-practice-test.spec.js",
-              "line": 15,
-              "column": 7
+              "id": "650e4dd11f7389a8a287-539622b04b4877b49b41",
+              "file": "numbers-math-test.spec.js",
+              "line": 11,
+              "column": 3
             },
             {
-              "title": "罫線の高さが設定できる",
+              "title": "4-6歳グループで基本的な足し算フレーズが表示される",
               "ok": true,
               "tags": [],
               "tests": [
@@ -260,12 +191,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 2313,
+                      "duration": 1584,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-08T09:58:07.240Z",
+                      "startTime": "2025-10-08T22:00:49.163Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -273,13 +204,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "18c0abf758c118047e72-b30613573f8821d5feb5",
-              "file": "normal-practice-test.spec.js",
-              "line": 27,
-              "column": 7
+              "id": "650e4dd11f7389a8a287-f1e6c2923fa4ab0f4631",
+              "file": "numbers-math-test.spec.js",
+              "line": 16,
+              "column": 3
             },
             {
-              "title": "罫線の色が設定できる",
+              "title": "7-9歳グループで位の概念フレーズが表示される",
               "ok": true,
               "tags": [],
               "tests": [
@@ -294,12 +225,12 @@
                       "workerIndex": 2,
                       "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 2342,
+                      "duration": 1494,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-08T09:58:07.246Z",
+                      "startTime": "2025-10-08T22:00:49.166Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -307,13 +238,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "18c0abf758c118047e72-390299476944247531b5",
-              "file": "normal-practice-test.spec.js",
-              "line": 45,
-              "column": 7
+              "id": "650e4dd11f7389a8a287-1d740ea9bc9149cadb71",
+              "file": "numbers-math-test.spec.js",
+              "line": 36,
+              "column": 3
             },
             {
-              "title": "名前・日付欄の表示/非表示が切り替わる",
+              "title": "10-12歳グループで四則演算フレーズが表示される",
               "ok": true,
               "tags": [],
               "tests": [
@@ -328,12 +259,12 @@
                       "workerIndex": 3,
                       "parallelIndex": 3,
                       "status": "passed",
-                      "duration": 1881,
+                      "duration": 1572,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-08T09:58:07.244Z",
+                      "startTime": "2025-10-08T22:00:49.164Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -341,13 +272,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "18c0abf758c118047e72-9bb87952c2afa0a05c2f",
-              "file": "normal-practice-test.spec.js",
-              "line": 58,
-              "column": 7
+              "id": "650e4dd11f7389a8a287-8639e891fcf6a5218150",
+              "file": "numbers-math-test.spec.js",
+              "line": 51,
+              "column": 3
             },
             {
-              "title": "ページ数が設定できる",
+              "title": "年齢グループを変更してもカテゴリーが維持される",
               "ok": true,
               "tags": [],
               "tests": [
@@ -362,12 +293,12 @@
                       "workerIndex": 4,
                       "parallelIndex": 4,
                       "status": "passed",
-                      "duration": 2344,
+                      "duration": 2587,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-08T09:58:07.240Z",
+                      "startTime": "2025-10-08T22:00:49.155Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -375,180 +306,10 @@
                   "status": "expected"
                 }
               ],
-              "id": "18c0abf758c118047e72-0f660bcb2578c00fce15",
-              "file": "normal-practice-test.spec.js",
-              "line": 74,
-              "column": 7
-            },
-            {
-              "title": "A4サイズの用紙が表示される",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 651,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-10-08T09:58:08.241Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "18c0abf758c118047e72-da1db8d78d44d0774306",
-              "file": "normal-practice-test.spec.js",
-              "line": 88,
-              "column": 7
-            },
-            {
-              "title": "十分な数の罫線が表示される",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 626,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-10-08T09:58:08.900Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "18c0abf758c118047e72-747a5f13ad2ebbbe2493",
-              "file": "normal-practice-test.spec.js",
-              "line": 103,
-              "column": 7
-            },
-            {
-              "title": "罫線が均等に配置される",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 3,
-                      "parallelIndex": 3,
-                      "status": "passed",
-                      "duration": 645,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-10-08T09:58:09.331Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "18c0abf758c118047e72-5ea3e84a0610ee5d32a5",
-              "file": "normal-practice-test.spec.js",
-              "line": 111,
-              "column": 7
-            },
-            {
-              "title": "印刷ボタンが表示される",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 638,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-10-08T09:58:09.533Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "18c0abf758c118047e72-b5116f74fd39485c45cb",
-              "file": "normal-practice-test.spec.js",
-              "line": 132,
-              "column": 7
-            },
-            {
-              "title": "プレビューボタンが表示される",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 688,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-10-08T09:58:09.765Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "18c0abf758c118047e72-c4b901be5e55e9f6e364",
-              "file": "normal-practice-test.spec.js",
-              "line": 141,
-              "column": 7
+              "id": "650e4dd11f7389a8a287-fffb645f051fa048b3a0",
+              "file": "numbers-math-test.spec.js",
+              "line": 67,
+              "column": 3
             }
           ]
         }
@@ -557,9 +318,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-10-08T09:58:06.241Z",
-    "duration": 4726.887,
-    "expected": 12,
+    "startTime": "2025-10-08T22:00:48.722Z",
+    "duration": 3440.1349999999998,
+    "expected": 5,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

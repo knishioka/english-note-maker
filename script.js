@@ -955,6 +955,7 @@ function generatePhrasePractice(showTranslation, ageGroup) {
     friend_making: '友達作り',
     cultural_exchange: '文化交流',
     emergency_situations: '緊急時の表現',
+    numbers_math: '数と算数',
   };
 
   html += `<h3 style="text-align: center; margin-bottom: 1mm; margin-top: 0mm;">Phrase Practice - ${categoryNames[phraseCategory] || phraseCategory}</h3>`;
