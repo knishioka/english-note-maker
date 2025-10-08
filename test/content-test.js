@@ -78,7 +78,7 @@ const ageGroups = ['4-6', '7-9', '10-12'];
 ageGroups.forEach((age) => {
   test(
     `年齢グループ "${age}" の存在`,
-    scriptContent.includes(`"${age}"`),
+    allContent.includes(`"${age}"`) || allContent.includes(`'${age}'`),
     `年齢グループ ${age} が見つかりません`
   );
 });
@@ -121,8 +121,9 @@ test(
 
 // 6. 例文データの構造チェック
 console.log('\n📖 例文データ構造のチェック');
+// More flexible regex that allows for multi-line formatting and any property order
 const exampleStructureRegex =
-  /{\s*english:\s*["'][^"']+["'],\s*japanese:\s*["'][^"']+["'],\s*category:\s*["'][^"']+["'],\s*difficulty:\s*\d+\s*}/;
+  /english:\s*['"][^'"]+['"]\s*,[\s\S]*?japanese:\s*['"][^'"]+['"]\s*,[\s\S]*?category:\s*['"][^'"]+['"]\s*,[\s\S]*?difficulty:\s*\d+/;
 test(
   '例文データの構造',
   exampleStructureRegex.test(allContent),

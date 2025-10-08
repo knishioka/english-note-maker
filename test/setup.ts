@@ -28,9 +28,18 @@ beforeAll(() => {
 
   // Mock CSS computation
   global.getComputedStyle = vi.fn((element: Element) => {
+    const htmlElement = element as HTMLElement;
+    const inlineStyle = htmlElement.style;
+
     return {
       getPropertyValue: vi.fn((property: string) => {
-        // Mock common CSS property values for testing
+        // First check inline styles
+        const inlineValue = inlineStyle.getPropertyValue(property);
+        if (inlineValue) {
+          return inlineValue;
+        }
+
+        // Then check common CSS property values for testing
         const mockValues: Record<string, string> = {
           height: '10mm',
           width: '210mm',
@@ -41,9 +50,9 @@ beforeAll(() => {
         };
         return mockValues[property] || '';
       }),
-      height: '10mm',
-      width: '210mm',
-      padding: '10mm',
+      height: inlineStyle.height || '10mm',
+      width: inlineStyle.width || '210mm',
+      padding: inlineStyle.padding || '10mm',
     } as any;
   });
 
@@ -53,8 +62,34 @@ beforeAll(() => {
     mark: vi.fn(),
     measure: vi.fn(),
     getEntriesByName: vi.fn(() => []),
+    getEntriesByType: vi.fn((type: string) => {
+      // Mock resource entries for resource type
+      if (type === 'resource') {
+        return [];
+      }
+      // Mock paint entries
+      if (type === 'paint') {
+        return [
+          { name: 'first-paint', startTime: 100, duration: 0 },
+          { name: 'first-contentful-paint', startTime: 150, duration: 0 },
+        ];
+      }
+      return [];
+    }),
     clearMarks: vi.fn(),
     clearMeasures: vi.fn(),
+    // Mock timing API
+    timing: {
+      navigationStart: 0,
+      loadEventEnd: 1000,
+      domContentLoadedEventEnd: 500,
+    },
+    // Mock memory API
+    memory: {
+      usedJSHeapSize: 10 * 1024 * 1024, // 10MB
+      totalJSHeapSize: 50 * 1024 * 1024, // 50MB
+      jsHeapSizeLimit: 2 * 1024 * 1024 * 1024, // 2GB
+    },
   } as any;
 
   // Mock console methods with spies

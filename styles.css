@@ -10,9 +10,9 @@
   /* === 印刷レイアウト変数 === */
   --page-width: 210mm;
   --page-height: 297mm;
-  --margin-standard: 5mm 10mm;
+  --margin-standard: 10mm;
   --margin-debug: 10mm 15mm;
-  --margin-minimum: 3mm 8mm;
+  --margin-minimum: 10mm;
 
   /* === ベースライン変数 === */
   --line-height-small: 8mm;
@@ -429,7 +429,7 @@ body {
     height: 297mm !important; /* A4高さを明示 */
     max-width: none !important;
     margin: 0 !important;
-    padding: 5mm 10mm !important; /* 変数ではなく直接指定 */
+    padding: 10mm !important; /* 統一設定システムに準拠 */
     box-sizing: border-box !important; /* パディングを含めたサイズ計算 */
     box-shadow: none !important;
   }

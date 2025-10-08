@@ -19,12 +19,12 @@ test.describe('単語練習モードテスト', () => {
     const previewContent = await page.locator('#notePreview').textContent();
     expect(previewContent).toContain('Word Practice - 動物');
 
-    // 動物に関連する単語が表示されていることを確認
+    // 動物に関連する単語が表示されていることを確認（7-9歳グループ）
     const hasAnimals =
-      previewContent.includes('cat') ||
-      previewContent.includes('dog') ||
-      previewContent.includes('bird') ||
-      previewContent.includes('fish');
+      previewContent.includes('elephant') ||
+      previewContent.includes('monkey') ||
+      previewContent.includes('giraffe') ||
+      previewContent.includes('penguin');
 
     expect(hasAnimals).toBeTruthy();
   });
@@ -37,10 +37,10 @@ test.describe('単語練習モードテスト', () => {
     expect(previewContent).toContain('Word Practice - 食べ物');
 
     const hasFood =
-      previewContent.includes('apple') ||
-      previewContent.includes('bread') ||
-      previewContent.includes('rice') ||
-      previewContent.includes('milk');
+      previewContent.includes('sandwich') ||
+      previewContent.includes('pizza') ||
+      previewContent.includes('hamburger') ||
+      previewContent.includes('spaghetti');
 
     expect(hasFood).toBeTruthy();
   });
@@ -53,10 +53,10 @@ test.describe('単語練習モードテスト', () => {
     expect(previewContent).toContain('Word Practice - 色');
 
     const hasColors =
-      previewContent.includes('red') ||
-      previewContent.includes('blue') ||
-      previewContent.includes('yellow') ||
-      previewContent.includes('green');
+      previewContent.includes('black') ||
+      previewContent.includes('orange') ||
+      previewContent.includes('purple') ||
+      previewContent.includes('pink');
 
     expect(hasColors).toBeTruthy();
   });
@@ -69,9 +69,10 @@ test.describe('単語練習モードテスト', () => {
     expect(previewContent).toContain('Word Practice - 数字');
 
     const hasNumbers =
-      previewContent.includes('one') ||
-      previewContent.includes('two') ||
-      previewContent.includes('three') ||
+      previewContent.includes('six') ||
+      previewContent.includes('seven') ||
+      previewContent.includes('eight') ||
+      previewContent.includes('nine') ||
       previewContent.includes('ten');
 
     expect(hasNumbers).toBeTruthy();

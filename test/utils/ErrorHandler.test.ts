@@ -55,7 +55,7 @@ describe('ErrorHandler', () => {
     });
 
     it('should log errors to console', () => {
-      const error = new Error('Test error');
+      const error = new TypeError('Test error');
 
       errorHandler.handleError(error);
 

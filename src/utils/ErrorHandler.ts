@@ -61,7 +61,33 @@ export class ErrorHandler {
       };
     }
 
-    // Handle non-Error objects
+    // Handle error-like objects with name and message properties
+    if (
+      error &&
+      typeof error === 'object' &&
+      'name' in error &&
+      'message' in error &&
+      typeof (error as any).name === 'string' &&
+      typeof (error as any).message === 'string'
+    ) {
+      const errorLike = error as { name: string; message: string };
+      return {
+        name: errorLike.name,
+        message: this.getUserFriendlyMessageFromName(errorLike.name, errorLike.message),
+        code: this.generateErrorCodeFromNameAndMessage(errorLike.name, errorLike.message),
+        severity: this.determineSeverityFromName(errorLike.name, errorLike.message),
+        context: {
+          ...context,
+          originalMessage: errorLike.message,
+          handlerContext: this.context,
+        },
+        userAgent,
+        timestamp,
+        stack: new Error().stack?.slice(0, this.maxStackTraceLength),
+      };
+    }
+
+    // Handle completely unknown errors
     return {
       name: 'UnknownError',
       message: 'An unexpected error occurred',
@@ -121,12 +147,67 @@ export class ErrorHandler {
   }
 
   /**
+   * Generate user-friendly error messages from name and message
+   */
+  private getUserFriendlyMessageFromName(name: string, message: string): string {
+    const messageMap: Record<string, string> = {
+      // Network errors
+      NetworkError: 'インターネット接続を確認してください',
+      TypeError: '入力データに問題があります',
+
+      // Validation errors
+      ValidationError: '入力内容を確認してください',
+      RangeError: '設定値が適切な範囲にありません',
+
+      // Print errors
+      PrintError: '印刷中にエラーが発生しました',
+      LayoutError: 'レイアウトの生成に失敗しました',
+
+      // Permission errors
+      SecurityError: 'アクセス権限がありません',
+      NotAllowedError: 'この操作は許可されていません',
+
+      // Resource errors
+      QuotaExceededError: 'ストレージ容量が不足しています',
+      MemoryError: 'メモリ不足です。ページを再読み込みしてください',
+    };
+
+    // Check for specific error patterns
+    if (message.includes('fetch')) {
+      return 'サーバーとの通信に失敗しました';
+    }
+
+    if (message.includes('localStorage')) {
+      return 'ブラウザのストレージにアクセスできません';
+    }
+
+    if (message.includes('print')) {
+      return '印刷機能が利用できません';
+    }
+
+    return messageMap[name] || message || '予期しないエラーが発生しました';
+  }
+
+  /**
    * Generate structured error code
    */
   private generateErrorCode(error: Error): string {
     const prefix = this.context.toUpperCase();
     const errorType = error.name.toUpperCase();
-    const hash = this.hashString(error.message).toString(16).slice(0, 4);
+    // Use 8-digit hash to reduce collision probability
+    const hash = this.hashString(error.message).toString(16).padStart(8, '0').slice(0, 8);
+
+    return `${prefix}_${errorType}_${hash}`;
+  }
+
+  /**
+   * Generate structured error code from name and message
+   */
+  private generateErrorCodeFromNameAndMessage(name: string, message: string): string {
+    const prefix = this.context.toUpperCase();
+    const errorType = name.toUpperCase();
+    // Use 8-digit hash to reduce collision probability
+    const hash = this.hashString(message).toString(16).padStart(8, '0').slice(0, 8);
 
     return `${prefix}_${errorType}_${hash}`;
   }
@@ -165,6 +246,39 @@ export class ErrorHandler {
   }
 
   /**
+   * Determine error severity from name and message
+   */
+  private determineSeverityFromName(name: string, message: string): ApplicationError['severity'] {
+    // Critical errors that break core functionality
+    const criticalErrors = ['ReferenceError', 'SyntaxError', 'SecurityError'];
+
+    // High severity errors that impact user experience
+    const highSeverityErrors = ['TypeError', 'RangeError', 'NetworkError', 'PrintError'];
+
+    // Medium severity errors that are recoverable
+    const mediumSeverityErrors = ['ValidationError', 'LayoutError'];
+
+    if (criticalErrors.includes(name)) {
+      return 'critical';
+    }
+
+    if (highSeverityErrors.includes(name)) {
+      return 'high';
+    }
+
+    if (mediumSeverityErrors.includes(name)) {
+      return 'medium';
+    }
+
+    // Check message content for severity clues
+    if (message.includes('failed') || message.includes('cannot')) {
+      return 'high';
+    }
+
+    return 'low';
+  }
+
+  /**
    * Log error with appropriate level
    */
   private logError(error: ApplicationError): void {
@@ -173,7 +287,8 @@ export class ErrorHandler {
     if (typeof console !== 'undefined') {
       const logMethod = console[logLevel] || console.error;
 
-      logMethod.call(console, `[${error.code}] ${error.message}`, {
+      // Call the log method directly to ensure spies work correctly
+      logMethod(`[${error.code}] ${error.message}`, {
         context: error.context,
         timestamp: error.timestamp,
         severity: error.severity,
