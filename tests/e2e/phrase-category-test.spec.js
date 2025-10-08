@@ -6,7 +6,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('フレーズカテゴリー切り替えテスト', () => {
-  test.beforeEach(async({ page }) => {
+  test.beforeEach(async ({ page }) => {
     // 開発サーバーにアクセス
     await page.goto('http://localhost:3000');
 
@@ -17,7 +17,7 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     await expect(page.locator('#phraseOptions')).toBeVisible();
   });
 
-  test('あいさつカテゴリーが正しく表示される', async({ page }) => {
+  test('あいさつカテゴリーが正しく表示される', async ({ page }) => {
     // あいさつカテゴリーを選択
     await page.selectOption('#phraseCategory', 'greetings');
 
@@ -37,7 +37,7 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     expect(hasGreetings).toBeTruthy();
   });
 
-  test('自己紹介カテゴリーが正しく表示される', async({ page }) => {
+  test('自己紹介カテゴリーが正しく表示される', async ({ page }) => {
     // 自己紹介カテゴリーを選択
     await page.selectOption('#phraseCategory', 'self_introduction');
 
@@ -60,7 +60,7 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     expect(hasSelfIntroduction).toBeTruthy();
   });
 
-  test('学校生活カテゴリーが正しく表示される', async({ page }) => {
+  test('学校生活カテゴリーが正しく表示される', async ({ page }) => {
     // 学校生活カテゴリーを選択
     await page.selectOption('#phraseCategory', 'school');
 
@@ -83,7 +83,7 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     expect(hasSchool).toBeTruthy();
   });
 
-  test('買い物カテゴリーが正しく表示される', async({ page }) => {
+  test('買い物カテゴリーが正しく表示される', async ({ page }) => {
     // 買い物カテゴリーを選択
     await page.selectOption('#phraseCategory', 'shopping');
 
@@ -97,7 +97,7 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     expect(previewContent).toContain('Phrase Practice - 買い物');
   });
 
-  test('日常生活カテゴリーが正しく表示される', async({ page }) => {
+  test('日常生活カテゴリーが正しく表示される', async ({ page }) => {
     // 日常生活カテゴリーを選択
     await page.selectOption('#phraseCategory', 'daily_life');
 
@@ -120,7 +120,7 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     expect(hasDailyLife).toBeTruthy();
   });
 
-  test('シャッフルボタンでフレーズが更新される', async({ page }) => {
+  test('シャッフルボタンでフレーズが更新される', async ({ page }) => {
     // 最初のプレビュー内容を取得
     const initialContent = await page.locator('#notePreview').textContent();
 
@@ -138,7 +138,7 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     expect(updatedContent).toContain('Phrase Practice - あいさつ');
   });
 
-  test('年齢グループを変更してもカテゴリーが維持される', async({ page }) => {
+  test('年齢グループを変更してもカテゴリーが維持される', async ({ page }) => {
     // 自己紹介カテゴリーを選択
     await page.selectOption('#phraseCategory', 'self_introduction');
     await page.waitForTimeout(500);
@@ -165,7 +165,7 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
 });
 
 // 全カテゴリーの網羅的テスト
-test('全カテゴリーが切り替え可能', async({ page }) => {
+test('全カテゴリーが切り替え可能', async ({ page }) => {
   await page.goto('http://localhost:3000');
   await page.selectOption('#practiceMode', 'phrase');
 
@@ -181,6 +181,7 @@ test('全カテゴリーが切り替え可能', async({ page }) => {
     { value: 'friend_making', name: '友達作り' },
     { value: 'cultural_exchange', name: '文化交流' },
     { value: 'emergency_situations', name: '緊急時の表現' },
+    { value: 'numbers_math', name: '数と算数' },
   ];
 
   for (const category of categories) {
@@ -195,5 +196,66 @@ test('全カテゴリーが切り替え可能', async({ page }) => {
     expect(previewContent).toContain(`Phrase Practice - ${category.name}`);
 
     console.log(`✅ ${category.name} カテゴリー: OK`);
+  }
+});
+
+// カテゴリー切り替え時のプレビュー更新テスト
+test('カテゴリー切り替え時にプレビューが更新される', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  await page.selectOption('#practiceMode', 'phrase');
+
+  // greetingsカテゴリーを選択
+  await page.selectOption('#phraseCategory', 'greetings');
+  await page.waitForTimeout(500);
+  const greetingsContent = await page.locator('#notePreview').textContent();
+
+  // タイトルとコンテンツを確認
+  expect(greetingsContent).toContain('Phrase Practice - あいさつ');
+
+  // numbers_mathに切り替え
+  await page.selectOption('#phraseCategory', 'numbers_math');
+  await page.waitForTimeout(500);
+  const mathContent = await page.locator('#notePreview').textContent();
+
+  // タイトルとコンテンツが変わっていることを確認
+  expect(mathContent).toContain('Phrase Practice - 数と算数');
+  expect(greetingsContent).not.toBe(mathContent);
+
+  // 数学関連のフレーズが表示されていることを確認
+  const hasMathPhrases =
+    mathContent.includes('plus') ||
+    mathContent.includes('minus') ||
+    mathContent.includes('equals') ||
+    mathContent.includes('times') ||
+    mathContent.includes('divided');
+
+  expect(hasMathPhrases).toBeTruthy();
+});
+
+// 複数カテゴリーを連続して切り替えるテスト
+test('複数カテゴリーを連続して切り替えても正しく表示される', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  await page.selectOption('#practiceMode', 'phrase');
+
+  // テストするカテゴリーのシーケンス
+  const testSequence = [
+    { value: 'greetings', name: 'あいさつ', keyword: 'Hello' },
+    { value: 'numbers_math', name: '数と算数', keyword: 'plus' },
+    { value: 'shopping', name: '買い物', keyword: 'buy' },
+    { value: 'school', name: '学校生活', keyword: 'school' },
+  ];
+
+  for (const category of testSequence) {
+    // カテゴリーを選択
+    await page.selectOption('#phraseCategory', category.value);
+    await page.waitForTimeout(500);
+
+    // プレビューを確認
+    const previewContent = await page.locator('#notePreview').textContent();
+
+    // カテゴリー名が正しく表示されていることを確認
+    expect(previewContent).toContain(`Phrase Practice - ${category.name}`);
+
+    console.log(`✅ ${category.name} → 正しく切り替わりました`);
   }
 });
