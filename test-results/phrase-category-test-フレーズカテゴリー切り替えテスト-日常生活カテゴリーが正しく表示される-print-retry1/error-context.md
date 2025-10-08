@@ -1,0 +1,93 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - banner [ref=e2]:
+        - heading "英語罫線ノート作成ツール" [level=1] [ref=e3]
+        - paragraph [ref=e4]: 美しいアルファベット練習用の4本線ノートを作成できます
+    - main [ref=e5]:
+        - generic [ref=e6]:
+            - generic [ref=e8]:
+                - text: '練習モード:'
+                - combobox "練習モード:" [ref=e9]:
+                    - option "フレーズ練習" [selected]
+                    - option "通常練習"
+                    - option "文章練習"
+                    - option "単語練習"
+                    - option "アルファベット練習"
+            - generic [ref=e11]:
+                - text: '年齢:'
+                - combobox "年齢:" [ref=e12]:
+                    - option "4〜6歳"
+                    - option "7〜9歳" [selected]
+                    - option "10〜12歳"
+            - generic [ref=e14]:
+                - checkbox "日本語訳を表示" [checked] [ref=e15]
+                - text: 日本語訳を表示
+            - generic [ref=e16]:
+                - generic [ref=e17]:
+                    - text: 'フレーズカテゴリー:'
+                    - combobox "フレーズカテゴリー:" [ref=e18]:
+                        - option "あいさつ"
+                        - option "自己紹介"
+                        - option "学校生活"
+                        - option "買い物"
+                        - option "旅行・移動"
+                        - option "感情表現"
+                        - option "日常生活" [selected]
+                        - option "教室での英語"
+                        - option "友達作り"
+                        - option "文化交流"
+                        - option "緊急時の表現"
+                        - option "数と算数"
+                - generic [ref=e19]:
+                    - checkbox "使用場面を表示" [checked] [ref=e20]
+                    - text: 使用場面を表示
+                - button "🔄 別のフレーズを表示" [ref=e21] [cursor=pointer]
+            - generic [ref=e22]:
+                - heading "カスタマイズ設定" [level=3] [ref=e23]
+                - generic [ref=e24]:
+                    - text: '罫線の高さ:'
+                    - combobox "罫線の高さ:" [ref=e25]:
+                        - option "8mm（小さめ）"
+                        - option "10mm（標準）" [selected]
+                        - option "12mm（大きめ）"
+                - generic [ref=e26]:
+                    - text: '罫線の色:'
+                    - combobox "罫線の色:" [ref=e27]:
+                        - option "グレー" [selected]
+                        - option "青"
+                        - option "緑"
+                - generic [ref=e28]:
+                    - checkbox "名前・日付欄を表示" [ref=e29]
+                    - text: 名前・日付欄を表示
+                - generic [ref=e30]:
+                    - text: 'ページ数:'
+                    - spinbutton "ページ数:" [ref=e31]: '1'
+            - button "🔍 印刷プレビュー" [ref=e32] [cursor=pointer]
+            - button "印刷・PDF保存" [ref=e33] [cursor=pointer]
+        - generic [ref=e37]:
+            - heading "Phrase Practice - 日常生活" [level=3] [ref=e38]
+            - generic [ref=e40]:
+                - generic [ref=e41]:
+                    - generic [ref=e42]: I walk my dog.
+                    - generic [ref=e43]: 私は犬の散歩をします。
+                - generic [ref=e44]: 【ペットの世話について話すとき】
+            - generic [ref=e64]:
+                - generic [ref=e65]:
+                    - generic [ref=e66]: I set the table.
+                    - generic [ref=e67]: 私は食卓の準備をします。
+                - generic [ref=e68]: 【食事の準備を手伝うとき】
+            - generic [ref=e88]:
+                - generic [ref=e89]:
+                    - generic [ref=e90]: I help with cooking.
+                    - generic [ref=e91]: 私は料理を手伝います。
+                - generic [ref=e92]: 【料理の手伝いについて話すとき】
+            - generic [ref=e112]:
+                - generic [ref=e113]:
+                    - generic [ref=e114]: I'm going to the park.
+                    - generic [ref=e115]: 私は公園に行く予定です。
+                - generic [ref=e116]: 【外出予定を言うとき】
+    - contentinfo [ref=e135]:
+        - paragraph [ref=e136]: © 2025 英語罫線ノート作成ツール
+```

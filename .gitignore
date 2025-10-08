@@ -27,3 +27,18 @@ npm-debug.log*
 # Temporary files
 *.tmp
 *.temp
+
+# Backup files
+*.backup
+*.bak
+*.old
+
+# Content expansion intermediate files
+expanded-*.js
+*-expansion.js
+
+# Development utility scripts (use E2E tests instead)
+check-*.js
+test-*.js
+!test/
+!tests/
