@@ -365,7 +365,9 @@ export interface UserInteraction {
 export interface ApplicationError extends Error {
   type: ErrorType;
   severity: ErrorSeverity;
-  userMessage: string;
+  code: string;
+  userMessage?: string;
+  userAgent?: string;
   context?: Record<string, unknown>;
   timestamp: string;
 }
@@ -384,6 +386,8 @@ export interface LogEntry {
   message: string;
   timestamp: string;
   data?: unknown;
+  context?: Record<string, unknown>;
+  stack?: string;
 }
 
 /**

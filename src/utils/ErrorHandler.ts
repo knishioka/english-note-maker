@@ -3,6 +3,7 @@
  * Centralized error handling with proper logging and user-friendly messages
  */
 
+import { ErrorSeverity, ErrorType } from '../types/index.js';
 import type { ApplicationError, LogLevel } from '../types/index.js';
 
 export class ErrorHandler {
@@ -48,6 +49,7 @@ export class ErrorHandler {
       return {
         name: error.name,
         message: this.getUserFriendlyMessage(error),
+        type: this.determineErrorType(error),
         code: this.generateErrorCode(error),
         severity: this.determineSeverity(error),
         context: {
@@ -74,6 +76,7 @@ export class ErrorHandler {
       return {
         name: errorLike.name,
         message: this.getUserFriendlyMessageFromName(errorLike.name, errorLike.message),
+        type: this.determineErrorTypeFromName(errorLike.name),
         code: this.generateErrorCodeFromNameAndMessage(errorLike.name, errorLike.message),
         severity: this.determineSeverityFromName(errorLike.name, errorLike.message),
         context: {
@@ -91,8 +94,9 @@ export class ErrorHandler {
     return {
       name: 'UnknownError',
       message: 'An unexpected error occurred',
+      type: ErrorType.UNKNOWN,
       code: 'UNKNOWN_ERROR',
-      severity: 'medium',
+      severity: ErrorSeverity.MEDIUM,
       context: {
         ...context,
         originalError: String(error),
@@ -213,9 +217,68 @@ export class ErrorHandler {
   }
 
   /**
+   * Determine error type based on error name and message
+   */
+  private determineErrorType(error: Error): ErrorType {
+    const errorName = error.name.toLowerCase();
+    const errorMessage = error.message.toLowerCase();
+
+    if (errorName.includes('validation') || errorMessage.includes('validation')) {
+      return ErrorType.VALIDATION;
+    }
+
+    if (errorName.includes('print') || errorMessage.includes('print')) {
+      return ErrorType.PRINT;
+    }
+
+    if (
+      errorName.includes('render') ||
+      errorName.includes('layout') ||
+      errorMessage.includes('render')
+    ) {
+      return ErrorType.RENDERING;
+    }
+
+    if (
+      errorName.includes('network') ||
+      errorName.includes('fetch') ||
+      errorMessage.includes('fetch')
+    ) {
+      return ErrorType.DATA_LOADING;
+    }
+
+    return ErrorType.UNKNOWN;
+  }
+
+  /**
+   * Determine error type from error name
+   */
+  private determineErrorTypeFromName(name: string): ErrorType {
+    const errorName = name.toLowerCase();
+
+    if (errorName.includes('validation')) {
+      return ErrorType.VALIDATION;
+    }
+
+    if (errorName.includes('print')) {
+      return ErrorType.PRINT;
+    }
+
+    if (errorName.includes('render') || errorName.includes('layout')) {
+      return ErrorType.RENDERING;
+    }
+
+    if (errorName.includes('network') || errorName.includes('fetch')) {
+      return ErrorType.DATA_LOADING;
+    }
+
+    return ErrorType.UNKNOWN;
+  }
+
+  /**
    * Determine error severity based on error type and context
    */
-  private determineSeverity(error: Error): ApplicationError['severity'] {
+  private determineSeverity(error: Error): ErrorSeverity {
     // Critical errors that break core functionality
     const criticalErrors = ['ReferenceError', 'SyntaxError', 'SecurityError'];
 
@@ -226,29 +289,29 @@ export class ErrorHandler {
     const mediumSeverityErrors = ['ValidationError', 'LayoutError'];
 
     if (criticalErrors.includes(error.name)) {
-      return 'critical';
+      return ErrorSeverity.CRITICAL;
     }
 
     if (highSeverityErrors.includes(error.name)) {
-      return 'high';
+      return ErrorSeverity.HIGH;
     }
 
     if (mediumSeverityErrors.includes(error.name)) {
-      return 'medium';
+      return ErrorSeverity.MEDIUM;
     }
 
     // Check message content for severity clues
     if (error.message.includes('failed') || error.message.includes('cannot')) {
-      return 'high';
+      return ErrorSeverity.HIGH;
     }
 
-    return 'low';
+    return ErrorSeverity.LOW;
   }
 
   /**
    * Determine error severity from name and message
    */
-  private determineSeverityFromName(name: string, message: string): ApplicationError['severity'] {
+  private determineSeverityFromName(name: string, message: string): ErrorSeverity {
     // Critical errors that break core functionality
     const criticalErrors = ['ReferenceError', 'SyntaxError', 'SecurityError'];
 
@@ -259,23 +322,23 @@ export class ErrorHandler {
     const mediumSeverityErrors = ['ValidationError', 'LayoutError'];
 
     if (criticalErrors.includes(name)) {
-      return 'critical';
+      return ErrorSeverity.CRITICAL;
     }
 
     if (highSeverityErrors.includes(name)) {
-      return 'high';
+      return ErrorSeverity.HIGH;
     }
 
     if (mediumSeverityErrors.includes(name)) {
-      return 'medium';
+      return ErrorSeverity.MEDIUM;
     }
 
     // Check message content for severity clues
     if (message.includes('failed') || message.includes('cannot')) {
-      return 'high';
+      return ErrorSeverity.HIGH;
     }
 
-    return 'low';
+    return ErrorSeverity.LOW;
   }
 
   /**
@@ -285,8 +348,7 @@ export class ErrorHandler {
     const logLevel: LogLevel = this.severityToLogLevel(error.severity);
 
     if (typeof console !== 'undefined') {
-      const logMethod =
-        (console as Record<string, (...args: any[]) => void>)[logLevel] || console.error;
+      const logMethod = console[logLevel] || console.error;
 
       // Call the log method directly to ensure spies work correctly
       logMethod(`[${error.code}] ${error.message}`, {
@@ -336,7 +398,7 @@ export class ErrorHandler {
    */
   private shouldReportError(error: ApplicationError): boolean {
     // Don't report low severity errors in production
-    if (error.severity === 'low') {
+    if (error.severity === ErrorSeverity.LOW) {
       return false;
     }
 
@@ -352,7 +414,7 @@ export class ErrorHandler {
   /**
    * Serialize error for transmission
    */
-  private serializeError(error: ApplicationError): Record<string, unknown> {
+  private serializeErrorForTransmission(error: ApplicationError): Record<string, unknown> {
     return {
       code: error.code,
       message: error.message,
@@ -368,18 +430,18 @@ export class ErrorHandler {
   /**
    * Utility methods
    */
-  private severityToLogLevel(severity: ApplicationError['severity']): LogLevel {
-    const map: Record<ApplicationError['severity'], LogLevel> = {
-      low: 'info',
-      medium: 'warn',
-      high: 'error',
-      critical: 'error',
+  private severityToLogLevel(severity: ErrorSeverity): LogLevel {
+    const map: Record<ErrorSeverity, LogLevel> = {
+      [ErrorSeverity.LOW]: 'info',
+      [ErrorSeverity.MEDIUM]: 'warn',
+      [ErrorSeverity.HIGH]: 'error',
+      [ErrorSeverity.CRITICAL]: 'error',
     };
     return map[severity];
   }
 
   private isProduction(): boolean {
-    return typeof process !== 'undefined' && process.env?.NODE_ENV === 'production';
+    return typeof process !== 'undefined' && process.env?.['NODE_ENV'] === 'production';
   }
 
   private sanitizeStackTrace(stack?: string): string | undefined {

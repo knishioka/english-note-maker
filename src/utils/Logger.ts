@@ -3,7 +3,7 @@
  * Structured logging with levels, context, and performance tracking
  */
 
-import type { LogLevel, LogEntry, DebugConfig } from '../types/index.js';
+import type { LogLevel, LogEntry } from '../types/index.js';
 
 export interface LoggerConfig {
   level: LogLevel;

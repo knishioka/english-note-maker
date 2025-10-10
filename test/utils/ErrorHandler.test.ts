@@ -5,6 +5,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ErrorHandler } from '../../src/utils/ErrorHandler.js';
+import { ErrorSeverity } from '../../src/types/index.js';
 import { createTestError } from '../setup.js';
 
 describe('ErrorHandler', () => {
@@ -28,8 +29,8 @@ describe('ErrorHandler', () => {
       expect(result.name).toBe('TypeError');
       expect(result.message).toBe('入力データに問題があります');
       expect(result.code).toContain('TESTCONTEXT_TYPEERROR_');
-      expect(result.severity).toBe('high');
-      expect(result.context.originalMessage).toBe('Test error message');
+      expect(result.severity).toBe(ErrorSeverity.HIGH);
+      expect(result.context?.originalMessage).toBe('Test error message');
       expect(result.timestamp).toBeDefined();
     });
 
@@ -39,8 +40,8 @@ describe('ErrorHandler', () => {
       expect(result.name).toBe('UnknownError');
       expect(result.message).toBe('An unexpected error occurred');
       expect(result.code).toBe('UNKNOWN_ERROR');
-      expect(result.severity).toBe('medium');
-      expect(result.context.originalError).toBe('String error');
+      expect(result.severity).toBe(ErrorSeverity.MEDIUM);
+      expect(result.context?.originalError).toBe('String error');
     });
 
     it('should include additional context', () => {
@@ -49,9 +50,9 @@ describe('ErrorHandler', () => {
 
       const result = errorHandler.handleError(error, context);
 
-      expect(result.context.userId).toBe('123');
-      expect(result.context.action).toBe('print');
-      expect(result.context.handlerContext).toBe('TestContext');
+      expect(result.context?.userId).toBe('123');
+      expect(result.context?.action).toBe('print');
+      expect(result.context?.handlerContext).toBe('TestContext');
     });
 
     it('should log errors to console', () => {
@@ -73,7 +74,7 @@ describe('ErrorHandler', () => {
 
       errors.forEach((error) => {
         const result = errorHandler.handleError(error);
-        expect(result.severity).toBe('critical');
+        expect(result.severity).toBe(ErrorSeverity.CRITICAL);
       });
     });
 
@@ -87,7 +88,7 @@ describe('ErrorHandler', () => {
 
       errors.forEach((error) => {
         const result = errorHandler.handleError(error);
-        expect(result.severity).toBe('high');
+        expect(result.severity).toBe(ErrorSeverity.HIGH);
       });
     });
 
@@ -99,7 +100,7 @@ describe('ErrorHandler', () => {
 
       errors.forEach((error) => {
         const result = errorHandler.handleError(error);
-        expect(result.severity).toBe('medium');
+        expect(result.severity).toBe(ErrorSeverity.MEDIUM);
       });
     });
 
@@ -108,7 +109,7 @@ describe('ErrorHandler', () => {
 
       const result = errorHandler.handleError(error);
 
-      expect(result.severity).toBe('low');
+      expect(result.severity).toBe(ErrorSeverity.LOW);
     });
   });
 
@@ -177,7 +178,7 @@ describe('ErrorHandler', () => {
 
       expect(result.stack).toBeDefined();
       expect(result.stack).not.toContain('file:///');
-      expect(result.stack!.length).toBeLessThanOrEqual(1000);
+      expect(result.stack?.length).toBeLessThanOrEqual(1000);
     });
 
     it('should handle missing stack traces', () => {
@@ -290,7 +291,7 @@ describe('ErrorHandler', () => {
 
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.context.handlerContext).toBe('AsyncTest');
+          expect(result.error.context?.handlerContext).toBe('AsyncTest');
         }
       });
     });
@@ -302,7 +303,7 @@ describe('ErrorHandler', () => {
       const result = errorHandler.handleError(error);
 
       // Test the serialization logic (accessing private method via any)
-      const serialized = (errorHandler as any).serializeError(result);
+      const serialized = (errorHandler as any).serializeErrorForTransmission(result);
 
       expect(serialized).toEqual({
         code: result.code,
@@ -355,10 +356,10 @@ describe('ErrorHandler', () => {
 
       const result = errorHandler.handleError(originalError, additionalContext);
 
-      expect(result.context.originalMessage).toBe('Original message');
-      expect(result.context.requestId).toBe('req-123');
-      expect(result.context.path).toBe('/api/test');
-      expect(result.context.handlerContext).toBe('TestContext');
+      expect(result.context?.originalMessage).toBe('Original message');
+      expect(result.context?.requestId).toBe('req-123');
+      expect(result.context?.path).toBe('/api/test');
+      expect(result.context?.handlerContext).toBe('TestContext');
     });
   });
 });
