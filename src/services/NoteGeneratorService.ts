@@ -5,13 +5,11 @@
 
 import type {
   UIState,
-  PracticeMode,
   ExampleSentence,
   WordData,
   AlphabetData,
   PhraseData,
   LineHeight,
-  MillimeterValue,
   ValidationResult,
 } from '../types/index.js';
 import { ErrorHandler } from '../utils/ErrorHandler.js';
@@ -218,7 +216,7 @@ export class NoteGeneratorService {
 
     // Generate examples if needed
     let examples: ExampleSentence[] = [];
-    if (state.showExamples) {
+    if (state.showExamples && state.selectedCategories?.sentence) {
       const neededExamples = Math.floor(maxLines / 4);
       examples = await this.getExamplesForAge(
         state.ageGroup,
@@ -229,10 +227,11 @@ export class NoteGeneratorService {
 
     for (let i = 0; i < maxLines; i++) {
       const exampleIndex = Math.floor(i / 4);
-      const shouldShowExample = state.showExamples && examples[exampleIndex] && i % 4 === 0;
+      const example = examples[exampleIndex];
+      const shouldShowExample = state.showExamples && example && i % 4 === 0;
 
-      if (shouldShowExample) {
-        html += this.generateExampleSentence(examples[exampleIndex], state.showTranslation);
+      if (shouldShowExample && example) {
+        html += this.generateExampleSentence(example, state.showTranslation);
       }
 
       html += this.generateBaselineGroup();
@@ -256,7 +255,7 @@ export class NoteGeneratorService {
     const examples = await this.getExamplesForAge(
       state.ageGroup,
       maxExamples,
-      state.selectedCategories.sentence
+      state.selectedCategories?.sentence || 'daily'
     );
 
     let html = '';
@@ -280,15 +279,19 @@ export class NoteGeneratorService {
    * Generate word practice mode content
    */
   private async generateWordPractice(state: UIState): Promise<string> {
-    const words = await this.getWordsForCategory(state.selectedCategories.word, state.ageGroup);
+    const words = await this.getWordsForCategory(
+      state.selectedCategories?.word || 'animals',
+      state.ageGroup
+    );
     const lineHeight = state.lineHeight;
     const maxWords = lineHeight === 12 ? 3 : lineHeight === 8 ? 5 : 4;
     const displayWords = words.slice(0, maxWords);
 
     const categoryNames = this.getWordCategoryNames();
+    const wordCategory = state.selectedCategories?.word || 'animals';
 
     let html = `<div class="word-practice">`;
-    html += `<h3 class="practice-title">Word Practice - ${categoryNames[state.selectedCategories.word] || state.selectedCategories.word}</h3>`;
+    html += `<h3 class="practice-title">Word Practice - ${categoryNames[wordCategory] || wordCategory}</h3>`;
 
     for (const word of displayWords) {
       const itemMargin = lineHeight === 12 ? '18mm' : lineHeight === 8 ? '10mm' : '12mm';
@@ -360,16 +363,14 @@ export class NoteGeneratorService {
    * Generate phrase practice mode content
    */
   private async generatePhrasePractice(state: UIState): Promise<string> {
-    const phrases = await this.getPhrasesForCategory(
-      state.selectedCategories.phrase,
-      state.ageGroup
-    );
+    const phraseCategory = state.selectedCategories?.phrase || 'greetings';
+    const phrases = await this.getPhrasesForCategory(phraseCategory, state.ageGroup);
     const shuffledPhrases = this.shuffleArray([...phrases]).slice(0, 4);
 
     const categoryNames = this.getPhraseCategoryNames();
 
     let html = '<div class="phrase-practice">';
-    html += `<h3 class="practice-title">Phrase Practice - ${categoryNames[state.selectedCategories.phrase] || state.selectedCategories.phrase}</h3>`;
+    html += `<h3 class="practice-title">Phrase Practice - ${categoryNames[phraseCategory] || phraseCategory}</h3>`;
 
     for (const phrase of shuffledPhrases) {
       html += `

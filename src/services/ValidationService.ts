@@ -8,8 +8,6 @@ import type {
   ValidationResult,
   ValidationReport,
   UIState,
-  MillimeterValue,
-  PixelValue,
 } from '../types/index.js';
 
 export class ValidationService {
@@ -172,17 +170,20 @@ export class ValidationService {
     rule: ValidationRule,
     container: Element
   ): Promise<ValidationResult | null> {
+    if (
+      !rule.selector ||
+      !rule.property ||
+      rule.min === undefined ||
+      rule.max === undefined ||
+      !rule.unit
+    ) {
+      return null; // Skip validation if rule is incomplete
+    }
+
     const elements = container.querySelectorAll(rule.selector);
 
     if (elements.length === 0) {
-      return {
-        rule: rule.name,
-        passed: true, // Not applicable if elements don't exist
-        actualValue: 'N/A',
-        expectedRange: `${rule.min}-${rule.max}${rule.unit}`,
-        severity: rule.severity,
-        message: `No elements found for selector: ${rule.selector}`,
-      };
+      return null; // Skip if no elements found
     }
 
     for (const element of elements) {
@@ -195,13 +196,16 @@ export class ValidationService {
 
       if (value < rule.min || value > rule.max) {
         return {
-          rule: rule.name,
+          valid: false,
           passed: false,
+          rule: rule.name,
           actualValue: value,
           expectedRange: `${rule.min}-${rule.max}${rule.unit}`,
           severity: rule.severity,
           message: `${rule.name} value ${value}${rule.unit} is outside expected range`,
-          element: htmlElement,
+          errors: [],
+          warnings: [],
+          timestamp: new Date().toISOString(),
         };
       }
     }
@@ -225,13 +229,16 @@ export class ValidationService {
       if (heightInMm > this.A4_HEIGHT_MM * 1.05) {
         // 5% tolerance
         results.push({
-          rule: 'pageHeight',
+          valid: false,
           passed: false,
+          rule: 'pageHeight',
           actualValue: Math.round(heightInMm),
           expectedRange: `<${this.A4_HEIGHT_MM}mm`,
           severity: 'error',
           message: `Page height ${Math.round(heightInMm)}mm exceeds A4 size`,
-          element: htmlPage,
+          errors: [],
+          warnings: [],
+          timestamp: new Date().toISOString(),
         });
       }
 
@@ -240,13 +247,16 @@ export class ValidationService {
       if (widthInMm > this.A4_WIDTH_MM * 1.1) {
         // 10% tolerance for margins
         results.push({
-          rule: 'pageWidth',
+          valid: false,
           passed: false,
+          rule: 'pageWidth',
           actualValue: Math.round(widthInMm),
           expectedRange: `<${this.A4_WIDTH_MM * 1.1}mm`,
           severity: 'warning',
           message: `Page width ${Math.round(widthInMm)}mm may cause printing issues`,
-          element: htmlPage,
+          errors: [],
+          warnings: [],
+          timestamp: new Date().toISOString(),
         });
       }
     }
@@ -275,12 +285,16 @@ export class ValidationService {
 
     if (heights.size > 1) {
       results.push({
-        rule: 'baselineConsistency',
+        valid: false,
         passed: false,
+        rule: 'baselineConsistency',
         actualValue: Array.from(heights).join(', '),
         expectedRange: 'Consistent heights',
         severity: 'warning',
         message: `Inconsistent baseline heights detected: ${Array.from(heights).join('px, ')}px`,
+        errors: [],
+        warnings: [],
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -289,13 +303,16 @@ export class ValidationService {
       const baselines = group.querySelectorAll('.baseline');
       if (baselines.length !== 4) {
         results.push({
-          rule: 'baselineStructure',
+          valid: false,
           passed: false,
+          rule: 'baselineStructure',
           actualValue: baselines.length,
           expectedRange: '4 baselines',
           severity: 'error',
           message: `Baseline group should contain exactly 4 lines, found ${baselines.length}`,
-          element: group as HTMLElement,
+          errors: [],
+          warnings: [],
+          timestamp: new Date().toISOString(),
         });
       }
     }
@@ -328,12 +345,16 @@ export class ValidationService {
 
     if (!hasPrintStyles) {
       results.push({
-        rule: 'printStyles',
+        valid: false,
         passed: false,
+        rule: 'printStyles',
         actualValue: 'Missing',
         expectedRange: 'Present',
         severity: 'warning',
         message: 'Print-specific CSS styles not detected',
+        errors: [],
+        warnings: [],
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -343,12 +364,16 @@ export class ValidationService {
 
     if (pages.length > 1 && pageBreaks.length === 0) {
       results.push({
-        rule: 'pageBreaks',
+        valid: false,
         passed: false,
+        rule: 'pageBreaks',
         actualValue: pageBreaks.length,
         expectedRange: `>0 for ${pages.length} pages`,
         severity: 'warning',
         message: 'Multi-page document missing page break directives',
+        errors: [],
+        warnings: [],
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -363,12 +388,16 @@ export class ValidationService {
     const isValid = validModes.includes(mode);
 
     return {
-      rule: 'practiceMode',
+      valid: isValid,
       passed: isValid,
+      rule: 'practiceMode',
       actualValue: mode,
       expectedRange: validModes.join(' | '),
       severity: 'error',
       message: isValid ? 'Valid practice mode' : `Invalid practice mode: ${mode}`,
+      errors: [],
+      warnings: [],
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -377,12 +406,16 @@ export class ValidationService {
     const isValid = validGroups.includes(ageGroup);
 
     return {
-      rule: 'ageGroup',
+      valid: isValid,
       passed: isValid,
+      rule: 'ageGroup',
       actualValue: ageGroup,
       expectedRange: validGroups.join(' | '),
       severity: 'error',
       message: isValid ? 'Valid age group' : `Invalid age group: ${ageGroup}`,
+      errors: [],
+      warnings: [],
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -390,12 +423,16 @@ export class ValidationService {
     const isValid = Number.isInteger(count) && count >= 1 && count <= 10;
 
     return {
-      rule: 'pageCount',
+      valid: isValid,
       passed: isValid,
+      rule: 'pageCount',
       actualValue: count,
       expectedRange: '1-10',
       severity: 'error',
       message: isValid ? 'Valid page count' : `Invalid page count: ${count}`,
+      errors: [],
+      warnings: [],
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -404,12 +441,16 @@ export class ValidationService {
     const isValid = validHeights.includes(height);
 
     return {
-      rule: 'lineHeight',
+      valid: isValid,
       passed: isValid,
+      rule: 'lineHeight',
       actualValue: height,
       expectedRange: validHeights.join(' | '),
       severity: 'error',
       message: isValid ? 'Valid line height' : `Invalid line height: ${height}`,
+      errors: [],
+      warnings: [],
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -418,12 +459,16 @@ export class ValidationService {
     const isValid = validColors.includes(color);
 
     return {
-      rule: 'lineColor',
+      valid: isValid,
       passed: isValid,
+      rule: 'lineColor',
       actualValue: color,
       expectedRange: validColors.join(' | '),
       severity: 'warning',
       message: isValid ? 'Valid line color' : `Invalid line color: ${color}`,
+      errors: [],
+      warnings: [],
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -433,40 +478,52 @@ export class ValidationService {
     // Validate based on practice mode
     switch (state.practiceMode) {
       case 'sentence':
-        if (!state.selectedCategories.sentence) {
+        if (!state.selectedCategories?.sentence) {
           results.push({
-            rule: 'sentenceCategory',
+            valid: false,
             passed: false,
+            rule: 'sentenceCategory',
             actualValue: 'undefined',
             expectedRange: 'Required for sentence mode',
             severity: 'error',
             message: 'Sentence category is required for sentence practice mode',
+            errors: [],
+            warnings: [],
+            timestamp: new Date().toISOString(),
           });
         }
         break;
 
       case 'word':
-        if (!state.selectedCategories.word) {
+        if (!state.selectedCategories?.word) {
           results.push({
-            rule: 'wordCategory',
+            valid: false,
             passed: false,
+            rule: 'wordCategory',
             actualValue: 'undefined',
             expectedRange: 'Required for word mode',
             severity: 'error',
             message: 'Word category is required for word practice mode',
+            errors: [],
+            warnings: [],
+            timestamp: new Date().toISOString(),
           });
         }
         break;
 
       case 'phrase':
-        if (!state.selectedCategories.phrase) {
+        if (!state.selectedCategories?.phrase) {
           results.push({
-            rule: 'phraseCategory',
+            valid: false,
             passed: false,
+            rule: 'phraseCategory',
             actualValue: 'undefined',
             expectedRange: 'Required for phrase mode',
             severity: 'error',
             message: 'Phrase category is required for phrase practice mode',
+            errors: [],
+            warnings: [],
+            timestamp: new Date().toISOString(),
           });
         }
         break;

@@ -24,7 +24,7 @@
     "updated": 0,
     "didUpdate": false
   },
-  "startTime": 1760106625201,
+  "startTime": 1760107001932,
   "success": true,
   "testResults": [
     {
@@ -34,7 +34,7 @@
           "fullName": "NoteGeneratorService generateNote should generate basic note HTML",
           "status": "passed",
           "title": "should generate basic note HTML",
-          "duration": 68.48566599999992,
+          "duration": 69.52841699999999,
           "failureMessages": [],
           "location": { "line": 30, "column": 5 },
           "meta": {}
@@ -44,7 +44,7 @@
           "fullName": "NoteGeneratorService generateNote should generate multiple pages when pageCount > 1",
           "status": "passed",
           "title": "should generate multiple pages when pageCount > 1",
-          "duration": 34.92208400000004,
+          "duration": 33.38683299999991,
           "failureMessages": [],
           "location": { "line": 41, "column": 5 },
           "meta": {}
@@ -54,7 +54,7 @@
           "fullName": "NoteGeneratorService generateNote should include header when showHeader is true",
           "status": "passed",
           "title": "should include header when showHeader is true",
-          "duration": 13.845208999999954,
+          "duration": 14.739625000000046,
           "failureMessages": [],
           "location": { "line": 51, "column": 5 },
           "meta": {}
@@ -64,7 +64,7 @@
           "fullName": "NoteGeneratorService generateNote should apply correct line color class",
           "status": "passed",
           "title": "should apply correct line color class",
-          "duration": 11.597750000000019,
+          "duration": 12.323208000000022,
           "failureMessages": [],
           "location": { "line": 61, "column": 5 },
           "meta": {}
@@ -74,7 +74,7 @@
           "fullName": "NoteGeneratorService generateNote should handle validation errors gracefully",
           "status": "passed",
           "title": "should handle validation errors gracefully",
-          "duration": 2.334165999999982,
+          "duration": 2.463041999999973,
           "failureMessages": [],
           "location": { "line": 69, "column": 5 },
           "meta": {}
@@ -84,7 +84,7 @@
           "fullName": "NoteGeneratorService generateNote should use caching for identical states",
           "status": "passed",
           "title": "should use caching for identical states",
-          "duration": 24.837916999999948,
+          "duration": 24.069834000000014,
           "failureMessages": [],
           "location": { "line": 78, "column": 5 },
           "meta": {}
@@ -94,7 +94,7 @@
           "fullName": "NoteGeneratorService practice modes should generate normal practice mode correctly",
           "status": "passed",
           "title": "should generate normal practice mode correctly",
-          "duration": 9.275125000000003,
+          "duration": 10.097250000000031,
           "failureMessages": [],
           "location": { "line": 91, "column": 5 },
           "meta": {}
@@ -104,7 +104,7 @@
           "fullName": "NoteGeneratorService practice modes should generate sentence practice mode with examples",
           "status": "passed",
           "title": "should generate sentence practice mode with examples",
-          "duration": 4.047458000000006,
+          "duration": 3.670833000000016,
           "failureMessages": [],
           "location": { "line": 103, "column": 5 },
           "meta": {}
@@ -114,7 +114,7 @@
           "fullName": "NoteGeneratorService practice modes should generate word practice mode with category",
           "status": "passed",
           "title": "should generate word practice mode with category",
-          "duration": 3.8079999999999927,
+          "duration": 3.7071670000000267,
           "failureMessages": [],
           "location": { "line": 117, "column": 5 },
           "meta": {}
@@ -124,7 +124,7 @@
           "fullName": "NoteGeneratorService practice modes should generate alphabet practice mode",
           "status": "passed",
           "title": "should generate alphabet practice mode",
-          "duration": 4.309875000000034,
+          "duration": 3.5378749999999854,
           "failureMessages": [],
           "location": { "line": 133, "column": 5 },
           "meta": {}
@@ -134,7 +134,7 @@
           "fullName": "NoteGeneratorService practice modes should generate phrase practice mode",
           "status": "passed",
           "title": "should generate phrase practice mode",
-          "duration": 3.6728749999999764,
+          "duration": 3.3652080000000524,
           "failureMessages": [],
           "location": { "line": 148, "column": 5 },
           "meta": {}
@@ -144,7 +144,7 @@
           "fullName": "NoteGeneratorService line height adjustments should adjust content for small line height (8mm)",
           "status": "passed",
           "title": "should adjust content for small line height (8mm)",
-          "duration": 10.881665999999996,
+          "duration": 9.711500000000001,
           "failureMessages": [],
           "location": { "line": 165, "column": 5 },
           "meta": {}
@@ -154,7 +154,7 @@
           "fullName": "NoteGeneratorService line height adjustments should adjust content for standard line height (10mm)",
           "status": "passed",
           "title": "should adjust content for standard line height (10mm)",
-          "duration": 8.916416000000027,
+          "duration": 9.321042000000034,
           "failureMessages": [],
           "location": { "line": 173, "column": 5 },
           "meta": {}
@@ -164,7 +164,7 @@
           "fullName": "NoteGeneratorService line height adjustments should adjust content for large line height (12mm)",
           "status": "passed",
           "title": "should adjust content for large line height (12mm)",
-          "duration": 8.131375000000048,
+          "duration": 8.007416999999919,
           "failureMessages": [],
           "location": { "line": 181, "column": 5 },
           "meta": {}
@@ -174,7 +174,7 @@
           "fullName": "NoteGeneratorService baseline generation should generate 4-line baseline structure",
           "status": "passed",
           "title": "should generate 4-line baseline structure",
-          "duration": 9.374957999999992,
+          "duration": 8.702125000000024,
           "failureMessages": [],
           "location": { "line": 191, "column": 5 },
           "meta": {}
@@ -184,7 +184,7 @@
           "fullName": "NoteGeneratorService baseline generation should include baseline groups in all practice modes",
           "status": "passed",
           "title": "should include baseline groups in all practice modes",
-          "duration": 9.904374999999959,
+          "duration": 9.888207999999963,
           "failureMessages": [],
           "location": { "line": 207, "column": 5 },
           "meta": {}
@@ -194,7 +194,7 @@
           "fullName": "NoteGeneratorService CSS style variables should generate correct CSS variables for line height",
           "status": "passed",
           "title": "should generate correct CSS variables for line height",
-          "duration": 8.626125000000002,
+          "duration": 8.626375000000053,
           "failureMessages": [],
           "location": { "line": 223, "column": 5 },
           "meta": {}
@@ -204,7 +204,7 @@
           "fullName": "NoteGeneratorService CSS style variables should calculate proportional spacing values",
           "status": "passed",
           "title": "should calculate proportional spacing values",
-          "duration": 9.207333000000062,
+          "duration": 8.28566699999999,
           "failureMessages": [],
           "location": { "line": 232, "column": 5 },
           "meta": {}
@@ -214,7 +214,7 @@
           "fullName": "NoteGeneratorService error handling should handle invalid practice mode gracefully",
           "status": "passed",
           "title": "should handle invalid practice mode gracefully",
-          "duration": 9.823416999999836,
+          "duration": 9.762875000000008,
           "failureMessages": [],
           "location": { "line": 243, "column": 5 },
           "meta": {}
@@ -224,7 +224,7 @@
           "fullName": "NoteGeneratorService error handling should handle missing category selections",
           "status": "passed",
           "title": "should handle missing category selections",
-          "duration": 3.7249159999998938,
+          "duration": 3.3224170000000868,
           "failureMessages": [],
           "location": { "line": 252, "column": 5 },
           "meta": {}
@@ -234,7 +234,7 @@
           "fullName": "NoteGeneratorService error handling should handle extreme page counts",
           "status": "passed",
           "title": "should handle extreme page counts",
-          "duration": 0.6498750000000655,
+          "duration": 0.6301660000000311,
           "failureMessages": [],
           "location": { "line": 266, "column": 5 },
           "meta": {}
@@ -244,7 +244,7 @@
           "fullName": "NoteGeneratorService performance optimization should complete generation within reasonable time",
           "status": "passed",
           "title": "should complete generation within reasonable time",
-          "duration": 23.27191700000003,
+          "duration": 22.195625000000064,
           "failureMessages": [],
           "location": { "line": 274, "column": 5 },
           "meta": {}
@@ -254,7 +254,7 @@
           "fullName": "NoteGeneratorService performance optimization should report performance metrics",
           "status": "passed",
           "title": "should report performance metrics",
-          "duration": 9.23420800000008,
+          "duration": 8.361750000000029,
           "failureMessages": [],
           "location": { "line": 285, "column": 5 },
           "meta": {}
@@ -264,7 +264,7 @@
           "fullName": "NoteGeneratorService performance optimization should handle concurrent generation requests",
           "status": "passed",
           "title": "should handle concurrent generation requests",
-          "duration": 18.05579200000011,
+          "duration": 16.989082999999937,
           "failureMessages": [],
           "location": { "line": 294, "column": 5 },
           "meta": {}
@@ -274,7 +274,7 @@
           "fullName": "NoteGeneratorService HTML output validation should generate valid HTML structure",
           "status": "passed",
           "title": "should generate valid HTML structure",
-          "duration": 8.837000000000216,
+          "duration": 8.395166000000017,
           "failureMessages": [],
           "location": { "line": 317, "column": 5 },
           "meta": {}
@@ -284,7 +284,7 @@
           "fullName": "NoteGeneratorService HTML output validation should escape user input properly",
           "status": "passed",
           "title": "should escape user input properly",
-          "duration": 8.645749999999907,
+          "duration": 8.165749999999889,
           "failureMessages": [],
           "location": { "line": 331, "column": 5 },
           "meta": {}
@@ -294,7 +294,7 @@
           "fullName": "NoteGeneratorService HTML output validation should include page numbers for multi-page documents",
           "status": "passed",
           "title": "should include page numbers for multi-page documents",
-          "duration": 14.724375000000009,
+          "duration": 13.858584000000064,
           "failureMessages": [],
           "location": { "line": 342, "column": 5 },
           "meta": {}
@@ -304,7 +304,7 @@
           "fullName": "NoteGeneratorService accessibility features should include semantic HTML elements",
           "status": "passed",
           "title": "should include semantic HTML elements",
-          "duration": 8.873999999999796,
+          "duration": 8.454917000000023,
           "failureMessages": [],
           "location": { "line": 354, "column": 5 },
           "meta": {}
@@ -314,14 +314,14 @@
           "fullName": "NoteGeneratorService accessibility features should provide appropriate labels",
           "status": "passed",
           "title": "should provide appropriate labels",
-          "duration": 3.2030829999998787,
+          "duration": 3.261207999999897,
           "failureMessages": [],
           "location": { "line": 364, "column": 5 },
           "meta": {}
         }
       ],
-      "startTime": 1760106625766,
-      "endTime": 1760106626122.2031,
+      "startTime": 1760107002489,
+      "endTime": 1760107002836.2612,
       "status": "passed",
       "message": "",
       "name": "/Users/ken/Developer/private/english-note-maker/test/services/NoteGeneratorService.test.ts"
@@ -333,7 +333,7 @@
           "fullName": "ValidationService validateUIState should validate a valid UI state without errors",
           "status": "passed",
           "title": "should validate a valid UI state without errors",
-          "duration": 6.275457999999958,
+          "duration": 6.763749999999959,
           "failureMessages": [],
           "location": { "line": 18, "column": 5 },
           "meta": {}
@@ -343,7 +343,7 @@
           "fullName": "ValidationService validateUIState should detect invalid practice mode",
           "status": "passed",
           "title": "should detect invalid practice mode",
-          "duration": 1.2799580000000788,
+          "duration": 2.614541999999915,
           "failureMessages": [],
           "location": { "line": 36, "column": 5 },
           "meta": {}
@@ -353,7 +353,7 @@
           "fullName": "ValidationService validateUIState should detect invalid age group",
           "status": "passed",
           "title": "should detect invalid age group",
-          "duration": 0.6171249999999873,
+          "duration": 0.7278330000000324,
           "failureMessages": [],
           "location": { "line": 53, "column": 5 },
           "meta": {}
@@ -363,7 +363,7 @@
           "fullName": "ValidationService validateUIState should detect invalid page count",
           "status": "passed",
           "title": "should detect invalid page count",
-          "duration": 0.7296670000000631,
+          "duration": 0.5644589999999425,
           "failureMessages": [],
           "location": { "line": 70, "column": 5 },
           "meta": {}
@@ -373,7 +373,7 @@
           "fullName": "ValidationService validateUIState should detect invalid line height",
           "status": "passed",
           "title": "should detect invalid line height",
-          "duration": 0.5912920000000668,
+          "duration": 0.529042000000004,
           "failureMessages": [],
           "location": { "line": 87, "column": 5 },
           "meta": {}
@@ -383,7 +383,7 @@
           "fullName": "ValidationService validateUIState should validate phrase mode requires category selection",
           "status": "passed",
           "title": "should validate phrase mode requires category selection",
-          "duration": 0.4080419999999094,
+          "duration": 0.42141700000001947,
           "failureMessages": [],
           "location": { "line": 104, "column": 5 },
           "meta": {}
@@ -393,7 +393,7 @@
           "fullName": "ValidationService validateUIState should validate word mode requires category selection",
           "status": "passed",
           "title": "should validate word mode requires category selection",
-          "duration": 0.38450000000000273,
+          "duration": 0.46029199999998127,
           "failureMessages": [],
           "location": { "line": 120, "column": 5 },
           "meta": {}
@@ -403,7 +403,7 @@
           "fullName": "ValidationService validateGeneratedHTML should validate correct HTML structure",
           "status": "passed",
           "title": "should validate correct HTML structure",
-          "duration": 54.39891699999998,
+          "duration": 54.84529199999997,
           "failureMessages": [],
           "location": { "line": 138, "column": 5 },
           "meta": {}
@@ -413,7 +413,7 @@
           "fullName": "ValidationService validateGeneratedHTML should detect missing baseline elements",
           "status": "passed",
           "title": "should detect missing baseline elements",
-          "duration": 9.921084000000064,
+          "duration": 10.24045799999999,
           "failureMessages": [],
           "location": { "line": 160, "column": 5 },
           "meta": {}
@@ -423,7 +423,7 @@
           "fullName": "ValidationService validateGeneratedHTML should detect invalid line height",
           "status": "passed",
           "title": "should detect invalid line height",
-          "duration": 9.645166000000017,
+          "duration": 9.922709000000054,
           "failureMessages": [],
           "location": { "line": 176, "column": 5 },
           "meta": {}
@@ -433,7 +433,7 @@
           "fullName": "ValidationService generateValidationReport should generate report with correct summary",
           "status": "passed",
           "title": "should generate report with correct summary",
-          "duration": 0.6758749999999054,
+          "duration": 0.6366249999999809,
           "failureMessages": [],
           "location": { "line": 195, "column": 5 },
           "meta": {}
@@ -443,7 +443,7 @@
           "fullName": "ValidationService generateValidationReport should categorize results by severity",
           "status": "passed",
           "title": "should categorize results by severity",
-          "duration": 0.4867500000000291,
+          "duration": 0.46970900000007987,
           "failureMessages": [],
           "location": { "line": 232, "column": 5 },
           "meta": {}
@@ -453,7 +453,7 @@
           "fullName": "ValidationService Edge Cases should handle empty UI state gracefully",
           "status": "passed",
           "title": "should handle empty UI state gracefully",
-          "duration": 0.3381249999999909,
+          "duration": 0.34150000000011005,
           "failureMessages": [],
           "location": { "line": 269, "column": 5 },
           "meta": {}
@@ -463,7 +463,7 @@
           "fullName": "ValidationService Edge Cases should handle empty HTML gracefully",
           "status": "passed",
           "title": "should handle empty HTML gracefully",
-          "duration": 0.5406669999999849,
+          "duration": 0.5775830000000042,
           "failureMessages": [],
           "location": { "line": 276, "column": 5 },
           "meta": {}
@@ -473,14 +473,14 @@
           "fullName": "ValidationService Edge Cases should handle malformed HTML",
           "status": "passed",
           "title": "should handle malformed HTML",
-          "duration": 1.136792000000014,
+          "duration": 1.0896249999999554,
           "failureMessages": [],
           "location": { "line": 284, "column": 5 },
           "meta": {}
         }
       ],
-      "startTime": 1760106625751,
-      "endTime": 1760106625838.1367,
+      "startTime": 1760107002475,
+      "endTime": 1760107002565.0896,
       "status": "passed",
       "message": "",
       "name": "/Users/ken/Developer/private/english-note-maker/test/services/ValidationService.test.ts"
@@ -492,7 +492,7 @@
           "fullName": "ErrorHandler handleError should handle Error objects correctly",
           "status": "passed",
           "title": "should handle Error objects correctly",
-          "duration": 6.2923339999999826,
+          "duration": 6.244042000000036,
           "failureMessages": [],
           "location": { "line": 22, "column": 5 },
           "meta": {}
@@ -502,7 +502,7 @@
           "fullName": "ErrorHandler handleError should handle non-Error objects",
           "status": "passed",
           "title": "should handle non-Error objects",
-          "duration": 1.4839169999999058,
+          "duration": 2.0175409999999374,
           "failureMessages": [],
           "location": { "line": 36, "column": 5 },
           "meta": {}
@@ -512,7 +512,7 @@
           "fullName": "ErrorHandler handleError should include additional context",
           "status": "passed",
           "title": "should include additional context",
-          "duration": 0.7657090000000153,
+          "duration": 0.7331249999999727,
           "failureMessages": [],
           "location": { "line": 46, "column": 5 },
           "meta": {}
@@ -522,7 +522,7 @@
           "fullName": "ErrorHandler handleError should log errors to console",
           "status": "passed",
           "title": "should log errors to console",
-          "duration": 0.7872079999999642,
+          "duration": 0.8224999999999909,
           "failureMessages": [],
           "location": { "line": 57, "column": 5 },
           "meta": {}
@@ -532,7 +532,7 @@
           "fullName": "ErrorHandler severity determination should classify critical errors correctly",
           "status": "passed",
           "title": "should classify critical errors correctly",
-          "duration": 0.8686249999999518,
+          "duration": 0.9567499999999427,
           "failureMessages": [],
           "location": { "line": 67, "column": 5 },
           "meta": {}
@@ -542,7 +542,7 @@
           "fullName": "ErrorHandler severity determination should classify high severity errors correctly",
           "status": "passed",
           "title": "should classify high severity errors correctly",
-          "duration": 0.8612079999999196,
+          "duration": 1.0801249999999527,
           "failureMessages": [],
           "location": { "line": 80, "column": 5 },
           "meta": {}
@@ -552,7 +552,7 @@
           "fullName": "ErrorHandler severity determination should classify medium severity errors correctly",
           "status": "passed",
           "title": "should classify medium severity errors correctly",
-          "duration": 0.6217080000000124,
+          "duration": 0.6352499999999281,
           "failureMessages": [],
           "location": { "line": 94, "column": 5 },
           "meta": {}
@@ -562,7 +562,7 @@
           "fullName": "ErrorHandler severity determination should default to low severity for unknown errors",
           "status": "passed",
           "title": "should default to low severity for unknown errors",
-          "duration": 0.47654099999999744,
+          "duration": 0.49241600000004837,
           "failureMessages": [],
           "location": { "line": 106, "column": 5 },
           "meta": {}
@@ -572,7 +572,7 @@
           "fullName": "ErrorHandler user-friendly messages should provide Japanese error messages",
           "status": "passed",
           "title": "should provide Japanese error messages",
-          "duration": 0.8165830000000369,
+          "duration": 0.9111669999999776,
           "failureMessages": [],
           "location": { "line": 116, "column": 5 },
           "meta": {}
@@ -582,7 +582,7 @@
           "fullName": "ErrorHandler user-friendly messages should detect error patterns in messages",
           "status": "passed",
           "title": "should detect error patterns in messages",
-          "duration": 1.0187079999999469,
+          "duration": 0.8383749999999281,
           "failureMessages": [],
           "location": { "line": 131, "column": 5 },
           "meta": {}
@@ -592,7 +592,7 @@
           "fullName": "ErrorHandler error code generation should generate consistent error codes",
           "status": "passed",
           "title": "should generate consistent error codes",
-          "duration": 0.6873339999999644,
+          "duration": 0.5317079999999805,
           "failureMessages": [],
           "location": { "line": 150, "column": 5 },
           "meta": {}
@@ -602,7 +602,7 @@
           "fullName": "ErrorHandler error code generation should generate different codes for different errors",
           "status": "passed",
           "title": "should generate different codes for different errors",
-          "duration": 0.9326660000000402,
+          "duration": 0.8250830000000633,
           "failureMessages": [],
           "location": { "line": 161, "column": 5 },
           "meta": {}
@@ -612,7 +612,7 @@
           "fullName": "ErrorHandler stack trace handling should sanitize stack traces",
           "status": "passed",
           "title": "should sanitize stack traces",
-          "duration": 0.44591700000000856,
+          "duration": 0.4680829999999787,
           "failureMessages": [],
           "location": { "line": 173, "column": 5 },
           "meta": {}
@@ -622,7 +622,7 @@
           "fullName": "ErrorHandler stack trace handling should handle missing stack traces",
           "status": "passed",
           "title": "should handle missing stack traces",
-          "duration": 0.372916000000032,
+          "duration": 0.4033749999999827,
           "failureMessages": [],
           "location": { "line": 183, "column": 5 },
           "meta": {}
@@ -632,7 +632,7 @@
           "fullName": "ErrorHandler error frequency tracking should track error frequency",
           "status": "passed",
           "title": "should track error frequency",
-          "duration": 1.2955420000000686,
+          "duration": 1.3490419999999403,
           "failureMessages": [],
           "location": { "line": 194, "column": 5 },
           "meta": {}
@@ -642,7 +642,7 @@
           "fullName": "ErrorHandler error frequency tracking should not warn for low frequency errors",
           "status": "passed",
           "title": "should not warn for low frequency errors",
-          "duration": 0.6420419999999467,
+          "duration": 0.5999590000000126,
           "failureMessages": [],
           "location": { "line": 207, "column": 5 },
           "meta": {}
@@ -652,7 +652,7 @@
           "fullName": "ErrorHandler static utility methods createErrorBoundary should create error boundary that catches errors",
           "status": "passed",
           "title": "should create error boundary that catches errors",
-          "duration": 0.8462089999999307,
+          "duration": 0.9383749999999509,
           "failureMessages": [],
           "location": { "line": 221, "column": 7 },
           "meta": {}
@@ -662,7 +662,7 @@
           "fullName": "ErrorHandler static utility methods createErrorBoundary should allow successful components to execute normally",
           "status": "passed",
           "title": "should allow successful components to execute normally",
-          "duration": 0.3392079999999851,
+          "duration": 0.44204099999990376,
           "failureMessages": [],
           "location": { "line": 245, "column": 7 },
           "meta": {}
@@ -672,7 +672,7 @@
           "fullName": "ErrorHandler static utility methods safeAsync should handle successful async operations",
           "status": "passed",
           "title": "should handle successful async operations",
-          "duration": 0.35125000000005,
+          "duration": 0.38437499999997726,
           "failureMessages": [],
           "location": { "line": 259, "column": 7 },
           "meta": {}
@@ -682,7 +682,7 @@
           "fullName": "ErrorHandler static utility methods safeAsync should handle failing async operations",
           "status": "passed",
           "title": "should handle failing async operations",
-          "duration": 0.6512500000000045,
+          "duration": 0.5327919999999722,
           "failureMessages": [],
           "location": { "line": 270, "column": 7 },
           "meta": {}
@@ -692,7 +692,7 @@
           "fullName": "ErrorHandler static utility methods safeAsync should provide context for async operations",
           "status": "passed",
           "title": "should provide context for async operations",
-          "duration": 0.504959000000099,
+          "duration": 0.6240419999999176,
           "failureMessages": [],
           "location": { "line": 284, "column": 7 },
           "meta": {}
@@ -702,7 +702,7 @@
           "fullName": "ErrorHandler production considerations should serialize errors for monitoring",
           "status": "passed",
           "title": "should serialize errors for monitoring",
-          "duration": 0.6083750000000236,
+          "duration": 0.6038750000000164,
           "failureMessages": [],
           "location": { "line": 300, "column": 5 },
           "meta": {}
@@ -712,7 +712,7 @@
           "fullName": "ErrorHandler production considerations should determine reporting eligibility correctly",
           "status": "passed",
           "title": "should determine reporting eligibility correctly",
-          "duration": 0.5116249999999809,
+          "duration": 0.6162080000000287,
           "failureMessages": [],
           "location": { "line": 318, "column": 5 },
           "meta": {}
@@ -722,7 +722,7 @@
           "fullName": "ErrorHandler context preservation should preserve user agent information",
           "status": "passed",
           "title": "should preserve user agent information",
-          "duration": 0.4274159999999938,
+          "duration": 0.5200419999999895,
           "failureMessages": [],
           "location": { "line": 334, "column": 5 },
           "meta": {}
@@ -732,7 +732,7 @@
           "fullName": "ErrorHandler context preservation should include timestamp in ISO format",
           "status": "passed",
           "title": "should include timestamp in ISO format",
-          "duration": 0.8453329999999823,
+          "duration": 0.8007499999999936,
           "failureMessages": [],
           "location": { "line": 343, "column": 5 },
           "meta": {}
@@ -742,14 +742,14 @@
           "fullName": "ErrorHandler context preservation should preserve original error context",
           "status": "passed",
           "title": "should preserve original error context",
-          "duration": 0.5287500000000591,
+          "duration": 0.5284580000000005,
           "failureMessages": [],
           "location": { "line": 352, "column": 5 },
           "meta": {}
         }
       ],
-      "startTime": 1760106625756,
-      "endTime": 1760106625780.5288,
+      "startTime": 1760107002476,
+      "endTime": 1760107002501.5286,
       "status": "passed",
       "message": "",
       "name": "/Users/ken/Developer/private/english-note-maker/test/utils/ErrorHandler.test.ts"

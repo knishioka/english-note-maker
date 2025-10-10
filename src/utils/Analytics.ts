@@ -3,7 +3,7 @@
  * Privacy-focused analytics for production monitoring
  */
 
-import type { UserInteraction, PerformanceMetric } from '../types/index.js';
+import type { PerformanceMetric } from '../types/index.js';
 
 export interface AnalyticsConfig {
   enabled: boolean;
