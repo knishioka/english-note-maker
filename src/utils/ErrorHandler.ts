@@ -285,7 +285,8 @@ export class ErrorHandler {
     const logLevel: LogLevel = this.severityToLogLevel(error.severity);
 
     if (typeof console !== 'undefined') {
-      const logMethod = console[logLevel] || console.error;
+      const logMethod =
+        (console as Record<string, (...args: any[]) => void>)[logLevel] || console.error;
 
       // Call the log method directly to ensure spies work correctly
       logMethod(`[${error.code}] ${error.message}`, {

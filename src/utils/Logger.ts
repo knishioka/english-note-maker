@@ -470,10 +470,10 @@ export class Logger {
 
 // Create global logger instance
 export const logger = new Logger({
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-  environment: (process.env.NODE_ENV as any) || 'development',
-  enableRemoteLogging: process.env.NODE_ENV === 'production',
-  remoteEndpoint: process.env.VITE_LOGGING_ENDPOINT,
+  level: process.env['NODE_ENV'] === 'production' ? 'info' : 'debug',
+  environment: (process.env['NODE_ENV'] as any) || 'development',
+  enableRemoteLogging: process.env['NODE_ENV'] === 'production',
+  remoteEndpoint: process.env['VITE_LOGGING_ENDPOINT'],
 });
 
 // Export logger creation function for custom loggers

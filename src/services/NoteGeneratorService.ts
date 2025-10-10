@@ -476,25 +476,25 @@ export class NoteGeneratorService {
 
   // Placeholder methods for data access - these would be implemented based on actual data sources
   private async getExamplesForAge(
-    ageGroup: string,
-    count: number,
-    category: string
+    _ageGroup: string,
+    _count: number,
+    _category: string
   ): Promise<ExampleSentence[]> {
     // Implementation would fetch from data service
     return [];
   }
 
-  private async getWordsForCategory(category: string, ageGroup: string): Promise<WordData[]> {
+  private async getWordsForCategory(_category: string, _ageGroup: string): Promise<WordData[]> {
     // Implementation would fetch from data service
     return [];
   }
 
-  private async getAlphabetData(type: string): Promise<AlphabetData[]> {
+  private async getAlphabetData(_type: string): Promise<AlphabetData[]> {
     // Implementation would fetch from data service
     return [];
   }
 
-  private async getPhrasesForCategory(category: string, ageGroup: string): Promise<PhraseData[]> {
+  private async getPhrasesForCategory(_category: string, _ageGroup: string): Promise<PhraseData[]> {
     // Implementation would fetch from data service
     return [];
   }

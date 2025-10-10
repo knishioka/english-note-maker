@@ -318,7 +318,7 @@ export class Analytics {
   private async sendEvents(events: any[]): Promise<void> {
     if (!this.config.endpoint) {
       // Log to console in development
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env['NODE_ENV'] === 'development') {
         console.log('Analytics Events:', events);
       }
       return;
@@ -335,7 +335,7 @@ export class Analytics {
           meta: {
             timestamp: new Date().toISOString(),
             sessionId: this.sessionId,
-            version: process.env.npm_package_version || '1.0.0',
+            version: process.env['npm_package_version'] || '1.0.0',
           },
         }),
       });
@@ -517,7 +517,7 @@ export class Analytics {
 
 // Global analytics instance
 export const analytics = new Analytics({
-  enabled: process.env.NODE_ENV === 'production',
-  endpoint: process.env.VITE_ANALYTICS_ENDPOINT,
+  enabled: process.env['NODE_ENV'] === 'production',
+  endpoint: process.env['VITE_ANALYTICS_ENDPOINT'],
   anonymizeData: true,
 });

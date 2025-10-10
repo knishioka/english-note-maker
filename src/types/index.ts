@@ -188,6 +188,11 @@ export interface UIState {
   wordCategory: WordCategory;
   phraseCategory: PhraseCategory;
   alphabetType: AlphabetType;
+  selectedCategories?: {
+    sentence?: ContentCategory;
+    word?: WordCategory;
+    phrase?: PhraseCategory;
+  };
 }
 
 /**
@@ -239,9 +244,15 @@ export interface NotePageResult {
  */
 export interface ValidationResult {
   valid: boolean;
+  passed?: boolean;
   errors: ValidationError[];
   warnings: ValidationWarning[];
   timestamp: string;
+  severity?: 'error' | 'warning' | 'info' | 'critical';
+  rule?: string;
+  message?: string;
+  actualValue?: string | number;
+  expectedRange?: string;
 }
 
 /**
@@ -263,6 +274,126 @@ export interface ValidationWarning {
   message: string;
   severity: 'warning' | 'info';
   suggestion?: string;
+}
+
+/**
+ * Validation rule configuration
+ */
+export interface ValidationRule {
+  name: string;
+  check?: (value: unknown) => boolean;
+  message?: string;
+  severity: 'error' | 'warning' | 'info';
+  selector?: string;
+  property?: string;
+  min?: number;
+  max?: number;
+  unit?: string;
+}
+
+/**
+ * Validation report summary
+ */
+export interface ValidationReport {
+  summary: {
+    passed: number;
+    failed: number;
+    skipped: number;
+  };
+  errors: ValidationError[];
+  warnings: ValidationWarning[];
+  timestamp: string;
+}
+
+/**
+ * Word data for vocabulary practice
+ */
+export interface WordData {
+  word: string;
+  english: string;
+  japanese: string;
+  syllables: string;
+  category: WordCategory;
+  ageGroup: AgeGroup;
+}
+
+/**
+ * Alphabet data for letter practice
+ */
+export interface AlphabetData {
+  letter: string;
+  example: string;
+  japanese: string;
+  type: AlphabetType;
+}
+
+/**
+ * Phrase data for conversation practice
+ */
+export interface PhraseData {
+  phrase: string;
+  english: string;
+  japanese: string;
+  situation: string;
+  category: PhraseCategory;
+  ageGroup: AgeGroup;
+}
+
+/**
+ * Millimeter value type for measurements
+ */
+export type MillimeterValue = number;
+
+/**
+ * Pixel value type for display measurements
+ */
+export type PixelValue = number;
+
+/**
+ * User interaction event
+ */
+export interface UserInteraction {
+  type: string;
+  target: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Application error interface
+ */
+export interface ApplicationError extends Error {
+  type: ErrorType;
+  severity: ErrorSeverity;
+  userMessage: string;
+  context?: Record<string, unknown>;
+  timestamp: string;
+}
+
+/**
+ * Log level enumeration
+ */
+export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
+
+/**
+ * Log entry structure
+ */
+export interface LogEntry {
+  level: LogLevel;
+  category: string;
+  message: string;
+  timestamp: string;
+  data?: unknown;
+}
+
+/**
+ * Debug configuration
+ */
+export interface DebugConfig {
+  enabled: boolean;
+  logLevel: LogLevel;
+  showPanel: boolean;
+  trackPerformance: boolean;
 }
 
 // ============= Error Handling Types =============
@@ -293,6 +424,7 @@ export enum ErrorSeverity {
  * Structured error information
  */
 export interface AppError {
+  name: string;
   type: ErrorType;
   severity: ErrorSeverity;
   message: string;
@@ -312,6 +444,9 @@ export interface PerformanceMetric {
   startTime: number;
   endTime?: number;
   duration?: number;
+  value?: number;
+  unit?: string;
+  status?: string;
   metadata?: Record<string, unknown>;
 }
 

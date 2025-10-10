@@ -62,7 +62,7 @@ export class ValidationService {
       const results: ValidationResult[] = [];
 
       // Validate each rule
-      for (const [ruleName, rule] of this.rules) {
+      for (const [_ruleName, rule] of this.rules) {
         const result = await this.validateRule(rule, tempDiv);
         if (result) {
           results.push(result);

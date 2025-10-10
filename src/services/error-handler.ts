@@ -73,6 +73,7 @@ export class ErrorHandler {
     context?: Record<string, unknown>
   ): AppError {
     const error: AppError = {
+      name: `${type}Error`,
       type,
       severity,
       message,
@@ -189,7 +190,7 @@ export class ErrorHandler {
       lines.push(`Context: ${JSON.stringify(error.context, null, 2)}`);
     }
 
-    if (error.stack && process.env.NODE_ENV !== 'production') {
+    if (error.stack && process.env['NODE_ENV'] !== 'production') {
       lines.push(`Stack: ${this.sanitizeStack(error.stack)}`);
     }
 
@@ -254,7 +255,7 @@ export class ErrorHandler {
    */
   private sendToMonitoring(error: AppError): void {
     // In production, this would send to a real monitoring service
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env['NODE_ENV'] === 'production') {
       // Example: Sentry, LogRocket, etc.
       console.log('Sending error to monitoring:', error);
     }
