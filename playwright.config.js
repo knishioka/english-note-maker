@@ -13,9 +13,9 @@ export default defineConfig({
 
   // Test execution settings
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 3 : 1, // 本番は3回、開発は1回リトライ
-  workers: process.env.CI ? 1 : undefined,
+  forbidOnly: !!process.env['CI'],
+  retries: process.env['CI'] ? 3 : 1, // 本番は3回、開発は1回リトライ
+  workers: process.env['CI'] ? 1 : undefined,
 
   // Global timeout settings
   timeout: 60000, // 1分でタイムアウト
@@ -77,11 +77,11 @@ export default defineConfig({
 
   // Run development server before tests
   webServer: {
-    command: process.env.CI
+    command: process.env['CI']
       ? 'npx http-server . -p 3000 -c-1'
       : 'live-server --port=3000 --no-browser --watch=false',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env['CI'],
     timeout: 120 * 1000,
   },
 

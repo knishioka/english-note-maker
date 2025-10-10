@@ -1,4 +1,5 @@
 // === 英語罫線ノート作成スクリプト ===
+// @ts-nocheck
 
 // モジュールインポート
 import { EXAMPLE_SENTENCES_BY_AGE } from './src/data/example-sentences.js';
@@ -186,7 +187,6 @@ function updateOptionsVisibility() {
 
 // プレビュー更新
 function updatePreview() {
-  const practiceMode = document.getElementById('practiceMode').value;
   const pageCount = parseInt(document.getElementById('pageCount').value) || 1;
   const notePreview = document.getElementById('notePreview');
 
@@ -659,7 +659,6 @@ function runLayoutTest() {
 
   // エラーの詳細
   if (report.errors.length > 0) {
-    console.group('\n❌ エラー詳細:');
     report.errors.forEach((error) => {
       if (window.Debug)
         window.Debug.error(
@@ -667,12 +666,10 @@ function runLayoutTest() {
           `- ${error.rule}: ${error.actualValue} (期待値: ${error.expectedRange})`
         );
     });
-    // Group end removed - using structured logging instead
   }
 
   // 警告の詳細
   if (report.warnings.length > 0) {
-    console.group('\n⚠️ 警告詳細:');
     report.warnings.forEach((warning) => {
       if (window.Debug)
         window.Debug.warn(
@@ -680,17 +677,14 @@ function runLayoutTest() {
           `- ${warning.rule}: ${warning.actualValue} (期待値: ${warning.expectedRange})`
         );
     });
-    // Group end removed - using structured logging instead
   }
 
   // ページ高さのチェック結果を強調
   const pageHeightErrors = report.errors.filter((e) => e.rule.startsWith('pageHeight'));
   if (pageHeightErrors.length > 0) {
-    console.group('\n📏 ページ高さエラー:');
     pageHeightErrors.forEach((error) => {
       if (window.Debug) window.Debug.error('LAYOUT_VALIDATION', error.message);
     });
-    // Group end removed - using structured logging instead
   }
 
   // 最終判定
@@ -1000,6 +994,7 @@ function addCustomExample(english, japanese, category, ageGroup) {
 }
 
 // Phase 2: 例文カテゴリーフィルター（将来実装用）
+// eslint-disable-next-line no-unused-vars
 function filterExamplesByCategory(category) {
   const ageGroup = document.getElementById('ageGroup').value;
   const sentences = EXAMPLE_SENTENCES_BY_AGE[ageGroup] || EXAMPLE_SENTENCES_BY_AGE['7-9'];
@@ -1050,7 +1045,8 @@ function updateContentStats() {
   return CONTENT_STATS;
 }
 
-// コンテンツ統計を表示する関数
+// コンテンツ統計を表示する関数（開発者コンソールから使用可能）
+// eslint-disable-next-line no-unused-vars
 function displayContentStats() {
   updateContentStats();
 
@@ -1102,7 +1098,7 @@ window.checkLayoutConsistency = function () {
     .flatMap((sheet) => {
       try {
         return Array.from(sheet.cssRules || []);
-      } catch (e) {
+      } catch {
         return [];
       }
     })

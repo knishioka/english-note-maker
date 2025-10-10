@@ -121,9 +121,6 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
   });
 
   test('シャッフルボタンでフレーズが更新される', async ({ page }) => {
-    // 最初のプレビュー内容を取得
-    const initialContent = await page.locator('#notePreview').textContent();
-
     // シャッフルボタンをクリック
     await page.click('#shufflePhrases');
 

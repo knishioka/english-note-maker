@@ -71,9 +71,6 @@ test.describe('文章練習モードテスト', () => {
     await page.check('#showExamples');
     await page.waitForTimeout(500);
 
-    // 最初の例文
-    const initialContent = await page.locator('#notePreview').textContent();
-
     // 例文を更新
     await page.click('#refreshExamplesBtn');
     await page.waitForTimeout(500);
