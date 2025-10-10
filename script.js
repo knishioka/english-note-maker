@@ -1,5 +1,4 @@
 // === 英語罫線ノート作成スクリプト ===
-// @ts-nocheck
 
 // モジュールインポート
 import { EXAMPLE_SENTENCES_BY_AGE } from './src/data/example-sentences.js';

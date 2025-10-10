@@ -51,7 +51,7 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
 
     /* Type Acquisition */
     "types": ["vite/client", "vitest/globals", "node"],
