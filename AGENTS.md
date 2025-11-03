@@ -146,8 +146,8 @@ npm run dev
 
 ### 4.6 GitHub Actions の HTML/CSS 検証失敗
 
-- **症状**: `test.yml` 内の `html-validate`, `node -c` などが失敗。
-- **対応**: ローカルで同等コマンドを実行して再現 (`npx html-validate index.html`, `node -c script.js`)。テンプレートリテラルの改行などに注意。
+- **症状**: `test.yml` 内の `html-validate`, `node -c` などが失敗。とくに `node -c script.js` が `Cannot use import statement outside a module` で落ちるケースが報告されています。
+- **対応**: ローカルで同等コマンドを実行して再現し、エラー内容を確認します。`script.js` はブラウザ向け ES Modules のため、Node が CommonJS と判定した場合に SyntaxError が発生します。その際は `node --check --input-type=module script.js` で構文を確認するか、CI と同等の Node 18.x 環境で `node -c script.js` を実行して挙動を比較してください。テンプレートリテラルの改行や未対応ブラウザ API の `import` 忘れがないかも確認します。
 
 ---
 
