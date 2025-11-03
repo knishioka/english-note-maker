@@ -84,12 +84,68 @@ function reportInitializationFailure(error) {
 // カスタム例文を保存する配列
 const customExamples = [];
 
+// 汎用ユーティリティ
+function addEventListenerIfExists(element, eventType, handler) {
+  if (!element) {
+    if (window.Debug) {
+      window.Debug.warn('EVENT', 'イベントリスナーを設定できませんでした', {
+        eventType,
+      });
+    }
+    return;
+  }
+  element.addEventListener(eventType, handler);
+}
+
+function setCheckboxState(element, isChecked) {
+  if (!element) {
+    if (window.Debug) {
+      window.Debug.warn('CHECKBOX', 'チェックボックスが見つかりません', {});
+    }
+    return;
+  }
+  element.checked = Boolean(isChecked);
+}
+
 // コンテンツ統計
 const CONTENT_STATS = {
   lastUpdated: '2025年1月',
   words: { total: 0, byCategory: {}, byAge: {} },
   phrases: { total: 0, byCategory: {}, byAge: {} },
   examples: { total: 0, byAge: {} },
+};
+
+const OPTION_SECTION_IDS = [
+  'exampleOptions',
+  'translationOptions',
+  'ageOptions',
+  'wordOptions',
+  'customExampleOptions',
+  'alphabetOptions',
+  'phraseOptions',
+];
+
+const PRACTICE_MODE_CONFIGS = {
+  sentence: {
+    sections: ['ageOptions', 'exampleOptions', 'translationOptions', 'customExampleOptions'],
+    checkboxes: { showExamples: true, showTranslation: true },
+  },
+  word: {
+    sections: ['ageOptions', 'wordOptions'],
+    checkboxes: { showExamples: false, showTranslation: false },
+  },
+  alphabet: {
+    sections: ['alphabetOptions'],
+    checkboxes: { showExamples: false, showTranslation: false },
+  },
+  phrase: {
+    sections: ['ageOptions', 'phraseOptions', 'translationOptions'],
+    checkboxes: { showExamples: false, showTranslation: true },
+  },
+  default: {
+    sections: [],
+    checkboxes: { showExamples: false, showTranslation: false },
+  },
 };
 
 function init() {
@@ -100,108 +156,90 @@ function init() {
 
 // イベントリスナーのセットアップ
 function setupEventListeners() {
-  // 既存のイベントリスナー
-  const practiceMode = document.getElementById('practiceMode');
-  const showExamplesCheckbox = document.getElementById('showExamples');
-  const showTranslationCheckbox = document.getElementById('showTranslation');
-  const refreshExamplesBtn = document.getElementById('refreshExamplesBtn');
-  const ageGroupSelect = document.getElementById('ageGroup');
-  const printBtn = document.getElementById('printBtn');
+  const elements = {
+    practiceMode: document.getElementById('practiceMode'),
+    showExamples: document.getElementById('showExamples'),
+    showTranslation: document.getElementById('showTranslation'),
+    refreshExamplesBtn: document.getElementById('refreshExamplesBtn'),
+    ageGroup: document.getElementById('ageGroup'),
+    printBtn: document.getElementById('printBtn'),
+    lineHeight: document.getElementById('lineHeight'),
+    lineColor: document.getElementById('lineColor'),
+    showHeader: document.getElementById('showHeader'),
+    pageCount: document.getElementById('pageCount'),
+    exampleCategory: document.getElementById('exampleCategory'),
+    wordCategory: document.getElementById('wordCategory'),
+    addCustomExampleBtn: document.getElementById('addCustomExampleBtn'),
+    alphabetType: document.getElementById('alphabetType'),
+    showAlphabetExample: document.getElementById('showAlphabetExample'),
+    phraseCategory: document.getElementById('phraseCategory'),
+    showSituation: document.getElementById('showSituation'),
+    shufflePhrasesBtn: document.getElementById('shufflePhrases'),
+    previewBtn: document.getElementById('previewBtn'),
+  };
 
-  // Phase 1: カスタマイズ機能のイベントリスナー
-  const lineHeightSelect = document.getElementById('lineHeight');
-  const lineColorSelect = document.getElementById('lineColor');
-  const showHeaderCheckbox = document.getElementById('showHeader');
-  const pageCountInput = document.getElementById('pageCount');
-
-  // Phase 2: 追加機能のイベントリスナー
-  const exampleCategorySelect = document.getElementById('exampleCategory');
-  const wordCategorySelect = document.getElementById('wordCategory');
-  const addCustomExampleBtn = document.getElementById('addCustomExampleBtn');
-  const alphabetTypeSelect = document.getElementById('alphabetType');
-  const showAlphabetExampleCheckbox = document.getElementById('showAlphabetExample');
-  const phraseCategorySelect = document.getElementById('phraseCategory');
-  const showSituationCheckbox = document.getElementById('showSituation');
-  const shufflePhrasesBtn = document.getElementById('shufflePhrases');
-  const previewBtn = document.getElementById('previewBtn');
-
-  // 更新イベントリスナー
-  // practiceMode.addEventListener('change', updatePreview); // 削除（571行目で設定済み）
-  showExamplesCheckbox.addEventListener('change', updatePreview);
-  showTranslationCheckbox.addEventListener('change', updatePreview);
-  refreshExamplesBtn.addEventListener('click', () => {
+  addEventListenerIfExists(elements.showExamples, 'change', updatePreview);
+  addEventListenerIfExists(elements.showTranslation, 'change', updatePreview);
+  addEventListenerIfExists(elements.refreshExamplesBtn, 'click', () => {
     shuffleCurrentExamples();
     updatePreview();
   });
-  ageGroupSelect.addEventListener('change', () => {
+
+  addEventListenerIfExists(elements.ageGroup, 'change', () => {
     setCurrentExampleIndices({});
-    setCurrentExamples([]); // 年齢変更時に例文をリセット
-    updatePreview();
-  });
-
-  // Phase 1カスタマイズ機能のイベントリスナー
-  lineHeightSelect.addEventListener('change', updatePreview);
-  lineColorSelect.addEventListener('change', updatePreview);
-  showHeaderCheckbox.addEventListener('change', updatePreview);
-  pageCountInput.addEventListener('change', updatePreview);
-  pageCountInput.addEventListener('input', updatePreview);
-
-  // Phase 2追加機能のイベントリスナー
-  exampleCategorySelect.addEventListener('change', () => {
     setCurrentExamples([]);
     updatePreview();
   });
-  wordCategorySelect.addEventListener('change', updatePreview);
-  addCustomExampleBtn.addEventListener('click', handleAddCustomExample);
 
-  // 新しい練習モード用のイベントリスナー
-  if (alphabetTypeSelect) {
-    alphabetTypeSelect.addEventListener('change', updatePreview);
-  }
-  if (showAlphabetExampleCheckbox) {
-    showAlphabetExampleCheckbox.addEventListener('change', updatePreview);
-  }
-  if (phraseCategorySelect) {
-    phraseCategorySelect.addEventListener('change', () => {
-      if (window.Debug) {
-        window.Debug.log('PHRASE_CATEGORY', 'フレーズカテゴリーが変更されました', {
-          newCategory: phraseCategorySelect.value,
-        });
-      }
-      updatePreview();
-    });
-  }
-  if (showSituationCheckbox) {
-    showSituationCheckbox.addEventListener('change', updatePreview);
+  [elements.lineHeight, elements.lineColor, elements.showHeader].forEach((element) =>
+    addEventListenerIfExists(element, 'change', updatePreview)
+  );
+
+  if (elements.pageCount) {
+    addEventListenerIfExists(elements.pageCount, 'change', updatePreview);
+    addEventListenerIfExists(elements.pageCount, 'input', updatePreview);
   }
 
-  // フレーズシャッフルボタン
-  if (shufflePhrasesBtn) {
-    shufflePhrasesBtn.addEventListener('click', () => {
-      if (window.Debug) {
-        window.Debug.log('PHRASE_SHUFFLE', 'フレーズをシャッフルします', {
-          currentCategory: document.getElementById('phraseCategory').value,
-        });
-      }
-      updatePreview();
-    });
-  }
+  addEventListenerIfExists(elements.exampleCategory, 'change', () => {
+    setCurrentExamples([]);
+    updatePreview();
+  });
+  addEventListenerIfExists(elements.wordCategory, 'change', updatePreview);
+  addEventListenerIfExists(elements.addCustomExampleBtn, 'click', handleAddCustomExample);
+  addEventListenerIfExists(elements.alphabetType, 'change', updatePreview);
+  addEventListenerIfExists(elements.showAlphabetExample, 'change', updatePreview);
 
-  // ボタンイベント
-  printBtn.addEventListener('click', printNote);
+  addEventListenerIfExists(elements.phraseCategory, 'change', () => {
+    if (window.Debug) {
+      window.Debug.log('PHRASE_CATEGORY', 'フレーズカテゴリーが変更されました', {
+        newCategory: elements.phraseCategory ? elements.phraseCategory.value : undefined,
+      });
+    }
+    updatePreview();
+  });
+  addEventListenerIfExists(elements.showSituation, 'change', updatePreview);
 
-  // プレビューボタンのイベント
-  if (previewBtn) {
-    previewBtn.addEventListener('click', showPrintPreview);
-    if (window.Debug)
+  addEventListenerIfExists(elements.shufflePhrasesBtn, 'click', () => {
+    if (window.Debug) {
+      window.Debug.log('PHRASE_SHUFFLE', 'フレーズをシャッフルします', {
+        currentCategory: elements.phraseCategory ? elements.phraseCategory.value : undefined,
+      });
+    }
+    updatePreview();
+  });
+
+  addEventListenerIfExists(elements.printBtn, 'click', printNote);
+
+  if (elements.previewBtn) {
+    addEventListenerIfExists(elements.previewBtn, 'click', showPrintPreview);
+    if (window.Debug) {
       window.Debug.log('INIT', '印刷プレビューボタンのイベントリスナーを設定しました');
-  } else {
-    if (window.Debug)
-      window.Debug.error('INIT', '印刷プレビューボタンが見つかりません', { element: 'previewBtn' });
+    }
+  } else if (window.Debug) {
+    window.Debug.error('INIT', '印刷プレビューボタンが見つかりません', { element: 'previewBtn' });
   }
 
-  // 練習モード変更時の処理
-  practiceMode.addEventListener('change', () => {
+  addEventListenerIfExists(elements.practiceMode, 'change', () => {
     updateOptionsVisibility();
     updatePreview();
   });
@@ -209,49 +247,35 @@ function setupEventListeners() {
 
 // オプションの表示/非表示を更新
 function updateOptionsVisibility() {
-  const practiceModeValue = document.getElementById('practiceMode').value;
-  const exampleOptions = document.getElementById('exampleOptions');
-  const translationOptions = document.getElementById('translationOptions');
-  const ageOptions = document.getElementById('ageOptions');
-  const wordOptions = document.getElementById('wordOptions');
-  const customExampleOptions = document.getElementById('customExampleOptions');
-  const alphabetOptions = document.getElementById('alphabetOptions');
-  const phraseOptions = document.getElementById('phraseOptions');
+  const practiceModeElement = document.getElementById('practiceMode');
+  const showExamplesCheckbox = document.getElementById('showExamples');
+  const showTranslationCheckbox = document.getElementById('showTranslation');
 
-  // すべて非表示にリセット
-  ageOptions.style.display = 'none';
-  exampleOptions.style.display = 'none';
-  translationOptions.style.display = 'none';
-  wordOptions.style.display = 'none';
-  customExampleOptions.style.display = 'none';
-  alphabetOptions.style.display = 'none';
-  phraseOptions.style.display = 'none';
-
-  if (practiceModeValue === 'sentence') {
-    ageOptions.style.display = 'block';
-    exampleOptions.style.display = 'block';
-    translationOptions.style.display = 'block';
-    customExampleOptions.style.display = 'block';
-    document.getElementById('showExamples').checked = true;
-  } else if (practiceModeValue === 'word') {
-    ageOptions.style.display = 'block';
-    wordOptions.style.display = 'block';
-    document.getElementById('showExamples').checked = false;
-    document.getElementById('showTranslation').checked = false;
-  } else if (practiceModeValue === 'alphabet') {
-    alphabetOptions.style.display = 'block';
-    document.getElementById('showExamples').checked = false;
-    document.getElementById('showTranslation').checked = false;
-  } else if (practiceModeValue === 'phrase') {
-    ageOptions.style.display = 'block';
-    phraseOptions.style.display = 'block';
-    translationOptions.style.display = 'block';
-    document.getElementById('showExamples').checked = false;
-    document.getElementById('showTranslation').checked = true;
-  } else {
-    document.getElementById('showExamples').checked = false;
-    document.getElementById('showTranslation').checked = false;
+  if (!practiceModeElement) {
+    if (window.Debug) {
+      window.Debug.error('INIT', '練習モードの選択要素が見つかりません', {
+        element: 'practiceMode',
+      });
+    }
+    return;
   }
+
+  const practiceModeValue = practiceModeElement.value;
+  const config = PRACTICE_MODE_CONFIGS[practiceModeValue] ?? PRACTICE_MODE_CONFIGS.default;
+
+  OPTION_SECTION_IDS.forEach((sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (!element) {
+      if (window.Debug) {
+        window.Debug.warn('OPTIONS', 'オプションセクションが見つかりません', { sectionId });
+      }
+      return;
+    }
+    element.style.display = config.sections.includes(sectionId) ? 'block' : 'none';
+  });
+
+  setCheckboxState(showExamplesCheckbox, config.checkboxes.showExamples);
+  setCheckboxState(showTranslationCheckbox, config.checkboxes.showTranslation);
 }
 
 // プレビュー更新
