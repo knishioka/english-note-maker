@@ -225,7 +225,7 @@ async function checkServer() {
   try {
     const response = await fetch('http://localhost:3000');
     return response.ok;
-  } catch (error) {
+  } catch {
     return false;
   }
 }

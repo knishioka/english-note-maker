@@ -63,6 +63,7 @@
             id="refreshExamplesBtn"
             class="btn btn--secondary"
             style="margin-top: 0.5rem; font-size: 0.9rem"
+            type="button"
           >
             例文を更新
           </button>
@@ -133,7 +134,12 @@
             <input type="checkbox" id="showSituation" class="controls__checkbox" checked />
             使用場面を表示
           </label>
-          <button id="shufflePhrases" class="btn btn--secondary" style="margin-top: 0.5rem">
+          <button
+            id="shufflePhrases"
+            class="btn btn--secondary"
+            style="margin-top: 0.5rem"
+            type="button"
+          >
             🔄 別のフレーズを表示
           </button>
         </div>
@@ -158,7 +164,12 @@
               placeholder="例: こんにちは、世界！"
             />
           </label>
-          <button id="addCustomExampleBtn" class="btn btn--secondary" style="margin-top: 0.5rem">
+          <button
+            id="addCustomExampleBtn"
+            class="btn btn--secondary"
+            style="margin-top: 0.5rem"
+            type="button"
+          >
             例文を追加
           </button>
         </div>
@@ -195,8 +206,8 @@
           </label>
         </div>
 
-        <button id="previewBtn" class="btn btn--secondary">🔍 印刷プレビュー</button>
-        <button id="printBtn" class="btn btn--primary">印刷・PDF保存</button>
+        <button id="previewBtn" class="btn btn--secondary" type="button">🔍 印刷プレビュー</button>
+        <button id="printBtn" class="btn btn--primary" type="button">印刷・PDF保存</button>
       </section>
 
       <section class="preview">
@@ -213,7 +224,7 @@
       <div class="print-preview-content">
         <div class="print-preview-header">
           <h3>🔍 印刷プレビュー</h3>
-          <button id="closePreviewBtn" class="close-btn">&times;</button>
+          <button id="closePreviewBtn" class="close-btn" type="button">&times;</button>
         </div>
 
         <div class="print-preview-body">
@@ -229,10 +240,14 @@
           </div>
 
           <div class="preview-controls">
-            <button id="zoomOutBtn" class="btn btn--small">🔍-</button>
-            <button id="zoomInBtn" class="btn btn--small">🔍+</button>
-            <button id="printFromPreviewBtn" class="btn btn--primary">🖨️ 印刷実行</button>
-            <button id="cancelPreviewBtn" class="btn btn--secondary">キャンセル</button>
+            <button id="zoomOutBtn" class="btn btn--small" type="button">🔍-</button>
+            <button id="zoomInBtn" class="btn btn--small" type="button">🔍+</button>
+            <button id="printFromPreviewBtn" class="btn btn--primary" type="button">
+              🖨️ 印刷実行
+            </button>
+            <button id="cancelPreviewBtn" class="btn btn--secondary" type="button">
+              キャンセル
+            </button>
           </div>
         </div>
       </div>

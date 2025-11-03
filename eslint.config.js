@@ -43,10 +43,13 @@ export default [
       indent: ['error', 2, { SwitchCase: 1 }],
 
       // 引用符の統一（シングルクォート）
-      quotes: ['error', 'single'],
+      quotes: ['error', 'single', { avoidEscape: true }],
 
       // 関数の前のスペース
-      'space-before-function-paren': ['error', 'never'],
+      'space-before-function-paren': [
+        'error',
+        { anonymous: 'always', named: 'never', asyncArrow: 'always' },
+      ],
 
       // オブジェクトの中のスペース
       'object-curly-spacing': ['error', 'always'],

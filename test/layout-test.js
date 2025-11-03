@@ -32,12 +32,6 @@ function test(name, condition, errorMessage, isWarning = false) {
   }
 }
 
-// CSSから値を抽出する関数
-function extractCSSValue(pattern) {
-  const match = cssContent.match(pattern);
-  return match ? match[1] : null;
-}
-
 // 1. A4サイズ設定の確認
 console.log('\n📄 A4サイズ設定のチェック');
 test(
