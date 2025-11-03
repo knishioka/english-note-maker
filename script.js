@@ -912,20 +912,20 @@ function generateAlphabetPractice(pageNumber) {
 
   for (let i = 0; i < currentPageLetters.length; i++) {
     const item = currentPageLetters[i];
-    html += `
-            <div class="alphabet-grid-item">
-                <div class="alphabet-header">
-                    <span class="alphabet-letter">${item.letter}</span>
-                    ${
-                      showExample
-                        ? `
+    const exampleHtml = showExample
+      ? `
                         <div class="alphabet-example">
                             <span class="example-word">${item.example}</span>
                             <span class="example-meaning">(${item.japanese})</span>
                         </div>
                     `
-                        : ''
-                    }
+      : '';
+
+    html += `
+            <div class="alphabet-grid-item">
+                <div class="alphabet-header">
+                    <span class="alphabet-letter">${item.letter}</span>
+                    ${exampleHtml}
                 </div>
                 <div class="alphabet-lines">
                     ${generateBaselineGroup()}
