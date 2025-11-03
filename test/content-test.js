@@ -49,26 +49,42 @@ function test(name, condition, errorMessage) {
 
 // 1. 必須データ構造の存在確認（モジュール化対応）
 console.log('\n📋 必須データ構造のチェック');
+
+const hasImportReference = (modulePath, fallbackIdentifier) => {
+  const patterns = [
+    `import('${modulePath}')`,
+    `import("${modulePath}")`,
+    `import(\`${modulePath}\`)`,
+  ];
+
+  return (
+    patterns.some((pattern) => scriptContent.includes(pattern)) ||
+    scriptContent.includes(`const ${fallbackIdentifier}`)
+  );
+};
+
 test(
   'WORD_LISTS の存在',
-  scriptContent.includes('import { WORD_LISTS }') || scriptContent.includes('const WORD_LISTS'),
+  scriptContent.includes('import { WORD_LISTS }') ||
+    hasImportReference('./src/data/word-lists.js', 'WORD_LISTS'),
   'WORD_LISTS が定義されていません'
 );
 test(
   'PHRASE_DATA の存在',
-  scriptContent.includes('import { PHRASE_DATA }') || scriptContent.includes('const PHRASE_DATA'),
+  scriptContent.includes('import { PHRASE_DATA }') ||
+    hasImportReference('./src/data/phrase-data.js', 'PHRASE_DATA'),
   'PHRASE_DATA が定義されていません'
 );
 test(
   'EXAMPLE_SENTENCES_BY_AGE の存在',
   scriptContent.includes('import { EXAMPLE_SENTENCES_BY_AGE }') ||
-    scriptContent.includes('const EXAMPLE_SENTENCES_BY_AGE'),
+    hasImportReference('./src/data/example-sentences.js', 'EXAMPLE_SENTENCES_BY_AGE'),
   'EXAMPLE_SENTENCES_BY_AGE が定義されていません'
 );
 test(
   'ALPHABET_DATA の存在',
   scriptContent.includes('import { ALPHABET_DATA }') ||
-    scriptContent.includes('const ALPHABET_DATA'),
+    hasImportReference('./src/data/alphabet-data.js', 'ALPHABET_DATA'),
   'ALPHABET_DATA が定義されていません'
 );
 

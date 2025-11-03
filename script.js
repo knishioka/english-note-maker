@@ -1,15 +1,72 @@
 // === 英語罫線ノート作成スクリプト ===
 
-// モジュールインポート
-import { EXAMPLE_SENTENCES_BY_AGE } from './src/data/example-sentences.js';
-import { WORD_LISTS } from './src/data/word-lists.js';
-import { ALPHABET_DATA } from './src/data/alphabet-data.js';
-import { PHRASE_DATA } from './src/data/phrase-data.js';
-import {
-  currentExamples,
-  setCurrentExamples,
-  setCurrentExampleIndices,
-} from './src/models/app-config.js';
+// モジュールローダー（CommonJS互換のため動的インポートを使用）
+let EXAMPLE_SENTENCES_BY_AGE = {};
+let WORD_LISTS = {};
+let ALPHABET_DATA = {};
+let PHRASE_DATA = {};
+
+let currentExamples = [];
+let currentExampleIndices = {};
+
+let setCurrentExamplesImpl = (examples) => {
+  currentExamples = Array.isArray(examples) ? examples : [];
+};
+
+let setCurrentExampleIndicesImpl = (indices) => {
+  currentExampleIndices = indices && typeof indices === 'object' ? { ...indices } : {};
+};
+
+const modulesReady = (async () => {
+  const [exampleModule, wordModule, alphabetModule, phraseModule, appConfigModule] =
+    await Promise.all([
+      import('./src/data/example-sentences.js'),
+      import('./src/data/word-lists.js'),
+      import('./src/data/alphabet-data.js'),
+      import('./src/data/phrase-data.js'),
+      import('./src/models/app-config.js'),
+    ]);
+
+  EXAMPLE_SENTENCES_BY_AGE = exampleModule.EXAMPLE_SENTENCES_BY_AGE;
+  WORD_LISTS = wordModule.WORD_LISTS;
+  ALPHABET_DATA = alphabetModule.ALPHABET_DATA;
+  PHRASE_DATA = phraseModule.PHRASE_DATA;
+
+  currentExamples = Array.isArray(appConfigModule.currentExamples)
+    ? appConfigModule.currentExamples
+    : [];
+  currentExampleIndices =
+    appConfigModule.currentExampleIndices &&
+    typeof appConfigModule.currentExampleIndices === 'object'
+      ? { ...appConfigModule.currentExampleIndices }
+      : {};
+
+  setCurrentExamplesImpl = (examples) => {
+    appConfigModule.setCurrentExamples(examples);
+    currentExamples = Array.isArray(appConfigModule.currentExamples)
+      ? appConfigModule.currentExamples
+      : [];
+  };
+
+  setCurrentExampleIndicesImpl = (indices) => {
+    appConfigModule.setCurrentExampleIndices(indices);
+    currentExampleIndices =
+      appConfigModule.currentExampleIndices &&
+      typeof appConfigModule.currentExampleIndices === 'object'
+        ? { ...appConfigModule.currentExampleIndices }
+        : {};
+  };
+})();
+
+function setCurrentExamples(examples) {
+  setCurrentExamplesImpl(examples);
+  currentExamples = Array.isArray(examples) ? examples : [];
+}
+
+function setCurrentExampleIndices(indices) {
+  setCurrentExampleIndicesImpl(indices);
+  currentExampleIndices = indices && typeof indices === 'object' ? { ...indices } : {};
+}
 
 // カスタム例文を保存する配列
 const customExamples = [];
@@ -704,7 +761,15 @@ function runLayoutTest() {
 }
 
 // 初期化実行
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+  modulesReady
+    .then(() => {
+      init();
+    })
+    .catch((error) => {
+      console.error('Initialization failed due to module load error', error);
+    });
+});
 
 // デバッグ機能
 document.addEventListener('keydown', (e) => {
