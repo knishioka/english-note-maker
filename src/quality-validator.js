@@ -149,26 +149,40 @@ class LayoutValidator {
     const errors = results.filter((r) => r.status === 'fail' && r.severity === 'error');
     const warnings = results.filter((r) => r.status === 'fail' && r.severity === 'warning');
 
-    console.group('📋 レイアウト検証レポート');
-    console.log(`検証日時: ${new Date().toLocaleString()}`);
-    console.log(`総チェック数: ${results.length}`);
-    console.log(`エラー: ${errors.length}`);
-    console.log(`警告: ${warnings.length}`);
+    if (window.Debug) {
+      const logger = window.Debug;
 
-    if (errors.length > 0) {
-      console.group('❌ エラー');
-      errors.forEach((e) => console.error(e.message));
-      console.groupEnd();
+      logger.log('LAYOUT_VALIDATION', '📋 レイアウト検証レポート', {
+        timestamp: new Date().toLocaleString(),
+        totalChecks: results.length,
+        errorCount: errors.length,
+        warningCount: warnings.length,
+      });
+
+      if (errors.length > 0) {
+        errors.forEach((error) => {
+          logger.error('LAYOUT_VALIDATION', error.message, {
+            rule: error.rule,
+            expected: error.expectedRange,
+            actual: error.actualValue,
+          });
+        });
+      }
+
+      if (warnings.length > 0) {
+        warnings.forEach((warning) => {
+          logger.warn('LAYOUT_VALIDATION', warning.message, {
+            rule: warning.rule,
+            expected: warning.expectedRange,
+            actual: warning.actualValue,
+          });
+        });
+      }
+
+      logger.log('LAYOUT_VALIDATION_DETAILS', '検証結果一覧', {
+        results,
+      });
     }
-
-    if (warnings.length > 0) {
-      console.group('⚠️ 警告');
-      warnings.forEach((w) => console.warn(w.message));
-      console.groupEnd();
-    }
-
-    console.table(results);
-    console.groupEnd();
 
     return {
       timestamp: new Date().toISOString(),

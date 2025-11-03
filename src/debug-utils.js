@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Debug Utilities Module
  *
@@ -177,7 +178,7 @@ class DebugLogger {
         return Array.from(sheet.cssRules).some(
           (rule) => rule.cssText && rule.cssText.includes('@media print')
         );
-      } catch (e) {
+      } catch {
         return false;
       }
     });
@@ -571,18 +572,15 @@ window.Debug = {
   init: () => debugPanel.init(),
 };
 
+const debugApi = window.Debug;
+
 // Auto-initialize in development
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    Debug.init();
-    Debug.log('INIT', 'Debug utilities loaded');
+    debugApi.init();
+    debugApi.log('INIT', 'Debug utilities loaded');
   });
 } else {
-  Debug.init();
-  Debug.log('INIT', 'Debug utilities loaded');
-}
-
-// Export for CommonJS environments (removed ES modules export)
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { debugLogger, debugPanel };
+  debugApi.init();
+  debugApi.log('INIT', 'Debug utilities loaded');
 }

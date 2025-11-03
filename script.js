@@ -7,15 +7,12 @@ let ALPHABET_DATA = {};
 let PHRASE_DATA = {};
 
 let currentExamples = [];
-let currentExampleIndices = {};
 
 let setCurrentExamplesImpl = (examples) => {
   currentExamples = Array.isArray(examples) ? examples : [];
 };
 
-let setCurrentExampleIndicesImpl = (indices) => {
-  currentExampleIndices = indices && typeof indices === 'object' ? { ...indices } : {};
-};
+let setCurrentExampleIndicesImpl = () => {};
 
 const modulesReady = (async () => {
   const [exampleModule, wordModule, alphabetModule, phraseModule, appConfigModule] =
@@ -35,12 +32,6 @@ const modulesReady = (async () => {
   currentExamples = Array.isArray(appConfigModule.currentExamples)
     ? appConfigModule.currentExamples
     : [];
-  currentExampleIndices =
-    appConfigModule.currentExampleIndices &&
-    typeof appConfigModule.currentExampleIndices === 'object'
-      ? { ...appConfigModule.currentExampleIndices }
-      : {};
-
   setCurrentExamplesImpl = (examples) => {
     appConfigModule.setCurrentExamples(examples);
     currentExamples = Array.isArray(appConfigModule.currentExamples)
@@ -50,11 +41,6 @@ const modulesReady = (async () => {
 
   setCurrentExampleIndicesImpl = (indices) => {
     appConfigModule.setCurrentExampleIndices(indices);
-    currentExampleIndices =
-      appConfigModule.currentExampleIndices &&
-      typeof appConfigModule.currentExampleIndices === 'object'
-        ? { ...appConfigModule.currentExampleIndices }
-        : {};
   };
 })();
 
@@ -65,7 +51,34 @@ function setCurrentExamples(examples) {
 
 function setCurrentExampleIndices(indices) {
   setCurrentExampleIndicesImpl(indices);
-  currentExampleIndices = indices && typeof indices === 'object' ? { ...indices } : {};
+}
+
+function reportInitializationFailure(error) {
+  const message = 'Initialization failed due to module load error';
+
+  if (window.Debug) {
+    window.Debug.error('INIT', message, { error });
+    return;
+  }
+
+  const existingBanner = document.getElementById('app-init-error');
+  if (existingBanner) {
+    existingBanner.textContent = `${message}: ${error.message}`;
+    return;
+  }
+
+  const banner = document.createElement('div');
+  banner.id = 'app-init-error';
+  banner.setAttribute('role', 'alert');
+  banner.textContent = `${message}: ${error.message}`;
+  banner.style.backgroundColor = '#f44336';
+  banner.style.color = '#ffffff';
+  banner.style.padding = '12px';
+  banner.style.textAlign = 'center';
+  banner.style.fontWeight = 'bold';
+  banner.style.margin = '0';
+
+  document.body.prepend(banner);
 }
 
 // カスタム例文を保存する配列
@@ -767,7 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
       init();
     })
     .catch((error) => {
-      console.error('Initialization failed due to module load error', error);
+      reportInitializationFailure(error);
     });
 });
 
