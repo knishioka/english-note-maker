@@ -968,6 +968,32 @@ function generatePhrasePractice(showTranslation, ageGroup) {
   let html = '<div class="phrase-practice">';
   const phraseCategory = document.getElementById('phraseCategory').value || 'greetings';
   const showSituation = document.getElementById('showSituation').checked;
+  const lineHeight = parseInt(document.getElementById('lineHeight').value) || 10;
+
+  // 行間に合わせてフレーズ数を調整し、A4に収める
+  const lineSpacing = Math.max(1, Math.floor(lineHeight * 0.2));
+  const lineSeparatorSmallHeight = Math.max(2, Math.floor(lineHeight * 0.4));
+  const baselineBlockHeight = lineHeight * 3 + lineSpacing * 3 + lineSeparatorSmallHeight * 2;
+  const headerBaseHeight = 8;
+  const translationExtraHeight = showTranslation ? 4 : 0;
+  const situationExtraHeight = showSituation ? 3 : 0;
+  const phraseMarginHeight = 2;
+  const estimatedPhraseHeight =
+    baselineBlockHeight +
+    headerBaseHeight +
+    translationExtraHeight +
+    situationExtraHeight +
+    phraseMarginHeight;
+
+  const headerOption = document.getElementById('showHeader');
+  const headerOffset = headerOption && headerOption.checked ? 15 : 0;
+  const pagePadding = 20;
+  const titleOffset = 10;
+  const safetyBuffer = 6;
+  const availableContentHeight = 297 - pagePadding - titleOffset - headerOffset - safetyBuffer;
+
+  let maxPhraseCount = Math.max(1, Math.floor(availableContentHeight / estimatedPhraseHeight));
+  maxPhraseCount = Math.min(maxPhraseCount, 4);
 
   // デバッグ情報を出力
   if (window.Debug) {
@@ -1028,7 +1054,20 @@ function generatePhrasePractice(showTranslation, ageGroup) {
   // A4に収めるため4つのフレーズに制限（練習行3行ずつ）
   // ランダムに4つ選択して、全てのフレーズが練習できるようにする
   const shuffled = [...allPhrases].sort(() => 0.5 - Math.random());
-  const phrases = shuffled.slice(0, Math.min(4, shuffled.length));
+  const phrasesToDisplay = Math.min(maxPhraseCount, shuffled.length);
+  const phrases = shuffled.slice(0, phrasesToDisplay);
+
+  if (window.Debug && phrasesToDisplay < Math.min(4, shuffled.length)) {
+    window.Debug.warn('PHRASE_PRACTICE', 'フレーズ数をA4用に調整しました', {
+      requested: Math.min(4, shuffled.length),
+      limitedTo: phrasesToDisplay,
+      lineHeight,
+      showTranslation,
+      showSituation,
+      availableContentHeight,
+      estimatedPhraseHeight,
+    });
+  }
 
   // 選択されたフレーズを確認
   if (window.Debug) {
