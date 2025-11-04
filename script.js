@@ -148,6 +148,19 @@ const PRACTICE_MODE_CONFIGS = {
   },
 };
 
+const DEFAULT_PHRASE_COUNT = 12;
+const PHRASE_USAGE_PRIORITY = ['critical', 'core', 'common', 'situational', 'specialized'];
+const PHRASE_PATTERN_LIMITS = {
+  question: 3,
+  introduction: 2,
+  response: 2,
+  request: 2,
+  invitation: 2,
+  exclamation: 1,
+  statement: 3,
+  other: 2,
+};
+
 function init() {
   setupEventListeners();
   updateOptionsVisibility();
@@ -966,48 +979,40 @@ function generateAlphabetPractice(pageNumber) {
 // フレーズ練習モード生成
 function generatePhrasePractice(showTranslation, ageGroup) {
   let html = '<div class="phrase-practice">';
-  const phraseCategory = document.getElementById('phraseCategory').value || 'greetings';
-  const showSituation = document.getElementById('showSituation').checked;
+  const phraseCategoryElement = document.getElementById('phraseCategory');
+  const phraseCategory = (phraseCategoryElement && phraseCategoryElement.value) || 'greetings';
+  const showSituation = Boolean(document.getElementById('showSituation')?.checked);
 
-  // デバッグ情報を出力
   if (window.Debug) {
     window.Debug.log('PHRASE_PRACTICE', 'フレーズ練習生成開始', {
       category: phraseCategory,
-      ageGroup: ageGroup,
-      showTranslation: showTranslation,
-      showSituation: showSituation,
+      ageGroup,
+      showTranslation,
+      showSituation,
     });
   }
 
-  // カテゴリーの存在を確認してデータを取得
   let allPhrases;
   if (PHRASE_DATA[phraseCategory]) {
-    // 選択したカテゴリーが存在する場合
     if (PHRASE_DATA[phraseCategory][ageGroup]) {
-      // 年齢グループも存在する場合
       allPhrases = PHRASE_DATA[phraseCategory][ageGroup];
     } else {
-      // 年齢グループが存在しない場合は、そのカテゴリーの別の年齢グループを使用
       const availableAges = Object.keys(PHRASE_DATA[phraseCategory]);
-      if (availableAges.includes('7-9')) {
-        allPhrases = PHRASE_DATA[phraseCategory]['7-9'];
-      } else {
-        allPhrases = PHRASE_DATA[phraseCategory][availableAges[0]];
-      }
+      const fallbackAge = availableAges.includes('7-9') ? '7-9' : availableAges[0];
+      allPhrases = PHRASE_DATA[phraseCategory][fallbackAge] || [];
       if (window.Debug) {
         window.Debug.warn(
           'PHRASE_PRACTICE',
           `年齢グループ${ageGroup}のデータが見つからないため、代替を使用`,
           {
             requestedAge: ageGroup,
-            usingAge: availableAges.includes('7-9') ? '7-9' : availableAges[0],
+            usingAge: fallbackAge,
           }
         );
       }
     }
   } else {
-    // カテゴリーが存在しない場合のフォールバック
-    allPhrases = PHRASE_DATA['greetings'][ageGroup] || PHRASE_DATA['greetings']['7-9'];
+    allPhrases = PHRASE_DATA.greetings?.[ageGroup] || PHRASE_DATA.greetings?.['7-9'] || [];
     if (window.Debug) {
       window.Debug.error(
         'PHRASE_PRACTICE',
@@ -1016,25 +1021,46 @@ function generatePhrasePractice(showTranslation, ageGroup) {
     }
   }
 
-  // 取得したフレーズを確認
-  if (window.Debug) {
-    window.Debug.log('PHRASE_PRACTICE', 'フレーズデータ取得完了', {
-      category: phraseCategory,
-      phraseCount: allPhrases ? allPhrases.length : 0,
-      firstPhrase: allPhrases && allPhrases[0] ? allPhrases[0].english : 'N/A',
-    });
+  const safePhrases = Array.isArray(allPhrases) ? allPhrases : [];
+
+  if (!safePhrases.length) {
+    if (window.Debug) {
+      window.Debug.warn('PHRASE_PRACTICE', '選択可能なフレーズが見つかりませんでした', {
+        category: phraseCategory,
+        ageGroup,
+      });
+    }
+
+    return `
+        <div class="phrase-practice">
+            <p class="phrase-empty">このカテゴリーには現在表示できるフレーズがありません。</p>
+        </div>
+    `;
   }
 
-  // A4に収めるため4つのフレーズに制限（練習行3行ずつ）
-  // ランダムに4つ選択して、全てのフレーズが練習できるようにする
-  const shuffled = [...allPhrases].sort(() => 0.5 - Math.random());
-  const phrases = shuffled.slice(0, Math.min(4, shuffled.length));
+  const desiredCount = Math.min(DEFAULT_PHRASE_COUNT, safePhrases.length);
+  const phrases = selectDiversePhrases(safePhrases, desiredCount);
 
-  // 選択されたフレーズを確認
+  const usageSummary = phrases.reduce((acc, phrase) => {
+    const key = (phrase.usageFrequency || 'common').toLowerCase();
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  const focusSummary = new Set();
+  const patternSummary = phrases.reduce((acc, phrase) => {
+    const key = (phrase.pattern || 'statement').toLowerCase();
+    acc[key] = (acc[key] || 0) + 1;
+    (phrase.focusWords || []).forEach((word) => focusSummary.add(word));
+    return acc;
+  }, {});
+
   if (window.Debug) {
-    window.Debug.log('PHRASE_PRACTICE', '表示するフレーズを選択', {
+    window.Debug.log('PHRASE_PRACTICE', '多様性を考慮したフレーズを選択', {
       selectedCount: phrases.length,
-      phrases: phrases.map((p) => p.english.substring(0, 30) + '...'),
+      desiredCount,
+      usageSummary,
+      patternSummary,
+      focusWords: Array.from(focusSummary).slice(0, 10),
     });
   }
 
@@ -1053,9 +1079,39 @@ function generatePhrasePractice(showTranslation, ageGroup) {
     numbers_math: '数と算数',
   };
 
-  html += `<h3 style="text-align: center; margin-bottom: 1mm; margin-top: 0mm;">Phrase Practice - ${categoryNames[phraseCategory] || phraseCategory}</h3>`;
+  const usageLabels = {
+    core: 'よく使う',
+    common: '日常',
+    situational: '場面',
+    critical: '緊急',
+    specialized: 'トピック',
+  };
+
+  html += `<h3 class="practice-title practice-title--phrase">Phrase Practice - ${categoryNames[phraseCategory] || phraseCategory}</h3>`;
+  html += '<div class="phrase-grid">';
 
   for (const phrase of phrases) {
+    const usageKey = (phrase.usageFrequency || 'common').toLowerCase();
+    const usageLabel = usageLabels[usageKey];
+    const usageBadge = usageLabel
+      ? `<span class="phrase-usage usage-${usageKey}">${usageLabel}</span>`
+      : '';
+    const focusWords = Array.isArray(phrase.focusWords)
+      ? phrase.focusWords.filter(Boolean).slice(0, 3)
+      : [];
+    const focusWordsHtml = focusWords.length
+      ? `
+            <div class="phrase-focus-words">
+                <span class="phrase-focus-label">覚えたい単語</span>
+                ${focusWords.map((word) => `<span class="phrase-focus-token">${word}</span>`).join('')}
+            </div>
+        `
+      : '';
+    const metaHtml =
+      usageBadge || focusWordsHtml
+        ? `<div class="phrase-meta">${usageBadge}${focusWordsHtml}</div>`
+        : '';
+
     html += `
             <div class="phrase-item">
                 <div class="phrase-header">
@@ -1063,8 +1119,9 @@ function generatePhrasePractice(showTranslation, ageGroup) {
                         <div class="phrase-english">${phrase.english}</div>
                         ${showTranslation ? `<div class="phrase-japanese">${phrase.japanese}</div>` : ''}
                     </div>
-                    ${showSituation ? `<div class="phrase-situation">【${phrase.situation}】</div>` : ''}
+                    ${showSituation && phrase.situation ? `<div class="phrase-situation">【${phrase.situation}】</div>` : ''}
                 </div>
+                ${metaHtml}
                 <div class="phrase-lines">
                     ${generateBaselineGroup()}
                     <div class="line-separator-small"></div>
@@ -1077,7 +1134,136 @@ function generatePhrasePractice(showTranslation, ageGroup) {
   }
 
   html += '</div>';
+  html += '</div>';
   return html;
+}
+
+function selectDiversePhrases(phrases, desiredCount) {
+  if (!Array.isArray(phrases) || phrases.length === 0) {
+    return [];
+  }
+
+  if (phrases.length <= desiredCount) {
+    return shuffleArray(phrases).slice(0, desiredCount);
+  }
+
+  const orderedCandidates = interleavePhrasesByUsage(phrases);
+  const selected = [];
+  const patternCounts = new Map();
+  const focusCoverage = new Set();
+
+  const selectionPasses = [
+    (phrase) => hasNewFocusWord(phrase, focusCoverage),
+    (phrase) => (phrase.focusWords || []).length > 0,
+    () => true,
+  ];
+
+  for (const predicate of selectionPasses) {
+    for (const phrase of orderedCandidates) {
+      if (selected.length >= desiredCount) {
+        break;
+      }
+      if (selected.includes(phrase)) {
+        continue;
+      }
+      if (!predicate(phrase)) {
+        continue;
+      }
+
+      const patternKey = (phrase.pattern || 'statement').toLowerCase();
+      const patternLimit = PHRASE_PATTERN_LIMITS[patternKey] ?? PHRASE_PATTERN_LIMITS.other;
+      if ((patternCounts.get(patternKey) || 0) >= patternLimit) {
+        continue;
+      }
+
+      selected.push(phrase);
+      patternCounts.set(patternKey, (patternCounts.get(patternKey) || 0) + 1);
+      (phrase.focusWords || []).forEach((word) => focusCoverage.add(normaliseFocusWord(word)));
+    }
+
+    if (selected.length >= desiredCount) {
+      break;
+    }
+  }
+
+  if (selected.length < desiredCount) {
+    for (const phrase of orderedCandidates) {
+      if (selected.length >= desiredCount) {
+        break;
+      }
+      if (selected.includes(phrase)) {
+        continue;
+      }
+      selected.push(phrase);
+    }
+  }
+
+  return selected.slice(0, desiredCount);
+}
+
+function interleavePhrasesByUsage(phrases) {
+  const usageBuckets = new Map();
+
+  for (const phrase of phrases) {
+    const usage = normaliseUsage(phrase);
+    if (!usageBuckets.has(usage)) {
+      usageBuckets.set(usage, []);
+    }
+    usageBuckets.get(usage).push(phrase);
+  }
+
+  const usageOrder = Array.from(
+    new Set([
+      ...PHRASE_USAGE_PRIORITY,
+      ...Array.from(usageBuckets.keys()).filter((usage) => !PHRASE_USAGE_PRIORITY.includes(usage)),
+    ])
+  );
+
+  for (const usage of usageBuckets.keys()) {
+    usageBuckets.set(usage, shuffleArray(usageBuckets.get(usage)));
+  }
+
+  const interleaved = [];
+  let hasMore = true;
+  while (hasMore) {
+    hasMore = false;
+    for (const usage of usageOrder) {
+      const bucket = usageBuckets.get(usage);
+      if (bucket && bucket.length > 0) {
+        interleaved.push(bucket.shift());
+        hasMore = true;
+      }
+    }
+  }
+
+  return interleaved;
+}
+
+function hasNewFocusWord(phrase, focusCoverage) {
+  if (!phrase.focusWords || phrase.focusWords.length === 0) {
+    return false;
+  }
+
+  return phrase.focusWords.some((word) => !focusCoverage.has(normaliseFocusWord(word)));
+}
+
+function normaliseFocusWord(word) {
+  return String(word || '')
+    .trim()
+    .toLowerCase();
+}
+
+function normaliseUsage(phrase) {
+  return String((phrase.usageFrequency || 'common').toLowerCase());
+}
+
+function shuffleArray(array) {
+  const clone = Array.isArray(array) ? [...array] : [];
+  for (let i = clone.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [clone[i], clone[j]] = [clone[j], clone[i]];
+  }
+  return clone;
 }
 
 // Phase 2: カスタム例文機能
