@@ -339,14 +339,12 @@ describe('NoteGeneratorService', () => {
       expect(result.html).not.toContain('&amp;lt;');
     });
 
-    it('should include page numbers for multi-page documents', async () => {
+    it('should not render page numbers even for multi-page documents', async () => {
       const state = createMockUIState({ pageCount: 3 });
 
       const result = await service.generateNote(state);
 
-      expect(result.html).toContain('page-number');
-      expect(result.html).toContain('1');
-      expect(result.html).toContain('3');
+      expect(result.html).not.toContain('page-number');
     });
   });
 
