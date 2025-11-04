@@ -128,11 +128,25 @@ test('単語データの構造', wordStructureRegex.test(allContent), '単語デ
 // 5. フレーズデータの構造チェック
 console.log('\n💬 フレーズデータ構造のチェック');
 const phraseStructureRegex =
-  /{\s*english:\s*["'][^"']+["'],\s*japanese:\s*["'][^"']+["'],\s*situation:\s*["'][^"']+["']\s*}/;
+  /english:\s*["'][^"']+["'][\s\S]*?japanese:\s*["'][^"']+["'][\s\S]*?situation:\s*["'][^"']+["']/;
 test(
   'フレーズデータの構造',
   phraseStructureRegex.test(allContent),
   'フレーズデータの構造が正しくありません'
+);
+
+const phraseMetadataRegex = /\busageFrequency\b/;
+test(
+  'フレーズデータに使用頻度メタデータが含まれる',
+  phraseMetadataRegex.test(phraseDataContent),
+  'usageFrequency メタデータが追加されていません'
+);
+
+const phraseFocusMetadataRegex = /\bfocusWords\b/;
+test(
+  'フレーズデータに覚えたい単語メタデータが含まれる',
+  phraseFocusMetadataRegex.test(phraseDataContent),
+  'focusWords メタデータが追加されていません'
 );
 
 // 6. 例文データの構造チェック

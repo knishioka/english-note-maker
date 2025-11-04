@@ -3,6 +3,226 @@
  * カテゴリー別・年齢別のフレーズリスト
  */
 
+const CATEGORY_USAGE_HINT = {
+  greetings: 'core',
+  self_introduction: 'core',
+  school: 'common',
+  shopping: 'situational',
+  travel: 'situational',
+  feelings: 'common',
+  daily_life: 'core',
+  classroom_english: 'core',
+  friend_making: 'common',
+  cultural_exchange: 'common',
+  emergency_situations: 'critical',
+  numbers_math: 'common',
+};
+
+const KEY_VOCABULARY_PHRASES = [
+  { key: 'thank you', display: 'thank you' },
+  { key: "you're welcome", display: "you're welcome" },
+  { key: 'excuse me', display: 'excuse me' },
+  { key: 'see you later', display: 'see you later' },
+  { key: 'see you soon', display: 'see you soon' },
+  { key: 'see you tomorrow', display: 'see you tomorrow' },
+  { key: 'good luck', display: 'good luck' },
+  { key: 'have a good', display: 'have a good' },
+  { key: 'take care', display: 'take care' },
+  { key: 'nice to meet you', display: 'nice to meet you' },
+];
+
+const KEY_VOCABULARY_WORDS = new Map([
+  ['please', 'please'],
+  ['hello', 'hello'],
+  ['morning', 'morning'],
+  ['afternoon', 'afternoon'],
+  ['evening', 'evening'],
+  ['congratulations', 'congratulations'],
+  ['sorry', 'sorry'],
+  ['introduce', 'introduce'],
+  ['favorite', 'favorite'],
+  ['hobby', 'hobby'],
+  ['passport', 'passport'],
+  ['ticket', 'ticket'],
+  ['station', 'station'],
+  ['airport', 'airport'],
+  ['museum', 'museum'],
+  ['library', 'library'],
+  ['borrow', 'borrow'],
+  ['homework', 'homework'],
+  ['project', 'project'],
+  ['practice', 'practice'],
+  ['concert', 'concert'],
+  ['because', 'because'],
+  ['should', 'should'],
+  ['nervous', 'nervous'],
+  ['excited', 'excited'],
+  ['worried', 'worried'],
+  ['hungry', 'hungry'],
+  ['thirsty', 'thirsty'],
+  ['emergency', 'emergency'],
+  ['ambulance', 'ambulance'],
+  ['medicine', 'medicine'],
+  ['appointment', 'appointment'],
+  ['temperature', 'temperature'],
+  ['dangerous', 'dangerous'],
+  ['earthquake', 'earthquake'],
+  ['help', 'help'],
+  ['map', 'map'],
+  ['change', 'change'],
+  ['cash', 'cash'],
+  ['credit', 'credit card'],
+  ['receipt', 'receipt'],
+  ['reservation', 'reservation'],
+  ['luggage', 'luggage'],
+  ['suitcase', 'suitcase'],
+  ['culture', 'culture'],
+  ['history', 'history'],
+  ['festival', 'festival'],
+  ['volunteer', 'volunteer'],
+  ['recycle', 'recycle'],
+  ['environment', 'environment'],
+  ['teamwork', 'teamwork'],
+  ['score', 'score'],
+  ['competition', 'competition'],
+  ['accident', 'accident'],
+  ['fire', 'fire'],
+  ['allergic', 'allergic'],
+  ['nurse', 'nurse'],
+  ['doctor', 'doctor'],
+  ['train', 'train'],
+  ['bus', 'bus'],
+  ['subway', 'subway'],
+  ['hotel', 'hotel'],
+  ['guide', 'guide'],
+]);
+
+function inferUsageFrequency(category, english) {
+  const base = CATEGORY_USAGE_HINT[category] || 'common';
+  const lower = english.toLowerCase();
+
+  if (
+    lower.includes('emergency') ||
+    lower.includes('help') ||
+    category === 'emergency_situations'
+  ) {
+    return 'critical';
+  }
+  if (lower.includes('please') || lower.includes('thank')) {
+    return 'core';
+  }
+  if (lower.includes('homework') || lower.includes('practice') || lower.includes('project')) {
+    return base === 'core' ? 'core' : 'common';
+  }
+  return base;
+}
+
+function extractFocusWords(english) {
+  const focusWords = [];
+  const lower = english.toLowerCase();
+
+  for (const phrase of KEY_VOCABULARY_PHRASES) {
+    if (lower.includes(phrase.key) && !focusWords.includes(phrase.display)) {
+      focusWords.push(phrase.display);
+    }
+  }
+
+  const tokens = english.match(/[A-Za-z']+/g) || [];
+  for (const token of tokens) {
+    const normalized = token.toLowerCase();
+    if (KEY_VOCABULARY_WORDS.has(normalized)) {
+      const display = KEY_VOCABULARY_WORDS.get(normalized) || token;
+      if (!focusWords.includes(display)) {
+        focusWords.push(display);
+      }
+    }
+  }
+
+  return focusWords;
+}
+
+function inferPattern(english) {
+  const trimmed = english.trim();
+  const lower = trimmed.toLowerCase();
+
+  if (
+    /[?？]$/.test(trimmed) ||
+    /^(can|could|may|do|does|did|will|would|shall|should|have|has|are|is|am|were|was|where|what|why|how|when|who)\b/.test(
+      lower
+    )
+  ) {
+    return 'question';
+  }
+  if (/^(let's|let us)\b/.test(lower)) {
+    return 'invitation';
+  }
+  if (/^(please|could you|can you|would you|don't forget|remember to|may i)\b/.test(lower)) {
+    return 'request';
+  }
+  if (/^(my name is|i am|i'm|we are|we're)\b/.test(lower)) {
+    return 'introduction';
+  }
+  if (
+    /^(yes|no|sure|of course|that's|that is|it's|it is|i can|i will|i'd love|i would|sounds good)/.test(
+      lower
+    )
+  ) {
+    return 'response';
+  }
+  if (/!$/.test(trimmed)) {
+    return 'exclamation';
+  }
+  return 'statement';
+}
+
+function inferTags(category, english, pattern) {
+  const tags = new Set([category]);
+  const lower = english.toLowerCase();
+
+  if (pattern) {
+    tags.add(pattern);
+  }
+  if (lower.includes('please') || lower.includes('thank')) {
+    tags.add('polite');
+  }
+  if (lower.includes('help') || category === 'emergency_situations') {
+    tags.add('help');
+  }
+  if (lower.includes('feel') || category === 'feelings') {
+    tags.add('emotion');
+  }
+  if (lower.includes('favorite') || lower.includes('hobby')) {
+    tags.add('preference');
+  }
+  if (lower.includes('introduce') || category === 'self_introduction') {
+    tags.add('introduction');
+  }
+  if (lower.includes('because')) {
+    tags.add('reasoning');
+  }
+  if (lower.includes('homework') || lower.includes('project') || lower.includes('practice')) {
+    tags.add('study');
+  }
+
+  return Array.from(tags);
+}
+
+function enrichPhrase(phrase, context) {
+  const pattern = phrase.pattern || inferPattern(phrase.english);
+  const usageFrequency =
+    phrase.usageFrequency || inferUsageFrequency(context.category, phrase.english);
+  const focusWords = phrase.focusWords || extractFocusWords(phrase.english);
+  const tags = phrase.tags || inferTags(context.category, phrase.english, pattern);
+
+  return {
+    ...phrase,
+    usageFrequency,
+    focusWords,
+    pattern,
+    tags,
+  };
+}
+
 export const PHRASE_DATA = {
   greetings: {
     '4-6': [
@@ -1999,3 +2219,9 @@ export const PHRASE_DATA = {
     ],
   },
 };
+
+Object.entries(PHRASE_DATA).forEach(([category, ageMap]) => {
+  Object.entries(ageMap).forEach(([ageGroup, phrases]) => {
+    ageMap[ageGroup] = phrases.map((phrase) => enrichPhrase(phrase, { category, ageGroup }));
+  });
+});
