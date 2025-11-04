@@ -736,6 +736,7 @@ body::before {
 
   .note-preview {
     padding: 0 !important;
+    margin: 0 !important;
     min-height: auto !important;
     border: none !important;
     background: none !important;
@@ -751,6 +752,11 @@ body::before {
     padding: 10mm !important; /* 統一設定システムに準拠 */
     box-sizing: border-box !important; /* パディングを含めたサイズ計算 */
     box-shadow: none !important;
+    page-break-after: always;
+  }
+
+  .note-page:last-child {
+    page-break-after: auto;
   }
 
   /* ベースライン - 印刷時の線種維持 */

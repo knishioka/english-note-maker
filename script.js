@@ -293,12 +293,14 @@ function updateOptionsVisibility() {
 
 // プレビュー更新
 function updatePreview() {
-  const pageCount = parseInt(document.getElementById('pageCount').value) || 1;
+  const config = getPreviewConfig();
   const notePreview = document.getElementById('notePreview');
+
+  const pageContents = buildPageContents(config);
 
   let html = '';
 
-  for (let page = 0; page < pageCount; page++) {
+  for (let page = 0; page < config.pageCount; page++) {
     if (page > 0) {
       // プレビュー用のページ区切り（画面表示用）
       html += `
@@ -308,24 +310,290 @@ function updatePreview() {
                     <div class="page-separator-line"></div>
                 </div>
             `;
-      // 印刷用のページ区切り
-      html += '<div style="page-break-before: always;"></div>';
     }
-    html += generateNotePage(page + 1, pageCount);
+    html += generateNotePage(page + 1, config.pageCount, pageContents[page], config);
   }
 
   notePreview.innerHTML = html;
 }
 
+function getPreviewConfig() {
+  const toNumber = (value, fallback) => {
+    const parsed = parseInt(value, 10);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const pageCountInput = document.getElementById('pageCount');
+  const rawPageCount = pageCountInput ? pageCountInput.value : '1';
+
+  const config = {
+    pageCount: clamp(toNumber(rawPageCount, 1), 1, 20),
+    practiceMode: document.getElementById('practiceMode')?.value || 'normal',
+    lineHeight: toNumber(document.getElementById('lineHeight')?.value, 10),
+    lineColor: document.getElementById('lineColor')?.value || 'gray',
+    showHeader: Boolean(document.getElementById('showHeader')?.checked),
+    showExamples: Boolean(document.getElementById('showExamples')?.checked),
+    showTranslation: Boolean(document.getElementById('showTranslation')?.checked),
+    ageGroup: document.getElementById('ageGroup')?.value || '7-9',
+    exampleCategory: document.getElementById('exampleCategory')?.value || 'all',
+    wordCategory: document.getElementById('wordCategory')?.value || 'animals',
+    alphabetType: document.getElementById('alphabetType')?.value || 'uppercase',
+    showAlphabetExample: Boolean(document.getElementById('showAlphabetExample')?.checked ?? true),
+    phraseCategory: document.getElementById('phraseCategory')?.value || 'greetings',
+    showSituation: Boolean(document.getElementById('showSituation')?.checked),
+  };
+
+  return config;
+}
+
+function buildPageContents(config) {
+  const pages = Array.from({ length: config.pageCount }, () => ({
+    examples: [],
+    words: [],
+    phrases: [],
+  }));
+
+  if (config.practiceMode === 'sentence' || config.practiceMode === 'normal') {
+    const examplesPerPage = calculateExamplesPerPage(config);
+
+    if (examplesPerPage > 0) {
+      const pagedExamples = buildPagedExamples(examplesPerPage, config);
+      pagedExamples.forEach((examples, index) => {
+        if (pages[index]) {
+          pages[index].examples = examples;
+        }
+      });
+      setCurrentExamples(pagedExamples[0] || []);
+    } else {
+      setCurrentExamples([]);
+    }
+  } else {
+    setCurrentExamples([]);
+  }
+
+  if (config.practiceMode === 'word') {
+    const wordsPerPage = calculateWordsPerPage(config);
+    const pagedWords = buildPagedWords(wordsPerPage, config);
+    pagedWords.forEach((words, index) => {
+      if (pages[index]) {
+        pages[index].words = words;
+      }
+    });
+  }
+
+  if (config.practiceMode === 'phrase') {
+    const phrasesPerPage = calculatePhrasesPerPage(config);
+    const phrasePages = buildPagedPhrases(phrasesPerPage, config);
+    phrasePages.forEach((phrases, index) => {
+      if (pages[index]) {
+        pages[index].phrases = phrases;
+      }
+    });
+  }
+
+  return pages;
+}
+
+function calculateExamplesPerPage(config) {
+  const lineHeight = config.lineHeight;
+
+  if (config.practiceMode === 'sentence') {
+    const baseMaxExamples = config.showTranslation ? 4 : 5;
+    let maxExamples = baseMaxExamples;
+    if (lineHeight === 12) {
+      maxExamples = Math.floor(baseMaxExamples * 0.8);
+    } else if (lineHeight === 8) {
+      maxExamples = Math.floor(baseMaxExamples * 1.2);
+    }
+    return Math.max(0, maxExamples);
+  }
+
+  if (config.practiceMode === 'normal') {
+    if (!config.showExamples) {
+      return 0;
+    }
+    const baseMaxLines = 12;
+    let maxLines = baseMaxLines;
+    if (lineHeight === 12) {
+      maxLines = Math.floor(baseMaxLines * 0.8);
+    } else if (lineHeight === 8) {
+      maxLines = Math.floor(baseMaxLines * 1.2);
+    }
+    return Math.max(0, Math.floor(maxLines / 4));
+  }
+
+  return 0;
+}
+
+function buildPagedExamples(examplesPerPage, config) {
+  const pages = Array.from({ length: config.pageCount }, () => []);
+
+  if (examplesPerPage <= 0) {
+    return pages;
+  }
+
+  const totalNeeded = examplesPerPage * config.pageCount;
+  const pool = getRandomExamples(totalNeeded, config.ageGroup, config.exampleCategory, {
+    allowReuse: true,
+  });
+
+  for (let i = 0; i < config.pageCount; i++) {
+    const start = i * examplesPerPage;
+    pages[i] = pool.slice(start, start + examplesPerPage);
+  }
+
+  return pages;
+}
+
+function calculateWordsPerPage(config) {
+  const lineHeight = config.lineHeight;
+  if (lineHeight === 12) {
+    return 3;
+  }
+  if (lineHeight === 8) {
+    return 5;
+  }
+  return 4;
+}
+
+function buildPagedWords(wordsPerPage, config) {
+  const pages = Array.from({ length: config.pageCount }, () => []);
+
+  if (wordsPerPage <= 0) {
+    return pages;
+  }
+
+  const ageGroup = config.ageGroup;
+  const category = config.wordCategory || 'animals';
+  const availableWords =
+    WORD_LISTS[category] && WORD_LISTS[category][ageGroup]
+      ? WORD_LISTS[category][ageGroup]
+      : WORD_LISTS['animals'][ageGroup] || WORD_LISTS['animals']['7-9'] || [];
+
+  if (!Array.isArray(availableWords) || availableWords.length === 0) {
+    return pages;
+  }
+
+  const totalNeeded = wordsPerPage * config.pageCount;
+  const pool = [];
+  let working = shuffleArray(availableWords);
+
+  while (pool.length < totalNeeded) {
+    if (working.length === 0) {
+      working = shuffleArray(availableWords);
+      if (working.length === 0) {
+        break;
+      }
+    }
+    pool.push(working.shift());
+  }
+
+  for (let i = 0; i < config.pageCount; i++) {
+    const start = i * wordsPerPage;
+    pages[i] = pool.slice(start, start + wordsPerPage);
+  }
+
+  return pages;
+}
+
+function calculatePhrasesPerPage(config) {
+  let limit = DEFAULT_PHRASE_COUNT;
+  if (config.showTranslation && config.showSituation) {
+    limit = Math.min(limit, 8);
+  } else if (config.showTranslation || config.showSituation) {
+    limit = Math.min(limit, 10);
+  }
+  return limit;
+}
+
+function buildPagedPhrases(phrasesPerPage, config) {
+  const pages = Array.from({ length: config.pageCount }, () => []);
+
+  if (phrasesPerPage <= 0) {
+    return pages;
+  }
+
+  const safePhrases = resolvePhraseSource(config);
+
+  if (!safePhrases.length) {
+    return pages;
+  }
+
+  let available = shuffleArray(safePhrases);
+
+  for (let pageIndex = 0; pageIndex < config.pageCount; pageIndex++) {
+    if (available.length < phrasesPerPage) {
+      available = available.concat(shuffleArray(safePhrases));
+    }
+
+    const selection = selectDiversePhrases(available, Math.min(phrasesPerPage, available.length));
+    pages[pageIndex] = selection.slice(0, phrasesPerPage);
+
+    selection.forEach((phrase) => {
+      const index = available.indexOf(phrase);
+      if (index !== -1) {
+        available.splice(index, 1);
+      }
+    });
+  }
+
+  return pages;
+}
+
+function resolvePhraseSource(config) {
+  const phraseCategory = config.phraseCategory || 'greetings';
+  const ageGroup = config.ageGroup;
+  let allPhrases;
+
+  if (PHRASE_DATA[phraseCategory]) {
+    if (PHRASE_DATA[phraseCategory][ageGroup]) {
+      allPhrases = PHRASE_DATA[phraseCategory][ageGroup];
+    } else {
+      const availableAges = Object.keys(PHRASE_DATA[phraseCategory]);
+      const fallbackAge = availableAges.includes('7-9') ? '7-9' : availableAges[0];
+      allPhrases = PHRASE_DATA[phraseCategory][fallbackAge] || [];
+      if (window.Debug) {
+        window.Debug.warn(
+          'PHRASE_PRACTICE',
+          `年齢グループ${ageGroup}のデータが見つからないため、代替を使用`,
+          {
+            requestedAge: ageGroup,
+            usingAge: fallbackAge,
+          }
+        );
+      }
+    }
+  } else {
+    allPhrases = PHRASE_DATA.greetings?.[ageGroup] || PHRASE_DATA.greetings?.['7-9'] || [];
+    if (window.Debug) {
+      window.Debug.error(
+        'PHRASE_PRACTICE',
+        `カテゴリー${phraseCategory}が見つからないため、greetingsを使用`
+      );
+    }
+  }
+
+  const safePhrases = Array.isArray(allPhrases) ? allPhrases : [];
+
+  if (!safePhrases.length && window.Debug) {
+    window.Debug.warn('PHRASE_PRACTICE', '選択可能なフレーズが見つかりませんでした', {
+      category: phraseCategory,
+      ageGroup,
+    });
+  }
+
+  return safePhrases;
+}
+
 // ノートページ生成
-function generateNotePage(pageNumber, totalPages) {
-  const practiceMode = document.getElementById('practiceMode').value;
-  const lineHeight = parseInt(document.getElementById('lineHeight').value);
-  const lineColor = document.getElementById('lineColor').value;
-  const showHeader = document.getElementById('showHeader').checked;
-  const showExamples = document.getElementById('showExamples').checked;
-  const showTranslation = document.getElementById('showTranslation').checked;
-  const ageGroup = document.getElementById('ageGroup').value;
+function generateNotePage(pageNumber, totalPages, pageData, config) {
+  const practiceMode = config.practiceMode;
+  const lineHeight = config.lineHeight;
+  const lineColor = config.lineColor;
+  const showHeader = config.showHeader;
+  const showTranslation = config.showTranslation;
 
   // 行高さに応じたスペーシングを計算
   const lineSpacing = Math.max(1, Math.floor(lineHeight * 0.2)); // 行高の20%
@@ -365,15 +633,15 @@ function generateNotePage(pageNumber, totalPages) {
 
   // コンテンツ
   if (practiceMode === 'sentence') {
-    html += generateSentencePractice(showExamples, showTranslation, ageGroup);
+    html += generateSentencePractice(pageData.examples, showTranslation);
   } else if (practiceMode === 'word') {
-    html += generateWordPractice(ageGroup);
+    html += generateWordPractice(pageData.words, config);
   } else if (practiceMode === 'alphabet') {
-    html += generateAlphabetPractice(pageNumber);
+    html += generateAlphabetPractice(pageNumber, config);
   } else if (practiceMode === 'phrase') {
-    html += generatePhrasePractice(showTranslation, ageGroup);
+    html += generatePhrasePractice(pageData.phrases, config);
   } else {
-    html += generateNormalPractice(showExamples, showTranslation, ageGroup);
+    html += generateNormalPractice(pageData.examples, showTranslation, config);
   }
 
   html += '</div>';
@@ -382,10 +650,11 @@ function generateNotePage(pageNumber, totalPages) {
 }
 
 // 通常練習モード生成
-function generateNormalPractice(showExamples, showTranslation, ageGroup) {
+function generateNormalPractice(examplesForPage, showTranslation, config) {
   let html = '';
   // 行高さに応じて最大行数を調整
-  const lineHeight = parseInt(document.getElementById('lineHeight').value);
+  const lineHeight = config.lineHeight;
+  const showExamples = config.showExamples;
   const baseMaxLines = showExamples ? 12 : 14;
   const maxLines =
     lineHeight === 12
@@ -394,17 +663,17 @@ function generateNormalPractice(showExamples, showTranslation, ageGroup) {
         ? Math.floor(baseMaxLines * 1.2)
         : baseMaxLines;
 
-  if (showExamples) {
-    const neededExamples = Math.floor(maxLines / 4);
-    ensureExamples(neededExamples, ageGroup);
-  }
+  const examples =
+    Array.isArray(examplesForPage) && examplesForPage.length > 0
+      ? examplesForPage
+      : currentExamples;
 
   for (let i = 0; i < maxLines; i++) {
     const exampleIndex = Math.floor(i / 4);
-    const shouldShowExample = showExamples && currentExamples[exampleIndex] && i % 4 === 0;
+    const shouldShowExample = showExamples && examples[exampleIndex] && i % 4 === 0;
 
     if (shouldShowExample) {
-      html += generateExampleSentence(currentExamples[exampleIndex], showTranslation);
+      html += generateExampleSentence(examples[exampleIndex], showTranslation);
     }
 
     html += generateBaselineGroup();
@@ -418,24 +687,17 @@ function generateNormalPractice(showExamples, showTranslation, ageGroup) {
 }
 
 // 文章練習モード生成
-function generateSentencePractice(showExamples, showTranslation, ageGroup) {
+function generateSentencePractice(examplesForPage, showTranslation) {
   let html = '';
-  // 行高さに応じて例文数を調整
-  const lineHeight = parseInt(document.getElementById('lineHeight').value);
-  const baseMaxExamples = showTranslation ? 4 : 5;
-  const maxExamples =
-    lineHeight === 12
-      ? Math.floor(baseMaxExamples * 0.8)
-      : lineHeight === 8
-        ? Math.floor(baseMaxExamples * 1.2)
-        : baseMaxExamples;
+  const examples =
+    Array.isArray(examplesForPage) && examplesForPage.length > 0
+      ? examplesForPage
+      : currentExamples;
 
-  ensureExamples(maxExamples, ageGroup);
-
-  for (let i = 0; i < currentExamples.length; i++) {
+  for (let i = 0; i < examples.length; i++) {
     html += `
             <div class="sentence-practice-group">
-                ${generateExampleSentence(currentExamples[i], showTranslation)}
+                ${generateExampleSentence(examples[i], showTranslation)}
                 <div class="practice-lines">
                     ${generateBaselineGroup()}
                     <div class="line-separator"></div>
@@ -449,12 +711,12 @@ function generateSentencePractice(showExamples, showTranslation, ageGroup) {
 }
 
 // Phase 2: 単語練習モード生成
-function generateWordPractice(ageGroup) {
+function generateWordPractice(wordsForPage, config) {
   let html = '<div class="word-practice">';
 
-  // 単語カテゴリーを選択
-  const category = document.getElementById('wordCategory').value || 'animals';
-  const words =
+  const ageGroup = config.ageGroup;
+  const category = config.wordCategory || 'animals';
+  const availableWords =
     WORD_LISTS[category] && WORD_LISTS[category][ageGroup]
       ? WORD_LISTS[category][ageGroup]
       : WORD_LISTS['animals'][ageGroup] || WORD_LISTS['animals']['7-9'];
@@ -477,14 +739,21 @@ function generateWordPractice(ageGroup) {
 
   html += `<h3 style="text-align: center; margin-bottom: 10mm;">Word Practice - ${categoryNames[category] || category}</h3>`;
 
-  // 行高さに応じて単語数を調整
-  const lineHeight = parseInt(document.getElementById('lineHeight').value);
-  const maxWords = lineHeight === 12 ? 3 : lineHeight === 8 ? 5 : 4;
-  const displayWords = words.slice(0, maxWords);
+  const displayWords = Array.isArray(wordsForPage) && wordsForPage.length > 0 ? wordsForPage : [];
+
+  if (!displayWords.length && availableWords.length === 0) {
+    html +=
+      '<p style="text-align: center; color: #666; margin-top: 12mm;">表示できる単語がありません。</p>';
+    html += '</div>';
+    return html;
+  }
+
+  const lineHeight = config.lineHeight;
+  const marginBottom = lineHeight === 12 ? '18mm' : lineHeight === 8 ? '10mm' : '12mm';
 
   for (const word of displayWords) {
     html += `
-            <div class="word-practice-item" style="margin-bottom: ${lineHeight === 12 ? '18mm' : lineHeight === 8 ? '10mm' : '12mm'};">
+            <div class="word-practice-item" style="margin-bottom: ${marginBottom};">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 2mm;">
                     <span style="font-size: 16pt; font-weight: bold;">${word.english}</span>
                     <span style="font-size: 12pt; color: #666;">${word.syllables}</span>
@@ -495,6 +764,11 @@ function generateWordPractice(ageGroup) {
                 ${generateBaselineGroup()}
             </div>
         `;
+  }
+
+  if (!displayWords.length && availableWords.length > 0) {
+    html +=
+      '<p style="text-align: center; color: #666;">このページに割り当てる単語が不足しています。</p>';
   }
 
   html += '</div>';
@@ -527,31 +801,46 @@ function generateExampleSentence(sentence, showTranslation) {
     `;
 }
 
-// 例文を確保
-function ensureExamples(count, ageGroup) {
-  if (currentExamples.length !== count) {
-    setCurrentExamples(getRandomExamples(count, ageGroup));
-  }
-}
-
 // ランダムな例文を取得
-function getRandomExamples(count, ageGroup) {
-  const category = document.getElementById('exampleCategory').value || 'all';
-  let sentences = EXAMPLE_SENTENCES_BY_AGE[ageGroup] || EXAMPLE_SENTENCES_BY_AGE['7-9'];
+function getRandomExamples(count, ageGroup, category = 'all', options = {}) {
+  const categoryKey = category || 'all';
+  let sentences = EXAMPLE_SENTENCES_BY_AGE[ageGroup] || EXAMPLE_SENTENCES_BY_AGE['7-9'] || [];
 
-  // カテゴリーでフィルタリング
-  if (category !== 'all') {
-    sentences = sentences.filter((s) => s.category === category);
+  if (categoryKey !== 'all') {
+    sentences = sentences.filter((s) => s.category === categoryKey);
   }
 
   const allSentences = [
     ...sentences,
     ...customExamples.filter(
-      (e) => e.ageGroup === ageGroup && (category === 'all' || e.category === category)
+      (e) => e.ageGroup === ageGroup && (categoryKey === 'all' || e.category === categoryKey)
     ),
   ];
-  const shuffled = [...allSentences].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
+
+  if (!allSentences.length || count <= 0) {
+    return [];
+  }
+
+  const shuffled = shuffleArray(allSentences);
+
+  if (!options.allowReuse || shuffled.length >= count) {
+    return shuffled.slice(0, count);
+  }
+
+  const result = [];
+  let working = [...shuffled];
+
+  while (result.length < count) {
+    if (working.length === 0) {
+      working = shuffleArray(allSentences);
+      if (working.length === 0) {
+        break;
+      }
+    }
+    result.push(working.shift());
+  }
+
+  return result.slice(0, count);
 }
 
 // 現在の例文をシャッフル
@@ -881,9 +1170,9 @@ function handleAddCustomExample() {
 }
 
 // アルファベット練習モード生成
-function generateAlphabetPractice(pageNumber) {
-  const alphabetType = document.getElementById('alphabetType').value;
-  const showExample = document.getElementById('showAlphabetExample').checked;
+function generateAlphabetPractice(pageNumber, config) {
+  const alphabetType = config.alphabetType;
+  const showExample = config.showAlphabetExample;
 
   let letters = [];
   if (alphabetType === 'uppercase' || alphabetType === 'both') {
@@ -966,11 +1255,13 @@ function generateAlphabetPractice(pageNumber) {
 }
 
 // フレーズ練習モード生成
-function generatePhrasePractice(showTranslation, ageGroup) {
+function generatePhrasePractice(phrasesForPage, config) {
   let html = '<div class="phrase-practice">';
-  const phraseCategoryElement = document.getElementById('phraseCategory');
-  const phraseCategory = (phraseCategoryElement && phraseCategoryElement.value) || 'greetings';
-  const showSituation = Boolean(document.getElementById('showSituation')?.checked);
+  const showTranslation = config.showTranslation;
+  const showSituation = config.showSituation;
+  const phraseCategory = config.phraseCategory || 'greetings';
+  const ageGroup = config.ageGroup;
+  const desiredCount = calculatePhrasesPerPage(config);
 
   if (window.Debug) {
     window.Debug.log('PHRASE_PRACTICE', 'フレーズ練習生成開始', {
@@ -978,48 +1269,11 @@ function generatePhrasePractice(showTranslation, ageGroup) {
       ageGroup,
       showTranslation,
       showSituation,
+      phrases: Array.isArray(phrasesForPage) ? phrasesForPage.length : 0,
     });
   }
 
-  let allPhrases;
-  if (PHRASE_DATA[phraseCategory]) {
-    if (PHRASE_DATA[phraseCategory][ageGroup]) {
-      allPhrases = PHRASE_DATA[phraseCategory][ageGroup];
-    } else {
-      const availableAges = Object.keys(PHRASE_DATA[phraseCategory]);
-      const fallbackAge = availableAges.includes('7-9') ? '7-9' : availableAges[0];
-      allPhrases = PHRASE_DATA[phraseCategory][fallbackAge] || [];
-      if (window.Debug) {
-        window.Debug.warn(
-          'PHRASE_PRACTICE',
-          `年齢グループ${ageGroup}のデータが見つからないため、代替を使用`,
-          {
-            requestedAge: ageGroup,
-            usingAge: fallbackAge,
-          }
-        );
-      }
-    }
-  } else {
-    allPhrases = PHRASE_DATA.greetings?.[ageGroup] || PHRASE_DATA.greetings?.['7-9'] || [];
-    if (window.Debug) {
-      window.Debug.error(
-        'PHRASE_PRACTICE',
-        `カテゴリー${phraseCategory}が見つからないため、greetingsを使用`
-      );
-    }
-  }
-
-  const safePhrases = Array.isArray(allPhrases) ? allPhrases : [];
-
-  if (!safePhrases.length) {
-    if (window.Debug) {
-      window.Debug.warn('PHRASE_PRACTICE', '選択可能なフレーズが見つかりませんでした', {
-        category: phraseCategory,
-        ageGroup,
-      });
-    }
-
+  if (!Array.isArray(phrasesForPage) || phrasesForPage.length === 0) {
     return `
         <div class="phrase-practice">
             <p class="phrase-empty">このカテゴリーには現在表示できるフレーズがありません。</p>
@@ -1027,8 +1281,7 @@ function generatePhrasePractice(showTranslation, ageGroup) {
     `;
   }
 
-  const desiredCount = Math.min(DEFAULT_PHRASE_COUNT, safePhrases.length);
-  const phrases = selectDiversePhrases(safePhrases, desiredCount);
+  const phrases = phrasesForPage;
 
   const usageSummary = phrases.reduce((acc, phrase) => {
     const key = (phrase.usageFrequency || 'common').toLowerCase();
