@@ -799,31 +799,6 @@ body::before {
     font-size: 8pt !important;
   }
 
-  /* 印刷時のページ番号スタイル調整 */
-  .page-number {
-    background: none !important;
-    box-shadow: none !important;
-    border: none !important;
-    padding: 2mm 4mm !important;
-    font-size: 10pt !important;
-  }
-
-  .page-number-current {
-    font-size: 12pt !important;
-    color: #000 !important;
-    font-weight: bold !important;
-  }
-
-  .page-number-separator {
-    color: #333 !important;
-    font-size: 10pt !important;
-  }
-
-  .page-number-total {
-    color: #333 !important;
-    font-size: 10pt !important;
-  }
-
   /* 複数ページの影を削除 */
   .note-page:not(:first-child) {
     margin-top: 0 !important;
@@ -1322,36 +1297,6 @@ body::before {
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 1px;
-}
-
-/* ページ番号 */
-.page-number {
-  position: absolute;
-  bottom: 10mm;
-  right: 15mm;
-  padding: 5px 10px;
-  background: #f0f0f0;
-  border-radius: 15px;
-  font-size: 12pt;
-  color: #666;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.page-number-current {
-  font-weight: bold;
-  color: var(--primary-color);
-  font-size: 14pt;
-}
-
-.page-number-separator {
-  color: #999;
-}
-
-.page-number-total {
-  color: #666;
 }
 
 /* 複数ページの場合、各ページに影をつける */

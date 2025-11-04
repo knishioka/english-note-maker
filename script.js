@@ -376,17 +376,6 @@ function generateNotePage(pageNumber, totalPages) {
     html += generateNormalPractice(showExamples, showTranslation, ageGroup);
   }
 
-  // ページ番号（複数ページの場合のみ表示）
-  if (totalPages > 1) {
-    html += `
-            <div class="page-number">
-                <span class="page-number-current">${pageNumber}</span>
-                <span class="page-number-separator">/</span>
-                <span class="page-number-total">${totalPages}</span>
-            </div>
-        `;
-  }
-
   html += '</div>';
 
   return html;

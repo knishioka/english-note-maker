@@ -122,11 +122,6 @@ export class NoteGeneratorService {
           break;
       }
 
-      // Page number for multi-page documents
-      if (state.pageCount > 1) {
-        html += this.generatePageNumber(pageNumber, state.pageCount);
-      }
-
       html += '</div>';
       return html;
     } catch (error) {
@@ -408,19 +403,6 @@ export class NoteGeneratorService {
         <div class="page-separator-line"></div>
       </div>
       <div style="page-break-before: always;"></div>
-    `;
-  }
-
-  /**
-   * Generate page number indicator
-   */
-  private generatePageNumber(current: number, total: number): string {
-    return `
-      <div class="page-number">
-        <span class="page-number-current">${current}</span>
-        <span class="page-number-separator">/</span>
-        <span class="page-number-total">${total}</span>
-      </div>
     `;
   }
 
