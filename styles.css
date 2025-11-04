@@ -684,13 +684,16 @@ body::before {
 }
 
 /* === 印刷用スタイル === */
-@media print {
-  /* ページ設定 */
-  @page {
-    size: A4;
-    margin: 0;
-  }
+/*
+  Chrome など一部ブラウザでは @page を @media print の内側に記述すると size 指定が無視される。
+  PDF 生成時に A4 からはみ出さないよう、トップレベルで宣言する。
+*/
+@page {
+  size: A4;
+  margin: 0;
+}
 
+@media print {
   /* htmlとbodyの余白を明示的に制御 */
   html {
     margin: 0;
