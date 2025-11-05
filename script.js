@@ -12,6 +12,11 @@ let currentExamplesMeta = { key: '', perPageCount: 0, pageCount: 0 };
 let wordSequenceCache = { key: '', perPage: 0, pageCount: 0, sequence: [] };
 let phraseSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 
+const PX_TO_MM = 0.2645833333;
+const A4_HEIGHT_MM = 297;
+const A4_TOLERANCE_MM = 0.5;
+const MAX_AUTO_LAYOUT_ATTEMPTS = 12;
+
 let setCurrentExamplesImpl = (examples) => {
   currentExamples = Array.isArray(examples) ? examples : [];
 };
@@ -332,14 +337,61 @@ function updateOptionsVisibility() {
 
 // プレビュー更新
 function updatePreview() {
-  const pageCount = parseInt(document.getElementById('pageCount').value) || 1;
+  const state = getPreviewState();
   const notePreview = document.getElementById('notePreview');
 
+  if (!notePreview) {
+    if (window.Debug) {
+      window.Debug.error('PREVIEW', 'notePreview 要素が見つかりません');
+    }
+    return;
+  }
+
+  const baseLayout = calculateBaseLayout(state);
+  const initialOverrides = {};
+
+  renderNotePreview(notePreview, state, initialOverrides);
+
+  const adjustmentResult = autoAdjustPreview(notePreview, state, baseLayout, initialOverrides);
+
+  updateAutoLayoutNotice(adjustmentResult, state, baseLayout);
+}
+
+function getPreviewState() {
+  const practiceModeElement = document.getElementById('practiceMode');
+  const lineHeightElement = document.getElementById('lineHeight');
+  const showExamplesElement = document.getElementById('showExamples');
+  const showTranslationElement = document.getElementById('showTranslation');
+  const pageCountInput = document.getElementById('pageCount');
+
+  const practiceMode = practiceModeElement ? practiceModeElement.value : 'normal';
+  const lineHeight = parseInt(lineHeightElement ? lineHeightElement.value : '10', 10);
+  const showExamples = Boolean(showExamplesElement?.checked);
+  const showTranslation = Boolean(showTranslationElement?.checked);
+
+  const maxAttr = pageCountInput?.getAttribute('max');
+  const maxPageCount = Number.isFinite(parseInt(maxAttr || '', 10)) ? parseInt(maxAttr, 10) : 20;
+  const rawPageCount = parseInt(pageCountInput ? pageCountInput.value : '1', 10);
+  const pageCount = clampNumber(Number.isFinite(rawPageCount) ? rawPageCount : 1, 1, maxPageCount);
+
+  if (pageCountInput && Number.isFinite(rawPageCount) && rawPageCount !== pageCount) {
+    pageCountInput.value = String(pageCount);
+  }
+
+  return {
+    practiceMode,
+    lineHeight: Number.isFinite(lineHeight) ? lineHeight : 10,
+    showExamples,
+    showTranslation,
+    pageCount,
+  };
+}
+
+function renderNotePreview(notePreview, state, overrides) {
   let html = '';
 
-  for (let page = 0; page < pageCount; page++) {
+  for (let page = 0; page < state.pageCount; page++) {
     if (page > 0) {
-      // プレビュー用のページ区切り（画面表示用）
       html += `
                 <div class="page-separator">
                     <div class="page-separator-line"></div>
@@ -347,17 +399,282 @@ function updatePreview() {
                     <div class="page-separator-line"></div>
                 </div>
             `;
-      // 印刷用のページ区切り
       html += '<div style="page-break-before: always;"></div>';
     }
-    html += generateNotePage(page + 1, pageCount);
+    html += generateNotePage(page + 1, state.pageCount, overrides);
   }
 
   notePreview.innerHTML = html;
 }
 
+function autoAdjustPreview(notePreview, state, baseLayout, initialOverrides) {
+  const appliedOverrides = cloneOverrides(initialOverrides);
+  let overflowInfo = detectOverflow(notePreview);
+  let attempts = 0;
+  let previousValue = null;
+  let nextValue = null;
+
+  while (overflowInfo.hasOverflow && attempts < MAX_AUTO_LAYOUT_ATTEMPTS) {
+    const adjustment = computeNextOverrides(state, appliedOverrides, baseLayout);
+    if (!adjustment.changed) {
+      return {
+        adjusted: attempts > 0,
+        success: false,
+        attempts,
+        mode: state.practiceMode,
+        baseLayout,
+        appliedOverrides,
+        overflow: overflowInfo,
+        previousValue,
+        nextValue,
+      };
+    }
+
+    previousValue = adjustment.previous;
+    nextValue = adjustment.next;
+    Object.assign(appliedOverrides, adjustment.overrides);
+
+    renderNotePreview(notePreview, state, appliedOverrides);
+    overflowInfo = detectOverflow(notePreview);
+    attempts += 1;
+  }
+
+  const modeLayout = baseLayout[state.practiceMode] || null;
+  const finalValue = modeLayout
+    ? (appliedOverrides[state.practiceMode]?.[modeLayout.property] ?? modeLayout.baseValue)
+    : null;
+
+  return {
+    adjusted: attempts > 0,
+    success: !overflowInfo.hasOverflow,
+    attempts,
+    mode: state.practiceMode,
+    baseLayout,
+    appliedOverrides,
+    overflow: overflowInfo,
+    previousValue,
+    nextValue,
+    finalValue,
+  };
+}
+
+function detectOverflow(notePreview) {
+  const pages = notePreview.querySelectorAll('.note-page');
+  const overflows = [];
+
+  pages.forEach((page, index) => {
+    const rect = page.getBoundingClientRect();
+    const heightMm = rect.height * PX_TO_MM;
+    const overflowMm = heightMm - A4_HEIGHT_MM;
+
+    if (overflowMm > A4_TOLERANCE_MM) {
+      overflows.push({
+        pageIndex: index,
+        displayIndex: index + 1,
+        heightMm: parseFloat(heightMm.toFixed(2)),
+        overflowMm: parseFloat(overflowMm.toFixed(2)),
+      });
+    }
+  });
+
+  return {
+    hasOverflow: overflows.length > 0,
+    overflows,
+    pageCount: pages.length,
+  };
+}
+
+function computeNextOverrides(state, overrides, baseLayout) {
+  const layout = baseLayout[state.practiceMode];
+  if (!layout) {
+    return { changed: false, overrides };
+  }
+
+  const current = overrides[state.practiceMode]?.[layout.property] ?? layout.baseValue;
+
+  if (current <= layout.minValue) {
+    return { changed: false, overrides };
+  }
+
+  const next = current - 1;
+  const updated = cloneOverrides(overrides);
+  if (!updated[state.practiceMode]) {
+    updated[state.practiceMode] = {};
+  }
+  updated[state.practiceMode][layout.property] = next;
+
+  return {
+    changed: true,
+    overrides: updated,
+    previous: current,
+    next,
+  };
+}
+
+function calculateBaseLayout(state) {
+  return {
+    normal: calculateNormalPracticeLayout(state.lineHeight, state.showExamples),
+    sentence: calculateSentencePracticeLayout(state.lineHeight, state.showTranslation),
+    word: calculateWordPracticeLayout(state.lineHeight),
+    phrase: calculatePhrasePracticeLayout(state.lineHeight),
+  };
+}
+
+function calculateNormalPracticeLayout(lineHeight, showExamples) {
+  const baseMaxLines = showExamples ? 12 : 14;
+  let maxLines = baseMaxLines;
+
+  if (lineHeight === 12) {
+    maxLines = Math.floor(baseMaxLines * 0.8);
+  } else if (lineHeight === 8) {
+    maxLines = Math.floor(baseMaxLines * 1.2);
+  }
+
+  maxLines = Math.max(6, maxLines);
+  const minLines = Math.max(4, Math.min(maxLines - 2, Math.floor(maxLines * 0.7)));
+
+  return {
+    property: 'maxLines',
+    label: '行数',
+    baseValue: maxLines,
+    minValue: minLines,
+  };
+}
+
+function calculateSentencePracticeLayout(lineHeight, showTranslation) {
+  const baseMaxExamples = showTranslation ? 4 : 5;
+  let maxExamples = baseMaxExamples;
+
+  if (lineHeight === 12) {
+    maxExamples = Math.floor(baseMaxExamples * 0.8);
+  } else if (lineHeight === 8) {
+    maxExamples = Math.floor(baseMaxExamples * 1.2);
+  }
+
+  maxExamples = Math.max(2, maxExamples);
+  const minExamples = Math.max(1, Math.min(maxExamples - 1, Math.floor(maxExamples * 0.7)));
+
+  return {
+    property: 'maxExamples',
+    label: '例文数',
+    baseValue: maxExamples,
+    minValue: minExamples,
+  };
+}
+
+function calculateWordPracticeLayout(lineHeight) {
+  let maxWords;
+  if (lineHeight === 12) {
+    maxWords = 3;
+  } else if (lineHeight === 8) {
+    maxWords = 5;
+  } else {
+    maxWords = 4;
+  }
+
+  const minWords = Math.max(1, Math.min(maxWords - 1, Math.floor(maxWords * 0.7)));
+
+  return {
+    property: 'maxWords',
+    label: '単語数',
+    baseValue: maxWords,
+    minValue: minWords,
+  };
+}
+
+function calculatePhrasePracticeLayout(lineHeight) {
+  const basePhrases = getPhraseCapacity(lineHeight);
+  const minPhrases = Math.max(1, Math.min(basePhrases - 1, Math.floor(basePhrases * 0.7)));
+
+  return {
+    property: 'phrasesPerPage',
+    label: 'フレーズ数',
+    baseValue: basePhrases,
+    minValue: minPhrases,
+  };
+}
+
+function updateAutoLayoutNotice(result, state, baseLayout) {
+  const notice = document.getElementById('autoLayoutNotice');
+  if (!notice) {
+    return;
+  }
+
+  if (!result || (!result.adjusted && result.success !== false)) {
+    notice.textContent = '';
+    notice.style.display = 'none';
+    notice.dataset.status = 'idle';
+    return;
+  }
+
+  const modeLayout = baseLayout[state.practiceMode];
+  const currentValue =
+    result.finalValue ??
+    (modeLayout ? result.appliedOverrides?.[state.practiceMode]?.[modeLayout.property] : null) ??
+    modeLayout?.baseValue;
+
+  if (result.success === false) {
+    const overflowSummary = result.overflow?.overflows?.[0];
+    const overflowText = overflowSummary
+      ? `（ページ${overflowSummary.displayIndex}が約${overflowSummary.overflowMm}mmはみ出しています）`
+      : '';
+    notice.textContent = `自動調整を試みましたが、A4サイズに収まりませんでした。ページ数や行間、カテゴリ設定を見直してください。${overflowText}`;
+    notice.style.display = 'block';
+    notice.dataset.status = 'error';
+    return;
+  }
+
+  if (modeLayout && result.adjusted) {
+    const fromValue = modeLayout.baseValue;
+    const label = modeLayout.label || '項目数';
+    notice.textContent = `A4に収めるため、1ページあたりの${label}を ${fromValue} → ${currentValue} に自動調整しました。`;
+    notice.style.display = 'block';
+    notice.dataset.status = 'adjusted';
+    return;
+  }
+
+  notice.textContent = '';
+  notice.style.display = 'none';
+  notice.dataset.status = 'idle';
+}
+
+function clampNumber(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function cloneOverrides(overrides) {
+  const clone = {};
+  if (!overrides) {
+    return clone;
+  }
+
+  ['normal', 'sentence', 'word', 'phrase'].forEach((key) => {
+    if (overrides[key]) {
+      clone[key] = { ...overrides[key] };
+    }
+  });
+
+  return clone;
+}
+
+function resolveLayoutValue(layoutInfo, overrideValue) {
+  if (!layoutInfo) {
+    return Number.isFinite(overrideValue) ? overrideValue : undefined;
+  }
+
+  const base = layoutInfo.baseValue;
+  const min = layoutInfo.minValue;
+
+  if (!Number.isFinite(overrideValue)) {
+    return base;
+  }
+
+  const rounded = Math.round(overrideValue);
+  return clampNumber(rounded, min, base);
+}
+
 // ノートページ生成
-function generateNotePage(pageNumber, totalPages) {
+function generateNotePage(pageNumber, totalPages, layoutOverrides = {}) {
   const practiceMode = document.getElementById('practiceMode').value;
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
   const lineColor = document.getElementById('lineColor').value;
@@ -404,15 +721,34 @@ function generateNotePage(pageNumber, totalPages) {
 
   // コンテンツ
   if (practiceMode === 'sentence') {
-    html += generateSentencePractice(pageNumber, totalPages, showTranslation, ageGroup);
+    html += generateSentencePractice(
+      pageNumber,
+      totalPages,
+      showTranslation,
+      ageGroup,
+      layoutOverrides.sentence
+    );
   } else if (practiceMode === 'word') {
-    html += generateWordPractice(pageNumber, totalPages, ageGroup);
+    html += generateWordPractice(pageNumber, totalPages, ageGroup, layoutOverrides.word);
   } else if (practiceMode === 'alphabet') {
     html += generateAlphabetPractice(pageNumber);
   } else if (practiceMode === 'phrase') {
-    html += generatePhrasePractice(pageNumber, totalPages, showTranslation, ageGroup);
+    html += generatePhrasePractice(
+      pageNumber,
+      totalPages,
+      showTranslation,
+      ageGroup,
+      layoutOverrides.phrase
+    );
   } else {
-    html += generateNormalPractice(pageNumber, totalPages, showExamples, showTranslation, ageGroup);
+    html += generateNormalPractice(
+      pageNumber,
+      totalPages,
+      showExamples,
+      showTranslation,
+      ageGroup,
+      layoutOverrides.normal
+    );
   }
 
   html += '</div>';
@@ -421,17 +757,19 @@ function generateNotePage(pageNumber, totalPages) {
 }
 
 // 通常練習モード生成
-function generateNormalPractice(pageNumber, totalPages, showExamples, showTranslation, ageGroup) {
+function generateNormalPractice(
+  pageNumber,
+  totalPages,
+  showExamples,
+  showTranslation,
+  ageGroup,
+  layoutOverride = {}
+) {
   let html = '';
   // 行高さに応じて最大行数を調整
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
-  const baseMaxLines = showExamples ? 12 : 14;
-  const maxLines =
-    lineHeight === 12
-      ? Math.floor(baseMaxLines * 0.8)
-      : lineHeight === 8
-        ? Math.floor(baseMaxLines * 1.2)
-        : baseMaxLines;
+  const layoutInfo = calculateNormalPracticeLayout(lineHeight, showExamples);
+  const maxLines = resolveLayoutValue(layoutInfo, layoutOverride?.maxLines);
 
   const category = document.getElementById('exampleCategory')?.value || 'all';
   const examplesPerPage = showExamples ? Math.max(1, Math.floor(maxLines / 4)) : 0;
@@ -463,17 +801,18 @@ function generateNormalPractice(pageNumber, totalPages, showExamples, showTransl
 }
 
 // 文章練習モード生成
-function generateSentencePractice(pageNumber, totalPages, showTranslation, ageGroup) {
+function generateSentencePractice(
+  pageNumber,
+  totalPages,
+  showTranslation,
+  ageGroup,
+  layoutOverride = {}
+) {
   let html = '';
   // 行高さに応じて例文数を調整
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
-  const baseMaxExamples = showTranslation ? 4 : 5;
-  const maxExamples =
-    lineHeight === 12
-      ? Math.floor(baseMaxExamples * 0.8)
-      : lineHeight === 8
-        ? Math.floor(baseMaxExamples * 1.2)
-        : baseMaxExamples;
+  const layoutInfo = calculateSentencePracticeLayout(lineHeight, showTranslation);
+  const maxExamples = resolveLayoutValue(layoutInfo, layoutOverride?.maxExamples);
 
   const category = document.getElementById('exampleCategory')?.value || 'all';
   ensureExamples(maxExamples, ageGroup, totalPages, category);
@@ -502,7 +841,7 @@ function generateSentencePractice(pageNumber, totalPages, showTranslation, ageGr
 }
 
 // Phase 2: 単語練習モード生成
-function generateWordPractice(pageNumber, totalPages, ageGroup) {
+function generateWordPractice(pageNumber, totalPages, ageGroup, layoutOverride = {}) {
   let html = '<div class="word-practice">';
 
   // 単語カテゴリーを選択
@@ -532,7 +871,8 @@ function generateWordPractice(pageNumber, totalPages, ageGroup) {
 
   // 行高さに応じて単語数を調整
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
-  const maxWords = lineHeight === 12 ? 3 : lineHeight === 8 ? 5 : 4;
+  const layoutInfo = calculateWordPracticeLayout(lineHeight);
+  const maxWords = resolveLayoutValue(layoutInfo, layoutOverride?.maxWords);
   const pageCount = Math.max(1, totalPages || 1);
   const safeWords = Array.isArray(words) ? [...words] : [];
 
@@ -1095,7 +1435,13 @@ function generateAlphabetPractice(pageNumber) {
 }
 
 // フレーズ練習モード生成
-function generatePhrasePractice(pageNumber, totalPages, showTranslation, ageGroup) {
+function generatePhrasePractice(
+  pageNumber,
+  totalPages,
+  showTranslation,
+  ageGroup,
+  layoutOverride = {}
+) {
   let html = '<div class="phrase-practice">';
   const phraseCategoryElement = document.getElementById('phraseCategory');
   const phraseCategory = (phraseCategoryElement && phraseCategoryElement.value) || 'greetings';
@@ -1157,7 +1503,8 @@ function generatePhrasePractice(pageNumber, totalPages, showTranslation, ageGrou
     `;
   }
 
-  const phrasesPerPage = getPhraseCapacity(lineHeight);
+  const layoutInfo = calculatePhrasePracticeLayout(lineHeight);
+  const phrasesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.phrasesPerPage);
   const pageCount = Math.max(1, totalPages || 1);
   const totalDesiredCount = phrasesPerPage * pageCount;
   const phrases = ensurePhraseSequence(
