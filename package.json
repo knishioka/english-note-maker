@@ -64,6 +64,7 @@
     "@vitejs/plugin-legacy": "^7.2.1",
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.35.0",
+    "html-validate": "^10.3.0",
     "http-server": "^14.1.1",
     "husky": "^9.1.7",
     "jsdom": "^27.0.0",
@@ -88,11 +89,15 @@
     "not ie 11"
   ],
   "lint-staged": {
+    "index.html": [
+      "html-validate",
+      "prettier --write"
+    ],
     "*.{js,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{json,css,scss,md,html,yml,yaml}": [
+    "*.{json,css,scss,md,yml,yaml}": [
       "prettier --write"
     ],
     "*": [

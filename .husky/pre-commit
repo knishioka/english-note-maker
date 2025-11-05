@@ -5,6 +5,13 @@ echo "🧪 コミット前のテストを実行しています..."
 # lint-stagedを実行
 npx lint-staged
 
+echo "🔍 HTML検証を実行..."
+npx html-validate index.html
+if [ $? -ne 0 ]; then
+  echo "❌ HTML検証が失敗しました"
+  exit 1
+fi
+
 # テストを実行
 echo "📋 コンテンツテストを実行..."
 npm run test:content
