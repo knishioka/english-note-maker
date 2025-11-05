@@ -531,15 +531,15 @@ body::before {
 .note-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 5mm;
-  padding-bottom: 3mm;
+  margin-bottom: 3mm;
+  padding-bottom: 2mm;
   border-bottom: 2px solid var(--text-color);
 }
 
 .note-header__item {
   display: flex;
   align-items: center;
-  gap: 5mm;
+  gap: 4mm;
 }
 
 .note-header__label {
@@ -984,7 +984,7 @@ body::before {
 
 .a4-preview-page .phrase-grid {
   grid-template-columns: 1fr;
-  gap: 4mm 5mm;
+  gap: 3mm 5mm;
 }
 
 .a4-preview-page .phrase-item {
@@ -1143,20 +1143,20 @@ body::before {
 }
 
 .practice-title--phrase {
-  margin-bottom: 5mm;
+  margin-bottom: 4mm;
 }
 
 .phrase-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 4mm 6mm;
+  gap: 3mm 5mm;
 }
 
 .phrase-item {
   margin-bottom: 0;
   display: flex;
   flex-direction: column;
-  gap: 2mm;
+  gap: 1.5mm;
   page-break-inside: avoid;
 }
 
@@ -1202,7 +1202,7 @@ body::before {
 .phrase-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 2mm 4mm;
+  gap: 1.5mm 3mm;
   align-items: center;
 }
 
@@ -1244,7 +1244,7 @@ body::before {
 .phrase-focus-words {
   display: flex;
   flex-wrap: wrap;
-  gap: 2mm;
+  gap: 1.5mm;
   align-items: center;
   font-size: 8pt;
   color: #475569;
@@ -1259,7 +1259,7 @@ body::before {
 .phrase-focus-token {
   display: inline-flex;
   align-items: center;
-  padding: 1px 6px;
+  padding: 1px 5px;
   border-radius: 999px;
   background: #f1f5f9;
   color: #1f2937;
@@ -1287,7 +1287,7 @@ body::before {
   text-align: center;
   font-size: 16pt;
   font-weight: bold;
-  margin-bottom: 10mm;
+  margin-bottom: 7mm;
   color: var(--text-color);
 }
 

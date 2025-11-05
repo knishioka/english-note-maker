@@ -1624,18 +1624,18 @@ function generatePhrasePractice(
 }
 
 function getPhraseCapacity(lineHeight) {
-  // 保守的な容量計算: A4サイズ(297mm) - 余白(20mm) = 277mm利用可能
-  // フレーズアイテム構成: ヘッダー(10mm) + メタ(3mm) + 練習ライン(2*lineHeight) + 区切り(4mm)
-  // 合計: 17mm + 2*lineHeight
+  // 利用可能な高さは余白(上下10mm)を除いた277mm
   const availableHeight = 277; // mm
   const itemHeight = 17 + 2 * lineHeight;
-  const maxItems = Math.floor(availableHeight / itemHeight);
+  const maxItems = Math.max(1, Math.floor(availableHeight / itemHeight));
 
-  // 安全マージンとして20%削減
-  const safeItems = Math.floor(maxItems * 0.8);
+  // 実測で余裕を残すため 60% の安全率を適用（行高12mmはさらに厳しめ）
+  const safetyFactor = lineHeight >= 12 ? 0.55 : 0.6;
+  const safeItems = Math.max(1, Math.floor(maxItems * safetyFactor));
 
-  // 最小値と最大値でクリップ
-  return Math.max(3, Math.min(safeItems, 10));
+  // 4問を上限としつつ、最低でも3問は確保（auto adjustで2問まで減らせる想定）
+  const cappedItems = Math.min(4, safeItems);
+  return cappedItems >= 3 ? cappedItems : Math.max(2, cappedItems);
 }
 
 function selectDiversePhrases(phrases, desiredCount) {
