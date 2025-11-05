@@ -654,10 +654,46 @@ function shuffleCurrentExamples() {
 
 // 印刷機能
 function printNote() {
-  // 印刷前にレイアウトチェックを実行
-  if (window.LayoutValidator) {
-    runLayoutTest();
+  // 印刷前に品質チェックを実行
+  if (window.LayoutValidator && window.PrintSimulator) {
+    const validator = new window.LayoutValidator();
+    const simulator = new window.PrintSimulator();
+
+    // レイアウト検証
+    const layoutReport = validator.generateReport();
+
+    // 印刷シミュレーション
+    const printQuality = simulator.diagnose();
+
+    // エラーがある場合は警告
+    if (layoutReport.errors.length > 0 || printQuality.grade === 'D') {
+      const errorMessages = layoutReport.errors.map((e) => e.message).join('\n');
+      const warningMessages = layoutReport.warnings.map((w) => w.message).join('\n');
+
+      let message = '⚠️ 印刷品質に問題が検出されました:\n\n';
+      if (errorMessages) {
+        message += '【エラー】\n' + errorMessages + '\n\n';
+      }
+      if (warningMessages) {
+        message += '【警告】\n' + warningMessages + '\n\n';
+      }
+      message += `品質スコア: ${printQuality.score}/100 (${printQuality.grade})\n\n`;
+      message += 'このまま印刷しますか？';
+
+      if (!confirm(message)) {
+        /* eslint-disable-next-line no-console */
+        console.log('印刷がキャンセルされました');
+        return;
+      }
+    }
+
+    // 警告のみの場合は情報表示
+    if (layoutReport.warnings.length > 0 && layoutReport.errors.length === 0) {
+      /* eslint-disable-next-line no-console */
+      console.info('印刷品質に軽微な警告があります:', layoutReport.warnings);
+    }
   }
+
   window.print();
 }
 
@@ -1241,13 +1277,18 @@ function generatePhrasePractice(pageNumber, totalPages, showTranslation, ageGrou
 }
 
 function getPhraseCapacity(lineHeight) {
-  if (lineHeight <= 8) {
-    return 8;
-  }
-  if (lineHeight >= 12) {
-    return 5;
-  }
-  return 6;
+  // 保守的な容量計算: A4サイズ(297mm) - 余白(20mm) = 277mm利用可能
+  // フレーズアイテム構成: ヘッダー(10mm) + メタ(3mm) + 練習ライン(2*lineHeight) + 区切り(4mm)
+  // 合計: 17mm + 2*lineHeight
+  const availableHeight = 277; // mm
+  const itemHeight = 17 + 2 * lineHeight;
+  const maxItems = Math.floor(availableHeight / itemHeight);
+
+  // 安全マージンとして20%削減
+  const safeItems = Math.floor(maxItems * 0.8);
+
+  // 最小値と最大値でクリップ
+  return Math.max(3, Math.min(safeItems, 10));
 }
 
 function selectDiversePhrases(phrases, desiredCount) {
