@@ -25,8 +25,9 @@ fi
 # Install Playwright browsers if not already installed
 if [ -d "node_modules/@playwright/test" ]; then
   echo "Installing Playwright browsers..."
-  if npx playwright install --with-deps chromium; then
-    echo "✅ Playwright browsers installed successfully"
+  # Install all browsers configured in playwright.config.js (chromium, firefox, webkit)
+  if npx playwright install --with-deps chromium firefox webkit; then
+    echo "✅ Playwright browsers installed successfully (chromium, firefox, webkit)"
   else
     echo "⚠️  Warning: Failed to install Playwright browsers (e2e tests may not work)"
   fi
