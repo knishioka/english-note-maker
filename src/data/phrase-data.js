@@ -1979,6 +1979,86 @@ export const PHRASE_DATA = {
         japanese: '私はおもちゃを4つ持っています。',
         situation: '持ち物を数える',
       },
+      {
+        english: 'What comes after five?',
+        japanese: '5の次は何ですか？',
+        situation: '数の順序',
+      },
+      {
+        english: 'I am first in line.',
+        japanese: '私が列の1番目です。',
+        situation: '順番を表す',
+      },
+      {
+        english: 'You are second, I am third.',
+        japanese: 'あなたが2番目、私が3番目です。',
+        situation: '順序数',
+      },
+      {
+        english: 'Zero means nothing.',
+        japanese: 'ゼロは何もないという意味です。',
+        situation: 'ゼロの概念',
+      },
+      {
+        english: 'I see two circles and one square.',
+        japanese: '丸が2つと四角が1つ見えます。',
+        situation: '図形を数える',
+      },
+      {
+        english: 'How many stars are there?',
+        japanese: '星はいくつありますか？',
+        situation: '数を尋ねる',
+      },
+      {
+        english: 'Eight plus one equals nine.',
+        japanese: '8たす1は9です。',
+        situation: '足し算',
+      },
+      {
+        english: 'Nine minus three equals six.',
+        japanese: '9ひく3は6です。',
+        situation: '引き算',
+      },
+      {
+        english: "It's three o'clock.",
+        japanese: '3時です。',
+        situation: '時刻の基本',
+      },
+      {
+        english: 'I have more than you.',
+        japanese: '私の方があなたより多いです。',
+        situation: '数の比較',
+      },
+      {
+        english: 'You have less than me.',
+        japanese: 'あなたは私より少ないです。',
+        situation: '数の比較',
+      },
+      {
+        english: 'We have the same number.',
+        japanese: '私たちは同じ数を持っています。',
+        situation: '同じ数',
+      },
+      {
+        english: 'This pencil is longer than that one.',
+        japanese: 'このペンはあちらより長いです。',
+        situation: '長さの比較',
+      },
+      {
+        english: 'I am taller than you.',
+        japanese: '私はあなたより背が高いです。',
+        situation: '高さの比較',
+      },
+      {
+        english: 'Your book is thicker than mine.',
+        japanese: 'あなたの本は私のより厚いです。',
+        situation: '厚さの比較',
+      },
+      {
+        english: 'This rope is shorter than that rope.',
+        japanese: 'このロープはあのロープより短いです。',
+        situation: '短さの比較',
+      },
     ],
     '7-9': [
       {
@@ -2092,6 +2172,116 @@ export const PHRASE_DATA = {
         english: 'Thirty-six minus twenty-one equals fifteen.',
         japanese: '36ひく21は15です。',
         situation: '2桁の引き算',
+      },
+      {
+        english: 'Two times three equals six.',
+        japanese: '2かける3は6です。',
+        situation: '掛け算の基本',
+      },
+      {
+        english: 'Three times four equals twelve.',
+        japanese: '3かける4は12です。',
+        situation: '掛け算',
+      },
+      {
+        english: 'Four times five equals twenty.',
+        japanese: '4かける5は20です。',
+        situation: '掛け算',
+      },
+      {
+        english: 'Six divided by two equals three.',
+        japanese: '6わる2は3です。',
+        situation: '割り算の基本',
+      },
+      {
+        english: 'Eight divided by four equals two.',
+        japanese: '8わる4は2です。',
+        situation: '割り算',
+      },
+      {
+        english: "It's half past three.",
+        japanese: '3時半です。',
+        situation: '時刻（30分）',
+      },
+      {
+        english: "It's quarter past four.",
+        japanese: '4時15分です。',
+        situation: '時刻（15分）',
+      },
+      {
+        english: 'One meter is one hundred centimeters.',
+        japanese: '1メートルは100センチメートルです。',
+        situation: '長さの単位',
+      },
+      {
+        english: 'One kilogram is one thousand grams.',
+        japanese: '1キログラムは1000グラムです。',
+        situation: '重さの単位',
+      },
+      {
+        english: 'How much does it weigh?',
+        japanese: 'それはどれくらいの重さですか？',
+        situation: '重さを尋ねる',
+      },
+      {
+        english: 'How long is this?',
+        japanese: 'これはどれくらいの長さですか？',
+        situation: '長さを尋ねる',
+      },
+      {
+        english: 'I have thirty-seven marbles, you have twenty-four.',
+        japanese: '私はビー玉を37個、あなたは24個持っています。',
+        situation: '文章問題',
+      },
+      {
+        english: 'If I buy two pencils at five dollars each, I pay ten dollars.',
+        japanese: '鉛筆を1本5ドルで2本買ったら、10ドル払います。',
+        situation: '掛け算の文章問題',
+      },
+      {
+        english: 'Sixty-five is five more than sixty.',
+        japanese: '65は60より5大きいです。',
+        situation: '差の計算',
+      },
+      {
+        english: 'Two plus two plus two equals six.',
+        japanese: '2たす2たす2は6です。',
+        situation: '連続の足し算',
+      },
+      {
+        english: 'Twenty-nine is one less than thirty.',
+        japanese: '29は30より1小さいです。',
+        situation: '数の比較',
+      },
+      {
+        english: 'This line is shorter than that line.',
+        japanese: 'この線はあの線より短いです。',
+        situation: '長さの比較',
+      },
+      {
+        english: 'This box is heavier than that box.',
+        japanese: 'この箱はあの箱より重いです。',
+        situation: '重さの比較',
+      },
+      {
+        english: 'My bag is lighter than your bag.',
+        japanese: '私のカバンはあなたのカバンより軽いです。',
+        situation: '軽さの比較',
+      },
+      {
+        english: 'The river is wider than the stream.',
+        japanese: '川は小川より幅が広いです。',
+        situation: '幅の比較',
+      },
+      {
+        english: 'This building is taller than that house.',
+        japanese: 'この建物はあの家より高いです。',
+        situation: '高さの比較',
+      },
+      {
+        english: 'Running is faster than walking.',
+        japanese: '走ることは歩くことより速いです。',
+        situation: '速さの比較',
       },
     ],
     '10-12': [
@@ -2215,6 +2405,144 @@ export const PHRASE_DATA = {
           'If a train travels sixty kilometers per hour for two hours, it goes one hundred twenty kilometers.',
         japanese: '電車が時速60キロで2時間走ると、120キロ進みます。',
         situation: '速度の文章問題',
+      },
+      {
+        english: 'Two-thirds equals approximately sixty-seven percent.',
+        japanese: '3分の2は約67パーセントです。',
+        situation: '分数とパーセント',
+      },
+      {
+        english: 'One-fifth of one hundred is twenty.',
+        japanese: '100の5分の1は20です。',
+        situation: '分数の計算',
+      },
+      {
+        english: 'The average of ten, twenty, and thirty is twenty.',
+        japanese: '10、20、30の平均は20です。',
+        situation: '平均の計算',
+      },
+      {
+        english: 'If you add all the numbers and divide by three, you get the average.',
+        japanese: 'すべての数を足して3で割ると、平均が出ます。',
+        situation: '平均の求め方',
+      },
+      {
+        english: 'The area of a rectangle is length times width.',
+        japanese: '長方形の面積は縦かける横です。',
+        situation: '面積の公式',
+      },
+      {
+        english:
+          'If a rectangle is five meters by three meters, its area is fifteen square meters.',
+        japanese: '長方形が5メートルかける3メートルなら、面積は15平方メートルです。',
+        situation: '面積の計算',
+      },
+      {
+        english: 'The perimeter is the distance around the shape.',
+        japanese: '周囲の長さは図形の周りの距離です。',
+        situation: '周囲の長さの概念',
+      },
+      {
+        english: 'A square with sides of four meters has a perimeter of sixteen meters.',
+        japanese: '1辺が4メートルの正方形の周囲は16メートルです。',
+        situation: '周囲の長さの計算',
+      },
+      {
+        english: 'Twenty times twenty equals four hundred.',
+        japanese: '20かける20は400です。',
+        situation: '大きい数の掛け算',
+      },
+      {
+        english: 'One hundred fifty divided by three equals fifty.',
+        japanese: '150わる3は50です。',
+        situation: '大きい数の割り算',
+      },
+      {
+        english: 'The ratio of boys to girls is three to two.',
+        japanese: '男子と女子の比は3対2です。',
+        situation: '比の表現',
+      },
+      {
+        english: 'If the ratio is two to one, there are twice as many.',
+        japanese: '比が2対1なら、2倍の数があります。',
+        situation: '比の理解',
+      },
+      {
+        english: 'Five is ten percent of fifty.',
+        japanese: '5は50の10パーセントです。',
+        situation: 'パーセントの計算',
+      },
+      {
+        english: 'Fifty percent off means half price.',
+        japanese: '50パーセントオフは半額という意味です。',
+        situation: '割引の計算',
+      },
+      {
+        english:
+          'If something costs one hundred dollars and is twenty percent off, you save twenty dollars.',
+        japanese: '100ドルの物が20パーセントオフなら、20ドル節約できます。',
+        situation: '割引の文章問題',
+      },
+      {
+        english: 'Three-eighths is smaller than one-half.',
+        japanese: '8分の3は2分の1より小さいです。',
+        situation: '分数の比較',
+      },
+      {
+        english: 'Seven times nine equals sixty-three.',
+        japanese: '7かける9は63です。',
+        situation: '掛け算',
+      },
+      {
+        english: 'One hundred eight divided by nine equals twelve.',
+        japanese: '108わる9は12です。',
+        situation: '割り算',
+      },
+      {
+        english:
+          'If you have forty-eight candies and share them equally among six friends, each gets eight.',
+        japanese: 'キャンディーが48個あって6人で等しく分けたら、1人8個ずつです。',
+        situation: '割り算の文章問題',
+      },
+      {
+        english: 'Five hundred is five times one hundred.',
+        japanese: '500は100の5倍です。',
+        situation: '倍数の概念',
+      },
+      {
+        english: 'The train is faster than the bus.',
+        japanese: '電車はバスより速いです。',
+        situation: '速さの比較',
+      },
+      {
+        english: 'This package is lighter than that one.',
+        japanese: 'この荷物はあちらより軽いです。',
+        situation: '重さの比較',
+      },
+      {
+        english: 'Mount Fuji is higher than most mountains in Japan.',
+        japanese: '富士山は日本のほとんどの山より高いです。',
+        situation: '高さの比較',
+      },
+      {
+        english: 'Summer days are longer than winter days.',
+        japanese: '夏の日は冬の日より長いです。',
+        situation: '時間の比較',
+      },
+      {
+        english: 'This problem is more difficult than the previous one.',
+        japanese: 'この問題は前の問題より難しいです。',
+        situation: '難易度の比較',
+      },
+      {
+        english: 'Walking is slower than cycling.',
+        japanese: '歩くことは自転車に乗ることより遅いです。',
+        situation: '速さの比較',
+      },
+      {
+        english: 'This method is more efficient than the old way.',
+        japanese: 'この方法は古いやり方より効率的です。',
+        situation: '効率の比較',
       },
     ],
   },
