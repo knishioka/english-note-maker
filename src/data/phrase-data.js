@@ -2039,6 +2039,26 @@ export const PHRASE_DATA = {
         japanese: '私たちは同じ数を持っています。',
         situation: '同じ数',
       },
+      {
+        english: 'This pencil is longer than that one.',
+        japanese: 'このペンはあちらより長いです。',
+        situation: '長さの比較',
+      },
+      {
+        english: 'I am taller than you.',
+        japanese: '私はあなたより背が高いです。',
+        situation: '高さの比較',
+      },
+      {
+        english: 'Your book is thicker than mine.',
+        japanese: 'あなたの本は私のより厚いです。',
+        situation: '厚さの比較',
+      },
+      {
+        english: 'This rope is shorter than that rope.',
+        japanese: 'このロープはあのロープより短いです。',
+        situation: '短さの比較',
+      },
     ],
     '7-9': [
       {
@@ -2232,6 +2252,36 @@ export const PHRASE_DATA = {
         english: 'Twenty-nine is one less than thirty.',
         japanese: '29は30より1小さいです。',
         situation: '数の比較',
+      },
+      {
+        english: 'This line is shorter than that line.',
+        japanese: 'この線はあの線より短いです。',
+        situation: '長さの比較',
+      },
+      {
+        english: 'This box is heavier than that box.',
+        japanese: 'この箱はあの箱より重いです。',
+        situation: '重さの比較',
+      },
+      {
+        english: 'My bag is lighter than your bag.',
+        japanese: '私のカバンはあなたのカバンより軽いです。',
+        situation: '軽さの比較',
+      },
+      {
+        english: 'The river is wider than the stream.',
+        japanese: '川は小川より幅が広いです。',
+        situation: '幅の比較',
+      },
+      {
+        english: 'This building is taller than that house.',
+        japanese: 'この建物はあの家より高いです。',
+        situation: '高さの比較',
+      },
+      {
+        english: 'Running is faster than walking.',
+        japanese: '走ることは歩くことより速いです。',
+        situation: '速さの比較',
       },
     ],
     '10-12': [
@@ -2458,6 +2508,41 @@ export const PHRASE_DATA = {
         english: 'Five hundred is five times one hundred.',
         japanese: '500は100の5倍です。',
         situation: '倍数の概念',
+      },
+      {
+        english: 'The train is faster than the bus.',
+        japanese: '電車はバスより速いです。',
+        situation: '速さの比較',
+      },
+      {
+        english: 'This package is lighter than that one.',
+        japanese: 'この荷物はあちらより軽いです。',
+        situation: '重さの比較',
+      },
+      {
+        english: 'Mount Fuji is higher than most mountains in Japan.',
+        japanese: '富士山は日本のほとんどの山より高いです。',
+        situation: '高さの比較',
+      },
+      {
+        english: 'Summer days are longer than winter days.',
+        japanese: '夏の日は冬の日より長いです。',
+        situation: '時間の比較',
+      },
+      {
+        english: 'This problem is more difficult than the previous one.',
+        japanese: 'この問題は前の問題より難しいです。',
+        situation: '難易度の比較',
+      },
+      {
+        english: 'Walking is slower than cycling.',
+        japanese: '歩くことは自転車に乗ることより遅いです。',
+        situation: '速さの比較',
+      },
+      {
+        english: 'This method is more efficient than the old way.',
+        japanese: 'この方法は古いやり方より効率的です。',
+        situation: '効率の比較',
       },
     ],
   },
