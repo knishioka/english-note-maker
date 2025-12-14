@@ -714,12 +714,15 @@ body::before {
   html {
     margin: 0;
     padding: 0;
+    height: auto !important;
   }
 
   body {
     margin: 0;
     padding: 0;
     background: white !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
   body::before {
@@ -735,7 +738,7 @@ body::before {
     display: none !important;
   }
 
-  /* メインレイアウト調整 */
+  /* メインレイアウト調整 - overflow/float/positionをリセット */
   .main {
     display: block !important;
     max-width: none !important;
@@ -744,6 +747,9 @@ body::before {
     background: none !important;
     box-shadow: none !important;
     border: none !important;
+    overflow: visible !important;
+    float: none !important;
+    position: static !important;
   }
 
   .preview {
@@ -751,25 +757,51 @@ body::before {
     border-radius: 0 !important;
     background: none !important;
     box-shadow: none !important;
+    overflow: visible !important;
+    float: none !important;
+    position: static !important;
+    padding: 0 !important;
   }
 
   .note-preview {
     padding: 0 !important;
     min-height: auto !important;
+    height: auto !important;
     border: none !important;
     background: none !important;
     box-shadow: none !important;
+    overflow: visible !important;
+    float: none !important;
+    position: static !important;
   }
 
-  /* ノートページ */
+  /* ノートページ - 固定高さを削除してページ区切りで制御 */
   .note-page {
-    width: 210mm !important; /* A4幅を明示 */
-    height: 297mm !important; /* A4高さを明示 */
+    width: 210mm !important;
+    min-height: 297mm !important;
+    height: auto !important;
     max-width: none !important;
     margin: 0 !important;
-    padding: var(--margin-standard) !important; /* 統一設定システムに準拠 */
-    box-sizing: border-box !important; /* パディングを含めたサイズ計算 */
+    padding: var(--margin-standard) !important;
+    box-sizing: border-box !important;
     box-shadow: none !important;
+    overflow: visible !important;
+    float: none !important;
+    position: relative !important;
+    /* ページ区切り制御 - 新旧両方のプロパティを指定 */
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* 最後のページ以外の後に改ページ */
+  .note-page:not(:last-of-type) {
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  .note-page:last-of-type {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 
   /* ベースライン - 印刷時の線種維持 */

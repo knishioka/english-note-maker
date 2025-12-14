@@ -399,7 +399,6 @@ function renderNotePreview(notePreview, state, overrides) {
                     <div class="page-separator-line"></div>
                 </div>
             `;
-      html += '<div style="page-break-before: always;"></div>';
     }
     html += generateNotePage(page + 1, state.pageCount, overrides);
   }
