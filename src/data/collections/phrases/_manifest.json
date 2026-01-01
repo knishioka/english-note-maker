@@ -1,0 +1,135 @@
+{
+  "type": "phrase",
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-01T12:34:13.662Z",
+  "files": [
+    {
+      "name": "greetings",
+      "path": "./greetings.json",
+      "itemCount": 62,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "self_introduction",
+      "path": "./self_introduction.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "school",
+      "path": "./school.json",
+      "itemCount": 53,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "daily_life",
+      "path": "./daily_life.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "shopping",
+      "path": "./shopping.json",
+      "itemCount": 54,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "travel",
+      "path": "./travel.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "feelings",
+      "path": "./feelings.json",
+      "itemCount": 54,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "classroom_english",
+      "path": "./classroom_english.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "friend_making",
+      "path": "./friend_making.json",
+      "itemCount": 54,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "cultural_exchange",
+      "path": "./cultural_exchange.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "emergency_situations",
+      "path": "./emergency_situations.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "numbers_math",
+      "path": "./numbers_math.json",
+      "itemCount": 72,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "family",
+      "path": "./family.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "hobbies",
+      "path": "./hobbies.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "food_eating",
+      "path": "./food_eating.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "weather",
+      "path": "./weather.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "asking_for_help",
+      "path": "./asking_for_help.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "opinions_preferences",
+      "path": "./opinions_preferences.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "making_plans",
+      "path": "./making_plans.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "apologizing_thanking",
+      "path": "./apologizing_thanking.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "health_body",
+      "path": "./health_body.json",
+      "itemCount": 36,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    }
+  ],
+  "totalItems": 889,
+  "loadStrategy": "lazy"
+}

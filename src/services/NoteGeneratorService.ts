@@ -15,6 +15,14 @@ import type {
 import { ErrorHandler } from '../utils/ErrorHandler.js';
 import { ValidationService } from './ValidationService.js';
 import { PerformanceMonitor } from '../utils/PerformanceMonitor.js';
+import { getDataManager, CATEGORY_DISPLAY_NAMES } from '../data/index.js';
+import type {
+  AgeGroup,
+  SentenceContentItem,
+  WordContentItem,
+  AlphabetContentItem,
+  PhraseContentItem,
+} from '../data/index.js';
 
 export class NoteGeneratorService {
   private readonly errorHandler: ErrorHandler;
@@ -42,16 +50,22 @@ export class NoteGeneratorService {
       // Input validation
       await this.validateUIState(state);
 
-      // Check cache first
+      // ランダムコンテンツを含むモードはキャッシュをスキップ
+      const randomModes = ['sentence', 'word', 'phrase'];
+      const useCache = !randomModes.includes(state.practiceMode);
+
+      // Check cache first (non-random modes only)
       const cacheKey = this.generateCacheKey(state);
-      const cached = this.cache.get(cacheKey);
-      if (cached) {
-        this.performanceMonitor.endTiming(performanceId);
-        return {
-          html: cached,
-          validation: [],
-          performance: this.performanceMonitor.getMetrics(),
-        };
+      if (useCache) {
+        const cached = this.cache.get(cacheKey);
+        if (cached) {
+          this.performanceMonitor.endTiming(performanceId);
+          return {
+            html: cached,
+            validation: [],
+            performance: this.performanceMonitor.getMetrics(),
+          };
+        }
       }
 
       // Generate pages
@@ -66,8 +80,8 @@ export class NoteGeneratorService {
       // Validate generated HTML
       const validation = await this.validator.validateGeneratedHTML(html);
 
-      // Cache result if valid
-      if (validation.every((v) => v.severity !== 'error')) {
+      // Cache result if valid (non-random modes only)
+      if (useCache && validation.every((v) => v.severity !== 'error')) {
         this.cache.set(cacheKey, html);
       }
 
@@ -457,46 +471,95 @@ export class NoteGeneratorService {
     }
   }
 
-  // Placeholder methods for data access - these would be implemented based on actual data sources
+  // Data access methods using DataManager
   private async getExamplesForAge(
-    _ageGroup: string,
-    _count: number,
-    _category: string
+    ageGroup: string,
+    count: number,
+    category: string
   ): Promise<ExampleSentence[]> {
-    // Implementation would fetch from data service
-    return [];
+    const manager = getDataManager();
+
+    const sentences = await manager.getSentences({
+      ageGroup: ageGroup as AgeGroup,
+      category: category === 'all' ? undefined : category,
+      limit: count,
+      shuffle: true,
+    });
+
+    return sentences.map((item: SentenceContentItem) => ({
+      english: item.english,
+      japanese: item.japanese,
+      category: item.category as ExampleSentence['category'],
+      difficulty: item.difficulty,
+      custom: item.custom,
+      ageGroup: item.ageGroup,
+    }));
   }
 
-  private async getWordsForCategory(_category: string, _ageGroup: string): Promise<WordData[]> {
-    // Implementation would fetch from data service
-    return [];
+  private async getWordsForCategory(category: string, ageGroup: string): Promise<WordData[]> {
+    const manager = getDataManager();
+
+    const words = await manager.getWords({
+      category,
+      ageGroup: ageGroup as AgeGroup,
+      shuffle: true,
+    });
+
+    return words.map((item: WordContentItem) => ({
+      word: item.english,
+      english: item.english,
+      japanese: item.japanese,
+      syllables: item.syllables,
+      category: item.category as WordData['category'],
+      ageGroup: item.ageGroup,
+    }));
   }
 
-  private async getAlphabetData(_type: string): Promise<AlphabetData[]> {
-    // Implementation would fetch from data service
-    return [];
+  private async getAlphabetData(type: string): Promise<AlphabetData[]> {
+    const manager = getDataManager();
+
+    // 'both'の場合は両方、それ以外は指定されたタイプ
+    let alphabet: AlphabetContentItem[] = [];
+
+    if (type === 'both') {
+      alphabet = await manager.getAlphabet();
+    } else {
+      alphabet = await manager.getAlphabet({
+        category: type,
+      });
+    }
+
+    return alphabet.map((item: AlphabetContentItem) => ({
+      letter: item.letter,
+      example: item.example,
+      japanese: item.japanese,
+      type: item.letterCase as AlphabetData['type'],
+    }));
   }
 
-  private async getPhrasesForCategory(_category: string, _ageGroup: string): Promise<PhraseData[]> {
-    // Implementation would fetch from data service
-    return [];
+  private async getPhrasesForCategory(category: string, ageGroup: string): Promise<PhraseData[]> {
+    const manager = getDataManager();
+
+    const phrases = await manager.getPhrases({
+      category,
+      ageGroup: ageGroup as AgeGroup,
+    });
+
+    return phrases.map((item: PhraseContentItem) => ({
+      phrase: item.english,
+      english: item.english,
+      japanese: item.japanese,
+      situation: item.situation,
+      category: item.category as PhraseData['category'],
+      ageGroup: item.ageGroup,
+    }));
   }
 
   private getWordCategoryNames(): Record<string, string> {
-    return {
-      animals: '動物',
-      food: '食べ物',
-      colors: '色',
-      // ... other categories
-    };
+    return CATEGORY_DISPLAY_NAMES;
   }
 
   private getPhraseCategoryNames(): Record<string, string> {
-    return {
-      greetings: 'あいさつ',
-      self_introduction: '自己紹介',
-      school: '学校生活',
-      // ... other categories
-    };
+    return CATEGORY_DISPLAY_NAMES;
   }
 }

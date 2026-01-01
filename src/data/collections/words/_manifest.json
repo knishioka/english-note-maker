@@ -1,0 +1,39 @@
+{
+  "type": "word",
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-01T09:14:07.023Z",
+  "files": [
+    {
+      "name": "animals",
+      "path": "./animals.json",
+      "itemCount": 15,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "food",
+      "path": "./food.json",
+      "itemCount": 15,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "colors",
+      "path": "./colors.json",
+      "itemCount": 15,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "numbers",
+      "path": "./numbers.json",
+      "itemCount": 15,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    },
+    {
+      "name": "calendar",
+      "path": "./calendar.json",
+      "itemCount": 15,
+      "ageGroups": ["4-6", "7-9", "10-12"]
+    }
+  ],
+  "totalItems": 75,
+  "loadStrategy": "lazy"
+}

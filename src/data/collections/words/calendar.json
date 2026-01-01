@@ -1,0 +1,162 @@
+{
+  "metadata": {
+    "type": "word",
+    "category": "calendar",
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-01T09:14:07.025Z",
+    "totalCount": 15,
+    "schemaVersion": "1.0.0"
+  },
+  "items": [
+    {
+      "id": "word-calendar-sunday-4-6",
+      "type": "word",
+      "english": "Sunday",
+      "japanese": "にちようび",
+      "syllables": "Sun-day",
+      "category": "calendar",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-calendar-monday-4-6",
+      "type": "word",
+      "english": "Monday",
+      "japanese": "げつようび",
+      "syllables": "Mon-day",
+      "category": "calendar",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-calendar-today-4-6",
+      "type": "word",
+      "english": "today",
+      "japanese": "きょう",
+      "syllables": "to-day",
+      "category": "calendar",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-calendar-morning-4-6",
+      "type": "word",
+      "english": "morning",
+      "japanese": "あさ",
+      "syllables": "morn-ing",
+      "category": "calendar",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-calendar-night-4-6",
+      "type": "word",
+      "english": "night",
+      "japanese": "よる",
+      "syllables": "night",
+      "category": "calendar",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-calendar-tuesday-7-9",
+      "type": "word",
+      "english": "Tuesday",
+      "japanese": "かようび",
+      "syllables": "Tues-day",
+      "category": "calendar",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-calendar-wednesday-7-9",
+      "type": "word",
+      "english": "Wednesday",
+      "japanese": "すいようび",
+      "syllables": "Wed-nes-day",
+      "category": "calendar",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-calendar-thursday-7-9",
+      "type": "word",
+      "english": "Thursday",
+      "japanese": "もくようび",
+      "syllables": "Thurs-day",
+      "category": "calendar",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-calendar-friday-7-9",
+      "type": "word",
+      "english": "Friday",
+      "japanese": "きんようび",
+      "syllables": "Fri-day",
+      "category": "calendar",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-calendar-saturday-7-9",
+      "type": "word",
+      "english": "Saturday",
+      "japanese": "どようび",
+      "syllables": "Sat-ur-day",
+      "category": "calendar",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-calendar-january-10-12",
+      "type": "word",
+      "english": "January",
+      "japanese": "いちがつ",
+      "syllables": "Jan-u-ar-y",
+      "category": "calendar",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-calendar-february-10-12",
+      "type": "word",
+      "english": "February",
+      "japanese": "にがつ",
+      "syllables": "Feb-ru-ar-y",
+      "category": "calendar",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-calendar-march-10-12",
+      "type": "word",
+      "english": "March",
+      "japanese": "さんがつ",
+      "syllables": "March",
+      "category": "calendar",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-calendar-april-10-12",
+      "type": "word",
+      "english": "April",
+      "japanese": "しがつ",
+      "syllables": "A-pril",
+      "category": "calendar",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-calendar-december-10-12",
+      "type": "word",
+      "english": "December",
+      "japanese": "じゅうにがつ",
+      "syllables": "De-cem-ber",
+      "category": "calendar",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    }
+  ]
+}

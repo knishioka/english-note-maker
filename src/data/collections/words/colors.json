@@ -1,0 +1,162 @@
+{
+  "metadata": {
+    "type": "word",
+    "category": "colors",
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-01T09:14:07.024Z",
+    "totalCount": 15,
+    "schemaVersion": "1.0.0"
+  },
+  "items": [
+    {
+      "id": "word-colors-red-4-6",
+      "type": "word",
+      "english": "red",
+      "japanese": "あか",
+      "syllables": "red",
+      "category": "colors",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-colors-blue-4-6",
+      "type": "word",
+      "english": "blue",
+      "japanese": "あお",
+      "syllables": "blue",
+      "category": "colors",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-colors-yellow-4-6",
+      "type": "word",
+      "english": "yellow",
+      "japanese": "きいろ",
+      "syllables": "yel-low",
+      "category": "colors",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-colors-green-4-6",
+      "type": "word",
+      "english": "green",
+      "japanese": "みどり",
+      "syllables": "green",
+      "category": "colors",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-colors-white-4-6",
+      "type": "word",
+      "english": "white",
+      "japanese": "しろ",
+      "syllables": "white",
+      "category": "colors",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-colors-black-7-9",
+      "type": "word",
+      "english": "black",
+      "japanese": "くろ",
+      "syllables": "black",
+      "category": "colors",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-colors-orange-7-9",
+      "type": "word",
+      "english": "orange",
+      "japanese": "オレンジ",
+      "syllables": "or-ange",
+      "category": "colors",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-colors-purple-7-9",
+      "type": "word",
+      "english": "purple",
+      "japanese": "むらさき",
+      "syllables": "pur-ple",
+      "category": "colors",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-colors-pink-7-9",
+      "type": "word",
+      "english": "pink",
+      "japanese": "ピンク",
+      "syllables": "pink",
+      "category": "colors",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-colors-brown-7-9",
+      "type": "word",
+      "english": "brown",
+      "japanese": "ちゃいろ",
+      "syllables": "brown",
+      "category": "colors",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-colors-gray-10-12",
+      "type": "word",
+      "english": "gray",
+      "japanese": "はいいろ",
+      "syllables": "gray",
+      "category": "colors",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-colors-silver-10-12",
+      "type": "word",
+      "english": "silver",
+      "japanese": "ぎんいろ",
+      "syllables": "sil-ver",
+      "category": "colors",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-colors-golden-10-12",
+      "type": "word",
+      "english": "golden",
+      "japanese": "きんいろ",
+      "syllables": "gold-en",
+      "category": "colors",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-colors-rainbow-10-12",
+      "type": "word",
+      "english": "rainbow",
+      "japanese": "にじ",
+      "syllables": "rain-bow",
+      "category": "colors",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-colors-colorful-10-12",
+      "type": "word",
+      "english": "colorful",
+      "japanese": "カラフル",
+      "syllables": "col-or-ful",
+      "category": "colors",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    }
+  ]
+}

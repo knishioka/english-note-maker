@@ -1,0 +1,162 @@
+{
+  "metadata": {
+    "type": "word",
+    "category": "numbers",
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-01T09:14:07.025Z",
+    "totalCount": 15,
+    "schemaVersion": "1.0.0"
+  },
+  "items": [
+    {
+      "id": "word-numbers-one-4-6",
+      "type": "word",
+      "english": "one",
+      "japanese": "いち",
+      "syllables": "one",
+      "category": "numbers",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-numbers-two-4-6",
+      "type": "word",
+      "english": "two",
+      "japanese": "に",
+      "syllables": "two",
+      "category": "numbers",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-numbers-three-4-6",
+      "type": "word",
+      "english": "three",
+      "japanese": "さん",
+      "syllables": "three",
+      "category": "numbers",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-numbers-four-4-6",
+      "type": "word",
+      "english": "four",
+      "japanese": "よん",
+      "syllables": "four",
+      "category": "numbers",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-numbers-five-4-6",
+      "type": "word",
+      "english": "five",
+      "japanese": "ご",
+      "syllables": "five",
+      "category": "numbers",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-numbers-six-7-9",
+      "type": "word",
+      "english": "six",
+      "japanese": "ろく",
+      "syllables": "six",
+      "category": "numbers",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-numbers-seven-7-9",
+      "type": "word",
+      "english": "seven",
+      "japanese": "なな",
+      "syllables": "sev-en",
+      "category": "numbers",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-numbers-eight-7-9",
+      "type": "word",
+      "english": "eight",
+      "japanese": "はち",
+      "syllables": "eight",
+      "category": "numbers",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-numbers-nine-7-9",
+      "type": "word",
+      "english": "nine",
+      "japanese": "きゅう",
+      "syllables": "nine",
+      "category": "numbers",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-numbers-ten-7-9",
+      "type": "word",
+      "english": "ten",
+      "japanese": "じゅう",
+      "syllables": "ten",
+      "category": "numbers",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-numbers-eleven-10-12",
+      "type": "word",
+      "english": "eleven",
+      "japanese": "じゅういち",
+      "syllables": "e-lev-en",
+      "category": "numbers",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-numbers-twelve-10-12",
+      "type": "word",
+      "english": "twelve",
+      "japanese": "じゅうに",
+      "syllables": "twelve",
+      "category": "numbers",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-numbers-thirteen-10-12",
+      "type": "word",
+      "english": "thirteen",
+      "japanese": "じゅうさん",
+      "syllables": "thir-teen",
+      "category": "numbers",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-numbers-twenty-10-12",
+      "type": "word",
+      "english": "twenty",
+      "japanese": "にじゅう",
+      "syllables": "twen-ty",
+      "category": "numbers",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-numbers-hundred-10-12",
+      "type": "word",
+      "english": "hundred",
+      "japanese": "ひゃく",
+      "syllables": "hun-dred",
+      "category": "numbers",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    }
+  ]
+}

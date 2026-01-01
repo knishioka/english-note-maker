@@ -1,0 +1,162 @@
+{
+  "metadata": {
+    "type": "word",
+    "category": "food",
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-01T09:14:07.024Z",
+    "totalCount": 15,
+    "schemaVersion": "1.0.0"
+  },
+  "items": [
+    {
+      "id": "word-food-apple-4-6",
+      "type": "word",
+      "english": "apple",
+      "japanese": "りんご",
+      "syllables": "ap-ple",
+      "category": "food",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-food-banana-4-6",
+      "type": "word",
+      "english": "banana",
+      "japanese": "バナナ",
+      "syllables": "ba-na-na",
+      "category": "food",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-food-rice-4-6",
+      "type": "word",
+      "english": "rice",
+      "japanese": "ごはん",
+      "syllables": "rice",
+      "category": "food",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-food-milk-4-6",
+      "type": "word",
+      "english": "milk",
+      "japanese": "ミルク",
+      "syllables": "milk",
+      "category": "food",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-food-egg-4-6",
+      "type": "word",
+      "english": "egg",
+      "japanese": "たまご",
+      "syllables": "egg",
+      "category": "food",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-food-sandwich-7-9",
+      "type": "word",
+      "english": "sandwich",
+      "japanese": "サンドイッチ",
+      "syllables": "sand-wich",
+      "category": "food",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-food-pizza-7-9",
+      "type": "word",
+      "english": "pizza",
+      "japanese": "ピザ",
+      "syllables": "piz-za",
+      "category": "food",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-food-hamburger-7-9",
+      "type": "word",
+      "english": "hamburger",
+      "japanese": "ハンバーガー",
+      "syllables": "ham-bur-ger",
+      "category": "food",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-food-spaghetti-7-9",
+      "type": "word",
+      "english": "spaghetti",
+      "japanese": "スパゲッティ",
+      "syllables": "spa-ghet-ti",
+      "category": "food",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-food-chocolate-7-9",
+      "type": "word",
+      "english": "chocolate",
+      "japanese": "チョコレート",
+      "syllables": "choc-o-late",
+      "category": "food",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-food-vegetable-10-12",
+      "type": "word",
+      "english": "vegetable",
+      "japanese": "野菜",
+      "syllables": "veg-e-ta-ble",
+      "category": "food",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-food-strawberry-10-12",
+      "type": "word",
+      "english": "strawberry",
+      "japanese": "いちご",
+      "syllables": "straw-ber-ry",
+      "category": "food",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-food-watermelon-10-12",
+      "type": "word",
+      "english": "watermelon",
+      "japanese": "すいか",
+      "syllables": "wa-ter-mel-on",
+      "category": "food",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-food-restaurant-10-12",
+      "type": "word",
+      "english": "restaurant",
+      "japanese": "レストラン",
+      "syllables": "res-tau-rant",
+      "category": "food",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-food-breakfast-10-12",
+      "type": "word",
+      "english": "breakfast",
+      "japanese": "朝食",
+      "syllables": "break-fast",
+      "category": "food",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    }
+  ]
+}

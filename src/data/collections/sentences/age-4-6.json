@@ -1,0 +1,112 @@
+{
+  "metadata": {
+    "type": "sentence",
+    "category": "age-4-6",
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-01T09:14:07.034Z",
+    "totalCount": 10,
+    "schemaVersion": "1.0.0"
+  },
+  "items": [
+    {
+      "id": "sentence-daily-i-like-apples-4-6",
+      "type": "sentence",
+      "english": "I like apples.",
+      "japanese": "わたしは りんごが すきです。",
+      "category": "daily",
+      "ageGroup": "4-6",
+      "difficulty": 1,
+      "custom": false
+    },
+    {
+      "id": "sentence-animals-the-cat-is-cute-4-6",
+      "type": "sentence",
+      "english": "The cat is cute.",
+      "japanese": "ねこは かわいいです。",
+      "category": "animals",
+      "ageGroup": "4-6",
+      "difficulty": 1,
+      "custom": false
+    },
+    {
+      "id": "sentence-daily-good-morning-4-6",
+      "type": "sentence",
+      "english": "Good morning!",
+      "japanese": "おはよう！",
+      "category": "daily",
+      "ageGroup": "4-6",
+      "difficulty": 1,
+      "custom": false
+    },
+    {
+      "id": "sentence-daily-thank-you-very-much-4-6",
+      "type": "sentence",
+      "english": "Thank you very much.",
+      "japanese": "ありがとう ございます。",
+      "category": "daily",
+      "ageGroup": "4-6",
+      "difficulty": 1,
+      "custom": false
+    },
+    {
+      "id": "sentence-school-my-name-is-tom-4-6",
+      "type": "sentence",
+      "english": "My name is Tom.",
+      "japanese": "わたしの なまえは トムです。",
+      "category": "school",
+      "ageGroup": "4-6",
+      "difficulty": 1,
+      "custom": false
+    },
+    {
+      "id": "sentence-hobby-i-can-jump-high-4-6",
+      "type": "sentence",
+      "english": "I can jump high.",
+      "japanese": "わたしは たかく ジャンプできます。",
+      "category": "hobby",
+      "ageGroup": "4-6",
+      "difficulty": 1,
+      "custom": false
+    },
+    {
+      "id": "sentence-hobby-let-s-play-together-4-6",
+      "type": "sentence",
+      "english": "Let's play together.",
+      "japanese": "いっしょに あそびましょう。",
+      "category": "hobby",
+      "ageGroup": "4-6",
+      "difficulty": 1,
+      "custom": false
+    },
+    {
+      "id": "sentence-family-i-love-my-mom-4-6",
+      "type": "sentence",
+      "english": "I love my mom.",
+      "japanese": "わたしは ママが だいすきです。",
+      "category": "family",
+      "ageGroup": "4-6",
+      "difficulty": 1,
+      "custom": false
+    },
+    {
+      "id": "sentence-daily-the-sun-is-bright-4-6",
+      "type": "sentence",
+      "english": "The sun is bright.",
+      "japanese": "たいようは あかるいです。",
+      "category": "daily",
+      "ageGroup": "4-6",
+      "difficulty": 1,
+      "custom": false
+    },
+    {
+      "id": "sentence-daily-happy-birthday-4-6",
+      "type": "sentence",
+      "english": "Happy birthday!",
+      "japanese": "おたんじょうび おめでとう！",
+      "category": "daily",
+      "ageGroup": "4-6",
+      "difficulty": 1,
+      "custom": false
+    }
+  ]
+}

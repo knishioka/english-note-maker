@@ -1,0 +1,112 @@
+{
+  "metadata": {
+    "type": "sentence",
+    "category": "age-10-12",
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-01T09:14:07.035Z",
+    "totalCount": 10,
+    "schemaVersion": "1.0.0"
+  },
+  "items": [
+    {
+      "id": "sentence-daily-practice-makes-perfect-10-12",
+      "type": "sentence",
+      "english": "Practice makes perfect.",
+      "japanese": "練習は完璧を作る。",
+      "category": "daily",
+      "ageGroup": "10-12",
+      "difficulty": 3,
+      "custom": false
+    },
+    {
+      "id": "sentence-hobby-i-enjoy-playing-basketball-wit-10-12",
+      "type": "sentence",
+      "english": "I enjoy playing basketball with my friends.",
+      "japanese": "友達とバスケットボールをするのが楽しいです。",
+      "category": "hobby",
+      "ageGroup": "10-12",
+      "difficulty": 3,
+      "custom": false
+    },
+    {
+      "id": "sentence-school-science-is-my-favorite-subject-10-12",
+      "type": "sentence",
+      "english": "Science is my favorite subject.",
+      "japanese": "理科は私の好きな教科です。",
+      "category": "school",
+      "ageGroup": "10-12",
+      "difficulty": 3,
+      "custom": false
+    },
+    {
+      "id": "sentence-daily-we-should-protect-our-environm-10-12",
+      "type": "sentence",
+      "english": "We should protect our environment.",
+      "japanese": "私たちは環境を守るべきです。",
+      "category": "daily",
+      "ageGroup": "10-12",
+      "difficulty": 3,
+      "custom": false
+    },
+    {
+      "id": "sentence-school-reading-helps-improve-vocabula-10-12",
+      "type": "sentence",
+      "english": "Reading helps improve vocabulary.",
+      "japanese": "読書は語彙力の向上に役立ちます。",
+      "category": "school",
+      "ageGroup": "10-12",
+      "difficulty": 3,
+      "custom": false
+    },
+    {
+      "id": "sentence-daily-time-flies-when-you-re-having--10-12",
+      "type": "sentence",
+      "english": "Time flies when you're having fun.",
+      "japanese": "楽しい時間はあっという間に過ぎる。",
+      "category": "daily",
+      "ageGroup": "10-12",
+      "difficulty": 3,
+      "custom": false
+    },
+    {
+      "id": "sentence-hobby-i-want-to-travel-around-the-wo-10-12",
+      "type": "sentence",
+      "english": "I want to travel around the world.",
+      "japanese": "世界中を旅行したいです。",
+      "category": "hobby",
+      "ageGroup": "10-12",
+      "difficulty": 3,
+      "custom": false
+    },
+    {
+      "id": "sentence-daily-technology-makes-our-lives-eas-10-12",
+      "type": "sentence",
+      "english": "Technology makes our lives easier.",
+      "japanese": "技術は私たちの生活を便利にします。",
+      "category": "daily",
+      "ageGroup": "10-12",
+      "difficulty": 3,
+      "custom": false
+    },
+    {
+      "id": "sentence-school-teamwork-is-important-for-succ-10-12",
+      "type": "sentence",
+      "english": "Teamwork is important for success.",
+      "japanese": "チームワークは成功のために重要です。",
+      "category": "school",
+      "ageGroup": "10-12",
+      "difficulty": 3,
+      "custom": false
+    },
+    {
+      "id": "sentence-daily-never-give-up-on-your-dreams-10-12",
+      "type": "sentence",
+      "english": "Never give up on your dreams.",
+      "japanese": "夢をあきらめてはいけません。",
+      "category": "daily",
+      "ageGroup": "10-12",
+      "difficulty": 3,
+      "custom": false
+    }
+  ]
+}

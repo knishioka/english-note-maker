@@ -1,0 +1,112 @@
+{
+  "metadata": {
+    "type": "sentence",
+    "category": "age-7-9",
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-01T09:14:07.034Z",
+    "totalCount": 10,
+    "schemaVersion": "1.0.0"
+  },
+  "items": [
+    {
+      "id": "sentence-school-i-go-to-school-every-day-7-9",
+      "type": "sentence",
+      "english": "I go to school every day.",
+      "japanese": "わたしは 毎日 学校に 行きます。",
+      "category": "school",
+      "ageGroup": "7-9",
+      "difficulty": 2,
+      "custom": false
+    },
+    {
+      "id": "sentence-daily-my-favorite-color-is-blue-7-9",
+      "type": "sentence",
+      "english": "My favorite color is blue.",
+      "japanese": "わたしの 好きな 色は 青です。",
+      "category": "daily",
+      "ageGroup": "7-9",
+      "difficulty": 2,
+      "custom": false
+    },
+    {
+      "id": "sentence-daily-can-you-help-me-please-7-9",
+      "type": "sentence",
+      "english": "Can you help me, please?",
+      "japanese": "手伝って もらえますか？",
+      "category": "daily",
+      "ageGroup": "7-9",
+      "difficulty": 2,
+      "custom": false
+    },
+    {
+      "id": "sentence-family-i-have-two-brothers-7-9",
+      "type": "sentence",
+      "english": "I have two brothers.",
+      "japanese": "わたしには 兄弟が 二人 います。",
+      "category": "family",
+      "ageGroup": "7-9",
+      "difficulty": 2,
+      "custom": false
+    },
+    {
+      "id": "sentence-school-let-s-study-english-together-7-9",
+      "type": "sentence",
+      "english": "Let's study English together.",
+      "japanese": "いっしょに 英語を 勉強しましょう。",
+      "category": "school",
+      "ageGroup": "7-9",
+      "difficulty": 2,
+      "custom": false
+    },
+    {
+      "id": "sentence-daily-the-weather-is-nice-today-7-9",
+      "type": "sentence",
+      "english": "The weather is nice today.",
+      "japanese": "今日は いい 天気です。",
+      "category": "daily",
+      "ageGroup": "7-9",
+      "difficulty": 2,
+      "custom": false
+    },
+    {
+      "id": "sentence-school-i-want-to-be-a-teacher-7-9",
+      "type": "sentence",
+      "english": "I want to be a teacher.",
+      "japanese": "わたしは 先生に なりたいです。",
+      "category": "school",
+      "ageGroup": "7-9",
+      "difficulty": 2,
+      "custom": false
+    },
+    {
+      "id": "sentence-hobby-my-hobby-is-reading-books-7-9",
+      "type": "sentence",
+      "english": "My hobby is reading books.",
+      "japanese": "わたしの しゅみは 読書です。",
+      "category": "hobby",
+      "ageGroup": "7-9",
+      "difficulty": 2,
+      "custom": false
+    },
+    {
+      "id": "sentence-school-summer-vacation-is-fun-7-9",
+      "type": "sentence",
+      "english": "Summer vacation is fun.",
+      "japanese": "夏休みは 楽しいです。",
+      "category": "school",
+      "ageGroup": "7-9",
+      "difficulty": 2,
+      "custom": false
+    },
+    {
+      "id": "sentence-hobby-i-can-ride-a-bicycle-7-9",
+      "type": "sentence",
+      "english": "I can ride a bicycle.",
+      "japanese": "わたしは 自転車に 乗れます。",
+      "category": "hobby",
+      "ageGroup": "7-9",
+      "difficulty": 2,
+      "custom": false
+    }
+  ]
+}

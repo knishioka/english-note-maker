@@ -1,0 +1,21 @@
+{
+  "type": "alphabet",
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-01T09:14:07.035Z",
+  "files": [
+    {
+      "name": "uppercase",
+      "path": "./uppercase.json",
+      "itemCount": 26,
+      "ageGroups": ["4-6"]
+    },
+    {
+      "name": "lowercase",
+      "path": "./lowercase.json",
+      "itemCount": 26,
+      "ageGroups": ["4-6"]
+    }
+  ],
+  "totalItems": 52,
+  "loadStrategy": "eager"
+}

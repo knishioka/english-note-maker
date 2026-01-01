@@ -1,0 +1,27 @@
+{
+  "type": "sentence",
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-01T09:14:07.033Z",
+  "files": [
+    {
+      "name": "age-4-6",
+      "path": "./age-4-6.json",
+      "itemCount": 10,
+      "ageGroups": ["4-6"]
+    },
+    {
+      "name": "age-7-9",
+      "path": "./age-7-9.json",
+      "itemCount": 10,
+      "ageGroups": ["7-9"]
+    },
+    {
+      "name": "age-10-12",
+      "path": "./age-10-12.json",
+      "itemCount": 10,
+      "ageGroups": ["10-12"]
+    }
+  ],
+  "totalItems": 30,
+  "loadStrategy": "eager"
+}

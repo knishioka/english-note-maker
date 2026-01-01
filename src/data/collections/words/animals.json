@@ -1,0 +1,162 @@
+{
+  "metadata": {
+    "type": "word",
+    "category": "animals",
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-01T09:14:07.024Z",
+    "totalCount": 15,
+    "schemaVersion": "1.0.0"
+  },
+  "items": [
+    {
+      "id": "word-animals-cat-4-6",
+      "type": "word",
+      "english": "cat",
+      "japanese": "ねこ",
+      "syllables": "cat",
+      "category": "animals",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-animals-dog-4-6",
+      "type": "word",
+      "english": "dog",
+      "japanese": "いぬ",
+      "syllables": "dog",
+      "category": "animals",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-animals-bird-4-6",
+      "type": "word",
+      "english": "bird",
+      "japanese": "とり",
+      "syllables": "bird",
+      "category": "animals",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-animals-fish-4-6",
+      "type": "word",
+      "english": "fish",
+      "japanese": "さかな",
+      "syllables": "fish",
+      "category": "animals",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-animals-rabbit-4-6",
+      "type": "word",
+      "english": "rabbit",
+      "japanese": "うさぎ",
+      "syllables": "rab-bit",
+      "category": "animals",
+      "ageGroup": "4-6",
+      "difficulty": 1
+    },
+    {
+      "id": "word-animals-elephant-7-9",
+      "type": "word",
+      "english": "elephant",
+      "japanese": "ぞう",
+      "syllables": "el-e-phant",
+      "category": "animals",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-animals-monkey-7-9",
+      "type": "word",
+      "english": "monkey",
+      "japanese": "さる",
+      "syllables": "mon-key",
+      "category": "animals",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-animals-giraffe-7-9",
+      "type": "word",
+      "english": "giraffe",
+      "japanese": "きりん",
+      "syllables": "gi-raffe",
+      "category": "animals",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-animals-penguin-7-9",
+      "type": "word",
+      "english": "penguin",
+      "japanese": "ペンギン",
+      "syllables": "pen-guin",
+      "category": "animals",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-animals-dolphin-7-9",
+      "type": "word",
+      "english": "dolphin",
+      "japanese": "イルカ",
+      "syllables": "dol-phin",
+      "category": "animals",
+      "ageGroup": "7-9",
+      "difficulty": 2
+    },
+    {
+      "id": "word-animals-chimpanzee-10-12",
+      "type": "word",
+      "english": "chimpanzee",
+      "japanese": "チンパンジー",
+      "syllables": "chim-pan-zee",
+      "category": "animals",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-animals-rhinoceros-10-12",
+      "type": "word",
+      "english": "rhinoceros",
+      "japanese": "サイ",
+      "syllables": "rhi-noc-er-os",
+      "category": "animals",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-animals-hippopotamus-10-12",
+      "type": "word",
+      "english": "hippopotamus",
+      "japanese": "カバ",
+      "syllables": "hip-po-pot-a-mus",
+      "category": "animals",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-animals-chameleon-10-12",
+      "type": "word",
+      "english": "chameleon",
+      "japanese": "カメレオン",
+      "syllables": "cha-me-le-on",
+      "category": "animals",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    },
+    {
+      "id": "word-animals-crocodile-10-12",
+      "type": "word",
+      "english": "crocodile",
+      "japanese": "ワニ",
+      "syllables": "croc-o-dile",
+      "category": "animals",
+      "ageGroup": "10-12",
+      "difficulty": 3
+    }
+  ]
+}
