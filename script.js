@@ -2019,16 +2019,30 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
   return html;
 }
 
+function extractPunctuation(token, cleanWord) {
+  const lowerToken = token.toLowerCase();
+  const lowerClean = cleanWord.toLowerCase();
+  const wordIndex = lowerToken.indexOf(lowerClean);
+  if (wordIndex < 0) {
+    return { leading: '', trailing: token.substring(cleanWord.length) };
+  }
+  return {
+    leading: token.substring(0, wordIndex),
+    trailing: token.substring(wordIndex + cleanWord.length),
+  };
+}
+
 function generateClozeText(text, blankType) {
   const words = text.split(/(\s+)/);
   const answers = [];
 
   if (blankType === 'char') {
     const processed = words.map((token) => {
-      if (/^\s+$/.test(token)) return token;
+      if (/^\s+$/.test(token)) return escapeHtml(token);
       const cleanWord = token.replace(/[.,!?;:'"()]/g, '');
-      if (cleanWord.length < 3) return token;
+      if (cleanWord.length < 3) return escapeHtml(token);
 
+      const { leading, trailing } = extractPunctuation(token, cleanWord);
       const sightWord = SIGHT_WORD_MAP_DATA.get(cleanWord.toLowerCase());
       if (sightWord && (sightWord.blankType === 'char' || sightWord.blankType === 'both')) {
         const pattern = sightWord.phonicsPattern;
@@ -2039,9 +2053,8 @@ function generateClozeText(text, blankType) {
           const prefix = cleanWord.substring(0, patternIndex);
           const blanked = '_'.repeat(pattern.length);
           const suffix = cleanWord.substring(patternIndex + pattern.length);
-          const punctuation = token.substring(cleanWord.length);
           answers.push(pattern);
-          return `<span class="cloze-blank-char">${prefix}<span class="cloze-blank">${blanked}</span>${suffix}</span>${punctuation}`;
+          return `${escapeHtml(leading)}<span class="cloze-blank-char">${escapeHtml(prefix)}<span class="cloze-blank">${blanked}</span>${escapeHtml(suffix)}</span>${escapeHtml(trailing)}`;
         }
       }
 
@@ -2052,12 +2065,11 @@ function generateClozeText(text, blankType) {
         const prefix = cleanWord.substring(0, midStart);
         const blanked = '_'.repeat(midEnd - midStart);
         const suffix = cleanWord.substring(midEnd);
-        const punctuation = token.substring(cleanWord.length);
         answers.push(blankedPart);
-        return `<span class="cloze-blank-char">${prefix}<span class="cloze-blank">${blanked}</span>${suffix}</span>${punctuation}`;
+        return `${escapeHtml(leading)}<span class="cloze-blank-char">${escapeHtml(prefix)}<span class="cloze-blank">${blanked}</span>${escapeHtml(suffix)}</span>${escapeHtml(trailing)}`;
       }
 
-      return token;
+      return escapeHtml(token);
     });
 
     return { display: processed.join(''), answers };
@@ -2069,20 +2081,20 @@ function generateClozeText(text, blankType) {
 
   const processed = words.map((token) => {
     if (/^\s+$/.test(token)) return token;
-    if (blankedCount >= maxBlanks) return token;
+    if (blankedCount >= maxBlanks) return escapeHtml(token);
 
     const cleanWord = token.replace(/[.,!?;:'"()]/g, '');
-    if (cleanWord.length < 2) return token;
+    if (cleanWord.length < 2) return escapeHtml(token);
 
     if (SIGHT_WORD_SET_DATA.has(cleanWord.toLowerCase())) {
       blankedCount++;
+      const { leading, trailing } = extractPunctuation(token, cleanWord);
       const blankWidth = Math.max(cleanWord.length * 2, 6);
-      const punctuation = token.substring(cleanWord.length);
       answers.push(cleanWord);
-      return `<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>${punctuation}`;
+      return `${escapeHtml(leading)}<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>${escapeHtml(trailing)}`;
     }
 
-    return token;
+    return escapeHtml(token);
   });
 
   if (answers.length === 0) {
@@ -2092,11 +2104,11 @@ function generateClozeText(text, blankType) {
     if (contentWordEntries.length > 0) {
       const target = contentWordEntries[Math.floor(contentWordEntries.length / 2)];
       const cleanWord = target.w.replace(/[.,!?;:'"()]/g, '');
+      const { leading, trailing } = extractPunctuation(target.w, cleanWord);
       const blankWidth = Math.max(cleanWord.length * 2, 6);
-      const punctuation = target.w.substring(cleanWord.length);
       answers.push(cleanWord);
       processed[target.i] =
-        `<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>${punctuation}`;
+        `${escapeHtml(leading)}<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>${escapeHtml(trailing)}`;
     }
   }
 

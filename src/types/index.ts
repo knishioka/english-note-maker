@@ -188,10 +188,12 @@ export interface UIState {
   wordCategory: WordCategory;
   phraseCategory: PhraseCategory;
   alphabetType: AlphabetType;
+  clozeBlankType?: 'word' | 'char';
   selectedCategories?: {
     sentence?: ContentCategory;
     word?: WordCategory;
     phrase?: PhraseCategory;
+    cloze?: PhraseCategory;
   };
 }
 

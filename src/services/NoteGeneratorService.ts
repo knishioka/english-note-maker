@@ -16,6 +16,7 @@ import { ErrorHandler } from '../utils/ErrorHandler.js';
 import { ValidationService } from './ValidationService.js';
 import { PerformanceMonitor } from '../utils/PerformanceMonitor.js';
 import { getDataManager, CATEGORY_DISPLAY_NAMES } from '../data/index.js';
+import { SIGHT_WORD_SET, SIGHT_WORD_MAP } from '../data/sight-words.js';
 import type {
   AgeGroup,
   SentenceContentItem,
@@ -414,17 +415,22 @@ export class NoteGeneratorService {
     const phrases = await this.getPhrasesForCategory(clozeCategory, state.ageGroup);
     const shuffledPhrases = this.shuffleArray([...phrases]).slice(0, 4);
     const categoryNames = this.getPhraseCategoryNames();
+    const blankType = state.clozeBlankType || 'word';
 
     let html = '<div class="cloze-practice">';
     html += `<h3 class="practice-title practice-title--cloze">Fill in the Blanks - ${categoryNames[clozeCategory] || clozeCategory}</h3>`;
     html += '<div class="cloze-grid">';
 
-    for (const phrase of shuffledPhrases) {
+    const clozeResults = shuffledPhrases.map((p) => this.generateClozeBlank(p.english, blankType));
+
+    for (let i = 0; i < shuffledPhrases.length; i++) {
+      const phrase = shuffledPhrases[i];
+      const clozeResult = clozeResults[i];
       html += `
         <div class="cloze-item">
           <div class="cloze-header">
             <div class="cloze-main">
-              <div class="cloze-english">${this.escapeHtml(phrase.english)}</div>
+              <div class="cloze-english">${clozeResult.display}</div>
               <div class="cloze-japanese">${this.escapeHtml(phrase.japanese)}</div>
             </div>
           </div>
@@ -440,6 +446,104 @@ export class NoteGeneratorService {
     html += '</div>';
     html += '</div>';
     return html;
+  }
+
+  private extractPunctuation(
+    token: string,
+    cleanWord: string
+  ): { leading: string; trailing: string } {
+    const wordIndex = token.toLowerCase().indexOf(cleanWord.toLowerCase());
+    if (wordIndex < 0) {
+      return { leading: '', trailing: token.substring(cleanWord.length) };
+    }
+    return {
+      leading: token.substring(0, wordIndex),
+      trailing: token.substring(wordIndex + cleanWord.length),
+    };
+  }
+
+  private generateClozeBlank(
+    text: string,
+    blankType: string
+  ): { display: string; answers: string[] } {
+    const words = text.split(/(\s+)/);
+    const answers: string[] = [];
+
+    if (blankType === 'char') {
+      const processed = words.map((token) => {
+        if (/^\s+$/.test(token)) return this.escapeHtml(token);
+        const cleanWord = token.replace(/[.,!?;:'"()]/g, '');
+        if (cleanWord.length < 3) return this.escapeHtml(token);
+
+        const { leading, trailing } = this.extractPunctuation(token, cleanWord);
+        const sightWord = SIGHT_WORD_MAP.get(cleanWord.toLowerCase());
+        if (sightWord && (sightWord.blankType === 'char' || sightWord.blankType === 'both')) {
+          const pattern = sightWord.phonicsPattern;
+          const patternIndex = cleanWord.toLowerCase().indexOf(pattern.toLowerCase());
+          if (patternIndex >= 0) {
+            const prefix = cleanWord.substring(0, patternIndex);
+            const blanked = '_'.repeat(pattern.length);
+            const suffix = cleanWord.substring(patternIndex + pattern.length);
+            answers.push(pattern);
+            return `${this.escapeHtml(leading)}<span class="cloze-blank-char">${this.escapeHtml(prefix)}<span class="cloze-blank">${blanked}</span>${this.escapeHtml(suffix)}</span>${this.escapeHtml(trailing)}`;
+          }
+        }
+
+        if (cleanWord.length >= 4) {
+          const midStart = Math.floor(cleanWord.length * 0.3);
+          const midEnd = Math.ceil(cleanWord.length * 0.7);
+          const blankedPart = cleanWord.substring(midStart, midEnd);
+          const prefix = cleanWord.substring(0, midStart);
+          const blanked = '_'.repeat(midEnd - midStart);
+          const suffix = cleanWord.substring(midEnd);
+          answers.push(blankedPart);
+          return `${this.escapeHtml(leading)}<span class="cloze-blank-char">${this.escapeHtml(prefix)}<span class="cloze-blank">${blanked}</span>${this.escapeHtml(suffix)}</span>${this.escapeHtml(trailing)}`;
+        }
+
+        return this.escapeHtml(token);
+      });
+
+      return { display: processed.join(''), answers };
+    }
+
+    // word-level blanks
+    let blankedCount = 0;
+    const maxBlanks = Math.max(1, Math.ceil(words.filter((w) => !/^\s+$/.test(w)).length * 0.3));
+
+    const processed = words.map((token) => {
+      if (/^\s+$/.test(token)) return token;
+      if (blankedCount >= maxBlanks) return this.escapeHtml(token);
+
+      const cleanWord = token.replace(/[.,!?;:'"()]/g, '');
+      if (cleanWord.length < 2) return this.escapeHtml(token);
+
+      if (SIGHT_WORD_SET.has(cleanWord.toLowerCase())) {
+        blankedCount++;
+        const { leading, trailing } = this.extractPunctuation(token, cleanWord);
+        const blankWidth = Math.max(cleanWord.length * 2, 6);
+        answers.push(cleanWord);
+        return `${this.escapeHtml(leading)}<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>${this.escapeHtml(trailing)}`;
+      }
+
+      return this.escapeHtml(token);
+    });
+
+    if (answers.length === 0) {
+      const contentWordEntries = words
+        .map((w, i) => ({ w, i }))
+        .filter(({ w }) => !/^\s+$/.test(w) && w.replace(/[.,!?;:'"()]/g, '').length >= 2);
+      if (contentWordEntries.length > 0) {
+        const target = contentWordEntries[Math.floor(contentWordEntries.length / 2)];
+        const cleanWord = target.w.replace(/[.,!?;:'"()]/g, '');
+        const { leading, trailing } = this.extractPunctuation(target.w, cleanWord);
+        const blankWidth = Math.max(cleanWord.length * 2, 6);
+        answers.push(cleanWord);
+        processed[target.i] =
+          `${this.escapeHtml(leading)}<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>${this.escapeHtml(trailing)}`;
+      }
+    }
+
+    return { display: processed.join(''), answers };
   }
 
   /**
