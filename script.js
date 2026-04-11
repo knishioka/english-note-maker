@@ -2039,7 +2039,7 @@ function generateClozeText(text, blankType) {
   if (blankType === 'char') {
     const processed = words.map((token) => {
       if (/^\s+$/.test(token)) return escapeHtml(token);
-      const cleanWord = token.replace(/[.,!?;:'"()]/g, '');
+      const cleanWord = token.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
       if (cleanWord.length < 3) return escapeHtml(token);
 
       const { leading, trailing } = extractPunctuation(token, cleanWord);
@@ -2083,7 +2083,7 @@ function generateClozeText(text, blankType) {
     if (/^\s+$/.test(token)) return token;
     if (blankedCount >= maxBlanks) return escapeHtml(token);
 
-    const cleanWord = token.replace(/[.,!?;:'"()]/g, '');
+    const cleanWord = token.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
     if (cleanWord.length < 2) return escapeHtml(token);
 
     if (SIGHT_WORD_SET_DATA.has(cleanWord.toLowerCase())) {

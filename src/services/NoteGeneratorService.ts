@@ -52,7 +52,7 @@ export class NoteGeneratorService {
       await this.validateUIState(state);
 
       // ランダムコンテンツを含むモードはキャッシュをスキップ
-      const randomModes = ['sentence', 'word', 'phrase'];
+      const randomModes = ['sentence', 'word', 'phrase', 'cloze'];
       const useCache = !randomModes.includes(state.practiceMode);
 
       // Check cache first (non-random modes only)
@@ -472,7 +472,7 @@ export class NoteGeneratorService {
     if (blankType === 'char') {
       const processed = words.map((token) => {
         if (/^\s+$/.test(token)) return this.escapeHtml(token);
-        const cleanWord = token.replace(/[.,!?;:'"()]/g, '');
+        const cleanWord = token.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
         if (cleanWord.length < 3) return this.escapeHtml(token);
 
         const { leading, trailing } = this.extractPunctuation(token, cleanWord);
@@ -514,7 +514,7 @@ export class NoteGeneratorService {
       if (/^\s+$/.test(token)) return token;
       if (blankedCount >= maxBlanks) return this.escapeHtml(token);
 
-      const cleanWord = token.replace(/[.,!?;:'"()]/g, '');
+      const cleanWord = token.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
       if (cleanWord.length < 2) return this.escapeHtml(token);
 
       if (SIGHT_WORD_SET.has(cleanWord.toLowerCase())) {
@@ -531,10 +531,12 @@ export class NoteGeneratorService {
     if (answers.length === 0) {
       const contentWordEntries = words
         .map((w, i) => ({ w, i }))
-        .filter(({ w }) => !/^\s+$/.test(w) && w.replace(/[.,!?;:'"()]/g, '').length >= 2);
+        .filter(
+          ({ w }) => !/^\s+$/.test(w) && w.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '').length >= 2
+        );
       if (contentWordEntries.length > 0) {
         const target = contentWordEntries[Math.floor(contentWordEntries.length / 2)];
-        const cleanWord = target.w.replace(/[.,!?;:'"()]/g, '');
+        const cleanWord = target.w.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
         const { leading, trailing } = this.extractPunctuation(target.w, cleanWord);
         const blankWidth = Math.max(cleanWord.length * 2, 6);
         answers.push(cleanWord);
