@@ -43,6 +43,7 @@
               <option value="sentence">文章練習</option>
               <option value="word">単語練習</option>
               <option value="alphabet">アルファベット練習</option>
+              <option value="cloze">穴埋めフレーズ練習</option>
             </select>
           </label>
         </div>
@@ -152,6 +153,45 @@
           </label>
           <button
             id="shufflePhrases"
+            class="btn btn--secondary"
+            style="margin-top: 0.5rem"
+            type="button"
+          >
+            🔄 別のフレーズを表示
+          </button>
+        </div>
+
+        <div class="controls__group" id="clozeOptions" style="display: none">
+          <label class="controls__label">
+            フレーズカテゴリー:
+            <select id="clozeCategory" class="controls__select">
+              <option value="greetings">あいさつ</option>
+              <option value="self_introduction">自己紹介</option>
+              <option value="school">学校生活</option>
+              <option value="shopping">買い物</option>
+              <option value="travel">旅行・移動</option>
+              <option value="feelings">感情表現</option>
+              <option value="daily_life">日常生活</option>
+              <option value="classroom_english">教室での英語</option>
+              <option value="friend_making">友達作り</option>
+              <option value="cultural_exchange">文化交流</option>
+              <option value="emergency_situations">緊急時の表現</option>
+              <option value="numbers_math">数と算数</option>
+            </select>
+          </label>
+          <label class="controls__label">
+            穴埋めタイプ:
+            <select id="clozeBlankType" class="controls__select">
+              <option value="word">単語レベル（単語を空欄に）</option>
+              <option value="char">文字レベル（文字を空欄に）</option>
+            </select>
+          </label>
+          <label class="controls__label">
+            <input type="checkbox" id="showClozeAnswers" class="controls__checkbox" />
+            解答を表示
+          </label>
+          <button
+            id="shuffleCloze"
             class="btn btn--secondary"
             style="margin-top: 0.5rem"
             type="button"

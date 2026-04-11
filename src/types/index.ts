@@ -13,7 +13,7 @@ export type AgeGroup = '4-6' | '7-9' | '10-12';
 /**
  * Practice modes available in the application
  */
-export type PracticeMode = 'normal' | 'sentence' | 'word' | 'alphabet' | 'phrase';
+export type PracticeMode = 'normal' | 'sentence' | 'word' | 'alphabet' | 'phrase' | 'cloze';
 
 /**
  * Line height options for baseline grids (in mm)
@@ -188,10 +188,12 @@ export interface UIState {
   wordCategory: WordCategory;
   phraseCategory: PhraseCategory;
   alphabetType: AlphabetType;
+  clozeBlankType?: 'word' | 'char';
   selectedCategories?: {
     sentence?: ContentCategory;
     word?: WordCategory;
     phrase?: PhraseCategory;
+    cloze?: PhraseCategory;
   };
 }
 
@@ -532,7 +534,7 @@ export function isAgeGroup(value: unknown): value is AgeGroup {
 export function isPracticeMode(value: unknown): value is PracticeMode {
   return (
     typeof value === 'string' &&
-    ['normal', 'sentence', 'word', 'alphabet', 'phrase'].includes(value)
+    ['normal', 'sentence', 'word', 'alphabet', 'phrase', 'cloze'].includes(value)
   );
 }
 
