@@ -5,12 +5,16 @@ let EXAMPLE_SENTENCES_BY_AGE = {};
 let WORD_LISTS = {};
 let ALPHABET_DATA = {};
 let PHRASE_DATA = {};
+let SIGHT_WORDS_DATA = [];
+let SIGHT_WORD_SET_DATA = new Set();
+let SIGHT_WORD_MAP_DATA = new Map();
 
 let currentExamples = [];
 
 let currentExamplesMeta = { key: '', perPageCount: 0, pageCount: 0 };
 let wordSequenceCache = { key: '', perPage: 0, pageCount: 0, sequence: [] };
 let phraseSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
+let clozeSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 
 const PX_TO_MM = 0.2645833333;
 const A4_HEIGHT_MM = 297;
@@ -24,19 +28,29 @@ let setCurrentExamplesImpl = (examples) => {
 let setCurrentExampleIndicesImpl = () => {};
 
 const modulesReady = (async () => {
-  const [exampleModule, wordModule, alphabetModule, phraseModule, appConfigModule] =
-    await Promise.all([
-      import('./src/data/example-sentences.js'),
-      import('./src/data/word-lists.js'),
-      import('./src/data/alphabet-data.js'),
-      import('./src/data/phrase-data.js'),
-      import('./src/models/app-config.js'),
-    ]);
+  const [
+    exampleModule,
+    wordModule,
+    alphabetModule,
+    phraseModule,
+    appConfigModule,
+    sightWordsModule,
+  ] = await Promise.all([
+    import('./src/data/example-sentences.js'),
+    import('./src/data/word-lists.js'),
+    import('./src/data/alphabet-data.js'),
+    import('./src/data/phrase-data.js'),
+    import('./src/models/app-config.js'),
+    import('./src/data/sight-words.js'),
+  ]);
 
   EXAMPLE_SENTENCES_BY_AGE = exampleModule.EXAMPLE_SENTENCES_BY_AGE;
   WORD_LISTS = wordModule.WORD_LISTS;
   ALPHABET_DATA = alphabetModule.ALPHABET_DATA;
   PHRASE_DATA = phraseModule.PHRASE_DATA;
+  SIGHT_WORDS_DATA = sightWordsModule.SIGHT_WORDS;
+  SIGHT_WORD_SET_DATA = sightWordsModule.SIGHT_WORD_SET;
+  SIGHT_WORD_MAP_DATA = sightWordsModule.SIGHT_WORD_MAP;
 
   currentExamples = Array.isArray(appConfigModule.currentExamples)
     ? appConfigModule.currentExamples
@@ -75,6 +89,10 @@ function resetWordCache() {
 
 function resetPhraseCache() {
   phraseSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
+}
+
+function resetClozeCache() {
+  clozeSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 }
 
 function reportInitializationFailure(error) {
@@ -147,6 +165,7 @@ const OPTION_SECTION_IDS = [
   'customExampleOptions',
   'alphabetOptions',
   'phraseOptions',
+  'clozeOptions',
 ];
 
 const PRACTICE_MODE_CONFIGS = {
@@ -165,6 +184,10 @@ const PRACTICE_MODE_CONFIGS = {
   phrase: {
     sections: ['ageOptions', 'phraseOptions', 'translationOptions'],
     checkboxes: { showExamples: false, showTranslation: true },
+  },
+  cloze: {
+    sections: ['ageOptions', 'clozeOptions'],
+    checkboxes: { showExamples: false, showTranslation: false },
   },
   default: {
     sections: [],
@@ -212,6 +235,10 @@ function setupEventListeners() {
     showSituation: document.getElementById('showSituation'),
     shufflePhrasesBtn: document.getElementById('shufflePhrases'),
     previewBtn: document.getElementById('previewBtn'),
+    clozeCategory: document.getElementById('clozeCategory'),
+    clozeBlankType: document.getElementById('clozeBlankType'),
+    showClozeAnswers: document.getElementById('showClozeAnswers'),
+    shuffleClozeBtn: document.getElementById('shuffleCloze'),
   };
 
   addEventListenerIfExists(elements.showExamples, 'change', updatePreview);
@@ -282,6 +309,17 @@ function setupEventListeners() {
     updatePreview();
   });
 
+  addEventListenerIfExists(elements.clozeCategory, 'change', () => {
+    resetClozeCache();
+    updatePreview();
+  });
+  addEventListenerIfExists(elements.clozeBlankType, 'change', updatePreview);
+  addEventListenerIfExists(elements.showClozeAnswers, 'change', updatePreview);
+  addEventListenerIfExists(elements.shuffleClozeBtn, 'click', () => {
+    resetClozeCache();
+    updatePreview();
+  });
+
   addEventListenerIfExists(elements.printBtn, 'click', printNote);
 
   if (elements.previewBtn) {
@@ -297,6 +335,7 @@ function setupEventListeners() {
     updateOptionsVisibility();
     resetWordCache();
     resetPhraseCache();
+    resetClozeCache();
     setCurrentExamples([]);
     updatePreview();
   });
@@ -516,6 +555,7 @@ function calculateBaseLayout(state) {
     sentence: calculateSentencePracticeLayout(state.lineHeight, state.showTranslation),
     word: calculateWordPracticeLayout(state.lineHeight),
     phrase: calculatePhrasePracticeLayout(state.lineHeight),
+    cloze: calculateClozePracticeLayout(state.lineHeight),
   };
 }
 
@@ -637,6 +677,12 @@ function updateAutoLayoutNotice(result, state, baseLayout) {
   notice.dataset.status = 'idle';
 }
 
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 function clampNumber(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
@@ -739,6 +785,8 @@ function generateNotePage(pageNumber, totalPages, layoutOverrides = {}) {
       ageGroup,
       layoutOverrides.phrase
     );
+  } else if (practiceMode === 'cloze') {
+    html += generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverrides.cloze);
   } else {
     html += generateNormalPractice(
       pageNumber,
@@ -1831,6 +1879,256 @@ function ensurePhraseSequence(category, ageGroup, perPage, pageCount, phrases) {
   }
 
   return phraseSequenceCache.sequence;
+}
+
+// === 穴埋めフレーズ練習（Cloze Practice） ===
+
+function calculateClozePracticeLayout(lineHeight) {
+  const basePhrases = getClozeCapacity(lineHeight);
+  const minPhrases = Math.max(1, Math.min(basePhrases - 1, Math.floor(basePhrases * 0.7)));
+
+  return {
+    property: 'clozesPerPage',
+    label: '穴埋め数',
+    baseValue: basePhrases,
+    minValue: minPhrases,
+  };
+}
+
+function getClozeCapacity(lineHeight) {
+  const availableHeight = 277;
+  const itemHeight = 20 + 2 * lineHeight;
+  const maxItems = Math.max(1, Math.floor(availableHeight / itemHeight));
+  const safetyFactor = lineHeight >= 12 ? 0.5 : 0.55;
+  const safeItems = Math.max(1, Math.floor(maxItems * safetyFactor));
+  return Math.min(4, Math.max(2, safeItems));
+}
+
+function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride = {}) {
+  let html = '<div class="cloze-practice">';
+  const clozeCategoryElement = document.getElementById('clozeCategory');
+  const clozeCategory = (clozeCategoryElement && clozeCategoryElement.value) || 'greetings';
+  const blankTypeElement = document.getElementById('clozeBlankType');
+  const blankType = (blankTypeElement && blankTypeElement.value) || 'word';
+  const showAnswers = Boolean(document.getElementById('showClozeAnswers')?.checked);
+  const lineHeight = parseInt(document.getElementById('lineHeight').value);
+
+  let allPhrases;
+  if (PHRASE_DATA[clozeCategory]) {
+    if (PHRASE_DATA[clozeCategory][ageGroup]) {
+      allPhrases = PHRASE_DATA[clozeCategory][ageGroup];
+    } else {
+      const availableAges = Object.keys(PHRASE_DATA[clozeCategory]);
+      const fallbackAge = availableAges.includes('7-9') ? '7-9' : availableAges[0];
+      allPhrases = PHRASE_DATA[clozeCategory][fallbackAge] || [];
+    }
+  } else {
+    allPhrases = PHRASE_DATA.greetings?.[ageGroup] || PHRASE_DATA.greetings?.['7-9'] || [];
+  }
+
+  const safePhrases = Array.isArray(allPhrases) ? allPhrases : [];
+
+  if (!safePhrases.length) {
+    return `
+      <div class="cloze-practice">
+        <p class="phrase-empty">このカテゴリーには現在表示できるフレーズがありません。</p>
+      </div>
+    `;
+  }
+
+  const layoutInfo = calculateClozePracticeLayout(lineHeight);
+  const clozesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.clozesPerPage);
+  const pageCount = Math.max(1, totalPages || 1);
+  const phrases = ensureClozeSequence(
+    clozeCategory,
+    ageGroup,
+    clozesPerPage,
+    pageCount,
+    safePhrases
+  );
+
+  const startIndex = (pageNumber - 1) * clozesPerPage;
+  const pagePhrases = phrases.slice(startIndex, startIndex + clozesPerPage).filter(Boolean);
+
+  if (!pagePhrases.length) {
+    html +=
+      '<p class="phrase-empty">このページに表示できるフレーズが不足しています。条件を変更してください。</p>';
+    html += '</div>';
+    return html;
+  }
+
+  const categoryNames = {
+    greetings: 'あいさつ',
+    self_introduction: '自己紹介',
+    school: '学校生活',
+    shopping: '買い物',
+    travel: '旅行・移動',
+    feelings: '感情表現',
+    daily_life: '日常生活',
+    classroom_english: '教室での英語',
+    friend_making: '友達作り',
+    cultural_exchange: '文化交流',
+    emergency_situations: '緊急時の表現',
+    numbers_math: '数と算数',
+  };
+
+  const blankTypeLabel = blankType === 'char' ? '文字レベル' : '単語レベル';
+  const pageLabel = pageCount > 1 ? ` (${pageNumber}/${pageCount})` : '';
+  html += `<h3 class="practice-title practice-title--cloze">Fill in the Blanks - ${categoryNames[clozeCategory] || clozeCategory}${pageLabel}</h3>`;
+  html += `<p class="cloze-type-label">${blankTypeLabel}</p>`;
+  html += '<div class="cloze-grid">';
+
+  const clozeResults = pagePhrases.map((p) => generateClozeText(p.english, blankType));
+
+  for (let i = 0; i < pagePhrases.length; i++) {
+    const phrase = pagePhrases[i];
+    const clozeResult = clozeResults[i];
+    html += `
+      <div class="cloze-item">
+        <div class="cloze-header">
+          <div class="cloze-main">
+            <div class="cloze-english">${clozeResult.display}</div>
+            <div class="cloze-japanese">${escapeHtml(phrase.japanese)}</div>
+          </div>
+          ${phrase.situation ? `<div class="phrase-situation">【${escapeHtml(phrase.situation)}】</div>` : ''}
+        </div>
+        <div class="phrase-lines">
+          ${generateBaselineGroup()}
+          <div class="line-separator-small"></div>
+          ${generateBaselineGroup()}
+        </div>
+      </div>
+    `;
+  }
+
+  html += '</div>';
+
+  if (showAnswers) {
+    html += '<div class="cloze-answers">';
+    html += '<h4 class="cloze-answers-title">Answer Key</h4>';
+    html += '<div class="cloze-answers-grid">';
+    for (let i = 0; i < clozeResults.length; i++) {
+      const answerList = escapeHtml(clozeResults[i].answers.join(', '));
+      html += `<div class="cloze-answer-item"><span class="cloze-answer-number">${i + 1}.</span> ${answerList}</div>`;
+    }
+    html += '</div>';
+    html += '</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function generateClozeText(text, blankType) {
+  const words = text.split(/(\s+)/);
+  const answers = [];
+
+  if (blankType === 'char') {
+    const processed = words.map((token) => {
+      if (/^\s+$/.test(token)) return token;
+      const cleanWord = token.replace(/[.,!?;:'"()]/g, '');
+      if (cleanWord.length < 3) return token;
+
+      const sightWord = SIGHT_WORD_MAP_DATA.get(cleanWord.toLowerCase());
+      if (sightWord && (sightWord.blankType === 'char' || sightWord.blankType === 'both')) {
+        const pattern = sightWord.phonicsPattern;
+        const lowerClean = cleanWord.toLowerCase();
+        const patternIndex = lowerClean.indexOf(pattern.toLowerCase());
+
+        if (patternIndex >= 0) {
+          const prefix = cleanWord.substring(0, patternIndex);
+          const blanked = '_'.repeat(pattern.length);
+          const suffix = cleanWord.substring(patternIndex + pattern.length);
+          const punctuation = token.substring(cleanWord.length);
+          answers.push(pattern);
+          return `<span class="cloze-blank-char">${prefix}<span class="cloze-blank">${blanked}</span>${suffix}</span>${punctuation}`;
+        }
+      }
+
+      if (cleanWord.length >= 4) {
+        const midStart = Math.floor(cleanWord.length * 0.3);
+        const midEnd = Math.ceil(cleanWord.length * 0.7);
+        const blankedPart = cleanWord.substring(midStart, midEnd);
+        const prefix = cleanWord.substring(0, midStart);
+        const blanked = '_'.repeat(midEnd - midStart);
+        const suffix = cleanWord.substring(midEnd);
+        const punctuation = token.substring(cleanWord.length);
+        answers.push(blankedPart);
+        return `<span class="cloze-blank-char">${prefix}<span class="cloze-blank">${blanked}</span>${suffix}</span>${punctuation}`;
+      }
+
+      return token;
+    });
+
+    return { display: processed.join(''), answers };
+  }
+
+  // word-level blanks
+  let blankedCount = 0;
+  const maxBlanks = Math.max(1, Math.ceil(words.filter((w) => !/^\s+$/.test(w)).length * 0.3));
+
+  const processed = words.map((token) => {
+    if (/^\s+$/.test(token)) return token;
+    if (blankedCount >= maxBlanks) return token;
+
+    const cleanWord = token.replace(/[.,!?;:'"()]/g, '');
+    if (cleanWord.length < 2) return token;
+
+    if (SIGHT_WORD_SET_DATA.has(cleanWord.toLowerCase())) {
+      blankedCount++;
+      const blankWidth = Math.max(cleanWord.length * 2, 6);
+      const punctuation = token.substring(cleanWord.length);
+      answers.push(cleanWord);
+      return `<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>${punctuation}`;
+    }
+
+    return token;
+  });
+
+  if (answers.length === 0) {
+    const contentWordEntries = words
+      .map((w, i) => ({ w, i }))
+      .filter(({ w }) => !/^\s+$/.test(w) && w.replace(/[.,!?;:'"()]/g, '').length >= 2);
+    if (contentWordEntries.length > 0) {
+      const target = contentWordEntries[Math.floor(contentWordEntries.length / 2)];
+      const cleanWord = target.w.replace(/[.,!?;:'"()]/g, '');
+      const blankWidth = Math.max(cleanWord.length * 2, 6);
+      const punctuation = target.w.substring(cleanWord.length);
+      answers.push(cleanWord);
+      processed[target.i] =
+        `<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>${punctuation}`;
+    }
+  }
+
+  return { display: processed.join(''), answers };
+}
+
+function ensureClozeSequence(category, ageGroup, perPage, pageCount, phrases) {
+  const key = `${category}|${ageGroup}`;
+  const totalNeeded = perPage * pageCount;
+  const fingerprint = phrases.map((phrase) => phrase?.english || '').join('|');
+  const needsRefresh =
+    clozeSequenceCache.key !== key ||
+    clozeSequenceCache.perPage !== perPage ||
+    clozeSequenceCache.pageCount !== pageCount ||
+    clozeSequenceCache.sequence.length < totalNeeded ||
+    clozeSequenceCache.fingerprint !== fingerprint;
+
+  if (needsRefresh) {
+    const shuffled = shuffleArray([...phrases]);
+    const extended =
+      shuffled.length >= totalNeeded ? shuffled : buildExtendedSequence(shuffled, totalNeeded);
+
+    clozeSequenceCache = {
+      key,
+      perPage,
+      pageCount,
+      fingerprint,
+      sequence: extended.slice(0, totalNeeded),
+    };
+  }
+
+  return clozeSequenceCache.sequence;
 }
 
 // Phase 2: カスタム例文機能

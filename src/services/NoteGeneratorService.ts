@@ -130,6 +130,9 @@ export class NoteGeneratorService {
         case 'phrase':
           html += await this.generatePhrasePractice(state);
           break;
+        case 'cloze':
+          html += await this.generateClozePractice(state);
+          break;
         case 'normal':
         default:
           html += await this.generateNormalPractice(state);
@@ -402,6 +405,39 @@ export class NoteGeneratorService {
       `;
     }
 
+    html += '</div>';
+    return html;
+  }
+
+  private async generateClozePractice(state: UIState): Promise<string> {
+    const clozeCategory = state.selectedCategories?.cloze || 'greetings';
+    const phrases = await this.getPhrasesForCategory(clozeCategory, state.ageGroup);
+    const shuffledPhrases = this.shuffleArray([...phrases]).slice(0, 4);
+    const categoryNames = this.getPhraseCategoryNames();
+
+    let html = '<div class="cloze-practice">';
+    html += `<h3 class="practice-title practice-title--cloze">Fill in the Blanks - ${categoryNames[clozeCategory] || clozeCategory}</h3>`;
+    html += '<div class="cloze-grid">';
+
+    for (const phrase of shuffledPhrases) {
+      html += `
+        <div class="cloze-item">
+          <div class="cloze-header">
+            <div class="cloze-main">
+              <div class="cloze-english">${this.escapeHtml(phrase.english)}</div>
+              <div class="cloze-japanese">${this.escapeHtml(phrase.japanese)}</div>
+            </div>
+          </div>
+          <div class="phrase-lines">
+            ${this.generateBaselineGroup()}
+            <div class="line-separator-small"></div>
+            ${this.generateBaselineGroup()}
+          </div>
+        </div>
+      `;
+    }
+
+    html += '</div>';
     html += '</div>';
     return html;
   }

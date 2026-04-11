@@ -839,8 +839,19 @@ body::before {
   .baseline-group,
   .sentence-practice-group,
   .example-sentence,
-  .phrase-item {
+  .phrase-item,
+  .cloze-item {
     page-break-inside: avoid !important;
+  }
+
+  /* 穴埋め練習の印刷時調整 */
+  .cloze-blank {
+    color: #000 !important;
+    border-bottom-color: #000 !important;
+  }
+
+  .cloze-answers {
+    border-top-color: #999 !important;
   }
 
   /* フレーズ練習の印刷時調整 */
@@ -1048,6 +1059,28 @@ body::before {
   font-size: 8pt;
   background: none;
   border: 1px solid #cbd5f5;
+}
+
+.a4-preview-page .cloze-practice {
+  padding: 0;
+}
+
+.a4-preview-page .cloze-grid {
+  grid-template-columns: 1fr;
+  gap: 3mm 5mm;
+}
+
+.a4-preview-page .cloze-item {
+  margin-bottom: 0;
+  page-break-inside: avoid;
+}
+
+.a4-preview-page .cloze-english {
+  font-size: 12pt;
+}
+
+.a4-preview-page .cloze-japanese {
+  font-size: 9.5pt;
 }
 
 /* プレビューでのベースライン色調整 */
@@ -1312,6 +1345,105 @@ body::before {
   font-size: 10pt;
   color: #64748b;
   margin: 8mm 0;
+}
+
+/* === 穴埋めフレーズ練習（Cloze Practice） === */
+
+.cloze-practice {
+  padding: 0;
+}
+
+.practice-title--cloze {
+  margin-bottom: 2mm;
+}
+
+.cloze-type-label {
+  text-align: center;
+  font-size: 9pt;
+  color: #64748b;
+  margin-bottom: 4mm;
+}
+
+.cloze-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3mm 5mm;
+}
+
+.cloze-item {
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5mm;
+  page-break-inside: avoid;
+}
+
+.cloze-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 4mm;
+}
+
+.cloze-main {
+  flex: 1;
+}
+
+.cloze-english {
+  font-size: 12pt;
+  font-weight: 600;
+  color: var(--text-color);
+  line-height: 1.4;
+}
+
+.cloze-japanese {
+  font-size: 9.5pt;
+  color: #606f7b;
+  margin-top: 0.5mm;
+  line-height: 1.2;
+}
+
+.cloze-blank {
+  display: inline;
+  font-family: monospace;
+  font-weight: 700;
+  color: #3b82f6;
+  letter-spacing: 0.15em;
+  border-bottom: 2px solid #3b82f6;
+  padding: 0 1px;
+}
+
+.cloze-blank-char {
+  font-weight: 600;
+}
+
+.cloze-answers {
+  margin-top: 5mm;
+  padding-top: 3mm;
+  border-top: 1px dashed #cbd5e1;
+}
+
+.cloze-answers-title {
+  font-size: 10pt;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 2mm;
+}
+
+.cloze-answers-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1mm 6mm;
+}
+
+.cloze-answer-item {
+  font-size: 9pt;
+  color: #64748b;
+}
+
+.cloze-answer-number {
+  font-weight: 600;
+  color: #475569;
 }
 
 /* 練習モード共通のタイトル */
