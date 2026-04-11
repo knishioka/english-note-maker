@@ -401,12 +401,14 @@ function getPreviewState() {
   const lineHeightElement = document.getElementById('lineHeight');
   const showExamplesElement = document.getElementById('showExamples');
   const showTranslationElement = document.getElementById('showTranslation');
+  const showClozeAnswersElement = document.getElementById('showClozeAnswers');
   const pageCountInput = document.getElementById('pageCount');
 
   const practiceMode = practiceModeElement ? practiceModeElement.value : 'normal';
   const lineHeight = parseInt(lineHeightElement ? lineHeightElement.value : '10', 10);
   const showExamples = Boolean(showExamplesElement?.checked);
   const showTranslation = Boolean(showTranslationElement?.checked);
+  const showClozeAnswers = Boolean(showClozeAnswersElement?.checked);
 
   const maxAttr = pageCountInput?.getAttribute('max');
   const maxPageCount = Number.isFinite(parseInt(maxAttr || '', 10)) ? parseInt(maxAttr, 10) : 20;
@@ -422,6 +424,7 @@ function getPreviewState() {
     lineHeight: Number.isFinite(lineHeight) ? lineHeight : 10,
     showExamples,
     showTranslation,
+    showClozeAnswers,
     pageCount,
   };
 }
@@ -555,7 +558,7 @@ function calculateBaseLayout(state) {
     sentence: calculateSentencePracticeLayout(state.lineHeight, state.showTranslation),
     word: calculateWordPracticeLayout(state.lineHeight),
     phrase: calculatePhrasePracticeLayout(state.lineHeight),
-    cloze: calculateClozePracticeLayout(state.lineHeight),
+    cloze: calculateClozePracticeLayout(state.lineHeight, state.showClozeAnswers),
   };
 }
 
@@ -1883,8 +1886,8 @@ function ensurePhraseSequence(category, ageGroup, perPage, pageCount, phrases) {
 
 // === 穴埋めフレーズ練習（Cloze Practice） ===
 
-function calculateClozePracticeLayout(lineHeight) {
-  const basePhrases = getClozeCapacity(lineHeight);
+function calculateClozePracticeLayout(lineHeight, showAnswers = false) {
+  const basePhrases = getClozeCapacity(lineHeight, showAnswers);
   const minPhrases = Math.max(1, Math.min(basePhrases - 1, Math.floor(basePhrases * 0.7)));
 
   return {
@@ -1895,14 +1898,36 @@ function calculateClozePracticeLayout(lineHeight) {
   };
 }
 
-function getClozeCapacity(lineHeight) {
+function getClozeCapacity(lineHeight, showAnswers = false) {
   const availableHeight = 277;
   const headerHeight = 12;
   const gapHeight = 2;
   const itemHeight = headerHeight + lineHeight + gapHeight;
   const titleAreaHeight = 15;
   const usableHeight = availableHeight - titleAreaHeight;
-  const maxItems = Math.max(1, Math.floor(usableHeight / itemHeight));
+  const answersPerRow = 2;
+  const answersSectionTop = 12;
+  const answerRowHeight = 4;
+  const answerRowGap = 1;
+
+  let maxItems = Math.max(1, Math.floor(usableHeight / itemHeight));
+  maxItems = Math.min(10, maxItems);
+
+  if (showAnswers) {
+    while (maxItems > 1) {
+      const answerRows = Math.ceil(maxItems / answersPerRow);
+      const answerRowsHeight =
+        answerRows * answerRowHeight + Math.max(0, answerRows - 1) * answerRowGap;
+      const totalHeight = maxItems * itemHeight + answersSectionTop + answerRowsHeight;
+
+      if (totalHeight <= usableHeight) {
+        break;
+      }
+
+      maxItems -= 1;
+    }
+  }
+
   return Math.min(10, Math.max(2, maxItems));
 }
 
@@ -1938,7 +1963,7 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
     `;
   }
 
-  const layoutInfo = calculateClozePracticeLayout(lineHeight);
+  const layoutInfo = calculateClozePracticeLayout(lineHeight, showAnswers);
   const clozesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.clozesPerPage);
   const pageCount = Math.max(1, totalPages || 1);
   const phrases = ensureClozeSequence(
