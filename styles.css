@@ -734,7 +734,8 @@ body::before {
   .controls,
   .header,
   .footer,
-  .page-separator {
+  .page-separator,
+  .auto-layout-notice {
     display: none !important;
   }
 
@@ -1067,7 +1068,7 @@ body::before {
 
 .a4-preview-page .cloze-grid {
   grid-template-columns: 1fr;
-  gap: 3mm 5mm;
+  gap: 1.5mm 5mm;
 }
 
 .a4-preview-page .cloze-item {
@@ -1367,14 +1368,14 @@ body::before {
 .cloze-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 3mm 5mm;
+  gap: 1.5mm 5mm;
 }
 
 .cloze-item {
   margin-bottom: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.5mm;
+  gap: 1mm;
   page-break-inside: avoid;
 }
 

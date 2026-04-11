@@ -1897,11 +1897,13 @@ function calculateClozePracticeLayout(lineHeight) {
 
 function getClozeCapacity(lineHeight) {
   const availableHeight = 277;
-  const itemHeight = 20 + 2 * lineHeight;
-  const maxItems = Math.max(1, Math.floor(availableHeight / itemHeight));
-  const safetyFactor = lineHeight >= 12 ? 0.5 : 0.55;
-  const safeItems = Math.max(1, Math.floor(maxItems * safetyFactor));
-  return Math.min(4, Math.max(2, safeItems));
+  const headerHeight = 12;
+  const gapHeight = 2;
+  const itemHeight = headerHeight + lineHeight + gapHeight;
+  const titleAreaHeight = 15;
+  const usableHeight = availableHeight - titleAreaHeight;
+  const maxItems = Math.max(1, Math.floor(usableHeight / itemHeight));
+  return Math.min(10, Math.max(2, maxItems));
 }
 
 function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride = {}) {
@@ -1993,8 +1995,6 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
           ${phrase.situation ? `<div class="phrase-situation">【${escapeHtml(phrase.situation)}】</div>` : ''}
         </div>
         <div class="phrase-lines">
-          ${generateBaselineGroup()}
-          <div class="line-separator-small"></div>
           ${generateBaselineGroup()}
         </div>
       </div>
