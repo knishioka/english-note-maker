@@ -272,6 +272,13 @@ body::before {
   color: var(--text-color);
 }
 
+.controls__help {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #64748b;
+}
+
 .controls__input,
 .controls__select {
   width: 100%;
@@ -446,11 +453,33 @@ body::before {
   page-break-inside: avoid;
 }
 
+.baseline-group--trace {
+  background: linear-gradient(180deg, rgba(219, 234, 254, 0.18) 0%, rgba(219, 234, 254, 0) 100%);
+  border-radius: 6px;
+}
+
 .baseline {
   position: absolute;
   width: 100%;
   height: 0;
   left: 0;
+}
+
+.guide-letter {
+  position: absolute;
+  left: 3mm;
+  top: 0.6mm;
+  font-family: 'Century Schoolbook', 'Times New Roman', serif;
+  font-size: calc(var(--line-height-mm, 10mm) * 0.62);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: #d6dce5;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
 }
 
 .baseline--top {
@@ -841,7 +870,8 @@ body::before {
   .sentence-practice-group,
   .example-sentence,
   .phrase-item,
-  .cloze-item {
+  .cloze-item,
+  .phonics-item {
     page-break-inside: avoid !important;
   }
 
@@ -1208,7 +1238,85 @@ body::before {
   padding: 0;
 }
 
-.practice-title--phrase {
+/* フォニックス練習 */
+.phonics-practice {
+  padding: 0;
+}
+
+.phonics-practice .practice-title--phonics {
+  margin-bottom: 2mm;
+}
+
+.phonics-pattern-note {
+  text-align: center;
+  font-size: 9pt;
+  color: #64748b;
+  margin-bottom: 4mm;
+}
+
+.phonics-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3mm 5mm;
+}
+
+.phonics-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5mm;
+  page-break-inside: avoid;
+}
+
+.phonics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 4mm;
+}
+
+.phonics-main {
+  flex: 1;
+}
+
+.phonics-word {
+  font-size: 14pt;
+  font-weight: 700;
+  color: var(--text-color);
+  line-height: 1.2;
+}
+
+.phonics-japanese {
+  font-size: 9.5pt;
+  color: #606f7b;
+  margin-top: 0.5mm;
+  line-height: 1.2;
+}
+
+.phonics-pattern-chip {
+  font-size: 8pt;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  border: 1px solid #bfdbfe;
+}
+
+.phonics-pattern-highlight {
+  color: #1d4ed8;
+}
+
+.phonics-lines {
+  margin-top: 0;
+}
+
+.phonics-item .line-separator-small {
+  --line-separator-small-height: 3mm;
+}
+
+.phrase-practice .practice-title--phrase {
   margin-bottom: 4mm;
 }
 

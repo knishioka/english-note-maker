@@ -5,9 +5,13 @@ let EXAMPLE_SENTENCES_BY_AGE = {};
 let WORD_LISTS = {};
 let ALPHABET_DATA = {};
 let PHRASE_DATA = {};
+let PHONICS_DATA = {};
 let SIGHT_WORDS_DATA = [];
 let SIGHT_WORD_SET_DATA = new Set();
 let SIGHT_WORD_MAP_DATA = new Map();
+let PHONICS_PATTERN_OPTIONS = [];
+let buildPhonicsWordSequenceImpl = () => [];
+let getPhonicsPatternConfigImpl = () => null;
 
 let currentExamples = [];
 
@@ -15,6 +19,7 @@ let currentExamplesMeta = { key: '', perPageCount: 0, pageCount: 0 };
 let wordSequenceCache = { key: '', perPage: 0, pageCount: 0, sequence: [] };
 let phraseSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 let clozeSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
+let phonicsSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 
 const PX_TO_MM = 0.2645833333;
 const A4_HEIGHT_MM = 297;
@@ -35,6 +40,7 @@ const modulesReady = (async () => {
     phraseModule,
     appConfigModule,
     sightWordsModule,
+    phonicsModule,
   ] = await Promise.all([
     import('./src/data/example-sentences.js'),
     import('./src/data/word-lists.js'),
@@ -42,6 +48,7 @@ const modulesReady = (async () => {
     import('./src/data/phrase-data.js'),
     import('./src/models/app-config.js'),
     import('./src/data/sight-words.js'),
+    import('./src/data/phonics-data.js'),
   ]);
 
   EXAMPLE_SENTENCES_BY_AGE = exampleModule.EXAMPLE_SENTENCES_BY_AGE;
@@ -51,6 +58,10 @@ const modulesReady = (async () => {
   SIGHT_WORDS_DATA = sightWordsModule.SIGHT_WORDS;
   SIGHT_WORD_SET_DATA = sightWordsModule.SIGHT_WORD_SET;
   SIGHT_WORD_MAP_DATA = sightWordsModule.SIGHT_WORD_MAP;
+  PHONICS_DATA = phonicsModule.PHONICS_DATA;
+  PHONICS_PATTERN_OPTIONS = phonicsModule.PHONICS_PATTERN_OPTIONS;
+  buildPhonicsWordSequenceImpl = phonicsModule.buildPhonicsWordSequence;
+  getPhonicsPatternConfigImpl = phonicsModule.getPhonicsPatternConfig;
 
   currentExamples = Array.isArray(appConfigModule.currentExamples)
     ? appConfigModule.currentExamples
@@ -93,6 +104,10 @@ function resetPhraseCache() {
 
 function resetClozeCache() {
   clozeSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
+}
+
+function resetPhonicsCache() {
+  phonicsSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 }
 
 function reportInitializationFailure(error) {
@@ -166,6 +181,7 @@ const OPTION_SECTION_IDS = [
   'alphabetOptions',
   'phraseOptions',
   'clozeOptions',
+  'phonicsOptions',
 ];
 
 const PRACTICE_MODE_CONFIGS = {
@@ -175,6 +191,10 @@ const PRACTICE_MODE_CONFIGS = {
   },
   word: {
     sections: ['ageOptions', 'wordOptions'],
+    checkboxes: { showExamples: false, showTranslation: false },
+  },
+  phonics: {
+    sections: ['phonicsOptions'],
     checkboxes: { showExamples: false, showTranslation: false },
   },
   alphabet: {
@@ -207,7 +227,38 @@ const PHRASE_PATTERN_LIMITS = {
   other: 2,
 };
 
+function syncPhonicsPatternOptions() {
+  const phonicsSelect = document.getElementById('phonicsPattern');
+  if (!phonicsSelect) {
+    return;
+  }
+
+  const options =
+    Array.isArray(PHONICS_PATTERN_OPTIONS) && PHONICS_PATTERN_OPTIONS.length
+      ? PHONICS_PATTERN_OPTIONS
+      : Object.keys(PHONICS_DATA).map((patternKey) => ({
+          value: patternKey,
+          label: PHONICS_DATA[patternKey]?.label || patternKey,
+        }));
+
+  if (!options.length) {
+    phonicsSelect.innerHTML = '';
+    return;
+  }
+
+  const previousValue = phonicsSelect.value;
+  phonicsSelect.innerHTML = options
+    .map(
+      (option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`
+    )
+    .join('');
+
+  const hasPreviousValue = options.some((option) => option.value === previousValue);
+  phonicsSelect.value = hasPreviousValue ? previousValue : options[0].value;
+}
+
 function init() {
+  syncPhonicsPatternOptions();
   setupEventListeners();
   updateOptionsVisibility();
   updatePreview();
@@ -228,6 +279,8 @@ function setupEventListeners() {
     pageCount: document.getElementById('pageCount'),
     exampleCategory: document.getElementById('exampleCategory'),
     wordCategory: document.getElementById('wordCategory'),
+    phonicsPattern: document.getElementById('phonicsPattern'),
+    shufflePhonicsBtn: document.getElementById('shufflePhonics'),
     addCustomExampleBtn: document.getElementById('addCustomExampleBtn'),
     alphabetType: document.getElementById('alphabetType'),
     showAlphabetExample: document.getElementById('showAlphabetExample'),
@@ -253,12 +306,14 @@ function setupEventListeners() {
     setCurrentExamples([]);
     resetWordCache();
     resetPhraseCache();
+    resetPhonicsCache();
     updatePreview();
   });
 
   addEventListenerIfExists(elements.lineHeight, 'change', () => {
     resetWordCache();
     resetPhraseCache();
+    resetPhonicsCache();
     updatePreview();
   });
 
@@ -270,6 +325,7 @@ function setupEventListeners() {
     const handlePageCountChange = () => {
       resetWordCache();
       resetPhraseCache();
+      resetPhonicsCache();
       updatePreview();
     };
     addEventListenerIfExists(elements.pageCount, 'change', handlePageCountChange);
@@ -282,6 +338,14 @@ function setupEventListeners() {
   });
   addEventListenerIfExists(elements.wordCategory, 'change', () => {
     resetWordCache();
+    updatePreview();
+  });
+  addEventListenerIfExists(elements.phonicsPattern, 'change', () => {
+    resetPhonicsCache();
+    updatePreview();
+  });
+  addEventListenerIfExists(elements.shufflePhonicsBtn, 'click', () => {
+    resetPhonicsCache();
     updatePreview();
   });
   addEventListenerIfExists(elements.addCustomExampleBtn, 'click', handleAddCustomExample);
@@ -336,6 +400,7 @@ function setupEventListeners() {
     resetWordCache();
     resetPhraseCache();
     resetClozeCache();
+    resetPhonicsCache();
     setCurrentExamples([]);
     updatePreview();
   });
@@ -557,6 +622,7 @@ function calculateBaseLayout(state) {
     normal: calculateNormalPracticeLayout(state.lineHeight, state.showExamples),
     sentence: calculateSentencePracticeLayout(state.lineHeight, state.showTranslation),
     word: calculateWordPracticeLayout(state.lineHeight),
+    phonics: calculatePhonicsPracticeLayout(state.lineHeight),
     phrase: calculatePhrasePracticeLayout(state.lineHeight),
     cloze: calculateClozePracticeLayout(state.lineHeight, state.showClozeAnswers),
   };
@@ -622,6 +688,28 @@ function calculateWordPracticeLayout(lineHeight) {
     baseValue: maxWords,
     minValue: minWords,
   };
+}
+
+function calculatePhonicsPracticeLayout(lineHeight) {
+  const baseWords = getPhonicsCapacity(lineHeight);
+  const minWords = Math.max(1, Math.min(baseWords - 1, Math.floor(baseWords * 0.7)));
+
+  return {
+    property: 'wordsPerPage',
+    label: '単語数',
+    baseValue: baseWords,
+    minValue: minWords,
+  };
+}
+
+function getPhonicsCapacity(lineHeight) {
+  if (lineHeight === 12) {
+    return 3;
+  }
+  if (lineHeight === 8) {
+    return 5;
+  }
+  return 4;
 }
 
 function calculatePhrasePracticeLayout(lineHeight) {
@@ -696,7 +784,7 @@ function cloneOverrides(overrides) {
     return clone;
   }
 
-  ['normal', 'sentence', 'word', 'phrase'].forEach((key) => {
+  ['normal', 'sentence', 'word', 'phonics', 'phrase', 'cloze'].forEach((key) => {
     if (overrides[key]) {
       clone[key] = { ...overrides[key] };
     }
@@ -778,6 +866,8 @@ function generateNotePage(pageNumber, totalPages, layoutOverrides = {}) {
     );
   } else if (practiceMode === 'word') {
     html += generateWordPractice(pageNumber, totalPages, ageGroup, layoutOverrides.word);
+  } else if (practiceMode === 'phonics') {
+    html += generatePhonicsPractice(pageNumber, totalPages, layoutOverrides.phonics);
   } else if (practiceMode === 'alphabet') {
     html += generateAlphabetPractice(pageNumber);
   } else if (practiceMode === 'phrase') {
@@ -890,6 +980,137 @@ function generateSentencePractice(
   return html;
 }
 
+function highlightPhonicsPattern(word, focus) {
+  const safeWord = String(word || '');
+  const safeFocus = String(focus || '');
+
+  if (!safeFocus) {
+    return escapeHtml(safeWord);
+  }
+
+  const escapedFocus = safeFocus.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const patternRegex = new RegExp(`(${escapedFocus})`, 'gi');
+
+  return safeWord
+    .split(patternRegex)
+    .map((part) =>
+      part.toLowerCase() === safeFocus.toLowerCase()
+        ? `<span class="phonics-pattern-highlight">${escapeHtml(part)}</span>`
+        : escapeHtml(part)
+    )
+    .join('');
+}
+
+function ensurePhonicsSequence(patternKey, perPage, pageCount, words) {
+  const totalNeeded = perPage * pageCount;
+  const fingerprint = words.map((word) => word?.english || '').join('|');
+  const needsRefresh =
+    phonicsSequenceCache.key !== patternKey ||
+    phonicsSequenceCache.perPage !== perPage ||
+    phonicsSequenceCache.pageCount !== pageCount ||
+    phonicsSequenceCache.sequence.length < totalNeeded ||
+    phonicsSequenceCache.fingerprint !== fingerprint;
+
+  if (needsRefresh) {
+    const generatedSequence = buildPhonicsWordSequenceImpl(
+      patternKey,
+      perPage,
+      pageCount,
+      PHONICS_DATA
+    );
+    const sequence =
+      Array.isArray(generatedSequence) && generatedSequence.length
+        ? generatedSequence
+        : buildExtendedSequence(words, totalNeeded);
+
+    phonicsSequenceCache = {
+      key: patternKey,
+      perPage,
+      pageCount,
+      fingerprint,
+      sequence: sequence.slice(0, totalNeeded),
+    };
+  }
+
+  return phonicsSequenceCache.sequence;
+}
+
+function generatePhonicsPractice(pageNumber, totalPages, layoutOverride = {}) {
+  let html = '<div class="phonics-practice">';
+  const phonicsPatternElement = document.getElementById('phonicsPattern');
+  const requestedPattern = phonicsPatternElement ? phonicsPatternElement.value : '';
+  const patternConfig = getPhonicsPatternConfigImpl(requestedPattern);
+
+  if (!patternConfig) {
+    html +=
+      '<p class="phrase-empty">フォニックスデータを読み込めませんでした。ページを再読み込みしてください。</p>';
+    html += '</div>';
+    return html;
+  }
+
+  const lineHeight = parseInt(document.getElementById('lineHeight').value, 10);
+  const layoutInfo = calculatePhonicsPracticeLayout(lineHeight);
+  const wordsPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.wordsPerPage);
+  const pageCount = Math.max(1, totalPages || 1);
+  const safeWords = Array.isArray(patternConfig.words) ? patternConfig.words.filter(Boolean) : [];
+
+  if (!safeWords.length) {
+    html += '<p class="phrase-empty">このパターンには現在表示できる単語がありません。</p>';
+    html += '</div>';
+    return html;
+  }
+
+  const words = ensurePhonicsSequence(
+    patternConfig.id || requestedPattern,
+    wordsPerPage,
+    pageCount,
+    safeWords
+  );
+  const startIndex = (pageNumber - 1) * wordsPerPage;
+  const pageWords = words.slice(startIndex, startIndex + wordsPerPage).filter(Boolean);
+  const pageLabel = pageCount > 1 ? ` (${pageNumber}/${pageCount})` : '';
+
+  html += `<h3 class="practice-title practice-title--phonics">Phonics Practice - ${escapeHtml(
+    patternConfig.displayPattern || patternConfig.label || requestedPattern
+  )}${pageLabel}</h3>`;
+  html += `<p class="phonics-pattern-note">${escapeHtml(patternConfig.label || requestedPattern)} / ${escapeHtml(
+    patternConfig.hint || ''
+  )}</p>`;
+  html += '<div class="phonics-grid">';
+
+  if (!pageWords.length) {
+    html +=
+      '<p class="phrase-empty">このページに表示できる単語が不足しています。条件を変更してください。</p>';
+    html += '</div></div>';
+    return html;
+  }
+
+  for (const word of pageWords) {
+    const patternBadgeText = escapeHtml(patternConfig.displayPattern || patternConfig.focus || '');
+
+    html += `
+            <div class="phonics-item">
+                <div class="phonics-header">
+                    <div class="phonics-main">
+                        <div class="phonics-word">${highlightPhonicsPattern(word.english, patternConfig.focus)}</div>
+                        <div class="phonics-japanese">${escapeHtml(word.japanese || '')}</div>
+                    </div>
+                    <span class="phonics-pattern-chip">${patternBadgeText}</span>
+                </div>
+                <div class="phonics-lines">
+                    ${generateBaselineGroup(word.english)}
+                    <div class="line-separator-small"></div>
+                    ${generateBaselineGroup()}
+                </div>
+            </div>
+        `;
+  }
+
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
 // Phase 2: 単語練習モード生成
 function generateWordPractice(pageNumber, totalPages, ageGroup, layoutOverride = {}) {
   let html = '<div class="word-practice">';
@@ -960,9 +1181,16 @@ function generateWordPractice(pageNumber, totalPages, ageGroup, layoutOverride =
 }
 
 // ベースライングループ生成
-function generateBaselineGroup() {
+function generateBaselineGroup(guideText = '') {
+  const traceGuide =
+    typeof guideText === 'string' && guideText.trim()
+      ? `<div class="guide-letter">${escapeHtml(guideText.trim())}</div>`
+      : '';
+  const traceClass = traceGuide ? ' baseline-group--trace' : '';
+
   return `
-        <div class="baseline-group">
+        <div class="baseline-group${traceClass}">
+            ${traceGuide}
             <div class="baseline baseline--top"></div>
             <div class="baseline baseline--upper"></div>
             <div class="baseline baseline--lower"></div>
