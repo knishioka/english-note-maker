@@ -5,13 +5,16 @@ const path = require('path');
 
 // scriptファイルを読み込み
 const scriptPath = path.join(__dirname, '..', 'script.js');
+const indexHtmlPath = path.join(__dirname, '..', 'index.html');
 const scriptContent = fs.readFileSync(scriptPath, 'utf8');
+const indexHtmlContent = fs.readFileSync(indexHtmlPath, 'utf8');
 
 // モジュール化されたデータファイルも読み込み
 const wordListPath = path.join(__dirname, '..', 'src', 'data', 'word-lists.js');
 const phraseDataPath = path.join(__dirname, '..', 'src', 'data', 'phrase-data.js');
 const exampleDataPath = path.join(__dirname, '..', 'src', 'data', 'example-sentences.js');
 const alphabetDataPath = path.join(__dirname, '..', 'src', 'data', 'alphabet-data.js');
+const phonicsDataPath = path.join(__dirname, '..', 'src', 'data', 'phonics-data.js');
 
 const wordListContent = fs.existsSync(wordListPath) ? fs.readFileSync(wordListPath, 'utf8') : '';
 const phraseDataContent = fs.existsSync(phraseDataPath)
@@ -23,10 +26,19 @@ const exampleDataContent = fs.existsSync(exampleDataPath)
 const alphabetDataContent = fs.existsSync(alphabetDataPath)
   ? fs.readFileSync(alphabetDataPath, 'utf8')
   : '';
+const phonicsDataContent = fs.existsSync(phonicsDataPath)
+  ? fs.readFileSync(phonicsDataPath, 'utf8')
+  : '';
 
 // 全コンテンツを統合
 const allContent =
-  scriptContent + wordListContent + phraseDataContent + exampleDataContent + alphabetDataContent;
+  scriptContent +
+  indexHtmlContent +
+  wordListContent +
+  phraseDataContent +
+  exampleDataContent +
+  alphabetDataContent +
+  phonicsDataContent;
 
 // テスト結果を格納
 const testResults = {
@@ -87,6 +99,12 @@ test(
     hasImportReference('./src/data/alphabet-data.js', 'ALPHABET_DATA'),
   'ALPHABET_DATA が定義されていません'
 );
+test(
+  'PHONICS_DATA の存在',
+  scriptContent.includes('import { PHONICS_DATA }') ||
+    hasImportReference('./src/data/phonics-data.js', 'PHONICS_DATA'),
+  'PHONICS_DATA が定義されていません'
+);
 
 // 2. 年齢グループの一貫性チェック
 console.log('\n👶 年齢グループの一貫性チェック');
@@ -106,6 +124,7 @@ const requiredFunctions = [
   'generateNormalPractice',
   'generateSentencePractice',
   'generateWordPractice',
+  'generatePhonicsPractice',
   'generateAlphabetPractice',
   'generatePhrasePractice',
   'updateOptionsVisibility',
@@ -149,6 +168,20 @@ test(
   'focusWords メタデータが追加されていません'
 );
 
+const phonicsPatternRegex = /\bdisplayPattern\b[\s\S]*?\bwords\b/;
+test(
+  'フォニックスデータの構造',
+  phonicsPatternRegex.test(phonicsDataContent),
+  'フォニックスデータの構造が正しくありません'
+);
+
+const phonicsPatternCount = (phonicsDataContent.match(/displayPattern:/g) || []).length;
+test(
+  'フォニックスパターンが8個以上ある',
+  phonicsPatternCount >= 8,
+  `フォニックスパターン数が不足しています: ${phonicsPatternCount}`
+);
+
 // 6. 例文データの構造チェック
 console.log('\n📖 例文データ構造のチェック');
 // More flexible regex that allows for multi-line formatting and any property order
@@ -190,6 +223,14 @@ expectedWordCategories.forEach((cat) => {
   );
 });
 
+['at', 'an', 'ap', 'it', 'ig', 'op', 'ug', 'sh'].forEach((pattern) => {
+  test(
+    `フォニックスパターン "${pattern}"`,
+    phonicsDataContent.includes(`${pattern}:`) || phonicsDataContent.includes(`'${pattern}'`),
+    `フォニックスパターン ${pattern} が見つかりません`
+  );
+});
+
 expectedPhraseCategories.forEach((cat) => {
   test(
     `フレーズカテゴリー "${cat}"`,
@@ -205,6 +246,7 @@ const eventListeners = [
   'ageGroup',
   'showExamples',
   'wordCategory',
+  'phonicsPattern',
   'phraseCategory',
   'printBtn',
 ];
@@ -225,6 +267,7 @@ const cssClasses = [
   'baseline',
   'example-sentence',
   'alphabet-grid',
+  'phonics-item',
   'phrase-item',
 ];
 
@@ -242,6 +285,18 @@ console.log('\n⚙️ 設定値の妥当性チェック');
 const hasConfig = scriptContent.includes('CONFIG') || allContent.includes('CONFIG');
 test('設定のインポート', hasConfig, '設定（CONFIG）がインポートされていません');
 // 行高さと余白はCSSやHTMLで設定されるため、ここではインポートのみチェック
+
+console.log('\n🧩 フォニックスUIのチェック');
+test(
+  'phonics モードの option',
+  indexHtmlContent.includes('<option value="phonics">'),
+  'phonics モードが index.html に追加されていません'
+);
+test(
+  'phonics パターン selector',
+  indexHtmlContent.includes('id="phonicsPattern"'),
+  'phonicsPattern selector が index.html に追加されていません'
+);
 
 // テスト結果のサマリー
 console.log('\n📊 テスト結果サマリー');

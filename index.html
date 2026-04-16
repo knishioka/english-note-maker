@@ -39,6 +39,7 @@
             練習モード:
             <select id="practiceMode" class="controls__select">
               <option value="phrase">フレーズ練習</option>
+              <option value="phonics">フォニックス練習</option>
               <option value="normal">通常練習</option>
               <option value="sentence">文章練習</option>
               <option value="word">単語練習</option>
@@ -112,6 +113,22 @@
               <option value="academic_words">学習用語</option>
             </select>
           </label>
+        </div>
+
+        <div class="controls__group" id="phonicsOptions" style="display: none">
+          <label class="controls__label">
+            フォニックスパターン:
+            <select id="phonicsPattern" class="controls__select"></select>
+          </label>
+          <p class="controls__help">1ページで1つの音パターンに集中して練習します。</p>
+          <button
+            id="shufflePhonics"
+            class="btn btn--secondary"
+            style="margin-top: 0.5rem"
+            type="button"
+          >
+            🔄 別の単語を表示
+          </button>
         </div>
 
         <div class="controls__group" id="alphabetOptions" style="display: none">

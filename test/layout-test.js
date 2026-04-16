@@ -108,6 +108,7 @@ const requiredClasses = [
   'example-sentence',
   'example-english',
   'example-japanese',
+  'phonics-item',
   'controls',
   'preview',
   'btn--primary',
