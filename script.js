@@ -982,17 +982,23 @@ function generateSentencePractice(
 
 function highlightPhonicsPattern(word, focus) {
   const safeWord = String(word || '');
-  const safeFocus = String(focus || '').toLowerCase();
-  const lowerWord = safeWord.toLowerCase();
-  const patternIndex = safeFocus ? lowerWord.indexOf(safeFocus) : -1;
+  const safeFocus = String(focus || '');
 
-  if (patternIndex < 0) {
+  if (!safeFocus) {
     return escapeHtml(safeWord);
   }
 
-  return `${escapeHtml(safeWord.slice(0, patternIndex))}<span class="phonics-pattern-highlight">${escapeHtml(
-    safeWord.slice(patternIndex, patternIndex + safeFocus.length)
-  )}</span>${escapeHtml(safeWord.slice(patternIndex + safeFocus.length))}`;
+  const escapedFocus = safeFocus.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const patternRegex = new RegExp(`(${escapedFocus})`, 'gi');
+
+  return safeWord
+    .split(patternRegex)
+    .map((part) =>
+      part.toLowerCase() === safeFocus.toLowerCase()
+        ? `<span class="phonics-pattern-highlight">${escapeHtml(part)}</span>`
+        : escapeHtml(part)
+    )
+    .join('');
 }
 
 function ensurePhonicsSequence(patternKey, perPage, pageCount, words) {

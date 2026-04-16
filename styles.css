@@ -1243,7 +1243,7 @@ body::before {
   padding: 0;
 }
 
-.practice-title--phonics {
+.phonics-practice .practice-title--phonics {
   margin-bottom: 2mm;
 }
 
@@ -1316,7 +1316,7 @@ body::before {
   --line-separator-small-height: 3mm;
 }
 
-.practice-title--phrase {
+.phrase-practice .practice-title--phrase {
   margin-bottom: 4mm;
 }
 
