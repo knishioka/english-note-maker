@@ -2453,13 +2453,23 @@ function buildClozePagedSequence(source, perPage, pageCount) {
     const pageItems = [];
 
     if (source.length >= perPage) {
-      let candidates = shuffleArray(source);
-      // Avoid carryover from previous page when the pool is large enough to do so.
-      if (prevPageKeys.size > 0 && source.length >= perPage + prevPageKeys.size) {
-        const filtered = candidates.filter((p) => !prevPageKeys.has(p?.english));
-        if (filtered.length >= perPage) candidates = filtered;
+      const candidates = shuffleArray(source);
+      // Best-effort cross-page dedup: take as many "fresh" (not on previous page)
+      // items as possible, then top up with previously-used items if needed.
+      // When the pool is large enough that a fully-fresh page is feasible, this
+      // degenerates to picking only fresh items.
+      if (prevPageKeys.size > 0) {
+        const fresh = candidates.filter((p) => !prevPageKeys.has(p?.english));
+        const used = candidates.filter((p) => prevPageKeys.has(p?.english));
+        const freshCount = Math.min(fresh.length, perPage);
+        pageItems.push(...fresh.slice(0, freshCount));
+        const remaining = perPage - freshCount;
+        if (remaining > 0) {
+          pageItems.push(...shuffleArray(used).slice(0, remaining));
+        }
+      } else {
+        pageItems.push(...candidates.slice(0, perPage));
       }
-      pageItems.push(...candidates.slice(0, perPage));
     } else {
       // Pool smaller than perPage: take all of one shuffle, then top up with more
       // shuffles. Within a single page items will be as unique as possible until
