@@ -2737,22 +2737,41 @@ function buildPagedUniqueSequence(source, perPage, pageCount, getKey) {
     const pageItems = [];
 
     if (source.length >= perPage) {
+      // Within-page dedup must be enforced even when the pool is "large enough"
+      // because the source array can contain duplicate keys (e.g. a custom
+      // example with the same English text as a built-in entry). Two-pass fill:
+      // Pass 1 prefers fresh + unique-on-page, Pass 2 relaxes the cross-page
+      // constraint while keeping within-page uniqueness.
+      const usedKeysOnPage = new Set();
       const candidates = shuffleArray(source);
-      // Best-effort cross-page dedup: take as many "fresh" (not on previous page)
-      // items as possible, then top up with previously-used items if needed.
-      // When the pool is large enough that a fully-fresh page is feasible, this
-      // degenerates to picking only fresh items.
-      if (prevPageKeys.size > 0) {
-        const fresh = candidates.filter((p) => !prevPageKeys.has(keyFn(p)));
-        const used = candidates.filter((p) => prevPageKeys.has(keyFn(p)));
-        const freshCount = Math.min(fresh.length, perPage);
-        pageItems.push(...fresh.slice(0, freshCount));
-        const remaining = perPage - freshCount;
-        if (remaining > 0) {
-          pageItems.push(...shuffleArray(used).slice(0, remaining));
+      for (const item of candidates) {
+        if (pageItems.length >= perPage) break;
+        const k = keyFn(item);
+        if (!prevPageKeys.has(k) && !usedKeysOnPage.has(k)) {
+          pageItems.push(item);
+          usedKeysOnPage.add(k);
         }
-      } else {
-        pageItems.push(...candidates.slice(0, perPage));
+      }
+      if (pageItems.length < perPage) {
+        const reshuffled = shuffleArray(source);
+        for (const item of reshuffled) {
+          if (pageItems.length >= perPage) break;
+          const k = keyFn(item);
+          if (!usedKeysOnPage.has(k)) {
+            pageItems.push(item);
+            usedKeysOnPage.add(k);
+          }
+        }
+      }
+      // If we still cannot fill a page, the source has fewer distinct keys than
+      // `perPage`. Fall through to the small-pool branch behavior by cycling.
+      if (pageItems.length < perPage) {
+        const fillFrom = shuffleArray(source);
+        let i = 0;
+        while (pageItems.length < perPage) {
+          pageItems.push(fillFrom[i % fillFrom.length]);
+          i++;
+        }
       }
     } else {
       // Pool smaller than perPage: take all of one shuffle, then top up with more
