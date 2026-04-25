@@ -119,6 +119,53 @@ test.describe('単語練習モードテスト', () => {
   });
 });
 
+test('複数ページ生成しても同一ページ内に単語の重複が出ない', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  await page.selectOption('#practiceMode', 'word');
+  await page.selectOption('#wordCategory', 'animals');
+  await page.fill('#pageCount', '3');
+  await page.waitForTimeout(800);
+
+  const pages = await page.locator('#notePreview .word-practice').all();
+  expect(pages.length).toBeGreaterThanOrEqual(2);
+
+  for (const pageBlock of pages) {
+    const englishTexts = await pageBlock
+      .locator('.word-practice-item span:first-child')
+      .allTextContents();
+    const trimmed = englishTexts.map((s) => s.trim()).filter(Boolean);
+    expect(trimmed.length).toBeGreaterThan(0);
+    const unique = new Set(trimmed);
+    expect(unique.size).toBe(trimmed.length);
+  }
+});
+
+test('難易度セレクタが存在し、難易度を切り替えると表示単語が変わる', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  await page.selectOption('#practiceMode', 'word');
+  await expect(page.locator('#wordDifficulty')).toBeVisible();
+  await page.selectOption('#wordCategory', 'animals');
+
+  await page.selectOption('#wordDifficulty', 'easy');
+  await page.waitForTimeout(500);
+  const easyWords = await page
+    .locator('#notePreview .word-practice-item span:first-child')
+    .allTextContents();
+
+  await page.selectOption('#wordDifficulty', 'hard');
+  await page.waitForTimeout(500);
+  const hardWords = await page
+    .locator('#notePreview .word-practice-item span:first-child')
+    .allTextContents();
+
+  // hard は easy より多くの単語を表示するはず（preset の maxWords）
+  expect(hardWords.length).toBeGreaterThanOrEqual(easyWords.length);
+  // 単語のリストが完全一致しないことを確認（並び替え or 件数増加で）
+  const easyJoined = easyWords.join('|');
+  const hardJoined = hardWords.join('|');
+  expect(hardJoined).not.toEqual(easyJoined);
+});
+
 test('全カテゴリーが切り替え可能', async ({ page }) => {
   await page.goto('http://localhost:3000');
   await page.selectOption('#practiceMode', 'word');

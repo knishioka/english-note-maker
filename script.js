@@ -16,10 +16,11 @@ let getPhonicsPatternConfigImpl = () => null;
 let currentExamples = [];
 
 let currentExamplesMeta = { key: '', perPageCount: 0, pageCount: 0 };
-let wordSequenceCache = { key: '', perPage: 0, pageCount: 0, sequence: [] };
+let wordSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 let phraseSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 let clozeSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 let phonicsSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
+let sentenceSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 
 const PX_TO_MM = 0.2645833333;
 const A4_HEIGHT_MM = 297;
@@ -95,7 +96,7 @@ function resetExampleCacheMeta() {
 }
 
 function resetWordCache() {
-  wordSequenceCache = { key: '', perPage: 0, pageCount: 0, sequence: [] };
+  wordSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 }
 
 function resetPhraseCache() {
@@ -108,6 +109,10 @@ function resetClozeCache() {
 
 function resetPhonicsCache() {
   phonicsSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
+}
+
+function resetSentenceCache() {
+  sentenceSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 }
 
 function reportInitializationFailure(error) {
@@ -177,20 +182,29 @@ const OPTION_SECTION_IDS = [
   'translationOptions',
   'ageOptions',
   'wordOptions',
+  'wordDifficultyOptions',
   'customExampleOptions',
   'alphabetOptions',
   'phraseOptions',
+  'phraseDifficultyOptions',
   'clozeOptions',
   'phonicsOptions',
+  'sentenceDifficultyOptions',
 ];
 
 const PRACTICE_MODE_CONFIGS = {
   sentence: {
-    sections: ['ageOptions', 'exampleOptions', 'translationOptions', 'customExampleOptions'],
+    sections: [
+      'ageOptions',
+      'exampleOptions',
+      'translationOptions',
+      'sentenceDifficultyOptions',
+      'customExampleOptions',
+    ],
     checkboxes: { showExamples: true, showTranslation: true },
   },
   word: {
-    sections: ['ageOptions', 'wordOptions'],
+    sections: ['ageOptions', 'wordOptions', 'wordDifficultyOptions'],
     checkboxes: { showExamples: false, showTranslation: false },
   },
   phonics: {
@@ -202,7 +216,7 @@ const PRACTICE_MODE_CONFIGS = {
     checkboxes: { showExamples: false, showTranslation: false },
   },
   phrase: {
-    sections: ['ageOptions', 'phraseOptions', 'translationOptions'],
+    sections: ['ageOptions', 'phraseOptions', 'phraseDifficultyOptions', 'translationOptions'],
     checkboxes: { showExamples: false, showTranslation: true },
   },
   cloze: {
@@ -293,6 +307,9 @@ function setupEventListeners() {
     clozeDifficulty: document.getElementById('clozeDifficulty'),
     showClozeAnswers: document.getElementById('showClozeAnswers'),
     shuffleClozeBtn: document.getElementById('shuffleCloze'),
+    wordDifficulty: document.getElementById('wordDifficulty'),
+    phraseDifficulty: document.getElementById('phraseDifficulty'),
+    sentenceDifficulty: document.getElementById('sentenceDifficulty'),
   };
 
   addEventListenerIfExists(elements.showExamples, 'change', updatePreview);
@@ -308,6 +325,8 @@ function setupEventListeners() {
     resetWordCache();
     resetPhraseCache();
     resetPhonicsCache();
+    resetClozeCache();
+    resetSentenceCache();
     updatePreview();
   });
 
@@ -315,6 +334,7 @@ function setupEventListeners() {
     resetWordCache();
     resetPhraseCache();
     resetPhonicsCache();
+    resetSentenceCache();
     updatePreview();
   });
 
@@ -327,6 +347,8 @@ function setupEventListeners() {
       resetWordCache();
       resetPhraseCache();
       resetPhonicsCache();
+      resetClozeCache();
+      resetSentenceCache();
       updatePreview();
     };
     addEventListenerIfExists(elements.pageCount, 'change', handlePageCountChange);
@@ -335,6 +357,7 @@ function setupEventListeners() {
 
   addEventListenerIfExists(elements.exampleCategory, 'change', () => {
     setCurrentExamples([]);
+    resetSentenceCache();
     updatePreview();
   });
   addEventListenerIfExists(elements.wordCategory, 'change', () => {
@@ -389,6 +412,19 @@ function setupEventListeners() {
     updatePreview();
   });
 
+  addEventListenerIfExists(elements.wordDifficulty, 'change', () => {
+    resetWordCache();
+    updatePreview();
+  });
+  addEventListenerIfExists(elements.phraseDifficulty, 'change', () => {
+    resetPhraseCache();
+    updatePreview();
+  });
+  addEventListenerIfExists(elements.sentenceDifficulty, 'change', () => {
+    resetSentenceCache();
+    updatePreview();
+  });
+
   addEventListenerIfExists(elements.printBtn, 'click', printNote);
 
   if (elements.previewBtn) {
@@ -406,6 +442,7 @@ function setupEventListeners() {
     resetPhraseCache();
     resetClozeCache();
     resetPhonicsCache();
+    resetSentenceCache();
     setCurrentExamples([]);
     updatePreview();
   });
@@ -960,10 +997,41 @@ function generateSentencePractice(
   const maxExamples = resolveLayoutValue(layoutInfo, layoutOverride?.maxExamples);
 
   const category = document.getElementById('exampleCategory')?.value || 'all';
-  ensureExamples(maxExamples, ageGroup, totalPages, category);
+  const sentenceDifficultyElement = document.getElementById('sentenceDifficulty');
+  const rawSentenceDifficulty =
+    (sentenceDifficultyElement && sentenceDifficultyElement.value) || 'auto';
+  const sentenceDifficulty = resolveSentenceDifficulty(rawSentenceDifficulty, ageGroup);
+  const sentencePreset = getSentenceDifficultyPreset(sentenceDifficulty);
 
-  const baseExampleIndex = (pageNumber - 1) * maxExamples;
-  const pageExamples = currentExamples.slice(baseExampleIndex, baseExampleIndex + maxExamples);
+  // 'auto' のときは既存の翻訳チェックボックスを尊重し、明示的指定時のみ
+  // preset の規定値で上書き。
+  const isAutoSentenceDifficulty = rawSentenceDifficulty === 'auto';
+  const effectiveShowTranslation = isAutoSentenceDifficulty
+    ? showTranslation
+    : sentencePreset.showJapanese;
+
+  const pageCount = Math.max(1, totalPages || 1);
+  const filteredSentences = getFilteredSentencesForPractice(ageGroup, category, sentencePreset);
+
+  let pageExamples;
+  if (filteredSentences.length > 0) {
+    const sequence = ensureSentenceSequence(
+      ageGroup,
+      category,
+      maxExamples,
+      pageCount,
+      filteredSentences,
+      sentenceDifficulty
+    );
+    const startIndex = (pageNumber - 1) * maxExamples;
+    pageExamples = sequence.slice(startIndex, startIndex + maxExamples);
+  } else {
+    // フィルタ後にゼロ件になった場合は従来の挙動（年齢グループ全体）に
+    // フォールバック。これでバックワード互換性を維持する。
+    ensureExamples(maxExamples, ageGroup, totalPages, category);
+    const baseExampleIndex = (pageNumber - 1) * maxExamples;
+    pageExamples = currentExamples.slice(baseExampleIndex, baseExampleIndex + maxExamples);
+  }
 
   pageExamples.forEach((example) => {
     if (!example) {
@@ -972,7 +1040,7 @@ function generateSentencePractice(
 
     html += `
             <div class="sentence-practice-group">
-                ${generateExampleSentence(example, showTranslation)}
+                ${generateExampleSentence(example, effectiveShowTranslation)}
                 <div class="practice-lines">
                     ${generateBaselineGroup()}
                     <div class="line-separator"></div>
@@ -983,6 +1051,34 @@ function generateSentencePractice(
   });
 
   return html;
+}
+
+// 例文を年齢グループ・カテゴリー・難易度プリセットでフィルタした結果を返す。
+// カスタム例文も含めるが、`difficulty` プロパティが無い場合は通過させる
+// （ユーザー定義は難易度の規定が無いため）。
+function getFilteredSentencesForPractice(ageGroup, category, preset) {
+  const baseSentences = EXAMPLE_SENTENCES_BY_AGE[ageGroup] || EXAMPLE_SENTENCES_BY_AGE['7-9'] || [];
+  const categoryFiltered =
+    category && category !== 'all'
+      ? baseSentences.filter((s) => s && s.category === category)
+      : baseSentences;
+
+  const customForCategory = customExamples.filter(
+    (e) =>
+      e && e.ageGroup === ageGroup && (category === 'all' || !category || e.category === category)
+  );
+
+  const merged = [...categoryFiltered, ...customForCategory].filter(Boolean);
+
+  return merged.filter((sentence) => {
+    const wordCount = String(sentence.english || '')
+      .split(/\s+/)
+      .filter(Boolean).length;
+    const passesLength = wordCount <= preset.maxLength;
+    const sentenceDifficulty = Number.isFinite(sentence.difficulty) ? sentence.difficulty : 1;
+    const passesDifficulty = sentenceDifficulty <= preset.difficultyMax;
+    return passesLength && passesDifficulty;
+  });
 }
 
 function highlightPhonicsPattern(word, focus) {
@@ -1127,6 +1223,11 @@ function generateWordPractice(pageNumber, totalPages, ageGroup, layoutOverride =
       ? WORD_LISTS[category][ageGroup]
       : WORD_LISTS['animals'][ageGroup] || WORD_LISTS['animals']['7-9'];
 
+  const wordDifficultyElement = document.getElementById('wordDifficulty');
+  const rawWordDifficulty = (wordDifficultyElement && wordDifficultyElement.value) || 'auto';
+  const wordDifficulty = resolveWordDifficulty(rawWordDifficulty, ageGroup);
+  const wordPreset = getWordDifficultyPreset(wordDifficulty);
+
   const categoryNames = {
     animals: '動物',
     food: '食べ物',
@@ -1143,13 +1244,19 @@ function generateWordPractice(pageNumber, totalPages, ageGroup, layoutOverride =
     academic_words: '学習用語',
   };
 
-  html += `<h3 style="text-align: center; margin-bottom: 10mm;">Word Practice - ${categoryNames[category] || category}</h3>`;
+  const difficultyLabels = { easy: 'やさしい', normal: 'ふつう', hard: 'むずかしい' };
+  const pageCount = Math.max(1, totalPages || 1);
+  const pageLabel = pageCount > 1 ? ` (${pageNumber}/${pageCount})` : '';
+  html += `<h3 style="text-align: center; margin-bottom: 6mm;">Word Practice - ${categoryNames[category] || category}${pageLabel}</h3>`;
+  html += `<p style="text-align: center; margin: 0 0 6mm; font-size: 10pt; color: #888;">${difficultyLabels[wordDifficulty] || ''}</p>`;
 
   // 行高さに応じて単語数を調整
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
   const layoutInfo = calculateWordPracticeLayout(lineHeight);
-  const maxWords = resolveLayoutValue(layoutInfo, layoutOverride?.maxWords);
-  const pageCount = Math.max(1, totalPages || 1);
+  const layoutMaxWords = resolveLayoutValue(layoutInfo, layoutOverride?.maxWords);
+  // 難易度プリセットの上限と物理的なレイアウト上限の小さい方を採用。
+  // 上限は preset 由来の方が優先（やさしい→6個、むずかしい→10個）。
+  const maxWords = Math.max(1, Math.min(layoutMaxWords, wordPreset.maxWords));
   const safeWords = Array.isArray(words) ? [...words] : [];
 
   if (!safeWords.length) {
@@ -1158,17 +1265,39 @@ function generateWordPractice(pageNumber, totalPages, ageGroup, layoutOverride =
     return html;
   }
 
-  const sequence = ensureWordSequence(category, ageGroup, maxWords, pageCount, safeWords);
+  // 難易度の選択は「同じカテゴリー・年齢でも違う並びで取り出す」ためのキー
+  // 役割を兼ねる（cloze と同様）。
+  const sequence = ensureWordSequence(
+    category,
+    ageGroup,
+    maxWords,
+    pageCount,
+    safeWords,
+    wordDifficulty
+  );
   const startIndex = (pageNumber - 1) * maxWords;
   const displayWords = sequence.slice(startIndex, startIndex + maxWords);
 
+  // ユーザーが明示的にチェックを操作するUIは現状ないため、preset で
+  // 表示制御する（auto時は年齢、明示指定時はその値）。
+  const showSyllables = wordPreset.showSyllables;
+  const showJapanese = wordPreset.showJapanese;
+
   for (const word of displayWords) {
+    if (!word) continue;
+    const syllablesHtml = showSyllables
+      ? `<span style="font-size: 12pt; color: #666;">${word.syllables}</span>`
+      : '';
+    const japaneseHtml = showJapanese
+      ? `<span style="font-size: 12pt; color: #666;">${word.japanese}</span>`
+      : '';
+
     html += `
             <div class="word-practice-item" style="margin-bottom: ${lineHeight === 12 ? '18mm' : lineHeight === 8 ? '10mm' : '12mm'};">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 2mm;">
                     <span style="font-size: 16pt; font-weight: bold;">${word.english}</span>
-                    <span style="font-size: 12pt; color: #666;">${word.syllables}</span>
-                    <span style="font-size: 12pt; color: #666;">${word.japanese}</span>
+                    ${syllablesHtml}
+                    ${japaneseHtml}
                 </div>
                 ${generateBaselineGroup()}
                 <div class="line-separator-small"></div>
@@ -1273,6 +1402,7 @@ function getRandomExamples(count, ageGroup, category = 'all') {
 function shuffleCurrentExamples() {
   setCurrentExamples([]);
   resetExampleCacheMeta();
+  resetSentenceCache();
 }
 
 // 印刷機能
@@ -1728,15 +1858,31 @@ function generatePhrasePractice(
   let html = '<div class="phrase-practice">';
   const phraseCategoryElement = document.getElementById('phraseCategory');
   const phraseCategory = (phraseCategoryElement && phraseCategoryElement.value) || 'greetings';
-  const showSituation = Boolean(document.getElementById('showSituation')?.checked);
+  const userShowSituation = Boolean(document.getElementById('showSituation')?.checked);
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
+
+  const phraseDifficultyElement = document.getElementById('phraseDifficulty');
+  const rawPhraseDifficulty = (phraseDifficultyElement && phraseDifficultyElement.value) || 'auto';
+  const phraseDifficulty = resolvePhraseDifficulty(rawPhraseDifficulty, ageGroup);
+  const phrasePreset = getPhraseDifficultyPreset(phraseDifficulty);
+
+  // 'auto' のときは既存のユーザー操作チェックボックスを尊重し、明示的に
+  // 難易度を選んだ場合は preset の規定値で上書きする。
+  const isAutoPhraseDifficulty = rawPhraseDifficulty === 'auto';
+  const effectiveShowTranslation = isAutoPhraseDifficulty
+    ? showTranslation
+    : phrasePreset.showTranslation;
+  const effectiveShowSituation = isAutoPhraseDifficulty
+    ? userShowSituation
+    : phrasePreset.showSituation;
 
   if (window.Debug) {
     window.Debug.log('PHRASE_PRACTICE', 'フレーズ練習生成開始', {
       category: phraseCategory,
       ageGroup,
-      showTranslation,
-      showSituation,
+      showTranslation: effectiveShowTranslation,
+      showSituation: effectiveShowSituation,
+      difficulty: phraseDifficulty,
     });
   }
 
@@ -1787,7 +1933,9 @@ function generatePhrasePractice(
   }
 
   const layoutInfo = calculatePhrasePracticeLayout(lineHeight);
-  const phrasesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.phrasesPerPage);
+  const layoutPhrasesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.phrasesPerPage);
+  // 難易度プリセットの上限と物理的なレイアウト上限の小さい方を採用。
+  const phrasesPerPage = Math.max(1, Math.min(layoutPhrasesPerPage, phrasePreset.maxPhrases));
   const pageCount = Math.max(1, totalPages || 1);
   const totalDesiredCount = phrasesPerPage * pageCount;
   const phrases = ensurePhraseSequence(
@@ -1795,7 +1943,8 @@ function generatePhrasePractice(
     ageGroup,
     phrasesPerPage,
     pageCount,
-    safePhrases
+    safePhrases,
+    phraseDifficulty
   );
 
   const startIndex = (pageNumber - 1) * phrasesPerPage;
@@ -1854,8 +2003,10 @@ function generatePhrasePractice(
     specialized: 'トピック',
   };
 
+  const phraseDifficultyLabels = { easy: 'やさしい', normal: 'ふつう', hard: 'むずかしい' };
   const pageLabel = pageCount > 1 ? ` (${pageNumber}/${pageCount})` : '';
   html += `<h3 class="practice-title practice-title--phrase">Phrase Practice - ${categoryNames[phraseCategory] || phraseCategory}${pageLabel}</h3>`;
+  html += `<p class="phrase-difficulty-label" style="text-align:center;margin:0 0 4mm;font-size:9pt;color:#888;">${phraseDifficultyLabels[phraseDifficulty] || ''}</p>`;
   html += '<div class="phrase-grid">';
 
   for (const phrase of pagePhrases) {
@@ -1885,9 +2036,9 @@ function generatePhrasePractice(
                 <div class="phrase-header">
                     <div class="phrase-main">
                         <div class="phrase-english">${phrase.english}</div>
-                        ${showTranslation ? `<div class="phrase-japanese">${phrase.japanese}</div>` : ''}
+                        ${effectiveShowTranslation ? `<div class="phrase-japanese">${phrase.japanese}</div>` : ''}
                     </div>
-                    ${showSituation && phrase.situation ? `<div class="phrase-situation">【${phrase.situation}】</div>` : ''}
+                    ${effectiveShowSituation && phrase.situation ? `<div class="phrase-situation">【${phrase.situation}】</div>` : ''}
                 </div>
                 ${metaHtml}
                 <div class="phrase-lines">
@@ -2070,25 +2221,33 @@ function buildExtendedSequence(source, desiredLength) {
   return result.slice(0, desiredLength);
 }
 
-function ensureWordSequence(category, ageGroup, perPage, pageCount, words) {
-  const key = `${category}|${ageGroup}`;
+function ensureWordSequence(category, ageGroup, perPage, pageCount, words, difficulty) {
+  const key = `${category}|${ageGroup}|${difficulty || 'auto'}`;
   const totalNeeded = perPage * pageCount;
+  const fingerprint = words.map((word) => word?.english || '').join('|');
   const needsRefresh =
     wordSequenceCache.key !== key ||
     wordSequenceCache.perPage !== perPage ||
     wordSequenceCache.pageCount !== pageCount ||
-    wordSequenceCache.sequence.length < totalNeeded;
+    wordSequenceCache.sequence.length < totalNeeded ||
+    wordSequenceCache.fingerprint !== fingerprint;
 
   if (needsRefresh) {
-    const sequence = buildExtendedSequence(words, totalNeeded);
-    wordSequenceCache = { key, perPage, pageCount, sequence };
+    const sequence = buildPagedUniqueSequence(words, perPage, pageCount, (w) => w?.english);
+    wordSequenceCache = {
+      key,
+      perPage,
+      pageCount,
+      fingerprint,
+      sequence: sequence.slice(0, totalNeeded),
+    };
   }
 
   return wordSequenceCache.sequence;
 }
 
-function ensurePhraseSequence(category, ageGroup, perPage, pageCount, phrases) {
-  const key = `${category}|${ageGroup}`;
+function ensurePhraseSequence(category, ageGroup, perPage, pageCount, phrases, difficulty) {
+  const key = `${category}|${ageGroup}|${difficulty || 'auto'}`;
   const totalNeeded = perPage * pageCount;
   const fingerprint = phrases.map((phrase) => phrase?.english || '').join('|');
   const needsRefresh =
@@ -2099,22 +2258,42 @@ function ensurePhraseSequence(category, ageGroup, perPage, pageCount, phrases) {
     phraseSequenceCache.fingerprint !== fingerprint;
 
   if (needsRefresh) {
-    const baseSelection = selectDiversePhrases(phrases, Math.min(totalNeeded, phrases.length));
-    const extended =
-      baseSelection.length >= totalNeeded
-        ? baseSelection
-        : buildExtendedSequence(baseSelection.length ? baseSelection : phrases, totalNeeded);
-
+    const sequence = buildPagedUniqueSequence(phrases, perPage, pageCount, (p) => p?.english);
     phraseSequenceCache = {
       key,
       perPage,
       pageCount,
       fingerprint,
-      sequence: extended.slice(0, totalNeeded),
+      sequence: sequence.slice(0, totalNeeded),
     };
   }
 
   return phraseSequenceCache.sequence;
+}
+
+function ensureSentenceSequence(ageGroup, category, perPage, pageCount, sentences, difficulty) {
+  const key = `${ageGroup}|${category}|${difficulty || 'auto'}`;
+  const totalNeeded = perPage * pageCount;
+  const fingerprint = sentences.map((sentence) => sentence?.english || '').join('|');
+  const needsRefresh =
+    sentenceSequenceCache.key !== key ||
+    sentenceSequenceCache.perPage !== perPage ||
+    sentenceSequenceCache.pageCount !== pageCount ||
+    sentenceSequenceCache.sequence.length < totalNeeded ||
+    sentenceSequenceCache.fingerprint !== fingerprint;
+
+  if (needsRefresh) {
+    const sequence = buildPagedUniqueSequence(sentences, perPage, pageCount, (s) => s?.english);
+    sentenceSequenceCache = {
+      key,
+      perPage,
+      pageCount,
+      fingerprint,
+      sequence: sequence.slice(0, totalNeeded),
+    };
+  }
+
+  return sentenceSequenceCache.sequence;
 }
 
 // === 穴埋めフレーズ練習（Cloze Practice） ===
@@ -2171,6 +2350,29 @@ function resolveClozeDifficulty(rawDifficulty, ageGroup) {
   if (ageGroup === '4-6') return 'easy';
   if (ageGroup === '10-12') return 'hard';
   return 'normal';
+}
+
+// Same age→level mapping is reused across word/phrase/sentence modes; keeping
+// the resolver shape identical to the cloze one means UI bindings and tests
+// stay symmetric.
+function resolveDifficultyByAge(rawDifficulty, ageGroup) {
+  const valid = ['easy', 'normal', 'hard'];
+  if (valid.includes(rawDifficulty)) return rawDifficulty;
+  if (ageGroup === '4-6') return 'easy';
+  if (ageGroup === '10-12') return 'hard';
+  return 'normal';
+}
+
+function resolveWordDifficulty(rawDifficulty, ageGroup) {
+  return resolveDifficultyByAge(rawDifficulty, ageGroup);
+}
+
+function resolvePhraseDifficulty(rawDifficulty, ageGroup) {
+  return resolveDifficultyByAge(rawDifficulty, ageGroup);
+}
+
+function resolveSentenceDifficulty(rawDifficulty, ageGroup) {
+  return resolveDifficultyByAge(rawDifficulty, ageGroup);
 }
 
 function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride = {}) {
@@ -2313,8 +2515,42 @@ const CLOZE_DIFFICULTY_PRESETS = {
   hard: { ratio: 0.5, sightScore: 3, contentScore: 8, otherScore: 1 },
 };
 
+// Per-mode difficulty presets. Each preset clamps the items-per-page upper
+// bound and supplies default visibility flags. Existing user-controlled
+// checkboxes still win — these only set defaults when the user has not
+// explicitly toggled, or when difficulty is 'auto'.
+const WORD_DIFFICULTY_PRESETS = {
+  easy: { maxWords: 6, showSyllables: true, showJapanese: true },
+  normal: { maxWords: 8, showSyllables: true, showJapanese: true },
+  hard: { maxWords: 10, showSyllables: false, showJapanese: false },
+};
+
+const PHRASE_DIFFICULTY_PRESETS = {
+  easy: { maxPhrases: 3, showTranslation: true, showSituation: true },
+  normal: { maxPhrases: 4, showTranslation: true, showSituation: false },
+  hard: { maxPhrases: 5, showTranslation: false, showSituation: false },
+};
+
+const SENTENCE_DIFFICULTY_PRESETS = {
+  easy: { maxLength: 6, difficultyMax: 1, showJapanese: true },
+  normal: { maxLength: 10, difficultyMax: 2, showJapanese: true },
+  hard: { maxLength: 99, difficultyMax: 3, showJapanese: false },
+};
+
 function getClozeDifficultyPreset(difficulty) {
   return CLOZE_DIFFICULTY_PRESETS[difficulty] || CLOZE_DIFFICULTY_PRESETS.normal;
+}
+
+function getWordDifficultyPreset(difficulty) {
+  return WORD_DIFFICULTY_PRESETS[difficulty] || WORD_DIFFICULTY_PRESETS.normal;
+}
+
+function getPhraseDifficultyPreset(difficulty) {
+  return PHRASE_DIFFICULTY_PRESETS[difficulty] || PHRASE_DIFFICULTY_PRESETS.normal;
+}
+
+function getSentenceDifficultyPreset(difficulty) {
+  return SENTENCE_DIFFICULTY_PRESETS[difficulty] || SENTENCE_DIFFICULTY_PRESETS.normal;
 }
 
 function buildWordBlankSpan(cleanWord) {
@@ -2437,14 +2673,20 @@ function generateClozeText(text, blankType, difficulty = 'normal') {
   return { display: processed.join(''), answers };
 }
 
-// Builds a sequence of `perPage * pageCount` phrases where each contiguous
-// page-sized window contains no duplicates (when source has at least `perPage`
-// unique items). When the source pool is smaller than what all pages need, it
-// reshuffles per page and tries to avoid items used on the previous page.
-function buildClozePagedSequence(source, perPage, pageCount) {
+// Generic paged-unique sequence builder. Produces `perPage * pageCount` items
+// where each contiguous page-sized window contains no duplicate keys (when
+// source has at least `perPage` unique items). The `getKey` extractor lets
+// callers use any item shape (default uses `item.english`).
+//
+// When the source pool is smaller than what all pages need, it reshuffles per
+// page and tries to avoid items used on the previous page; within-page
+// duplicates only occur if the pool itself is smaller than `perPage`.
+function buildPagedUniqueSequence(source, perPage, pageCount, getKey) {
   if (!Array.isArray(source) || source.length === 0 || perPage <= 0 || pageCount <= 0) {
     return [];
   }
+
+  const keyFn = typeof getKey === 'function' ? getKey : (item) => item?.english;
 
   const result = [];
   let prevPageKeys = new Set();
@@ -2459,8 +2701,8 @@ function buildClozePagedSequence(source, perPage, pageCount) {
       // When the pool is large enough that a fully-fresh page is feasible, this
       // degenerates to picking only fresh items.
       if (prevPageKeys.size > 0) {
-        const fresh = candidates.filter((p) => !prevPageKeys.has(p?.english));
-        const used = candidates.filter((p) => prevPageKeys.has(p?.english));
+        const fresh = candidates.filter((p) => !prevPageKeys.has(keyFn(p)));
+        const used = candidates.filter((p) => prevPageKeys.has(keyFn(p)));
         const freshCount = Math.min(fresh.length, perPage);
         pageItems.push(...fresh.slice(0, freshCount));
         const remaining = perPage - freshCount;
@@ -2477,23 +2719,31 @@ function buildClozePagedSequence(source, perPage, pageCount) {
       const seenKeys = new Set();
       while (pageItems.length < perPage) {
         const remaining = perPage - pageItems.length;
-        const fresh = shuffleArray(source).filter((p) => !seenKeys.has(p?.english));
+        const fresh = shuffleArray(source).filter((p) => !seenKeys.has(keyFn(p)));
         if (fresh.length === 0) {
           // Pool exhausted within page — must repeat. Reset seen and continue.
           seenKeys.clear();
           continue;
         }
         const take = fresh.slice(0, remaining);
-        take.forEach((p) => seenKeys.add(p?.english));
+        take.forEach((p) => seenKeys.add(keyFn(p)));
         pageItems.push(...take);
       }
     }
 
     result.push(...pageItems);
-    prevPageKeys = new Set(pageItems.map((p) => p?.english));
+    prevPageKeys = new Set(pageItems.map((p) => keyFn(p)));
   }
 
   return result;
+}
+
+// Builds a sequence of `perPage * pageCount` phrases where each contiguous
+// page-sized window contains no duplicates (when source has at least `perPage`
+// unique items). Thin wrapper around `buildPagedUniqueSequence` that keys on
+// the English text of each phrase.
+function buildClozePagedSequence(source, perPage, pageCount) {
+  return buildPagedUniqueSequence(source, perPage, pageCount, (p) => p?.english);
 }
 
 function ensureClozeSequence(category, ageGroup, perPage, pageCount, phrases, difficulty) {
