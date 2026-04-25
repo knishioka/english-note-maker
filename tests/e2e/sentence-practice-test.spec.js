@@ -144,6 +144,48 @@ test.describe('文章練習モードテスト', () => {
   });
 });
 
+test('複数ページ生成しても同一ページ内に例文の重複が出ない', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  await page.selectOption('#practiceMode', 'sentence');
+  await page.check('#showExamples');
+  await page.selectOption('#exampleCategory', 'all');
+  await page.selectOption('#ageGroup', '7-9');
+  await page.fill('#pageCount', '3');
+  await page.waitForTimeout(800);
+
+  const pages = await page.locator('#notePreview .note-page').all();
+  expect(pages.length).toBeGreaterThanOrEqual(2);
+
+  for (const pageBlock of pages) {
+    const englishTexts = await pageBlock.locator('.example-english').allTextContents();
+    const trimmed = englishTexts.map((s) => s.trim().replace(/\s+/g, ' ')).filter(Boolean);
+    if (trimmed.length === 0) continue;
+    const unique = new Set(trimmed);
+    expect(unique.size).toBe(trimmed.length);
+  }
+});
+
+test('難易度セレクタが存在し、難易度を切り替えると表示例文が変わる', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  await page.selectOption('#practiceMode', 'sentence');
+  await page.check('#showExamples');
+  await expect(page.locator('#sentenceDifficulty')).toBeVisible();
+  await page.selectOption('#ageGroup', '10-12');
+
+  await page.selectOption('#sentenceDifficulty', 'easy');
+  await page.waitForTimeout(500);
+  const easyTexts = await page.locator('#notePreview .example-english').allTextContents();
+
+  await page.selectOption('#sentenceDifficulty', 'hard');
+  await page.waitForTimeout(500);
+  const hardTexts = await page.locator('#notePreview .example-english').allTextContents();
+
+  // 表示内容（英文の一覧）が変化しているはず（フィルタ条件が違うため）
+  const easyJoined = easyTexts.map((s) => s.trim()).join('|');
+  const hardJoined = hardTexts.map((s) => s.trim()).join('|');
+  expect(hardJoined).not.toEqual(easyJoined);
+});
+
 test('文章練習モードの全体統合テスト', async ({ page }) => {
   await page.goto('http://localhost:3000');
   await page.selectOption('#practiceMode', 'sentence');

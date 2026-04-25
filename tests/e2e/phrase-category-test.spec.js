@@ -229,6 +229,47 @@ test('カテゴリー切り替え時にプレビューが更新される', async
   expect(hasMathPhrases).toBeTruthy();
 });
 
+// 複数ページ生成時に同一ページ内のフレーズが重複しないことを検証
+test('複数ページ生成しても同一ページ内にフレーズの重複が出ない', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  await page.selectOption('#practiceMode', 'phrase');
+  await page.selectOption('#phraseCategory', 'classroom_english');
+  await page.fill('#pageCount', '3');
+  await page.waitForTimeout(800);
+
+  const pages = await page.locator('#notePreview .phrase-practice').all();
+  expect(pages.length).toBeGreaterThanOrEqual(2);
+
+  for (const pageBlock of pages) {
+    const englishTexts = await pageBlock.locator('.phrase-english').allTextContents();
+    const trimmed = englishTexts.map((s) => s.trim()).filter(Boolean);
+    expect(trimmed.length).toBeGreaterThan(0);
+    const unique = new Set(trimmed);
+    expect(unique.size).toBe(trimmed.length);
+  }
+});
+
+test('難易度セレクタが存在し、難易度を切り替えると表示フレーズが変わる', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  await page.selectOption('#practiceMode', 'phrase');
+  await expect(page.locator('#phraseDifficulty')).toBeVisible();
+  await page.selectOption('#phraseCategory', 'classroom_english');
+
+  await page.selectOption('#phraseDifficulty', 'easy');
+  await page.waitForTimeout(500);
+  const easyPhrases = await page.locator('#notePreview .phrase-english').allTextContents();
+
+  await page.selectOption('#phraseDifficulty', 'hard');
+  await page.waitForTimeout(500);
+  const hardPhrases = await page.locator('#notePreview .phrase-english').allTextContents();
+
+  // hard は easy より多くのフレーズを表示するはず（preset の maxPhrases）
+  expect(hardPhrases.length).toBeGreaterThanOrEqual(easyPhrases.length);
+  const easyJoined = easyPhrases.join('|');
+  const hardJoined = hardPhrases.join('|');
+  expect(hardJoined).not.toEqual(easyJoined);
+});
+
 // 複数カテゴリーを連続して切り替えるテスト
 test('複数カテゴリーを連続して切り替えても正しく表示される', async ({ page }) => {
   await page.goto('http://localhost:3000');
