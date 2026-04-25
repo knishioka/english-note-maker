@@ -20,7 +20,14 @@ let wordSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', se
 let phraseSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 let clozeSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 let phonicsSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
-let sentenceSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
+let sentenceSequenceCache = {
+  key: '',
+  perPage: 0,
+  pageCount: 0,
+  fingerprint: '',
+  sequence: [],
+  emptySource: false,
+};
 
 const PX_TO_MM = 0.2645833333;
 const A4_HEIGHT_MM = 297;
@@ -112,7 +119,14 @@ function resetPhonicsCache() {
 }
 
 function resetSentenceCache() {
-  sentenceSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
+  sentenceSequenceCache = {
+    key: '',
+    perPage: 0,
+    pageCount: 0,
+    fingerprint: '',
+    sequence: [],
+    emptySource: false,
+  };
 }
 
 function reportInitializationFailure(error) {
@@ -660,10 +674,22 @@ function computeNextOverrides(state, overrides, baseLayout) {
 }
 
 function calculateBaseLayout(state) {
+  const ageGroup = document.getElementById('ageGroup')?.value || '7-9';
+
+  const rawWordDifficulty = document.getElementById('wordDifficulty')?.value || 'auto';
+  const wordDifficulty = resolveWordDifficulty(rawWordDifficulty, ageGroup);
+  const wordPreset = getWordDifficultyPreset(wordDifficulty);
+
+  const rawSentenceDifficulty = document.getElementById('sentenceDifficulty')?.value || 'auto';
+  const sentenceDifficulty = resolveSentenceDifficulty(rawSentenceDifficulty, ageGroup);
+  const sentencePreset = getSentenceDifficultyPreset(sentenceDifficulty);
+  const effectiveSentenceShowTranslation =
+    rawSentenceDifficulty === 'auto' ? state.showTranslation : sentencePreset.showJapanese;
+
   return {
     normal: calculateNormalPracticeLayout(state.lineHeight, state.showExamples),
-    sentence: calculateSentencePracticeLayout(state.lineHeight, state.showTranslation),
-    word: calculateWordPracticeLayout(state.lineHeight),
+    sentence: calculateSentencePracticeLayout(state.lineHeight, effectiveSentenceShowTranslation),
+    word: calculateWordPracticeLayout(state.lineHeight, wordPreset.maxWords),
     phonics: calculatePhonicsPracticeLayout(state.lineHeight),
     phrase: calculatePhrasePracticeLayout(state.lineHeight),
     cloze: calculateClozePracticeLayout(state.lineHeight, state.showClozeAnswers),
@@ -712,15 +738,14 @@ function calculateSentencePracticeLayout(lineHeight, showTranslation) {
   };
 }
 
-function calculateWordPracticeLayout(lineHeight) {
-  let maxWords;
+function calculateWordPracticeLayout(lineHeight, basePresetMaxWords = 8) {
+  let scale = 1;
   if (lineHeight === 12) {
-    maxWords = 3;
+    scale = 0.8;
   } else if (lineHeight === 8) {
-    maxWords = 5;
-  } else {
-    maxWords = 4;
+    scale = 1.2;
   }
+  const maxWords = Math.max(2, Math.floor(basePresetMaxWords * scale));
 
   const minWords = Math.max(1, Math.min(maxWords - 1, Math.floor(maxWords * 0.7)));
 
@@ -991,11 +1016,6 @@ function generateSentencePractice(
   layoutOverride = {}
 ) {
   let html = '';
-  // 行高さに応じて例文数を調整
-  const lineHeight = parseInt(document.getElementById('lineHeight').value);
-  const layoutInfo = calculateSentencePracticeLayout(lineHeight, showTranslation);
-  const maxExamples = resolveLayoutValue(layoutInfo, layoutOverride?.maxExamples);
-
   const category = document.getElementById('exampleCategory')?.value || 'all';
   const sentenceDifficultyElement = document.getElementById('sentenceDifficulty');
   const rawSentenceDifficulty =
@@ -1010,27 +1030,31 @@ function generateSentencePractice(
     ? showTranslation
     : sentencePreset.showJapanese;
 
+  // 行高さに応じた例文数は、実際に表示する翻訳有無で計算する。
+  const lineHeight = parseInt(document.getElementById('lineHeight').value);
+  const layoutInfo = calculateSentencePracticeLayout(lineHeight, effectiveShowTranslation);
+  const maxExamples = resolveLayoutValue(layoutInfo, layoutOverride?.maxExamples);
+
   const pageCount = Math.max(1, totalPages || 1);
-  const filteredSentences = getFilteredSentencesForPractice(ageGroup, category, sentencePreset);
+  const sequence = ensureSentenceSequence(
+    ageGroup,
+    category,
+    maxExamples,
+    pageCount,
+    sentenceDifficulty,
+    sentencePreset
+  );
 
   let pageExamples;
-  if (filteredSentences.length > 0) {
-    const sequence = ensureSentenceSequence(
-      ageGroup,
-      category,
-      maxExamples,
-      pageCount,
-      filteredSentences,
-      sentenceDifficulty
-    );
-    const startIndex = (pageNumber - 1) * maxExamples;
-    pageExamples = sequence.slice(startIndex, startIndex + maxExamples);
-  } else {
+  if (sequence.length === 0) {
     // フィルタ後にゼロ件になった場合は従来の挙動（年齢グループ全体）に
     // フォールバック。これでバックワード互換性を維持する。
     ensureExamples(maxExamples, ageGroup, totalPages, category);
     const baseExampleIndex = (pageNumber - 1) * maxExamples;
     pageExamples = currentExamples.slice(baseExampleIndex, baseExampleIndex + maxExamples);
+  } else {
+    const startIndex = (pageNumber - 1) * maxExamples;
+    pageExamples = sequence.slice(startIndex, startIndex + maxExamples);
   }
 
   pageExamples.forEach((example) => {
@@ -2271,25 +2295,43 @@ function ensurePhraseSequence(category, ageGroup, perPage, pageCount, phrases, d
   return phraseSequenceCache.sequence;
 }
 
-function ensureSentenceSequence(ageGroup, category, perPage, pageCount, sentences, difficulty) {
+function ensureSentenceSequence(ageGroup, category, perPage, pageCount, difficulty, preset) {
   const key = `${ageGroup}|${category}|${difficulty || 'auto'}`;
   const totalNeeded = perPage * pageCount;
-  const fingerprint = sentences.map((sentence) => sentence?.english || '').join('|');
   const needsRefresh =
     sentenceSequenceCache.key !== key ||
     sentenceSequenceCache.perPage !== perPage ||
     sentenceSequenceCache.pageCount !== pageCount ||
-    sentenceSequenceCache.sequence.length < totalNeeded ||
-    sentenceSequenceCache.fingerprint !== fingerprint;
+    (!sentenceSequenceCache.emptySource && sentenceSequenceCache.sequence.length < totalNeeded);
 
   if (needsRefresh) {
-    const sequence = buildPagedUniqueSequence(sentences, perPage, pageCount, (s) => s?.english);
+    const filteredSentences = getFilteredSentencesForPractice(ageGroup, category, preset);
+    if (filteredSentences.length === 0) {
+      sentenceSequenceCache = {
+        key,
+        perPage,
+        pageCount,
+        fingerprint: '',
+        sequence: [],
+        emptySource: true,
+      };
+      return sentenceSequenceCache.sequence;
+    }
+
+    const fingerprint = filteredSentences.map((sentence) => sentence?.english || '').join('|');
+    const sequence = buildPagedUniqueSequence(
+      filteredSentences,
+      perPage,
+      pageCount,
+      (s) => s?.english
+    );
     sentenceSequenceCache = {
       key,
       perPage,
       pageCount,
       fingerprint,
       sequence: sequence.slice(0, totalNeeded),
+      emptySource: false,
     };
   }
 
@@ -2714,20 +2756,32 @@ function buildPagedUniqueSequence(source, perPage, pageCount, getKey) {
       }
     } else {
       // Pool smaller than perPage: take all of one shuffle, then top up with more
-      // shuffles. Within a single page items will be as unique as possible until
+      // cycles. Within a single page items will be as unique as possible until
       // the pool is exhausted.
+      const shuffled = shuffleArray(source);
+      const cyclePool = [];
       const seenKeys = new Set();
-      while (pageItems.length < perPage) {
-        const remaining = perPage - pageItems.length;
-        const fresh = shuffleArray(source).filter((p) => !seenKeys.has(keyFn(p)));
-        if (fresh.length === 0) {
-          // Pool exhausted within page — must repeat. Reset seen and continue.
-          seenKeys.clear();
+      for (const item of shuffled) {
+        const key = keyFn(item);
+        if (seenKeys.has(key)) {
           continue;
         }
-        const take = fresh.slice(0, remaining);
-        take.forEach((p) => seenKeys.add(keyFn(p)));
-        pageItems.push(...take);
+        seenKeys.add(key);
+        cyclePool.push(item);
+      }
+
+      const pool = cyclePool.length > 0 ? cyclePool : shuffled;
+      if (pool.length === 0) {
+        continue;
+      }
+
+      while (pageItems.length < perPage) {
+        for (const item of pool) {
+          pageItems.push(item);
+          if (pageItems.length >= perPage) {
+            break;
+          }
+        }
       }
     }
 
