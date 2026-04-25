@@ -166,4 +166,39 @@ test.describe('穴埋めフレーズ練習テスト', () => {
       expect(count).toBeGreaterThan(0);
     }
   });
+
+  test('教室の英語を複数ページ生成しても同一ページ内にフレーズの重複が出ない', async ({ page }) => {
+    await page.selectOption('#clozeCategory', 'classroom_english');
+    await page.fill('#pageCount', '3');
+    await page.waitForTimeout(800);
+
+    const englishTexts = await page.locator('#notePreview .cloze-english').allTextContents();
+    expect(englishTexts.length).toBeGreaterThan(0);
+
+    // 各ページの cloze-practice ブロックごとにフレーズが一意であること
+    const pages = await page.locator('#notePreview .cloze-practice').all();
+    expect(pages.length).toBeGreaterThanOrEqual(2);
+    for (const pageBlock of pages) {
+      const items = await pageBlock.locator('.cloze-english').allTextContents();
+      const unique = new Set(items.map((s) => s.trim()));
+      expect(unique.size).toBe(items.length);
+    }
+  });
+
+  test('難易度セレクタが存在し、難易度ごとに穴の数が変わる', async ({ page }) => {
+    await expect(page.locator('#clozeDifficulty')).toBeVisible();
+    await page.selectOption('#clozeCategory', 'classroom_english');
+    await page.selectOption('#clozeBlankType', 'word');
+
+    await page.selectOption('#clozeDifficulty', 'easy');
+    await page.waitForTimeout(500);
+    const easyBlanks = await page.locator('#notePreview .cloze-blank').count();
+
+    await page.selectOption('#clozeDifficulty', 'hard');
+    await page.waitForTimeout(500);
+    const hardBlanks = await page.locator('#notePreview .cloze-blank').count();
+
+    // hard は easy より多くの穴を生成するはず
+    expect(hardBlanks).toBeGreaterThan(easyBlanks);
+  });
 });

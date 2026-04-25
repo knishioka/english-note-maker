@@ -290,6 +290,7 @@ function setupEventListeners() {
     previewBtn: document.getElementById('previewBtn'),
     clozeCategory: document.getElementById('clozeCategory'),
     clozeBlankType: document.getElementById('clozeBlankType'),
+    clozeDifficulty: document.getElementById('clozeDifficulty'),
     showClozeAnswers: document.getElementById('showClozeAnswers'),
     shuffleClozeBtn: document.getElementById('shuffleCloze'),
   };
@@ -378,6 +379,10 @@ function setupEventListeners() {
     updatePreview();
   });
   addEventListenerIfExists(elements.clozeBlankType, 'change', updatePreview);
+  addEventListenerIfExists(elements.clozeDifficulty, 'change', () => {
+    resetClozeCache();
+    updatePreview();
+  });
   addEventListenerIfExists(elements.showClozeAnswers, 'change', updatePreview);
   addEventListenerIfExists(elements.shuffleClozeBtn, 'click', () => {
     resetClozeCache();
@@ -2159,12 +2164,24 @@ function getClozeCapacity(lineHeight, showAnswers = false) {
   return Math.min(10, Math.max(2, maxItems));
 }
 
+function resolveClozeDifficulty(rawDifficulty, ageGroup) {
+  const valid = ['easy', 'normal', 'hard'];
+  if (valid.includes(rawDifficulty)) return rawDifficulty;
+  // 'auto' or invalid → derive from ageGroup
+  if (ageGroup === '4-6') return 'easy';
+  if (ageGroup === '10-12') return 'hard';
+  return 'normal';
+}
+
 function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride = {}) {
   let html = '<div class="cloze-practice">';
   const clozeCategoryElement = document.getElementById('clozeCategory');
   const clozeCategory = (clozeCategoryElement && clozeCategoryElement.value) || 'greetings';
   const blankTypeElement = document.getElementById('clozeBlankType');
   const blankType = (blankTypeElement && blankTypeElement.value) || 'word';
+  const difficultyElement = document.getElementById('clozeDifficulty');
+  const rawDifficulty = (difficultyElement && difficultyElement.value) || 'auto';
+  const difficulty = resolveClozeDifficulty(rawDifficulty, ageGroup);
   const showAnswers = Boolean(document.getElementById('showClozeAnswers')?.checked);
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
 
@@ -2199,7 +2216,8 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
     ageGroup,
     clozesPerPage,
     pageCount,
-    safePhrases
+    safePhrases,
+    difficulty
   );
 
   const startIndex = (pageNumber - 1) * clozesPerPage;
@@ -2228,12 +2246,14 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
   };
 
   const blankTypeLabel = blankType === 'char' ? '文字レベル' : '単語レベル';
+  const difficultyLabels = { easy: 'やさしい', normal: 'ふつう', hard: 'むずかしい' };
+  const difficultyLabel = difficultyLabels[difficulty] || 'ふつう';
   const pageLabel = pageCount > 1 ? ` (${pageNumber}/${pageCount})` : '';
   html += `<h3 class="practice-title practice-title--cloze">Fill in the Blanks - ${categoryNames[clozeCategory] || clozeCategory}${pageLabel}</h3>`;
-  html += `<p class="cloze-type-label">${blankTypeLabel}</p>`;
+  html += `<p class="cloze-type-label">${blankTypeLabel}・${difficultyLabel}</p>`;
   html += '<div class="cloze-grid">';
 
-  const clozeResults = pagePhrases.map((p) => generateClozeText(p.english, blankType));
+  const clozeResults = pagePhrases.map((p) => generateClozeText(p.english, blankType, difficulty));
 
   for (let i = 0; i < pagePhrases.length; i++) {
     const phrase = pagePhrases[i];
@@ -2285,23 +2305,56 @@ function extractPunctuation(token, cleanWord) {
   };
 }
 
-function generateClozeText(text, blankType) {
+// Difficulty presets controlling blank ratio and which kinds of words are
+// preferred as blanks. Higher score = more likely to be picked.
+const CLOZE_DIFFICULTY_PRESETS = {
+  easy: { ratio: 0.2, sightScore: 10, contentScore: 0, otherScore: 0 },
+  normal: { ratio: 0.3, sightScore: 6, contentScore: 3, otherScore: 1 },
+  hard: { ratio: 0.5, sightScore: 3, contentScore: 8, otherScore: 1 },
+};
+
+function getClozeDifficultyPreset(difficulty) {
+  return CLOZE_DIFFICULTY_PRESETS[difficulty] || CLOZE_DIFFICULTY_PRESETS.normal;
+}
+
+function buildWordBlankSpan(cleanWord) {
+  const blankWidth = Math.max(cleanWord.length * 2, 6);
+  return `<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>`;
+}
+
+function generateClozeText(text, blankType, difficulty = 'normal') {
   const words = text.split(/(\s+)/);
   const answers = [];
+  const preset = getClozeDifficultyPreset(difficulty);
 
   if (blankType === 'char') {
-    const processed = words.map((token) => {
+    // Char-level: collect candidate words first, then keep only a difficulty-
+    // dependent fraction. Selection within candidates is randomized so the same
+    // sentence can produce different blanks across regenerations.
+    const candidateIndexes = [];
+    words.forEach((token, i) => {
+      if (/^\s+$/.test(token)) return;
+      const cleanWord = token.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
+      if (cleanWord.length < 3) return;
+      candidateIndexes.push(i);
+    });
+
+    const charBlankRatio = { easy: 0.4, normal: 0.65, hard: 1.0 }[difficulty] ?? 0.65;
+    const targetCount = Math.max(1, Math.round(candidateIndexes.length * charBlankRatio));
+    const chosenIndexes = new Set(
+      shuffleArray([...candidateIndexes]).slice(0, Math.min(targetCount, candidateIndexes.length))
+    );
+
+    const processed = words.map((token, i) => {
       if (/^\s+$/.test(token)) return escapeHtml(token);
       const cleanWord = token.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
-      if (cleanWord.length < 3) return escapeHtml(token);
+      if (cleanWord.length < 3 || !chosenIndexes.has(i)) return escapeHtml(token);
 
       const { leading, trailing } = extractPunctuation(token, cleanWord);
       const sightWord = SIGHT_WORD_MAP_DATA.get(cleanWord.toLowerCase());
       if (sightWord && (sightWord.blankType === 'char' || sightWord.blankType === 'both')) {
         const pattern = sightWord.phonicsPattern;
-        const lowerClean = cleanWord.toLowerCase();
-        const patternIndex = lowerClean.indexOf(pattern.toLowerCase());
-
+        const patternIndex = cleanWord.toLowerCase().indexOf(pattern.toLowerCase());
         if (patternIndex >= 0) {
           const prefix = cleanWord.substring(0, patternIndex);
           const blanked = '_'.repeat(pattern.length);
@@ -2328,48 +2381,123 @@ function generateClozeText(text, blankType) {
     return { display: processed.join(''), answers };
   }
 
-  // word-level blanks
-  let blankedCount = 0;
-  const maxBlanks = Math.max(1, Math.ceil(words.filter((w) => !/^\s+$/.test(w)).length * 0.3));
-
-  const processed = words.map((token) => {
-    if (/^\s+$/.test(token)) return token;
-    if (blankedCount >= maxBlanks) return escapeHtml(token);
-
+  // word-level blanks: score every candidate word by difficulty, randomize
+  // within score tier, then take the top-N positions.
+  const wordEntries = [];
+  words.forEach((token, i) => {
+    if (/^\s+$/.test(token)) return;
     const cleanWord = token.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
-    if (cleanWord.length < 2) return escapeHtml(token);
-
-    if (SIGHT_WORD_SET_DATA.has(cleanWord.toLowerCase())) {
-      blankedCount++;
-      const { leading, trailing } = extractPunctuation(token, cleanWord);
-      const blankWidth = Math.max(cleanWord.length * 2, 6);
-      answers.push(cleanWord);
-      return `${escapeHtml(leading)}<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>${escapeHtml(trailing)}`;
-    }
-
-    return escapeHtml(token);
+    if (cleanWord.length < 2) return;
+    const lower = cleanWord.toLowerCase();
+    const isSight = SIGHT_WORD_SET_DATA.has(lower);
+    // "Content word" ≈ non-sight word with substance: nouns/verbs/adjectives
+    // typically ≥3 chars. Cheap heuristic; good enough for early-learner text.
+    const isContent = !isSight && cleanWord.length >= 3;
+    let baseScore;
+    if (isSight) baseScore = preset.sightScore;
+    else if (isContent) baseScore = preset.contentScore;
+    else baseScore = preset.otherScore;
+    wordEntries.push({
+      token,
+      index: i,
+      cleanWord,
+      score: baseScore + Math.random(),
+    });
   });
 
-  if (answers.length === 0) {
-    const contentWordEntries = words
-      .map((w, i) => ({ w, i }))
-      .filter(({ w }) => !/^\s+$/.test(w) && w.replace(/[.,!?;:'"()]/g, '').length >= 2);
-    if (contentWordEntries.length > 0) {
-      const target = contentWordEntries[Math.floor(contentWordEntries.length / 2)];
-      const cleanWord = target.w.replace(/[.,!?;:'"()]/g, '');
-      const { leading, trailing } = extractPunctuation(target.w, cleanWord);
-      const blankWidth = Math.max(cleanWord.length * 2, 6);
-      answers.push(cleanWord);
-      processed[target.i] =
-        `${escapeHtml(leading)}<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>${escapeHtml(trailing)}`;
-    }
+  const totalWordCount = wordEntries.length;
+  const maxBlanks = Math.max(1, Math.round(totalWordCount * preset.ratio));
+
+  // Highest-score-first; ties broken by the random component already baked in.
+  const ranked = [...wordEntries].sort((a, b) => b.score - a.score);
+  // Filter out zero-score entries (e.g. easy mode has no sight words in the
+  // sentence — the fallback below will still ensure at least one blank).
+  const chosen = ranked.filter((e) => e.score >= 1).slice(0, maxBlanks);
+  const chosenByIndex = new Map(chosen.map((e) => [e.index, e]));
+
+  const processed = words.map((token, i) => {
+    if (/^\s+$/.test(token)) return token;
+    const entry = chosenByIndex.get(i);
+    if (!entry) return escapeHtml(token);
+    const { leading, trailing } = extractPunctuation(token, entry.cleanWord);
+    answers.push(entry.cleanWord);
+    return `${escapeHtml(leading)}${buildWordBlankSpan(entry.cleanWord)}${escapeHtml(trailing)}`;
+  });
+
+  // Fallback: if no candidate qualified (e.g. easy mode + sentence has zero
+  // sight words), blank the middle content word so the exercise is non-empty.
+  if (answers.length === 0 && wordEntries.length > 0) {
+    const target = wordEntries[Math.floor(wordEntries.length / 2)];
+    const { leading, trailing } = extractPunctuation(target.token, target.cleanWord);
+    answers.push(target.cleanWord);
+    processed[target.index] =
+      `${escapeHtml(leading)}${buildWordBlankSpan(target.cleanWord)}${escapeHtml(trailing)}`;
   }
 
   return { display: processed.join(''), answers };
 }
 
-function ensureClozeSequence(category, ageGroup, perPage, pageCount, phrases) {
-  const key = `${category}|${ageGroup}`;
+// Builds a sequence of `perPage * pageCount` phrases where each contiguous
+// page-sized window contains no duplicates (when source has at least `perPage`
+// unique items). When the source pool is smaller than what all pages need, it
+// reshuffles per page and tries to avoid items used on the previous page.
+function buildClozePagedSequence(source, perPage, pageCount) {
+  if (!Array.isArray(source) || source.length === 0 || perPage <= 0 || pageCount <= 0) {
+    return [];
+  }
+
+  const result = [];
+  let prevPageKeys = new Set();
+
+  for (let page = 0; page < pageCount; page++) {
+    const pageItems = [];
+
+    if (source.length >= perPage) {
+      const candidates = shuffleArray(source);
+      // Best-effort cross-page dedup: take as many "fresh" (not on previous page)
+      // items as possible, then top up with previously-used items if needed.
+      // When the pool is large enough that a fully-fresh page is feasible, this
+      // degenerates to picking only fresh items.
+      if (prevPageKeys.size > 0) {
+        const fresh = candidates.filter((p) => !prevPageKeys.has(p?.english));
+        const used = candidates.filter((p) => prevPageKeys.has(p?.english));
+        const freshCount = Math.min(fresh.length, perPage);
+        pageItems.push(...fresh.slice(0, freshCount));
+        const remaining = perPage - freshCount;
+        if (remaining > 0) {
+          pageItems.push(...shuffleArray(used).slice(0, remaining));
+        }
+      } else {
+        pageItems.push(...candidates.slice(0, perPage));
+      }
+    } else {
+      // Pool smaller than perPage: take all of one shuffle, then top up with more
+      // shuffles. Within a single page items will be as unique as possible until
+      // the pool is exhausted.
+      const seenKeys = new Set();
+      while (pageItems.length < perPage) {
+        const remaining = perPage - pageItems.length;
+        const fresh = shuffleArray(source).filter((p) => !seenKeys.has(p?.english));
+        if (fresh.length === 0) {
+          // Pool exhausted within page — must repeat. Reset seen and continue.
+          seenKeys.clear();
+          continue;
+        }
+        const take = fresh.slice(0, remaining);
+        take.forEach((p) => seenKeys.add(p?.english));
+        pageItems.push(...take);
+      }
+    }
+
+    result.push(...pageItems);
+    prevPageKeys = new Set(pageItems.map((p) => p?.english));
+  }
+
+  return result;
+}
+
+function ensureClozeSequence(category, ageGroup, perPage, pageCount, phrases, difficulty) {
+  const key = `${category}|${ageGroup}|${difficulty || 'auto'}`;
   const totalNeeded = perPage * pageCount;
   const fingerprint = phrases.map((phrase) => phrase?.english || '').join('|');
   const needsRefresh =
@@ -2380,16 +2508,14 @@ function ensureClozeSequence(category, ageGroup, perPage, pageCount, phrases) {
     clozeSequenceCache.fingerprint !== fingerprint;
 
   if (needsRefresh) {
-    const shuffled = shuffleArray([...phrases]);
-    const extended =
-      shuffled.length >= totalNeeded ? shuffled : buildExtendedSequence(shuffled, totalNeeded);
+    const sequence = buildClozePagedSequence(phrases, perPage, pageCount);
 
     clozeSequenceCache = {
       key,
       perPage,
       pageCount,
       fingerprint,
-      sequence: extended.slice(0, totalNeeded),
+      sequence,
     };
   }
 
