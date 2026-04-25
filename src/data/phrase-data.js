@@ -1348,14 +1348,14 @@ export const PHRASE_DATA = {
     ],
     '10-12': [
       {
-        english: 'Could you explain that again?',
-        japanese: 'もう一度説明していただけますか？',
-        situation: '再説明を求めるとき',
+        english: 'How does this connect to the lesson?',
+        japanese: 'これは今日の授業とどうつながっていますか？',
+        situation: '内容と授業のつながりを確認するとき',
       },
       {
-        english: 'What does this mean?',
-        japanese: 'これはどういう意味ですか？',
-        situation: '意味を尋ねるとき',
+        english: 'Why is this important?',
+        japanese: 'なぜこれは大切なのですか？',
+        situation: '学ぶ意義や重要性を尋ねるとき',
       },
       {
         english: 'May I ask a question?',
