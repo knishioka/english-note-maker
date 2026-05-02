@@ -1173,15 +1173,21 @@ body::before {
 
 /* アルファベット練習 */
 .alphabet-practice {
-  padding: 5mm 0;
+  padding: 0;
 }
 
 /* アルファベット2列グリッドレイアウト */
 .alphabet-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10mm 15mm;
-  margin-top: 5mm;
+  gap: 6mm 12mm;
+  margin-top: 3mm;
+}
+
+/* なぞり書きモード: 1列で各セルに複数行ぶんのスペースを取る */
+.alphabet-grid--tracing {
+  grid-template-columns: 1fr;
+  gap: 5mm;
 }
 
 .alphabet-grid-item {
@@ -1193,8 +1199,9 @@ body::before {
   display: flex;
   align-items: baseline;
   gap: 5mm;
-  margin-bottom: 3mm;
+  margin-bottom: 2mm;
   min-height: 10mm;
+  flex-wrap: wrap;
 }
 
 .alphabet-letter {
@@ -1209,6 +1216,7 @@ body::before {
   align-items: baseline;
   gap: 3mm;
   flex: 1;
+  flex-wrap: wrap;
 }
 
 .example-word {
@@ -1219,10 +1227,54 @@ body::before {
 .example-meaning {
   font-size: 10pt;
   color: #999;
+  margin-left: 1mm;
+}
+
+.example-separator {
+  font-size: 10pt;
+  color: #ccc;
+  margin: 0 1mm;
 }
 
 .alphabet-lines {
   flex: 1;
+}
+
+/* なぞり書きモード: ラベル + 複数本ベースラインのセット */
+.alphabet-trace-row {
+  display: grid;
+  grid-template-columns: minmax(auto, 22mm) 1fr;
+  gap: 3mm;
+  align-items: start;
+  margin-bottom: 3mm;
+}
+
+.alphabet-trace-row:last-child {
+  margin-bottom: 0;
+}
+
+.alphabet-trace-label {
+  font-size: 18pt;
+  font-weight: bold;
+  color: var(--primary-color);
+  display: flex;
+  flex-direction: column;
+  gap: 1mm;
+  padding-top: 1mm;
+}
+
+.alphabet-trace-label .example-word {
+  font-size: 11pt;
+  font-weight: normal;
+}
+
+.alphabet-trace-label .example-meaning {
+  font-size: 9pt;
+}
+
+.alphabet-trace-lines {
+  display: flex;
+  flex-direction: column;
 }
 
 .alphabet-note {

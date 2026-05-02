@@ -82,6 +82,83 @@ test.describe('アルファベット練習モードテスト', () => {
     expect(count).toBeLessThanOrEqual(6); // 1ページに最大6文字
   });
 
+  test('例示単語数を増やすと複数の単語が表示される', async ({ page }) => {
+    await page.selectOption('#alphabetType', 'uppercase');
+    await page.selectOption('#alphabetWordCount', '3');
+    await page.check('#showAlphabetExample');
+    await page.waitForTimeout(500);
+
+    const firstItem = page.locator('.alphabet-grid-item').first();
+    const wordSpans = firstItem.locator('.example-word');
+    expect(await wordSpans.count()).toBe(3);
+  });
+
+  test('なぞり書きモードで薄字ガイドと指定行数が表示される', async ({ page }) => {
+    await page.selectOption('#alphabetType', 'uppercase');
+    await page.selectOption('#alphabetMode', 'trace');
+    await page.selectOption('#alphabetTraceRepeat', '3');
+    await page.selectOption('#alphabetWordCount', '2');
+    await page.check('#showAlphabetExample');
+    await page.waitForTimeout(500);
+
+    // tracing 用グリッドが適用されている
+    await expect(page.locator('.alphabet-grid--tracing').first()).toBeVisible();
+
+    // 薄字ガイド要素が出現
+    const guideLetters = page.locator('.guide-letter');
+    expect(await guideLetters.count()).toBeGreaterThan(0);
+
+    // 1セル目: 文字行(repeat=3) + 単語2個分(各 repeat=3) = 9 本のベースライン
+    const firstItem = page.locator('.alphabet-grid-item').first();
+    const traceRows = firstItem.locator('.alphabet-trace-row');
+    expect(await traceRows.count()).toBe(3);
+
+    const baselineGroups = firstItem.locator('.baseline-group');
+    expect(await baselineGroups.count()).toBe(9);
+  });
+
+  test('なぞり書きモードは A4 高さに収まるよう文字数が決まる', async ({ page }) => {
+    await page.selectOption('#alphabetType', 'uppercase');
+    await page.selectOption('#alphabetMode', 'trace');
+    await page.waitForTimeout(500);
+
+    const gridItems = page.locator('.alphabet-grid-item');
+    const count = await gridItems.count();
+    expect(count).toBeGreaterThan(0);
+    // 既定 (repeat=3, wordCount=2) は 2 文字/ページに収まる
+    expect(count).toBeLessThanOrEqual(2);
+  });
+
+  // .note-page は min-height: 297mm。コンテンツがそれを超えるとプリント時にページ分割が発生する。
+  // px換算: 1mm = 96/25.4 ≒ 3.7795px、A4 = 1122.5px。
+  // 高密度 (repeat=5, wordCount=3) でも .note-page が膨張しないことを確認する。
+  test('A4 高さを越えてレンダリングされない (高密度 trace)', async ({ page }) => {
+    await page.selectOption('#alphabetType', 'uppercase');
+    await page.selectOption('#alphabetMode', 'trace');
+    await page.selectOption('#alphabetTraceRepeat', '5');
+    await page.selectOption('#alphabetWordCount', '3');
+    await page.check('#showAlphabetExample');
+    await page.waitForTimeout(600);
+
+    const firstPage = page.locator('.note-page').first();
+    const metrics = await firstPage.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      const inner = el.querySelector('.alphabet-practice');
+      const innerR = inner ? inner.getBoundingClientRect() : null;
+      return {
+        pageHeight: r.height,
+        innerBottom: innerR ? innerR.bottom : 0,
+        pageBottom: r.bottom,
+      };
+    });
+
+    const A4_PX = (297 * 96) / 25.4;
+    // .note-page が A4 高さを越えて伸びていないこと（許容 +1px は丸め用）
+    expect(metrics.pageHeight).toBeLessThanOrEqual(A4_PX + 1);
+    // インナー下端がページ下端を越えない
+    expect(metrics.innerBottom).toBeLessThanOrEqual(metrics.pageBottom + 1);
+  });
+
   test('各文字に4本線ベースラインが表示される', async ({ page }) => {
     const alphabetLines = page.locator('.alphabet-lines');
     const firstLines = alphabetLines.first();
