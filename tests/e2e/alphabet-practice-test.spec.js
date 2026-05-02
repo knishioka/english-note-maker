@@ -117,7 +117,7 @@ test.describe('アルファベット練習モードテスト', () => {
     expect(await baselineGroups.count()).toBe(9);
   });
 
-  test('なぞり書きモードでは1ページ3文字に切り替わる', async ({ page }) => {
+  test('なぞり書きモードは A4 高さに収まるよう文字数が決まる', async ({ page }) => {
     await page.selectOption('#alphabetType', 'uppercase');
     await page.selectOption('#alphabetMode', 'trace');
     await page.waitForTimeout(500);
@@ -125,7 +125,38 @@ test.describe('アルファベット練習モードテスト', () => {
     const gridItems = page.locator('.alphabet-grid-item');
     const count = await gridItems.count();
     expect(count).toBeGreaterThan(0);
-    expect(count).toBeLessThanOrEqual(3);
+    // 既定 (repeat=3, wordCount=2) は 2 文字/ページに収まる
+    expect(count).toBeLessThanOrEqual(2);
+  });
+
+  // .note-page は min-height: 297mm。コンテンツがそれを超えるとプリント時にページ分割が発生する。
+  // px換算: 1mm = 96/25.4 ≒ 3.7795px、A4 = 1122.5px。
+  // 高密度 (repeat=5, wordCount=3) でも .note-page が膨張しないことを確認する。
+  test('A4 高さを越えてレンダリングされない (高密度 trace)', async ({ page }) => {
+    await page.selectOption('#alphabetType', 'uppercase');
+    await page.selectOption('#alphabetMode', 'trace');
+    await page.selectOption('#alphabetTraceRepeat', '5');
+    await page.selectOption('#alphabetWordCount', '3');
+    await page.check('#showAlphabetExample');
+    await page.waitForTimeout(600);
+
+    const firstPage = page.locator('.note-page').first();
+    const metrics = await firstPage.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      const inner = el.querySelector('.alphabet-practice');
+      const innerR = inner ? inner.getBoundingClientRect() : null;
+      return {
+        pageHeight: r.height,
+        innerBottom: innerR ? innerR.bottom : 0,
+        pageBottom: r.bottom,
+      };
+    });
+
+    const A4_PX = (297 * 96) / 25.4;
+    // .note-page が A4 高さを越えて伸びていないこと（許容 +1px は丸め用）
+    expect(metrics.pageHeight).toBeLessThanOrEqual(A4_PX + 1);
+    // インナー下端がページ下端を越えない
+    expect(metrics.innerBottom).toBeLessThanOrEqual(metrics.pageBottom + 1);
   });
 
   test('各文字に4本線ベースラインが表示される', async ({ page }) => {

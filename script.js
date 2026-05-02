@@ -1809,8 +1809,10 @@ function generateAlphabetPractice(pageNumber) {
     letters = letters.concat(ALPHABET_DATA.lowercase);
   }
 
-  // 通常: 2列×3行=6 / なぞり書き: 1列×3行=3（行数が増えるため密度を保つ）
-  const lettersPerPage = isTrace ? 3 : 6;
+  // 通常: 2列×3行=6 / なぞり書き: A4 高さ (297mm − 余白 − タイトル ≒ 260mm) に収まる文字数を密度から逆算
+  const lettersPerPage = isTrace
+    ? computeTraceLettersPerPage(traceRepeat, wordCount, showExample)
+    : 6;
   const startIndex = (pageNumber - 1) * lettersPerPage;
   const endIndex = startIndex + lettersPerPage;
   const currentPageLetters = letters.slice(startIndex, endIndex);
@@ -1918,6 +1920,18 @@ function clampInt(value, min, max, fallback) {
   const n = parseInt(value, 10);
   if (Number.isNaN(n)) return fallback;
   return Math.min(max, Math.max(min, n));
+}
+
+// なぞり書き時の 1 ページあたり文字数を A4 高さから逆算
+// ベースライン1本=10mm + 行間2mm=12mm。1セル=(1+wordCount)行 × repeat 本 + 行マージン3mm × 行数。
+// セル間ギャップ5mm、タイトル~10mm、ページパディング20mm を引いた約260mm を可用域とする。
+function computeTraceLettersPerPage(repeat, wordCount, showExample) {
+  const rowsPerCell = 1 + (showExample ? wordCount : 0);
+  const cellHeightMm = rowsPerCell * (repeat * 12 + 3);
+  const interCellGapMm = 5;
+  const availableMm = 260;
+  const fit = Math.floor((availableMm + interCellGapMm) / (cellHeightMm + interCellGapMm));
+  return Math.max(1, fit);
 }
 
 // フレーズ練習モード生成
