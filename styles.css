@@ -1243,7 +1243,7 @@ body::before {
 /* なぞり書きモード: ラベル + 複数本ベースラインのセット */
 .alphabet-trace-row {
   display: grid;
-  grid-template-columns: 22mm 1fr;
+  grid-template-columns: minmax(auto, 22mm) 1fr;
   gap: 3mm;
   align-items: start;
   margin-bottom: 3mm;
