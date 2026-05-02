@@ -1345,11 +1345,15 @@ function generateWordPractice(pageNumber, totalPages, ageGroup, layoutOverride =
 }
 
 // ベースライングループ生成
-function generateBaselineGroup(guideText = '') {
-  const traceGuide =
-    typeof guideText === 'string' && guideText.trim()
-      ? `<div class="guide-letter">${escapeHtml(guideText.trim())}</div>`
-      : '';
+// horizRepeat > 1 で薄字ガイドを行内に複数回繰り返し描画する（なぞり書き用）
+function generateBaselineGroup(guideText = '', horizRepeat = 1) {
+  let traceGuide = '';
+  if (typeof guideText === 'string' && guideText.trim()) {
+    const safe = escapeHtml(guideText.trim());
+    const count = Math.max(1, horizRepeat | 0);
+    const spans = Array.from({ length: count }, () => `<span>${safe}</span>`).join('');
+    traceGuide = `<div class="guide-letter">${spans}</div>`;
+  }
   const traceClass = traceGuide ? ' baseline-group--trace' : '';
 
   return `
@@ -1361,6 +1365,16 @@ function generateBaselineGroup(guideText = '') {
             <div class="baseline baseline--bottom"></div>
         </div>
     `;
+}
+
+// テキスト長に応じた行内なぞり数を返す（短い文字ほど多く並べる）
+function horizRepeatForText(text) {
+  const len = (text || '').trim().length;
+  if (len <= 1) return 7;
+  if (len <= 3) return 4;
+  if (len <= 5) return 3;
+  if (len <= 7) return 2;
+  return 2;
 }
 
 // 例文表示生成
@@ -1798,7 +1812,7 @@ function generateAlphabetPractice(pageNumber) {
   const showExample = document.getElementById('showAlphabetExample').checked;
   const alphabetMode = document.getElementById('alphabetMode')?.value || 'normal';
   const isTrace = alphabetMode === 'trace';
-  const traceRepeat = clampInt(document.getElementById('alphabetTraceRepeat')?.value, 1, 5, 5);
+  const traceRepeat = clampInt(document.getElementById('alphabetTraceRepeat')?.value, 1, 5, 3);
   const wordCount = clampInt(document.getElementById('alphabetWordCount')?.value, 1, 3, 2);
 
   let letters = [];
@@ -1895,11 +1909,12 @@ function generateAlphabetPractice(pageNumber) {
   return html;
 }
 
-// 薄字ガイド付きベースラインを n 本連続で生成
+// 薄字ガイド付きベースラインを n 本連続で生成（行内には複数回なぞれるよう horizRepeat 個並べる）
 function repeatBaselineGroup(guideText, count) {
+  const horiz = horizRepeatForText(guideText);
   let out = '';
   for (let i = 0; i < count; i++) {
-    out += generateBaselineGroup(guideText);
+    out += generateBaselineGroup(guideText, horiz);
   }
   return out;
 }

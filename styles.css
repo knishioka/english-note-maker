@@ -468,6 +468,7 @@ body::before {
 .guide-letter {
   position: absolute;
   left: 3mm;
+  right: 3mm;
   top: -1.6mm;
   font-family:
     'Hiragino Maru Gothic ProN', 'Comic Sans MS', 'Andika', 'Yu Gothic', system-ui, sans-serif;
@@ -477,10 +478,19 @@ body::before {
   line-height: 1;
   letter-spacing: 0.04em;
   color: #d6dce5;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 3mm;
   white-space: nowrap;
+  overflow: hidden;
   pointer-events: none;
   user-select: none;
   z-index: 1;
+}
+
+.guide-letter > span {
+  flex: 0 0 auto;
 }
 
 .baseline--top {
