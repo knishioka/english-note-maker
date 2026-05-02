@@ -20,6 +20,11 @@ Thumbs.db
 *.log
 npm-debug.log*
 
+# Test output
+playwright-report/
+test-results/
+coverage/
+
 # Environment variables
 .env
 .env.local
@@ -42,3 +47,7 @@ check-*.js
 test-*.js
 !test/
 !tests/
+
+# Claude Code worktrees
+.claude/worktrees/
+
