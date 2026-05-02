@@ -311,6 +311,9 @@ function setupEventListeners() {
     shufflePhonicsBtn: document.getElementById('shufflePhonics'),
     addCustomExampleBtn: document.getElementById('addCustomExampleBtn'),
     alphabetType: document.getElementById('alphabetType'),
+    alphabetMode: document.getElementById('alphabetMode'),
+    alphabetTraceRepeat: document.getElementById('alphabetTraceRepeat'),
+    alphabetWordCount: document.getElementById('alphabetWordCount'),
     showAlphabetExample: document.getElementById('showAlphabetExample'),
     phraseCategory: document.getElementById('phraseCategory'),
     showSituation: document.getElementById('showSituation'),
@@ -388,6 +391,9 @@ function setupEventListeners() {
   });
   addEventListenerIfExists(elements.addCustomExampleBtn, 'click', handleAddCustomExample);
   addEventListenerIfExists(elements.alphabetType, 'change', updatePreview);
+  addEventListenerIfExists(elements.alphabetMode, 'change', updatePreview);
+  addEventListenerIfExists(elements.alphabetTraceRepeat, 'change', updatePreview);
+  addEventListenerIfExists(elements.alphabetWordCount, 'change', updatePreview);
   addEventListenerIfExists(elements.showAlphabetExample, 'change', updatePreview);
 
   addEventListenerIfExists(elements.phraseCategory, 'change', () => {
@@ -1790,6 +1796,10 @@ function handleAddCustomExample() {
 function generateAlphabetPractice(pageNumber) {
   const alphabetType = document.getElementById('alphabetType').value;
   const showExample = document.getElementById('showAlphabetExample').checked;
+  const alphabetMode = document.getElementById('alphabetMode')?.value || 'normal';
+  const isTrace = alphabetMode === 'trace';
+  const traceRepeat = clampInt(document.getElementById('alphabetTraceRepeat')?.value, 1, 5, 3);
+  const wordCount = clampInt(document.getElementById('alphabetWordCount')?.value, 1, 3, 2);
 
   let letters = [];
   if (alphabetType === 'uppercase' || alphabetType === 'both') {
@@ -1799,8 +1809,8 @@ function generateAlphabetPractice(pageNumber) {
     letters = letters.concat(ALPHABET_DATA.lowercase);
   }
 
-  // 2列レイアウトで1ページに6文字（3行×2列）
-  const lettersPerPage = 6;
+  // 通常: 2列×3行=6 / なぞり書き: 1列×3行=3（行数が増えるため密度を保つ）
+  const lettersPerPage = isTrace ? 3 : 6;
   const startIndex = (pageNumber - 1) * lettersPerPage;
   const endIndex = startIndex + lettersPerPage;
   const currentPageLetters = letters.slice(startIndex, endIndex);
@@ -1840,35 +1850,74 @@ function generateAlphabetPractice(pageNumber) {
   const totalPages = Math.ceil(letters.length / lettersPerPage);
   html += `<h3 class="practice-title">Alphabet Practice ${totalPages > 1 ? `(${pageNumber}/${totalPages})` : ''}</h3>`;
 
-  html += '<div class="alphabet-grid">';
+  const gridClass = isTrace ? 'alphabet-grid alphabet-grid--tracing' : 'alphabet-grid';
+  html += `<div class="${gridClass}">`;
 
   for (let i = 0; i < currentPageLetters.length; i++) {
     const item = currentPageLetters[i];
-    const exampleHtml = showExample
-      ? `
-                        <div class="alphabet-example">
-                            <span class="example-word">${item.example}</span>
-                            <span class="example-meaning">(${item.japanese})</span>
-                        </div>
-                    `
-      : '';
+    const itemWords = Array.isArray(item.words) ? item.words.slice(0, wordCount) : [];
 
-    html += `
-            <div class="alphabet-grid-item">
-                <div class="alphabet-header">
-                    <span class="alphabet-letter">${item.letter}</span>
-                    ${exampleHtml}
-                </div>
-                <div class="alphabet-lines">
-                    ${generateBaselineGroup()}
-                </div>
+    let bodyHtml = '';
+
+    if (isTrace) {
+      // なぞり書き: 文字 + 例示単語ごとに薄字ガイド付きベースラインを repeat 本描画
+      bodyHtml += `<div class="alphabet-trace-row">
+                <div class="alphabet-trace-label">${escapeHtml(item.letter)}</div>
+                <div class="alphabet-trace-lines">${repeatBaselineGroup(item.letter, traceRepeat)}</div>
+            </div>`;
+      if (showExample) {
+        for (const word of itemWords) {
+          bodyHtml += `<div class="alphabet-trace-row">
+                    <div class="alphabet-trace-label">
+                        <span class="example-word">${escapeHtml(word.english)}</span>
+                        <span class="example-meaning">(${escapeHtml(word.japanese)})</span>
+                    </div>
+                    <div class="alphabet-trace-lines">${repeatBaselineGroup(word.english, traceRepeat)}</div>
+                </div>`;
+        }
+      }
+    } else {
+      const exampleHtml =
+        showExample && itemWords.length > 0
+          ? `<div class="alphabet-example">${itemWords
+              .map(
+                (w) =>
+                  `<span class="example-word">${escapeHtml(w.english)}</span>` +
+                  `<span class="example-meaning">(${escapeHtml(w.japanese)})</span>`
+              )
+              .join('<span class="example-separator">/</span>')}</div>`
+          : '';
+      bodyHtml = `<div class="alphabet-header">
+                <span class="alphabet-letter">${escapeHtml(item.letter)}</span>
+                ${exampleHtml}
             </div>
-        `;
+            <div class="alphabet-lines">
+                ${generateBaselineGroup()}
+            </div>`;
+    }
+
+    html += `<div class="alphabet-grid-item">${bodyHtml}</div>`;
   }
 
   html += '</div>'; // alphabet-grid
   html += '</div>'; // alphabet-practice
   return html;
+}
+
+// 薄字ガイド付きベースラインを n 本連続で生成
+function repeatBaselineGroup(guideText, count) {
+  let out = '';
+  for (let i = 0; i < count; i++) {
+    out += generateBaselineGroup(guideText);
+  }
+  return out;
+}
+
+// 整数クランプヘルパー（select 値の安全パース用）
+function clampInt(value, min, max, fallback) {
+  const n = parseInt(value, 10);
+  if (Number.isNaN(n)) return fallback;
+  return Math.min(max, Math.max(min, n));
 }
 
 // フレーズ練習モード生成

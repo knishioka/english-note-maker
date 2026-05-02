@@ -82,6 +82,52 @@ test.describe('アルファベット練習モードテスト', () => {
     expect(count).toBeLessThanOrEqual(6); // 1ページに最大6文字
   });
 
+  test('例示単語数を増やすと複数の単語が表示される', async ({ page }) => {
+    await page.selectOption('#alphabetType', 'uppercase');
+    await page.selectOption('#alphabetWordCount', '3');
+    await page.check('#showAlphabetExample');
+    await page.waitForTimeout(500);
+
+    const firstItem = page.locator('.alphabet-grid-item').first();
+    const wordSpans = firstItem.locator('.example-word');
+    expect(await wordSpans.count()).toBe(3);
+  });
+
+  test('なぞり書きモードで薄字ガイドと指定行数が表示される', async ({ page }) => {
+    await page.selectOption('#alphabetType', 'uppercase');
+    await page.selectOption('#alphabetMode', 'trace');
+    await page.selectOption('#alphabetTraceRepeat', '3');
+    await page.selectOption('#alphabetWordCount', '2');
+    await page.check('#showAlphabetExample');
+    await page.waitForTimeout(500);
+
+    // tracing 用グリッドが適用されている
+    await expect(page.locator('.alphabet-grid--tracing').first()).toBeVisible();
+
+    // 薄字ガイド要素が出現
+    const guideLetters = page.locator('.guide-letter');
+    expect(await guideLetters.count()).toBeGreaterThan(0);
+
+    // 1セル目: 文字行(repeat=3) + 単語2個分(各 repeat=3) = 9 本のベースライン
+    const firstItem = page.locator('.alphabet-grid-item').first();
+    const traceRows = firstItem.locator('.alphabet-trace-row');
+    expect(await traceRows.count()).toBe(3);
+
+    const baselineGroups = firstItem.locator('.baseline-group');
+    expect(await baselineGroups.count()).toBe(9);
+  });
+
+  test('なぞり書きモードでは1ページ3文字に切り替わる', async ({ page }) => {
+    await page.selectOption('#alphabetType', 'uppercase');
+    await page.selectOption('#alphabetMode', 'trace');
+    await page.waitForTimeout(500);
+
+    const gridItems = page.locator('.alphabet-grid-item');
+    const count = await gridItems.count();
+    expect(count).toBeGreaterThan(0);
+    expect(count).toBeLessThanOrEqual(3);
+  });
+
   test('各文字に4本線ベースラインが表示される', async ({ page }) => {
     const alphabetLines = page.locator('.alphabet-lines');
     const firstLines = alphabetLines.first();
