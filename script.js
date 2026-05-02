@@ -1798,7 +1798,7 @@ function generateAlphabetPractice(pageNumber) {
   const showExample = document.getElementById('showAlphabetExample').checked;
   const alphabetMode = document.getElementById('alphabetMode')?.value || 'normal';
   const isTrace = alphabetMode === 'trace';
-  const traceRepeat = clampInt(document.getElementById('alphabetTraceRepeat')?.value, 1, 5, 3);
+  const traceRepeat = clampInt(document.getElementById('alphabetTraceRepeat')?.value, 1, 5, 5);
   const wordCount = clampInt(document.getElementById('alphabetWordCount')?.value, 1, 3, 2);
 
   let letters = [];

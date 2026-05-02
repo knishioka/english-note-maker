@@ -184,14 +184,21 @@ test.describe('アルファベット練習モードテスト', () => {
     expect(hasPageInfo).toBeTruthy();
   });
 
-  // なぞり書きモード+大文字: 26 文字 / 2 letters per page = 13 ページが既定で必要
-  test('大文字なぞり書きの既定設定で 13 ページに自動調整される', async ({ page }) => {
+  // なぞり書きモード+大文字: 26 文字すべてを表示できる枚数に自動調整
+  test('大文字なぞり書きの既定設定で全 26 文字を表示できるよう自動調整される', async ({ page }) => {
     await page.selectOption('#alphabetType', 'uppercase');
     await page.selectOption('#alphabetMode', 'trace');
     await page.waitForTimeout(500);
 
     const pageCountValue = await page.locator('#pageCount').inputValue();
-    expect(parseInt(pageCountValue, 10)).toBeGreaterThanOrEqual(13);
+    const pages = parseInt(pageCountValue, 10);
+    // 1 ページあたりの文字数 × ページ数 ≥ 26
+    const firstPageItems = await page
+      .locator('.note-page')
+      .first()
+      .locator('.alphabet-grid-item')
+      .count();
+    expect(pages * firstPageItems).toBeGreaterThanOrEqual(26);
   });
 
   // .guide-letter は初学者向けに非斜体（normal）であること
