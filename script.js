@@ -503,6 +503,11 @@ function updateOptionsVisibility() {
 
 // プレビュー更新
 function updatePreview() {
+  // アルファベット練習モードでは、全文字を1巡表示できるよう pageCount をレンダー前に同期で引き上げる
+  // （旧実装は generateAlphabetPractice 内の setTimeout で再帰的に updatePreview を呼んでおり、
+  //   不要な二重レンダリング＆ pageCount.max を超えると無限ループする恐れがあった）
+  bumpPageCountForAlphabet();
+
   const state = getPreviewState();
   const notePreview = document.getElementById('notePreview');
 
@@ -521,6 +526,46 @@ function updatePreview() {
   const adjustmentResult = autoAdjustPreview(notePreview, state, baseLayout, initialOverrides);
 
   updateAutoLayoutNotice(adjustmentResult, state, baseLayout);
+}
+
+// アルファベット練習で全文字を表示できる枚数を返す（モードでなければ null）
+function computeAlphabetNeededPages() {
+  const practiceMode = document.getElementById('practiceMode')?.value;
+  if (practiceMode !== 'alphabet') return null;
+
+  const alphabetType = document.getElementById('alphabetType')?.value || 'uppercase';
+  const alphabetMode = document.getElementById('alphabetMode')?.value || 'normal';
+  const isTrace = alphabetMode === 'trace';
+  const traceRepeat = clampInt(document.getElementById('alphabetTraceRepeat')?.value, 1, 5, 3);
+  const wordCount = clampInt(document.getElementById('alphabetWordCount')?.value, 1, 3, 2);
+  const showExample = Boolean(document.getElementById('showAlphabetExample')?.checked);
+
+  let total = 0;
+  if (alphabetType === 'uppercase' || alphabetType === 'both')
+    total += ALPHABET_DATA.uppercase?.length || 0;
+  if (alphabetType === 'lowercase' || alphabetType === 'both')
+    total += ALPHABET_DATA.lowercase?.length || 0;
+  if (total === 0) return null;
+
+  const lettersPerPage = isTrace
+    ? computeTraceLettersPerPage(traceRepeat, wordCount, showExample)
+    : 6;
+  return Math.ceil(total / lettersPerPage);
+}
+
+// 必要に応じて pageCount を引き上げ（max 属性で必ずキャップしてループ無限化を防ぐ）
+function bumpPageCountForAlphabet() {
+  const needed = computeAlphabetNeededPages();
+  if (!needed) return;
+  const pageCountInput = document.getElementById('pageCount');
+  if (!pageCountInput) return;
+  const maxAttr = parseInt(pageCountInput.getAttribute('max') || '', 10);
+  const maxPages = Number.isFinite(maxAttr) ? maxAttr : 60;
+  const target = Math.min(needed, maxPages);
+  const current = parseInt(pageCountInput.value, 10);
+  if (!Number.isFinite(current) || current < target) {
+    pageCountInput.value = String(target);
+  }
 }
 
 function getPreviewState() {
@@ -1836,18 +1881,8 @@ function generateAlphabetPractice(pageNumber) {
     return '<div class="alphabet-practice"><p style="text-align: center; color: #999;">このページには表示する文字がありません</p></div>';
   }
 
-  // 必要なページ数を自動計算（全文字を1巡表示できるよう pageCount を引き上げる）
-  if (pageNumber === 1) {
-    const neededPages = Math.ceil(letters.length / lettersPerPage);
-    const pageCountInput = document.getElementById('pageCount');
-    if (pageCountInput && parseInt(pageCountInput.value) < neededPages) {
-      // 確認ダイアログなしで自動的にページ数を引き上げる
-      setTimeout(() => {
-        pageCountInput.value = neededPages;
-        updatePreview();
-      }, 0);
-    }
-  }
+  // pageCount の自動引き上げは updatePreview() の bumpPageCountForAlphabet() が
+  // レンダー前に同期で済ませるため、ここでは何もしない（再帰呼び出し回避）。
 
   let html = '<div class="alphabet-practice">';
 

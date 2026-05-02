@@ -201,6 +201,20 @@ test.describe('アルファベット練習モードテスト', () => {
     expect(pages * firstPageItems).toBeGreaterThanOrEqual(26);
   });
 
+  // pageCount の自動引き上げはレンダー前に同期で行われる（再帰 updatePreview を使わない）
+  test('alphabet モード切替直後に pageCount が即時に引き上がる', async ({ page }) => {
+    // pageCount を強制的に 1 にリセット
+    await page.evaluate(() => {
+      const el = document.getElementById('pageCount');
+      if (el) el.value = '1';
+    });
+    await page.selectOption('#alphabetType', 'uppercase');
+    await page.selectOption('#alphabetMode', 'trace');
+    // wait は最小限。同期で更新されるなら即時に増えているはず
+    const value = await page.locator('#pageCount').inputValue();
+    expect(parseInt(value, 10)).toBeGreaterThanOrEqual(13);
+  });
+
   // .guide-letter は初学者向けに非斜体（normal）であること
   test('なぞり書きの薄字ガイドは斜体ではない', async ({ page }) => {
     await page.selectOption('#alphabetType', 'uppercase');
