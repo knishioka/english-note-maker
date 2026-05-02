@@ -74,12 +74,13 @@ test.describe('アルファベット練習モードテスト', () => {
 
   test('2列グリッドレイアウトで表示される', async ({ page }) => {
     const alphabetGrid = page.locator('.alphabet-grid');
-    await expect(alphabetGrid).toBeVisible();
+    await expect(alphabetGrid.first()).toBeVisible();
 
-    const gridItems = page.locator('.alphabet-grid-item');
-    const count = await gridItems.count();
+    // 1 ページ目に最大 6 文字（通常モード = 2×3 グリッド）
+    const firstPageItems = page.locator('.note-page').first().locator('.alphabet-grid-item');
+    const count = await firstPageItems.count();
     expect(count).toBeGreaterThan(0);
-    expect(count).toBeLessThanOrEqual(6); // 1ページに最大6文字
+    expect(count).toBeLessThanOrEqual(6);
   });
 
   test('例示単語数を増やすと複数の単語が表示される', async ({ page }) => {
@@ -122,10 +123,10 @@ test.describe('アルファベット練習モードテスト', () => {
     await page.selectOption('#alphabetMode', 'trace');
     await page.waitForTimeout(500);
 
-    const gridItems = page.locator('.alphabet-grid-item');
-    const count = await gridItems.count();
+    // 1 ページ目あたりの文字数を確認（既定 repeat=3, wordCount=2 → 2 文字/ページ）
+    const firstPageItems = page.locator('.note-page').first().locator('.alphabet-grid-item');
+    const count = await firstPageItems.count();
     expect(count).toBeGreaterThan(0);
-    // 既定 (repeat=3, wordCount=2) は 2 文字/ページに収まる
     expect(count).toBeLessThanOrEqual(2);
   });
 
@@ -175,12 +176,35 @@ test.describe('アルファベット練習モードテスト', () => {
 
   test('ページ数が自動調整される（両方モード）', async ({ page }) => {
     await page.selectOption('#alphabetType', 'both');
-    await page.waitForTimeout(1000); // ページ数調整のための待機
+    await page.waitForTimeout(500);
 
     const previewContent = await page.locator('#notePreview').textContent();
     // ページ情報が表示されることを確認
     const hasPageInfo = /\((\d+)\/(\d+)\)/.test(previewContent);
     expect(hasPageInfo).toBeTruthy();
+  });
+
+  // なぞり書きモード+大文字: 26 文字 / 2 letters per page = 13 ページが既定で必要
+  test('大文字なぞり書きの既定設定で 13 ページに自動調整される', async ({ page }) => {
+    await page.selectOption('#alphabetType', 'uppercase');
+    await page.selectOption('#alphabetMode', 'trace');
+    await page.waitForTimeout(500);
+
+    const pageCountValue = await page.locator('#pageCount').inputValue();
+    expect(parseInt(pageCountValue, 10)).toBeGreaterThanOrEqual(13);
+  });
+
+  // .guide-letter は初学者向けに非斜体（normal）であること
+  test('なぞり書きの薄字ガイドは斜体ではない', async ({ page }) => {
+    await page.selectOption('#alphabetType', 'uppercase');
+    await page.selectOption('#alphabetMode', 'trace');
+    await page.waitForTimeout(500);
+
+    const fontStyle = await page
+      .locator('.guide-letter')
+      .first()
+      .evaluate((el) => window.getComputedStyle(el).fontStyle);
+    expect(fontStyle).toBe('normal');
   });
 
   test('文字が大きく見やすく表示される', async ({ page }) => {

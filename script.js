@@ -1822,27 +1822,16 @@ function generateAlphabetPractice(pageNumber) {
     return '<div class="alphabet-practice"><p style="text-align: center; color: #999;">このページには表示する文字がありません</p></div>';
   }
 
-  // 必要なページ数を自動計算して設定
-  if (alphabetType === 'both' && pageNumber === 1) {
+  // 必要なページ数を自動計算（全文字を1巡表示できるよう pageCount を引き上げる）
+  if (pageNumber === 1) {
     const neededPages = Math.ceil(letters.length / lettersPerPage);
     const pageCountInput = document.getElementById('pageCount');
     if (pageCountInput && parseInt(pageCountInput.value) < neededPages) {
-      if (window.Debug)
-        window.Debug.info(
-          'ALPHABET_PRACTICE',
-          `アルファベット練習（両方）: ${neededPages}ページ必要です`
-        );
-      // ユーザーに通知
+      // 確認ダイアログなしで自動的にページ数を引き上げる
       setTimeout(() => {
-        if (
-          confirm(
-            `全${letters.length}文字を表示するには${neededPages}ページ必要です。ページ数を${neededPages}に変更しますか？`
-          )
-        ) {
-          pageCountInput.value = neededPages;
-          updatePreview();
-        }
-      }, 100);
+        pageCountInput.value = neededPages;
+        updatePreview();
+      }, 0);
     }
   }
 

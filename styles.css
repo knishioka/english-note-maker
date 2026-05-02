@@ -471,7 +471,7 @@ body::before {
   top: 0.6mm;
   font-family: 'Century Schoolbook', 'Times New Roman', serif;
   font-size: calc(var(--line-height-mm, 10mm) * 0.62);
-  font-style: italic;
+  font-style: normal;
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0.06em;
