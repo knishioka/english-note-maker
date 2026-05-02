@@ -503,6 +503,11 @@ function updateOptionsVisibility() {
 
 // プレビュー更新
 function updatePreview() {
+  // アルファベット練習モードでは、全文字を1巡表示できるよう pageCount をレンダー前に同期で引き上げる
+  // （旧実装は generateAlphabetPractice 内の setTimeout で再帰的に updatePreview を呼んでおり、
+  //   不要な二重レンダリング＆ pageCount.max を超えると無限ループする恐れがあった）
+  bumpPageCountForAlphabet();
+
   const state = getPreviewState();
   const notePreview = document.getElementById('notePreview');
 
@@ -521,6 +526,46 @@ function updatePreview() {
   const adjustmentResult = autoAdjustPreview(notePreview, state, baseLayout, initialOverrides);
 
   updateAutoLayoutNotice(adjustmentResult, state, baseLayout);
+}
+
+// アルファベット練習で全文字を表示できる枚数を返す（モードでなければ null）
+function computeAlphabetNeededPages() {
+  const practiceMode = document.getElementById('practiceMode')?.value;
+  if (practiceMode !== 'alphabet') return null;
+
+  const alphabetType = document.getElementById('alphabetType')?.value || 'uppercase';
+  const alphabetMode = document.getElementById('alphabetMode')?.value || 'normal';
+  const isTrace = alphabetMode === 'trace';
+  const traceRepeat = clampInt(document.getElementById('alphabetTraceRepeat')?.value, 1, 5, 3);
+  const wordCount = clampInt(document.getElementById('alphabetWordCount')?.value, 1, 3, 2);
+  const showExample = Boolean(document.getElementById('showAlphabetExample')?.checked);
+
+  let total = 0;
+  if (alphabetType === 'uppercase' || alphabetType === 'both')
+    total += ALPHABET_DATA.uppercase?.length || 0;
+  if (alphabetType === 'lowercase' || alphabetType === 'both')
+    total += ALPHABET_DATA.lowercase?.length || 0;
+  if (total === 0) return null;
+
+  const lettersPerPage = isTrace
+    ? computeTraceLettersPerPage(traceRepeat, wordCount, showExample)
+    : 6;
+  return Math.ceil(total / lettersPerPage);
+}
+
+// 必要に応じて pageCount を引き上げ（max 属性で必ずキャップしてループ無限化を防ぐ）
+function bumpPageCountForAlphabet() {
+  const needed = computeAlphabetNeededPages();
+  if (!needed) return;
+  const pageCountInput = document.getElementById('pageCount');
+  if (!pageCountInput) return;
+  const maxAttr = parseInt(pageCountInput.getAttribute('max') || '', 10);
+  const maxPages = Number.isFinite(maxAttr) ? maxAttr : 60;
+  const target = Math.min(needed, maxPages);
+  const current = parseInt(pageCountInput.value, 10);
+  if (!Number.isFinite(current) || current < target) {
+    pageCountInput.value = String(target);
+  }
 }
 
 function getPreviewState() {
@@ -1345,11 +1390,15 @@ function generateWordPractice(pageNumber, totalPages, ageGroup, layoutOverride =
 }
 
 // ベースライングループ生成
-function generateBaselineGroup(guideText = '') {
-  const traceGuide =
-    typeof guideText === 'string' && guideText.trim()
-      ? `<div class="guide-letter">${escapeHtml(guideText.trim())}</div>`
-      : '';
+// horizRepeat > 1 で薄字ガイドを行内に複数回繰り返し描画する（なぞり書き用）
+function generateBaselineGroup(guideText = '', horizRepeat = 1) {
+  let traceGuide = '';
+  if (typeof guideText === 'string' && guideText.trim()) {
+    const safe = escapeHtml(guideText.trim());
+    const count = Math.max(1, horizRepeat | 0);
+    const spans = Array.from({ length: count }, () => `<span>${safe}</span>`).join('');
+    traceGuide = `<div class="guide-letter">${spans}</div>`;
+  }
   const traceClass = traceGuide ? ' baseline-group--trace' : '';
 
   return `
@@ -1361,6 +1410,16 @@ function generateBaselineGroup(guideText = '') {
             <div class="baseline baseline--bottom"></div>
         </div>
     `;
+}
+
+// テキスト長に応じた行内なぞり数を返す（短い文字ほど多く並べる）
+function horizRepeatForText(text) {
+  const len = (text || '').trim().length;
+  if (len <= 1) return 7;
+  if (len <= 3) return 4;
+  if (len <= 5) return 3;
+  if (len <= 7) return 2;
+  return 2;
 }
 
 // 例文表示生成
@@ -1822,29 +1881,8 @@ function generateAlphabetPractice(pageNumber) {
     return '<div class="alphabet-practice"><p style="text-align: center; color: #999;">このページには表示する文字がありません</p></div>';
   }
 
-  // 必要なページ数を自動計算して設定
-  if (alphabetType === 'both' && pageNumber === 1) {
-    const neededPages = Math.ceil(letters.length / lettersPerPage);
-    const pageCountInput = document.getElementById('pageCount');
-    if (pageCountInput && parseInt(pageCountInput.value) < neededPages) {
-      if (window.Debug)
-        window.Debug.info(
-          'ALPHABET_PRACTICE',
-          `アルファベット練習（両方）: ${neededPages}ページ必要です`
-        );
-      // ユーザーに通知
-      setTimeout(() => {
-        if (
-          confirm(
-            `全${letters.length}文字を表示するには${neededPages}ページ必要です。ページ数を${neededPages}に変更しますか？`
-          )
-        ) {
-          pageCountInput.value = neededPages;
-          updatePreview();
-        }
-      }, 100);
-    }
-  }
+  // pageCount の自動引き上げは updatePreview() の bumpPageCountForAlphabet() が
+  // レンダー前に同期で済ませるため、ここでは何もしない（再帰呼び出し回避）。
 
   let html = '<div class="alphabet-practice">';
 
@@ -1906,11 +1944,12 @@ function generateAlphabetPractice(pageNumber) {
   return html;
 }
 
-// 薄字ガイド付きベースラインを n 本連続で生成
+// 薄字ガイド付きベースラインを n 本連続で生成（行内には複数回なぞれるよう horizRepeat 個並べる）
 function repeatBaselineGroup(guideText, count) {
+  const horiz = horizRepeatForText(guideText);
   let out = '';
   for (let i = 0; i < count; i++) {
-    out += generateBaselineGroup(guideText);
+    out += generateBaselineGroup(guideText, horiz);
   }
   return out;
 }

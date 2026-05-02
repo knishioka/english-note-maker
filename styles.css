@@ -468,18 +468,29 @@ body::before {
 .guide-letter {
   position: absolute;
   left: 3mm;
-  top: 0.6mm;
-  font-family: 'Century Schoolbook', 'Times New Roman', serif;
-  font-size: calc(var(--line-height-mm, 10mm) * 0.62);
-  font-style: italic;
-  font-weight: 600;
+  right: 3mm;
+  top: -1.6mm;
+  font-family:
+    'Hiragino Maru Gothic ProN', 'Comic Sans MS', 'Andika', 'Yu Gothic', system-ui, sans-serif;
+  font-size: calc(var(--line-height-mm, 10mm) * 1.1);
+  font-style: normal;
+  font-weight: 500;
   line-height: 1;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: #d6dce5;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 3mm;
   white-space: nowrap;
+  overflow: hidden;
   pointer-events: none;
   user-select: none;
   z-index: 1;
+}
+
+.guide-letter > span {
+  flex: 0 0 auto;
 }
 
 .baseline--top {
