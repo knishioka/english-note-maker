@@ -505,22 +505,22 @@ body::before {
 
 .guide-letter--lowercase-short {
   --guide-font-scale: 1;
-  --guide-top-scale: -0.03;
+  --guide-top-scale: -0.11;
 }
 
 .guide-letter--lowercase-ascender {
   --guide-font-scale: 1.04;
-  --guide-top-scale: -0.08;
+  --guide-top-scale: -0.13;
 }
 
 .guide-letter--lowercase-descender {
   --guide-font-scale: 1.04;
-  --guide-top-scale: -0.02;
+  --guide-top-scale: -0.04;
 }
 
 .guide-letter--lowercase-word {
   --guide-font-scale: 1.02;
-  --guide-top-scale: -0.05;
+  --guide-top-scale: -0.1;
 }
 
 .baseline--top {
