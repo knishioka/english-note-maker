@@ -297,6 +297,7 @@ export class Logger {
     // Create log entry
     const entry: LogEntry = {
       level,
+      category: 'application',
       message,
       timestamp: this.config.enableTimestamps ? new Date().toISOString() : '',
       context: this.buildContext(context),

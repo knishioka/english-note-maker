@@ -7,9 +7,10 @@ export default [
       '**/dist/**',
       '**/build/**',
       '**/coverage/**',
+      '**/.claude/**',
       '**/.turbo/**',
-      'test-results/**',
-      'playwright-report/**',
+      '**/test-results/**',
+      '**/playwright-report/**',
       '**/*.ts',
       '**/*.tsx',
       '**/*.d.ts',
@@ -113,6 +114,13 @@ export default [
       'no-var': 'error',
       'prefer-const': 'warn',
       'prefer-arrow-callback': 'warn',
+    },
+  },
+  {
+    files: ['script.js'],
+    rules: {
+      // 大きなテンプレートリテラルを含むため、字下げは Prettier に任せる。
+      indent: 'off',
     },
   },
   // Node.js環境のファイル（テストやビルドスクリプト）

@@ -9,17 +9,8 @@ export default defineConfig({
   plugins: [
     legacy({
       targets: ['defaults', 'not IE 11'],
-      additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
       renderLegacyChunks: true,
-      polyfills: [
-        'es.promise',
-        'es.array',
-        'es.object',
-        'es.string',
-        'es.symbol',
-        'es.map',
-        'es.set',
-      ],
+      polyfills: false,
     }),
   ],
 
@@ -58,25 +49,6 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['puppeteer'],
-          data: [
-            './src/data/example-sentences.js',
-            './src/data/word-lists.js',
-            './src/data/alphabet-data.js',
-            './src/data/phrase-data.js',
-          ],
-          services: [
-            './src/services/note-generator.ts',
-            './src/services/validation.ts',
-            './src/services/error-handler.ts',
-          ],
-          utils: [
-            './src/utils/dom-helpers.ts',
-            './src/utils/performance-monitor.ts',
-            './src/utils/analytics.ts',
-          ],
-        },
         chunkFileNames: (chunkInfo) => {
           const facadeModuleId = chunkInfo.facadeModuleId
             ? chunkInfo.facadeModuleId.split('/').pop()
@@ -129,7 +101,7 @@ export default defineConfig({
   },
 
   optimizeDeps: {
-    include: ['puppeteer'],
+    include: [],
     exclude: [],
     esbuildOptions: {
       target: 'es2022',

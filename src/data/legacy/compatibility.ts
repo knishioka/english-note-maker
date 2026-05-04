@@ -129,11 +129,14 @@ export function createLegacyWordLists(): CategoryData<LegacyWordItem> {
       return manager.getCategories('word');
     },
 
-    getOwnPropertyDescriptor(_, key) {
+    getOwnPropertyDescriptor(target, key) {
+      const category = String(key);
+      const value = target[category] ?? createAgeGroupProxy('word', category, toLegacyWord);
+
       return {
         enumerable: true,
         configurable: true,
-        value: this.get!(_, key, this),
+        value,
       };
     },
   });
@@ -160,11 +163,14 @@ export function createLegacyPhraseData(): CategoryData<LegacyPhraseItem> {
       return manager.getCategories('phrase');
     },
 
-    getOwnPropertyDescriptor(_, key) {
+    getOwnPropertyDescriptor(target, key) {
+      const category = String(key);
+      const value = target[category] ?? createAgeGroupProxy('phrase', category, toLegacyPhrase);
+
       return {
         enumerable: true,
         configurable: true,
-        value: this.get!(_, key, this),
+        value,
       };
     },
   });
@@ -281,15 +287,20 @@ function createAgeGroupProxy<T, U>(
         target[ageGroup as AgeGroup] = [];
 
         const manager = getDataManager();
-        const queryFn =
-          type === 'word' ? manager.getWords.bind(manager) : manager.getPhrases.bind(manager);
+        const query =
+          type === 'word'
+            ? manager.getWords({
+                category,
+                ageGroup: ageGroup as AgeGroup,
+              })
+            : manager.getPhrases({
+                category,
+                ageGroup: ageGroup as AgeGroup,
+              });
 
-        queryFn({
-          category,
-          ageGroup: ageGroup as AgeGroup,
-        })
-          .then((items: T[]) => {
-            target[ageGroup as AgeGroup] = items.map(converter);
+        query
+          .then((items) => {
+            target[ageGroup as AgeGroup] = items.map((item) => converter(item as T));
           })
           .catch((error: Error) => {
             console.warn(`Failed to load ${type}/${category}/${ageGroup}:`, error);

@@ -293,7 +293,7 @@ export class Analytics {
 
     // Track input focus (for engagement measurement)
     document.addEventListener('focusin', (event) => {
-      const target = event.target as HTMLElement;
+      const target = event.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
       if (target.matches('input, select, textarea')) {
         this.trackEvent('interaction', 'input_focus', target.id || target.name);
       }
