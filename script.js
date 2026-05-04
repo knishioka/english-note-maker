@@ -1926,7 +1926,7 @@ function generateAlphabetPractice(pageNumber) {
     if (isTrace) {
       // なぞり書き: 文字 + 例示単語ごとに薄字ガイド付きベースラインを repeat 本描画
       bodyHtml += `<div class="alphabet-trace-row">
-                <div class="alphabet-trace-label">${escapeHtml(item.letter)}</div>
+                <div class="alphabet-trace-label"><span class="alphabet-trace-letter">${escapeHtml(item.letter)}</span></div>
                 <div class="alphabet-trace-lines">${repeatBaselineGroup(item.letter, traceRepeat, lineHeight)}</div>
             </div>`;
       if (showExample) {

@@ -471,6 +471,7 @@ body::before {
 .guide-letter {
   --guide-font-scale: 1.08;
   --guide-top-scale: -0.15;
+  --guide-slant-correction: -4deg;
 
   position: absolute;
   left: 3mm;
@@ -496,6 +497,8 @@ body::before {
 
 .guide-letter > span {
   flex: 0 0 auto;
+  transform: skewX(var(--guide-slant-correction));
+  transform-origin: center 70%;
 }
 
 .guide-letter--mixed-word {
@@ -1298,12 +1301,20 @@ body::before {
 .alphabet-trace-label {
   font-family: var(--font-handwriting);
   font-size: 18pt;
+  font-style: normal;
   font-weight: 700;
   color: var(--primary-color);
   display: flex;
   flex-direction: column;
   gap: 1mm;
   padding-top: 1mm;
+}
+
+.alphabet-trace-letter,
+.alphabet-trace-label .example-word {
+  display: inline-block;
+  transform: skewX(-4deg);
+  transform-origin: center 70%;
 }
 
 .alphabet-trace-label .example-word {
