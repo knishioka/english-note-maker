@@ -469,12 +469,15 @@ body::before {
 }
 
 .guide-letter {
+  --guide-font-scale: 1.08;
+  --guide-top-scale: -0.15;
+
   position: absolute;
   left: 3mm;
   right: 3mm;
-  top: -1.6mm;
+  top: calc(var(--line-height-mm, 10mm) * var(--guide-top-scale));
   font-family: var(--font-handwriting);
-  font-size: calc(var(--line-height-mm, 10mm) * 1.1);
+  font-size: calc(var(--line-height-mm, 10mm) * var(--guide-font-scale));
   font-style: normal;
   font-weight: 400;
   line-height: 1;
@@ -493,6 +496,31 @@ body::before {
 
 .guide-letter > span {
   flex: 0 0 auto;
+}
+
+.guide-letter--mixed-word {
+  --guide-font-scale: 1.02;
+  --guide-top-scale: -0.08;
+}
+
+.guide-letter--lowercase-short {
+  --guide-font-scale: 1;
+  --guide-top-scale: -0.03;
+}
+
+.guide-letter--lowercase-ascender {
+  --guide-font-scale: 1.04;
+  --guide-top-scale: -0.08;
+}
+
+.guide-letter--lowercase-descender {
+  --guide-font-scale: 1.04;
+  --guide-top-scale: -0.02;
+}
+
+.guide-letter--lowercase-word {
+  --guide-font-scale: 1.02;
+  --guide-top-scale: -0.05;
 }
 
 .baseline--top {
