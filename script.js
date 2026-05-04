@@ -286,10 +286,36 @@ function syncPhonicsPatternOptions() {
 }
 
 function init() {
+  applyHandwritingFontPreference();
   syncPhonicsPatternOptions();
   setupEventListeners();
   updateOptionsVisibility();
   updatePreview();
+}
+
+function isLocalFontAvailable(fontFamily) {
+  if (typeof document === 'undefined') return false;
+
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  if (!context) return false;
+
+  const text = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const fallbacks = ['monospace', 'serif', 'sans-serif'];
+
+  return fallbacks.some((fallback) => {
+    context.font = `32px ${fallback}`;
+    const fallbackWidth = context.measureText(text).width;
+    context.font = `32px "${fontFamily}", ${fallback}`;
+    return Math.abs(context.measureText(text).width - fallbackWidth) > 0.1;
+  });
+}
+
+function applyHandwritingFontPreference() {
+  document.documentElement.classList.toggle(
+    'handwriting-font-upright',
+    isLocalFontAvailable('Chalkboard SE')
+  );
 }
 
 // イベントリスナーのセットアップ

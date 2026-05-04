@@ -61,8 +61,17 @@
   --font-ui: 'Segoe UI', 'Roboto', sans-serif;
   --font-japanese: 'Hiragino Sans', 'Yu Gothic', sans-serif;
   --font-handwriting:
-    'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', 'Segoe Print', 'Bradley Hand', 'Marker Felt',
+    'Comic Sans MS', 'Comic Sans', 'Segoe Print', 'Bradley Hand', 'Marker Felt', cursive, sans-serif;
+  --trace-guide-slant-correction: -8deg;
+  --trace-label-slant-correction: -8deg;
+}
+
+.handwriting-font-upright {
+  --font-handwriting:
+    'Chalkboard SE', 'Comic Sans MS', 'Comic Sans', 'Segoe Print', 'Bradley Hand', 'Marker Felt',
     cursive, sans-serif;
+  --trace-guide-slant-correction: 0deg;
+  --trace-label-slant-correction: 0deg;
 }
 
 /* === 基本スタイル === */
@@ -471,7 +480,7 @@ body::before {
 .guide-letter {
   --guide-font-scale: 1.08;
   --guide-top-scale: -0.15;
-  --guide-slant-correction: -4deg;
+  --guide-slant-correction: var(--trace-guide-slant-correction, -8deg);
 
   position: absolute;
   left: 3mm;
@@ -1313,7 +1322,7 @@ body::before {
 .alphabet-trace-letter,
 .alphabet-trace-label .example-word {
   display: inline-block;
-  transform: skewX(-4deg);
+  transform: skewX(var(--trace-label-slant-correction, -8deg));
   transform-origin: center 70%;
 }
 
