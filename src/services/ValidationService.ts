@@ -540,7 +540,7 @@ export class ValidationService {
     const match = value.match(regex);
 
     if (match) {
-      return parseFloat(match[1]);
+      return parseFloat(match[1] ?? '0');
     }
 
     // Handle unitless values (assume pixels for certain properties)
@@ -577,8 +577,8 @@ export class ValidationService {
     return String(value);
   }
 
-  private sanitizeMessage(message: string): string {
-    return message
+  private sanitizeMessage(message?: string): string {
+    return (message ?? '')
       .replace(/<[^>]*>/g, '') // Remove HTML tags
       .replace(/[<>\"']/g, '') // Remove potentially dangerous characters
       .slice(0, 200); // Limit length

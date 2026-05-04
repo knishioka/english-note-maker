@@ -302,8 +302,9 @@ export interface ValidationReport {
     failed: number;
     skipped: number;
   };
-  errors: ValidationError[];
-  warnings: ValidationWarning[];
+  errors: ValidationResult[];
+  warnings: ValidationResult[];
+  info?: ValidationResult[];
   timestamp: string;
 }
 
@@ -447,12 +448,13 @@ export interface AppError {
  */
 export interface PerformanceMetric {
   name: string;
-  startTime: number;
+  startTime?: number;
   endTime?: number;
   duration?: number;
   value?: number;
   unit?: string;
   status?: string;
+  threshold?: number;
   metadata?: Record<string, unknown>;
 }
 
@@ -461,13 +463,16 @@ export interface PerformanceMetric {
  */
 export interface PerformanceReport {
   metrics: PerformanceMetric[];
-  summary: {
+  summary?: {
     totalDuration: number;
     averageDuration: number;
     slowestOperation: string;
     fastestOperation: string;
   };
   timestamp: string;
+  renderTime: number;
+  memoryUsage: number;
+  bundleSize: number;
 }
 
 // ============= Analytics Types =============

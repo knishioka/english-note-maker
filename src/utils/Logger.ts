@@ -186,8 +186,8 @@ export class Logger {
    */
   public apiCall(method: string, url: string, status?: number, duration?: number): void {
     const context: Record<string, unknown> = { method, url };
-    if (status !== undefined) context.status = status;
-    if (duration !== undefined) context.duration = `${duration.toFixed(2)}ms`;
+    if (status !== undefined) context['status'] = status;
+    if (duration !== undefined) context['duration'] = `${duration.toFixed(2)}ms`;
 
     if (status && status >= 400) {
       this.error(`API Error: ${method} ${url}`, context);
@@ -201,8 +201,8 @@ export class Logger {
    */
   public userInteraction(action: string, element?: string, data?: Record<string, unknown>): void {
     const context: Record<string, unknown> = { action };
-    if (element) context.element = element;
-    if (data) context.data = data;
+    if (element) context['element'] = element;
+    if (data) context['data'] = data;
 
     this.info(`User: ${action}`, context);
   }
@@ -297,6 +297,7 @@ export class Logger {
     // Create log entry
     const entry: LogEntry = {
       level,
+      category: 'application',
       message,
       timestamp: this.config.enableTimestamps ? new Date().toISOString() : '',
       context: this.buildContext(context),
@@ -341,17 +342,17 @@ export class Logger {
 
     // Add context stack
     if (this.contextStack.length > 0) {
-      context._context = this.contextStack.join(' → ');
+      context['_context'] = this.contextStack.join(' → ');
     }
 
     // Add environment info
     if (this.config.environment !== 'production') {
-      context._env = this.config.environment;
+      context['_env'] = this.config.environment;
     }
 
     // Add performance info
     if (this.config.enablePerformanceLogging && typeof performance !== 'undefined') {
-      context._perf = {
+      context['_perf'] = {
         now: Math.round(performance.now()),
         memory: this.getMemoryInfo(),
       };

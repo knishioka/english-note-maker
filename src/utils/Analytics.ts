@@ -293,9 +293,10 @@ export class Analytics {
 
     // Track input focus (for engagement measurement)
     document.addEventListener('focusin', (event) => {
-      const target = event.target as HTMLElement;
-      if (target.matches('input, select, textarea')) {
-        this.trackEvent('interaction', 'input_focus', target.id || target.name);
+      const target = event.target;
+      if (target instanceof HTMLElement && target.matches('input, select, textarea')) {
+        const input = target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+        this.trackEvent('interaction', 'input_focus', input.id || input.name);
       }
     });
   }
@@ -353,7 +354,7 @@ export class Analytics {
    */
   private calculateEngagementMetrics(): Record<string, any> {
     const now = Date.now();
-    const sessionStart = parseInt(this.sessionId.split('_')[1]) || now;
+    const sessionStart = parseInt(this.sessionId.split('_')[1] ?? '', 10) || now;
     const sessionDuration = now - sessionStart;
 
     return {

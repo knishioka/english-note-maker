@@ -83,7 +83,7 @@ export default defineConfig({
     },
 
     // Reporter configuration
-    reporter: ['verbose', 'json', 'html'],
+    reporters: ['verbose', 'json', 'html'],
     outputFile: {
       json: './test-results/results.json',
       html: './test-results/index.html',

@@ -60,6 +60,9 @@
   --font-practice: 'Times New Roman', serif;
   --font-ui: 'Segoe UI', 'Roboto', sans-serif;
   --font-japanese: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  --font-handwriting:
+    'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', 'Segoe Print', 'Bradley Hand', 'Marker Felt',
+    cursive, sans-serif;
 }
 
 /* === 基本スタイル === */
@@ -470,11 +473,10 @@ body::before {
   left: 3mm;
   right: 3mm;
   top: -1.6mm;
-  font-family:
-    'Hiragino Maru Gothic ProN', 'Comic Sans MS', 'Andika', 'Yu Gothic', system-ui, sans-serif;
+  font-family: var(--font-handwriting);
   font-size: calc(var(--line-height-mm, 10mm) * 1.1);
   font-style: normal;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: 0.04em;
   color: #d6dce5;
@@ -1216,8 +1218,9 @@ body::before {
 }
 
 .alphabet-letter {
+  font-family: var(--font-handwriting);
   font-size: 28pt;
-  font-weight: bold;
+  font-weight: 700;
   color: var(--primary-color);
   min-width: 15mm;
 }
@@ -1265,8 +1268,9 @@ body::before {
 }
 
 .alphabet-trace-label {
+  font-family: var(--font-handwriting);
   font-size: 18pt;
-  font-weight: bold;
+  font-weight: 700;
   color: var(--primary-color);
   display: flex;
   flex-direction: column;
@@ -1280,6 +1284,7 @@ body::before {
 }
 
 .alphabet-trace-label .example-meaning {
+  font-family: var(--font-japanese);
   font-size: 9pt;
 }
 

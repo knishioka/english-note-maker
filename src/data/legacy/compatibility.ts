@@ -129,11 +129,16 @@ export function createLegacyWordLists(): CategoryData<LegacyWordItem> {
       return manager.getCategories('word');
     },
 
-    getOwnPropertyDescriptor(_, key) {
+    getOwnPropertyDescriptor(target, key) {
+      const category = String(key);
+      if (!target[category]) {
+        target[category] = createAgeGroupProxy('word', category, toLegacyWord);
+      }
+
       return {
         enumerable: true,
         configurable: true,
-        value: this.get!(_, key, this),
+        value: target[category],
       };
     },
   });
@@ -160,11 +165,16 @@ export function createLegacyPhraseData(): CategoryData<LegacyPhraseItem> {
       return manager.getCategories('phrase');
     },
 
-    getOwnPropertyDescriptor(_, key) {
+    getOwnPropertyDescriptor(target, key) {
+      const category = String(key);
+      if (!target[category]) {
+        target[category] = createAgeGroupProxy('phrase', category, toLegacyPhrase);
+      }
+
       return {
         enumerable: true,
         configurable: true,
-        value: this.get!(_, key, this),
+        value: target[category],
       };
     },
   });
@@ -281,15 +291,20 @@ function createAgeGroupProxy<T, U>(
         target[ageGroup as AgeGroup] = [];
 
         const manager = getDataManager();
-        const queryFn =
-          type === 'word' ? manager.getWords.bind(manager) : manager.getPhrases.bind(manager);
+        const query =
+          type === 'word'
+            ? manager.getWords({
+                category,
+                ageGroup: ageGroup as AgeGroup,
+              })
+            : manager.getPhrases({
+                category,
+                ageGroup: ageGroup as AgeGroup,
+              });
 
-        queryFn({
-          category,
-          ageGroup: ageGroup as AgeGroup,
-        })
-          .then((items: T[]) => {
-            target[ageGroup as AgeGroup] = items.map(converter);
+        query
+          .then((items) => {
+            target[ageGroup as AgeGroup] = items.map((item) => converter(item as T));
           })
           .catch((error: Error) => {
             console.warn(`Failed to load ${type}/${category}/${ageGroup}:`, error);
@@ -326,10 +341,9 @@ export function getLegacyWordListsSync(): CategoryData<LegacyWordItem> | null {
   const words = manager.getAllItems().filter((item) => item.type === 'word') as WordContentItem[];
 
   for (const word of words) {
-    if (!result[word.category]) {
-      result[word.category] = { '4-6': [], '7-9': [], '10-12': [] };
-    }
-    result[word.category][word.ageGroup].push(toLegacyWord(word));
+    const categoryData =
+      result[word.category] ?? (result[word.category] = { '4-6': [], '7-9': [], '10-12': [] });
+    categoryData[word.ageGroup].push(toLegacyWord(word));
   }
 
   return result;
@@ -350,10 +364,9 @@ export function getLegacyPhraseDataSync(): CategoryData<LegacyPhraseItem> | null
     .filter((item) => item.type === 'phrase') as PhraseContentItem[];
 
   for (const phrase of phrases) {
-    if (!result[phrase.category]) {
-      result[phrase.category] = { '4-6': [], '7-9': [], '10-12': [] };
-    }
-    result[phrase.category][phrase.ageGroup].push(toLegacyPhrase(phrase));
+    const categoryData =
+      result[phrase.category] ?? (result[phrase.category] = { '4-6': [], '7-9': [], '10-12': [] });
+    categoryData[phrase.ageGroup].push(toLegacyPhrase(phrase));
   }
 
   return result;

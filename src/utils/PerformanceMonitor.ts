@@ -5,6 +5,23 @@
 
 import type { PerformanceMetric, PerformanceReport } from '../types/index.js';
 
+interface MemoryPerformance extends Performance {
+  memory?: {
+    usedJSHeapSize: number;
+    totalJSHeapSize: number;
+    jsHeapSizeLimit: number;
+  };
+}
+
+interface FirstInputPerformanceEntry extends PerformanceEntry {
+  processingStart: number;
+}
+
+interface LayoutShiftPerformanceEntry extends PerformanceEntry {
+  hadRecentInput: boolean;
+  value: number;
+}
+
 export class PerformanceMonitor {
   private readonly metrics = new Map<string, PerformanceMetric>();
   private readonly timings = new Map<string, number>();
@@ -48,7 +65,7 @@ export class PerformanceMonitor {
     this.timings.delete(timingId);
 
     // Extract operation name from timing ID
-    const operationName = timingId.split('_')[0];
+    const operationName = timingId.split('_')[0] ?? timingId;
 
     // Create performance measure
     if (typeof performance.measure === 'function') {
@@ -78,7 +95,9 @@ export class PerformanceMonitor {
     // Prevent memory leaks by limiting metrics
     if (this.metrics.size >= this.maxMetrics) {
       const oldestKey = this.metrics.keys().next().value;
-      this.metrics.delete(oldestKey);
+      if (oldestKey) {
+        this.metrics.delete(oldestKey);
+      }
     }
 
     this.metrics.set(`${metric.name}_${Date.now()}`, metric);
@@ -98,27 +117,28 @@ export class PerformanceMonitor {
     const result: Record<string, number> = {};
 
     // Basic metrics
-    result.renderTime = this.getAverageMetric('generateNote');
-    result.validationTime = this.getAverageMetric('validation');
-    result.printTime = this.getAverageMetric('print');
+    result['renderTime'] = this.getAverageMetric('generateNote');
+    result['validationTime'] = this.getAverageMetric('validation');
+    result['printTime'] = this.getAverageMetric('print');
 
     // Memory metrics
-    if (typeof performance.memory !== 'undefined') {
-      result.memoryUsed = performance.memory.usedJSHeapSize;
-      result.memoryTotal = performance.memory.totalJSHeapSize;
-      result.memoryLimit = performance.memory.jsHeapSizeLimit;
+    const memory = (performance as MemoryPerformance).memory;
+    if (memory) {
+      result['memoryUsed'] = memory.usedJSHeapSize;
+      result['memoryTotal'] = memory.totalJSHeapSize;
+      result['memoryLimit'] = memory.jsHeapSizeLimit;
     }
 
     // Navigation timing
     if (typeof performance.timing !== 'undefined') {
       const timing = performance.timing;
-      result.pageLoadTime = timing.loadEventEnd - timing.navigationStart;
-      result.domContentLoaded = timing.domContentLoadedEventEnd - timing.navigationStart;
-      result.firstPaint = this.getFirstPaintTime();
+      result['pageLoadTime'] = timing.loadEventEnd - timing.navigationStart;
+      result['domContentLoaded'] = timing.domContentLoadedEventEnd - timing.navigationStart;
+      result['firstPaint'] = this.getFirstPaintTime();
     }
 
     // Resource timing
-    result.resourceCount = performance.getEntriesByType('resource').length;
+    result['resourceCount'] = performance.getEntriesByType('resource').length;
 
     return result;
   }
@@ -148,24 +168,27 @@ export class PerformanceMonitor {
       // Largest Contentful Paint (LCP)
       this.observePerformance('largest-contentful-paint', (entries) => {
         const lastEntry = entries[entries.length - 1];
-        vitals.lcp = lastEntry.startTime;
+        if (!lastEntry) return;
+        vitals['lcp'] = lastEntry.startTime;
       });
 
       // First Input Delay (FID)
       this.observePerformance('first-input', (entries) => {
-        const firstEntry = entries[0];
-        vitals.fid = firstEntry.processingStart - firstEntry.startTime;
+        const firstEntry = entries[0] as FirstInputPerformanceEntry | undefined;
+        if (!firstEntry) return;
+        vitals['fid'] = firstEntry.processingStart - firstEntry.startTime;
       });
 
       // Cumulative Layout Shift (CLS)
       this.observePerformance('layout-shift', (entries) => {
         const clsValue = entries.reduce((sum, entry) => {
-          if (!entry.hadRecentInput) {
-            return sum + entry.value;
+          const layoutShiftEntry = entry as LayoutShiftPerformanceEntry;
+          if (!layoutShiftEntry.hadRecentInput) {
+            return sum + layoutShiftEntry.value;
           }
           return sum;
         }, 0);
-        vitals.cls = clsValue;
+        vitals['cls'] = clsValue;
       });
 
       // Resolve after a reasonable timeout
@@ -207,13 +230,15 @@ export class PerformanceMonitor {
    * Monitor memory usage patterns
    */
   public monitorMemoryUsage(): void {
-    if (typeof performance.memory === 'undefined') {
+    const memoryPerformance = performance as MemoryPerformance;
+    if (!memoryPerformance.memory) {
       console.warn('Memory API not available');
       return;
     }
 
     const checkMemory = () => {
-      const memory = performance.memory;
+      const memory = memoryPerformance.memory;
+      if (!memory) return;
       const usagePercent = (memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100;
 
       this.recordMetric({
@@ -306,7 +331,7 @@ export class PerformanceMonitor {
       default: 200,
     };
 
-    return thresholds[operationName] || thresholds.default;
+    return thresholds[operationName] ?? thresholds['default'] ?? 200;
   }
 
   private getPerformanceStatus(
@@ -333,13 +358,14 @@ export class PerformanceMonitor {
       return 0;
     }
 
-    const sum = relevantMetrics.reduce((total, metric) => total + metric.value, 0);
+    const sum = relevantMetrics.reduce((total, metric) => total + (metric.value ?? 0), 0);
     return sum / relevantMetrics.length;
   }
 
   private getCurrentMemoryUsage(): number {
-    if (typeof performance.memory !== 'undefined') {
-      return performance.memory.usedJSHeapSize;
+    const memory = (performance as MemoryPerformance).memory;
+    if (memory) {
+      return memory.usedJSHeapSize;
     }
     return 0;
   }

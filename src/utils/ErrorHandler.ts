@@ -384,6 +384,8 @@ export class ErrorHandler {
     // - Custom monitoring endpoints
 
     if (this.shouldReportError(error)) {
+      const serializedError = this.serializeErrorForTransmission(error);
+      void serializedError;
       // Example: Send to monitoring API
       // fetch('/api/errors', {
       //   method: 'POST',

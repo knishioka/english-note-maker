@@ -109,8 +109,8 @@ export type {
 if (typeof window !== 'undefined') {
   // ブラウザ環境でのみ公開
   import('./managers/DataManager.js').then(({ getDataManager }) => {
-    (window as unknown as Record<string, unknown>).dataManager = getDataManager();
-    (window as unknown as Record<string, unknown>).displayDataStats = async () => {
+    (window as unknown as Record<string, unknown>)['dataManager'] = getDataManager();
+    (window as unknown as Record<string, unknown>)['displayDataStats'] = async () => {
       const manager = getDataManager();
       await manager.displayStats();
     };

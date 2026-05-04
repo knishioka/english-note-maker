@@ -421,11 +421,8 @@ export class NoteGeneratorService {
     html += `<h3 class="practice-title practice-title--cloze">Fill in the Blanks - ${categoryNames[clozeCategory] || clozeCategory}</h3>`;
     html += '<div class="cloze-grid">';
 
-    const clozeResults = shuffledPhrases.map((p) => this.generateClozeBlank(p.english, blankType));
-
-    for (let i = 0; i < shuffledPhrases.length; i++) {
-      const phrase = shuffledPhrases[i];
-      const clozeResult = clozeResults[i];
+    for (const phrase of shuffledPhrases) {
+      const clozeResult = this.generateClozeBlank(phrase.english, blankType);
       html += `
         <div class="cloze-item">
           <div class="cloze-header">
@@ -536,6 +533,9 @@ export class NoteGeneratorService {
         );
       if (contentWordEntries.length > 0) {
         const target = contentWordEntries[Math.floor(contentWordEntries.length / 2)];
+        if (!target) {
+          return { display: processed.join(''), answers };
+        }
         const cleanWord = target.w.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
         const { leading, trailing } = this.extractPunctuation(target.w, cleanWord);
         const blankWidth = Math.max(cleanWord.length * 2, 6);
@@ -583,7 +583,12 @@ export class NoteGeneratorService {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      const current = shuffled[i];
+      const target = shuffled[j];
+      if (current !== undefined && target !== undefined) {
+        shuffled[i] = target;
+        shuffled[j] = current;
+      }
     }
     return shuffled;
   }
