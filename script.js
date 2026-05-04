@@ -538,6 +538,7 @@ function computeAlphabetNeededPages() {
   const isTrace = alphabetMode === 'trace';
   const traceRepeat = clampInt(document.getElementById('alphabetTraceRepeat')?.value, 1, 5, 3);
   const wordCount = clampInt(document.getElementById('alphabetWordCount')?.value, 1, 3, 2);
+  const lineHeight = clampInt(document.getElementById('lineHeight')?.value, 8, 12, 10);
   const showExample = Boolean(document.getElementById('showAlphabetExample')?.checked);
 
   let total = 0;
@@ -548,12 +549,12 @@ function computeAlphabetNeededPages() {
   if (total === 0) return null;
 
   const lettersPerPage = isTrace
-    ? computeTraceLettersPerPage(traceRepeat, wordCount, showExample)
+    ? computeTraceLettersPerPage(traceRepeat, wordCount, showExample, lineHeight)
     : 6;
   return Math.ceil(total / lettersPerPage);
 }
 
-// 必要に応じて pageCount を引き上げ（max 属性で必ずキャップしてループ無限化を防ぐ）
+// アルファベット練習では、文字種・罫線高さの変更に合わせて pageCount を同期する
 function bumpPageCountForAlphabet() {
   const needed = computeAlphabetNeededPages();
   if (!needed) return;
@@ -563,7 +564,7 @@ function bumpPageCountForAlphabet() {
   const maxPages = Number.isFinite(maxAttr) ? maxAttr : 60;
   const target = Math.min(needed, maxPages);
   const current = parseInt(pageCountInput.value, 10);
-  if (!Number.isFinite(current) || current < target) {
+  if (!Number.isFinite(current) || current !== target) {
     pageCountInput.value = String(target);
   }
 }
@@ -1397,7 +1398,7 @@ function generateBaselineGroup(guideText = '', horizRepeat = 1) {
     const safe = escapeHtml(guideText.trim());
     const count = Math.max(1, horizRepeat | 0);
     const spans = Array.from({ length: count }, () => `<span>${safe}</span>`).join('');
-    traceGuide = `<div class="guide-letter">${spans}</div>`;
+    traceGuide = `<div class="guide-letter ${getTraceGuideClass(guideText)}">${spans}</div>`;
   }
   const traceClass = traceGuide ? ' baseline-group--trace' : '';
 
@@ -1412,12 +1413,34 @@ function generateBaselineGroup(guideText = '', horizRepeat = 1) {
     `;
 }
 
+const TRACE_ASCENDERS = new Set(['b', 'd', 'f', 'h', 'k', 'l', 't']);
+const TRACE_DESCENDERS = new Set(['g', 'j', 'p', 'q', 'y']);
+
+function getTraceGuideClass(text) {
+  const value = (text || '').trim();
+  if (/^[a-z]$/.test(value)) {
+    if (TRACE_ASCENDERS.has(value)) return 'guide-letter--lowercase-ascender';
+    if (TRACE_DESCENDERS.has(value)) return 'guide-letter--lowercase-descender';
+    return 'guide-letter--lowercase-short';
+  }
+
+  if (/^[a-z]+$/.test(value)) {
+    return 'guide-letter--lowercase-word';
+  }
+
+  if (/^[A-Z][a-z]+$/.test(value)) {
+    return 'guide-letter--mixed-word';
+  }
+
+  return 'guide-letter--uppercase';
+}
+
 // テキスト長に応じた行内なぞり数を返す（短い文字ほど多く並べる）
-function horizRepeatForText(text) {
+function horizRepeatForText(text, lineHeight = 10) {
   const len = (text || '').trim().length;
   if (len <= 1) return 7;
-  if (len <= 3) return 4;
-  if (len <= 5) return 3;
+  if (len <= 3) return lineHeight >= 12 ? 3 : 4;
+  if (len <= 5) return lineHeight >= 12 ? 2 : 3;
   if (len <= 7) return 2;
   return 2;
 }
@@ -1859,6 +1882,7 @@ function generateAlphabetPractice(pageNumber) {
   const isTrace = alphabetMode === 'trace';
   const traceRepeat = clampInt(document.getElementById('alphabetTraceRepeat')?.value, 1, 5, 3);
   const wordCount = clampInt(document.getElementById('alphabetWordCount')?.value, 1, 3, 2);
+  const lineHeight = clampInt(document.getElementById('lineHeight')?.value, 8, 12, 10);
 
   let letters = [];
   if (alphabetType === 'uppercase' || alphabetType === 'both') {
@@ -1870,7 +1894,7 @@ function generateAlphabetPractice(pageNumber) {
 
   // 通常: 2列×3行=6 / なぞり書き: A4 高さ (297mm − 余白 − タイトル ≒ 260mm) に収まる文字数を密度から逆算
   const lettersPerPage = isTrace
-    ? computeTraceLettersPerPage(traceRepeat, wordCount, showExample)
+    ? computeTraceLettersPerPage(traceRepeat, wordCount, showExample, lineHeight)
     : 6;
   const startIndex = (pageNumber - 1) * lettersPerPage;
   const endIndex = startIndex + lettersPerPage;
@@ -1903,7 +1927,7 @@ function generateAlphabetPractice(pageNumber) {
       // なぞり書き: 文字 + 例示単語ごとに薄字ガイド付きベースラインを repeat 本描画
       bodyHtml += `<div class="alphabet-trace-row">
                 <div class="alphabet-trace-label">${escapeHtml(item.letter)}</div>
-                <div class="alphabet-trace-lines">${repeatBaselineGroup(item.letter, traceRepeat)}</div>
+                <div class="alphabet-trace-lines">${repeatBaselineGroup(item.letter, traceRepeat, lineHeight)}</div>
             </div>`;
       if (showExample) {
         for (const word of itemWords) {
@@ -1912,7 +1936,7 @@ function generateAlphabetPractice(pageNumber) {
                         <span class="example-word">${escapeHtml(word.english)}</span>
                         <span class="example-meaning">(${escapeHtml(word.japanese)})</span>
                     </div>
-                    <div class="alphabet-trace-lines">${repeatBaselineGroup(word.english, traceRepeat)}</div>
+                    <div class="alphabet-trace-lines">${repeatBaselineGroup(word.english, traceRepeat, lineHeight)}</div>
                 </div>`;
         }
       }
@@ -1945,8 +1969,10 @@ function generateAlphabetPractice(pageNumber) {
 }
 
 // 薄字ガイド付きベースラインを n 本連続で生成（行内には複数回なぞれるよう horizRepeat 個並べる）
-function repeatBaselineGroup(guideText, count) {
-  const horiz = horizRepeatForText(guideText);
+function repeatBaselineGroup(guideText, count, lineHeight = null) {
+  const effectiveLineHeight =
+    lineHeight ?? clampInt(document.getElementById('lineHeight')?.value, 8, 12, 10);
+  const horiz = horizRepeatForText(guideText, effectiveLineHeight);
   let out = '';
   for (let i = 0; i < count; i++) {
     out += generateBaselineGroup(guideText, horiz);
@@ -1962,13 +1988,15 @@ function clampInt(value, min, max, fallback) {
 }
 
 // なぞり書き時の 1 ページあたり文字数を A4 高さから逆算
-// ベースライン1本=10mm + 行間2mm=12mm。1セル=(1+wordCount)行 × repeat 本 + 行マージン3mm × 行数。
-// セル間ギャップ5mm、タイトル~10mm、ページパディング20mm を引いた約260mm を可用域とする。
-function computeTraceLettersPerPage(repeat, wordCount, showExample) {
+// 1セル=(1+wordCount)行 × repeat 本。罫線高さの設定に合わせて行間も再計算する。
+// タイトル、ページパディング、セル間ギャップを差し引き、例示単語ありでは少し保守的に見積もる。
+function computeTraceLettersPerPage(repeat, wordCount, showExample, lineHeight = 10) {
   const rowsPerCell = 1 + (showExample ? wordCount : 0);
-  const cellHeightMm = rowsPerCell * (repeat * 12 + 3);
+  const lineSpacingMm = Math.max(1, Math.floor(lineHeight * 0.2));
+  const rowMarginMm = 3;
+  const cellHeightMm = rowsPerCell * (repeat * (lineHeight + lineSpacingMm) + rowMarginMm);
   const interCellGapMm = 5;
-  const availableMm = 260;
+  const availableMm = showExample ? 250 : 260;
   const fit = Math.floor((availableMm + interCellGapMm) / (cellHeightMm + interCellGapMm));
   return Math.max(1, fit);
 }
