@@ -131,12 +131,14 @@ export function createLegacyWordLists(): CategoryData<LegacyWordItem> {
 
     getOwnPropertyDescriptor(target, key) {
       const category = String(key);
-      const value = target[category] ?? createAgeGroupProxy('word', category, toLegacyWord);
+      if (!target[category]) {
+        target[category] = createAgeGroupProxy('word', category, toLegacyWord);
+      }
 
       return {
         enumerable: true,
         configurable: true,
-        value,
+        value: target[category],
       };
     },
   });
@@ -165,12 +167,14 @@ export function createLegacyPhraseData(): CategoryData<LegacyPhraseItem> {
 
     getOwnPropertyDescriptor(target, key) {
       const category = String(key);
-      const value = target[category] ?? createAgeGroupProxy('phrase', category, toLegacyPhrase);
+      if (!target[category]) {
+        target[category] = createAgeGroupProxy('phrase', category, toLegacyPhrase);
+      }
 
       return {
         enumerable: true,
         configurable: true,
-        value,
+        value: target[category],
       };
     },
   });
@@ -337,10 +341,9 @@ export function getLegacyWordListsSync(): CategoryData<LegacyWordItem> | null {
   const words = manager.getAllItems().filter((item) => item.type === 'word') as WordContentItem[];
 
   for (const word of words) {
-    if (!result[word.category]) {
-      result[word.category] = { '4-6': [], '7-9': [], '10-12': [] };
-    }
-    result[word.category][word.ageGroup].push(toLegacyWord(word));
+    const categoryData =
+      result[word.category] ?? (result[word.category] = { '4-6': [], '7-9': [], '10-12': [] });
+    categoryData[word.ageGroup].push(toLegacyWord(word));
   }
 
   return result;
@@ -361,10 +364,9 @@ export function getLegacyPhraseDataSync(): CategoryData<LegacyPhraseItem> | null
     .filter((item) => item.type === 'phrase') as PhraseContentItem[];
 
   for (const phrase of phrases) {
-    if (!result[phrase.category]) {
-      result[phrase.category] = { '4-6': [], '7-9': [], '10-12': [] };
-    }
-    result[phrase.category][phrase.ageGroup].push(toLegacyPhrase(phrase));
+    const categoryData =
+      result[phrase.category] ?? (result[phrase.category] = { '4-6': [], '7-9': [], '10-12': [] });
+    categoryData[phrase.ageGroup].push(toLegacyPhrase(phrase));
   }
 
   return result;

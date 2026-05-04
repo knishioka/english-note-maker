@@ -65,7 +65,7 @@ export class PerformanceMonitor {
     this.timings.delete(timingId);
 
     // Extract operation name from timing ID
-    const operationName = timingId.split('_')[0];
+    const operationName = timingId.split('_')[0] ?? timingId;
 
     // Create performance measure
     if (typeof performance.measure === 'function') {
@@ -117,28 +117,28 @@ export class PerformanceMonitor {
     const result: Record<string, number> = {};
 
     // Basic metrics
-    result.renderTime = this.getAverageMetric('generateNote');
-    result.validationTime = this.getAverageMetric('validation');
-    result.printTime = this.getAverageMetric('print');
+    result['renderTime'] = this.getAverageMetric('generateNote');
+    result['validationTime'] = this.getAverageMetric('validation');
+    result['printTime'] = this.getAverageMetric('print');
 
     // Memory metrics
     const memory = (performance as MemoryPerformance).memory;
     if (memory) {
-      result.memoryUsed = memory.usedJSHeapSize;
-      result.memoryTotal = memory.totalJSHeapSize;
-      result.memoryLimit = memory.jsHeapSizeLimit;
+      result['memoryUsed'] = memory.usedJSHeapSize;
+      result['memoryTotal'] = memory.totalJSHeapSize;
+      result['memoryLimit'] = memory.jsHeapSizeLimit;
     }
 
     // Navigation timing
     if (typeof performance.timing !== 'undefined') {
       const timing = performance.timing;
-      result.pageLoadTime = timing.loadEventEnd - timing.navigationStart;
-      result.domContentLoaded = timing.domContentLoadedEventEnd - timing.navigationStart;
-      result.firstPaint = this.getFirstPaintTime();
+      result['pageLoadTime'] = timing.loadEventEnd - timing.navigationStart;
+      result['domContentLoaded'] = timing.domContentLoadedEventEnd - timing.navigationStart;
+      result['firstPaint'] = this.getFirstPaintTime();
     }
 
     // Resource timing
-    result.resourceCount = performance.getEntriesByType('resource').length;
+    result['resourceCount'] = performance.getEntriesByType('resource').length;
 
     return result;
   }
@@ -168,14 +168,15 @@ export class PerformanceMonitor {
       // Largest Contentful Paint (LCP)
       this.observePerformance('largest-contentful-paint', (entries) => {
         const lastEntry = entries[entries.length - 1];
-        vitals.lcp = lastEntry.startTime;
+        if (!lastEntry) return;
+        vitals['lcp'] = lastEntry.startTime;
       });
 
       // First Input Delay (FID)
       this.observePerformance('first-input', (entries) => {
         const firstEntry = entries[0] as FirstInputPerformanceEntry | undefined;
         if (!firstEntry) return;
-        vitals.fid = firstEntry.processingStart - firstEntry.startTime;
+        vitals['fid'] = firstEntry.processingStart - firstEntry.startTime;
       });
 
       // Cumulative Layout Shift (CLS)
@@ -187,7 +188,7 @@ export class PerformanceMonitor {
           }
           return sum;
         }, 0);
-        vitals.cls = clsValue;
+        vitals['cls'] = clsValue;
       });
 
       // Resolve after a reasonable timeout
@@ -330,7 +331,7 @@ export class PerformanceMonitor {
       default: 200,
     };
 
-    return thresholds[operationName] || thresholds.default;
+    return thresholds[operationName] ?? thresholds['default'] ?? 200;
   }
 
   private getPerformanceStatus(

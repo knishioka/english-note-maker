@@ -540,7 +540,7 @@ export class ValidationService {
     const match = value.match(regex);
 
     if (match) {
-      return parseFloat(match[1]);
+      return parseFloat(match[1] ?? '0');
     }
 
     // Handle unitless values (assume pixels for certain properties)
