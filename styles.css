@@ -513,17 +513,17 @@ body::before {
 
 .guide-letter--lowercase-ascender {
   --guide-font-scale: 1.04;
-  --guide-top-scale: -0.13;
+  --guide-top-scale: -0.14;
 }
 
 .guide-letter--lowercase-descender {
   --guide-font-scale: 1.04;
-  --guide-top-scale: -0.04;
+  --guide-top-scale: -0.14;
 }
 
 .guide-letter--lowercase-word {
   --guide-font-scale: 1.02;
-  --guide-top-scale: -0.1;
+  --guide-top-scale: -0.13;
 }
 
 .baseline--top {
