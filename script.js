@@ -1413,14 +1413,14 @@ function generateBaselineGroup(guideText = '', horizRepeat = 1) {
     `;
 }
 
+const TRACE_ASCENDERS = new Set(['b', 'd', 'f', 'h', 'k', 'l', 't']);
+const TRACE_DESCENDERS = new Set(['g', 'j', 'p', 'q', 'y']);
+
 function getTraceGuideClass(text) {
   const value = (text || '').trim();
-  const ascenders = new Set(['b', 'd', 'f', 'h', 'k', 'l', 't']);
-  const descenders = new Set(['g', 'j', 'p', 'q', 'y']);
-
   if (/^[a-z]$/.test(value)) {
-    if (ascenders.has(value)) return 'guide-letter--lowercase-ascender';
-    if (descenders.has(value)) return 'guide-letter--lowercase-descender';
+    if (TRACE_ASCENDERS.has(value)) return 'guide-letter--lowercase-ascender';
+    if (TRACE_DESCENDERS.has(value)) return 'guide-letter--lowercase-descender';
     return 'guide-letter--lowercase-short';
   }
 
@@ -1927,7 +1927,7 @@ function generateAlphabetPractice(pageNumber) {
       // なぞり書き: 文字 + 例示単語ごとに薄字ガイド付きベースラインを repeat 本描画
       bodyHtml += `<div class="alphabet-trace-row">
                 <div class="alphabet-trace-label">${escapeHtml(item.letter)}</div>
-                <div class="alphabet-trace-lines">${repeatBaselineGroup(item.letter, traceRepeat)}</div>
+                <div class="alphabet-trace-lines">${repeatBaselineGroup(item.letter, traceRepeat, lineHeight)}</div>
             </div>`;
       if (showExample) {
         for (const word of itemWords) {
@@ -1936,7 +1936,7 @@ function generateAlphabetPractice(pageNumber) {
                         <span class="example-word">${escapeHtml(word.english)}</span>
                         <span class="example-meaning">(${escapeHtml(word.japanese)})</span>
                     </div>
-                    <div class="alphabet-trace-lines">${repeatBaselineGroup(word.english, traceRepeat)}</div>
+                    <div class="alphabet-trace-lines">${repeatBaselineGroup(word.english, traceRepeat, lineHeight)}</div>
                 </div>`;
         }
       }
@@ -1969,9 +1969,10 @@ function generateAlphabetPractice(pageNumber) {
 }
 
 // 薄字ガイド付きベースラインを n 本連続で生成（行内には複数回なぞれるよう horizRepeat 個並べる）
-function repeatBaselineGroup(guideText, count) {
-  const lineHeight = clampInt(document.getElementById('lineHeight')?.value, 8, 12, 10);
-  const horiz = horizRepeatForText(guideText, lineHeight);
+function repeatBaselineGroup(guideText, count, lineHeight = null) {
+  const effectiveLineHeight =
+    lineHeight ?? clampInt(document.getElementById('lineHeight')?.value, 8, 12, 10);
+  const horiz = horizRepeatForText(guideText, effectiveLineHeight);
   let out = '';
   for (let i = 0; i < count; i++) {
     out += generateBaselineGroup(guideText, horiz);
