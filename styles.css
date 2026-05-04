@@ -83,8 +83,7 @@
   --font-ui: 'Segoe UI', 'Roboto', sans-serif;
   --font-japanese: 'Hiragino Sans', 'Yu Gothic', sans-serif;
   --font-handwriting: 'Comic Neue', 'Comic Sans MS', 'Comic Sans', cursive, sans-serif;
-  --trace-guide-slant-correction: 0deg;
-  --trace-label-slant-correction: 0deg;
+  --trace-slant-correction: 0deg;
 }
 
 /* === 基本スタイル === */
@@ -493,7 +492,7 @@ body::before {
 .guide-letter {
   --guide-font-scale: 1.08;
   --guide-top-scale: -0.15;
-  --guide-slant-correction: var(--trace-guide-slant-correction, -8deg);
+  --guide-slant-correction: var(--trace-slant-correction, 0deg);
 
   position: absolute;
   left: 3mm;
@@ -1335,7 +1334,7 @@ body::before {
 .alphabet-trace-letter,
 .alphabet-trace-label .example-word {
   display: inline-block;
-  transform: skewX(var(--trace-label-slant-correction, -8deg));
+  transform: skewX(var(--trace-slant-correction, 0deg));
   transform-origin: center 70%;
 }
 
