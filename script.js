@@ -40,6 +40,75 @@ let setCurrentExamplesImpl = (examples) => {
 
 let setCurrentExampleIndicesImpl = () => {};
 
+// フレーズコレクション（src/data/collections/phrases/*.json）をViteのglobで一括取り込み。
+// _manifest.json は除外する。本番(vite build)・開発(vite)で有効。
+const COLLECTION_PHRASE_MODULES = import.meta.glob('./src/data/collections/phrases/*.json', {
+  eager: true,
+});
+
+// コレクションJSONを PHRASE_DATA[カテゴリー][年齢] 形へマージする。
+// english を正規化（小文字・前後空白除去）したキーで重複排除し、
+// 既存（phrase-data.js）のエントリを優先順序で先頭に残す。
+function mergePhraseCollections(base, modules) {
+  const normalize = (s) => (s || '').toString().trim().toLowerCase();
+  const bucketKey = (category, ageGroup) => `${category}|${ageGroup}`;
+
+  // 既存データを浅くコピー（元データを破壊しない）
+  const merged = {};
+  for (const category of Object.keys(base || {})) {
+    merged[category] = {};
+    for (const ageGroup of Object.keys(base[category] || {})) {
+      const arr = base[category][ageGroup];
+      merged[category][ageGroup] = Array.isArray(arr) ? [...arr] : [];
+    }
+  }
+
+  // 既存englishを重複チェック用に登録
+  const seenByBucket = new Map();
+  for (const category of Object.keys(merged)) {
+    for (const ageGroup of Object.keys(merged[category])) {
+      const set = new Set(merged[category][ageGroup].map((p) => normalize(p?.english)));
+      seenByBucket.set(bucketKey(category, ageGroup), set);
+    }
+  }
+
+  for (const path of Object.keys(modules || {})) {
+    if (path.includes('_manifest')) {
+      continue;
+    }
+    const mod = modules[path];
+    const data = mod && (mod.default || mod);
+    const items = data && Array.isArray(data.items) ? data.items : [];
+    for (const item of items) {
+      const category = item && item.category;
+      const ageGroup = item && item.ageGroup;
+      const english = item && item.english;
+      if (!category || !ageGroup || !english) {
+        continue;
+      }
+      if (!merged[category]) {
+        merged[category] = {};
+      }
+      if (!merged[category][ageGroup]) {
+        merged[category][ageGroup] = [];
+      }
+      const bk = bucketKey(category, ageGroup);
+      if (!seenByBucket.has(bk)) {
+        seenByBucket.set(bk, new Set());
+      }
+      const set = seenByBucket.get(bk);
+      const norm = normalize(english);
+      if (set.has(norm)) {
+        continue;
+      }
+      set.add(norm);
+      merged[category][ageGroup].push(item);
+    }
+  }
+
+  return merged;
+}
+
 const modulesReady = (async () => {
   const [
     exampleModule,
@@ -62,7 +131,7 @@ const modulesReady = (async () => {
   EXAMPLE_SENTENCES_BY_AGE = exampleModule.EXAMPLE_SENTENCES_BY_AGE;
   WORD_LISTS = wordModule.WORD_LISTS;
   ALPHABET_DATA = alphabetModule.ALPHABET_DATA;
-  PHRASE_DATA = phraseModule.PHRASE_DATA;
+  PHRASE_DATA = mergePhraseCollections(phraseModule.PHRASE_DATA, COLLECTION_PHRASE_MODULES);
   SIGHT_WORDS_DATA = sightWordsModule.SIGHT_WORDS;
   SIGHT_WORD_SET_DATA = sightWordsModule.SIGHT_WORD_SET;
   SIGHT_WORD_MAP_DATA = sightWordsModule.SIGHT_WORD_MAP;
@@ -127,6 +196,83 @@ function resetSentenceCache() {
     sequence: [],
     emptySource: false,
   };
+}
+
+// カテゴリーキー → 日本語ラベル（cloze / phrase 両モードで共有）
+const CATEGORY_NAMES = {
+  all: 'すべてのカテゴリー',
+  greetings: 'あいさつ',
+  self_introduction: '自己紹介',
+  school: '学校生活',
+  shopping: '買い物',
+  travel: '旅行・移動',
+  feelings: '感情表現',
+  daily_life: '日常生活',
+  classroom_english: '教室での英語',
+  friend_making: '友達作り',
+  cultural_exchange: '文化交流',
+  emergency_situations: '緊急時の表現',
+  numbers_math: '数と算数',
+  family: '家族',
+  hobbies: '趣味・遊び',
+  food_eating: '食べ物・食事',
+  weather: '天気',
+  asking_for_help: '助けを求める',
+  opinions_preferences: '意見・好み',
+  making_plans: '予定を立てる',
+  apologizing_thanking: '謝る・感謝する',
+  health_body: '体・健康',
+};
+
+// フレーズプール取得（cloze / phrase 共有）。
+// - category === 'all' なら全カテゴリーを連結
+// - 単一カテゴリーは選択年齢を先頭にし、続けて他年齢を連結（年齢横断プール）
+// - english を正規化して重複排除
+// - カテゴリーが存在しない場合は greetings にフォールバック
+function getPhrasePool(category, ageGroup) {
+  const normalize = (s) => (s || '').toString().trim().toLowerCase();
+  const seen = new Set();
+  const pool = [];
+
+  const pushUnique = (arr) => {
+    if (!Array.isArray(arr)) {
+      return;
+    }
+    for (const item of arr) {
+      const norm = normalize(item && item.english);
+      if (!norm || seen.has(norm)) {
+        continue;
+      }
+      seen.add(norm);
+      pool.push(item);
+    }
+  };
+
+  const collectCategory = (cat) => {
+    const ageMap = PHRASE_DATA[cat];
+    if (!ageMap) {
+      return;
+    }
+    pushUnique(ageMap[ageGroup]); // 選択年齢を優先
+    for (const age of Object.keys(ageMap)) {
+      if (age === ageGroup) {
+        continue;
+      }
+      pushUnique(ageMap[age]); // 残りの年齢を横断で補完
+    }
+  };
+
+  if (category === 'all') {
+    for (const cat of Object.keys(PHRASE_DATA)) {
+      collectCategory(cat);
+    }
+  } else if (PHRASE_DATA[category]) {
+    collectCategory(category);
+  } else {
+    collectCategory('greetings');
+  }
+
+  return pool;
 }
 
 function reportInitializationFailure(error) {
@@ -843,16 +989,60 @@ function calculatePhrasePracticeLayout(lineHeight) {
   };
 }
 
+// cloze / phrase モードで、選択条件のユニークなフレーズ数が
+// 印刷に必要な数（1ページの問題数 × ページ数）に満たない場合に警告文を返す。
+// 不足がなければ空文字を返す。
+function getVarietyWarning(state) {
+  if (!state) {
+    return '';
+  }
+  const mode = state.practiceMode;
+  if (mode !== 'cloze' && mode !== 'phrase') {
+    return '';
+  }
+
+  const categoryId = mode === 'cloze' ? 'clozeCategory' : 'phraseCategory';
+  const categoryEl = document.getElementById(categoryId);
+  const category = (categoryEl && categoryEl.value) || 'greetings';
+
+  const ageGroupEl = document.getElementById('ageGroup');
+  const ageGroup = (ageGroupEl && ageGroupEl.value) || '7-9';
+
+  const uniqueCount = getPhrasePool(category, ageGroup).length;
+
+  let perPage;
+  if (mode === 'cloze') {
+    perPage = calculateClozePracticeLayout(state.lineHeight, state.showClozeAnswers).baseValue || 1;
+  } else {
+    perPage = calculatePhrasePracticeLayout(state.lineHeight).baseValue || 1;
+  }
+
+  const pageCount = Math.max(1, state.pageCount || 1);
+  const needed = perPage * pageCount;
+
+  if (uniqueCount >= needed) {
+    return '';
+  }
+
+  return `選択条件のフレーズは ${uniqueCount} 件です。${pageCount}ページ印刷では同じ問題が繰り返されます。「すべてのカテゴリー」を選ぶか、対象年齢を変えると種類が増えます。`;
+}
+
 function updateAutoLayoutNotice(result, state, baseLayout) {
   const notice = document.getElementById('autoLayoutNotice');
   if (!notice) {
     return;
   }
 
+  const varietyWarning = getVarietyWarning(state);
+  const show = (text, status) => {
+    notice.textContent = text || '';
+    notice.style.display = text ? 'block' : 'none';
+    notice.dataset.status = text ? status : 'idle';
+  };
+
   if (!result || (!result.adjusted && result.success !== false)) {
-    notice.textContent = '';
-    notice.style.display = 'none';
-    notice.dataset.status = 'idle';
+    // 自動レイアウト調整は不要。バリエーション警告があればそれを表示。
+    show(varietyWarning, 'warning');
     return;
   }
 
@@ -867,24 +1057,20 @@ function updateAutoLayoutNotice(result, state, baseLayout) {
     const overflowText = overflowSummary
       ? `（ページ${overflowSummary.displayIndex}が約${overflowSummary.overflowMm}mmはみ出しています）`
       : '';
-    notice.textContent = `自動調整を試みましたが、A4サイズに収まりませんでした。ページ数や行間、カテゴリ設定を見直してください。${overflowText}`;
-    notice.style.display = 'block';
-    notice.dataset.status = 'error';
+    const base = `自動調整を試みましたが、A4サイズに収まりませんでした。ページ数や行間、カテゴリ設定を見直してください。${overflowText}`;
+    show(varietyWarning ? `${base}\n${varietyWarning}` : base, 'error');
     return;
   }
 
   if (modeLayout && result.adjusted) {
     const fromValue = modeLayout.baseValue;
     const label = modeLayout.label || '項目数';
-    notice.textContent = `A4に収めるため、1ページあたりの${label}を ${fromValue} → ${currentValue} に自動調整しました。`;
-    notice.style.display = 'block';
-    notice.dataset.status = 'adjusted';
+    const base = `A4に収めるため、1ページあたりの${label}を ${fromValue} → ${currentValue} に自動調整しました。`;
+    show(varietyWarning ? `${base}\n${varietyWarning}` : base, 'adjusted');
     return;
   }
 
-  notice.textContent = '';
-  notice.style.display = 'none';
-  notice.dataset.status = 'idle';
+  show(varietyWarning, 'warning');
 }
 
 function escapeHtml(text) {
@@ -2040,36 +2226,8 @@ function generatePhrasePractice(
     });
   }
 
-  let allPhrases;
-  if (PHRASE_DATA[phraseCategory]) {
-    if (PHRASE_DATA[phraseCategory][ageGroup]) {
-      allPhrases = PHRASE_DATA[phraseCategory][ageGroup];
-    } else {
-      const availableAges = Object.keys(PHRASE_DATA[phraseCategory]);
-      const fallbackAge = availableAges.includes('7-9') ? '7-9' : availableAges[0];
-      allPhrases = PHRASE_DATA[phraseCategory][fallbackAge] || [];
-      if (window.Debug) {
-        window.Debug.warn(
-          'PHRASE_PRACTICE',
-          `年齢グループ${ageGroup}のデータが見つからないため、代替を使用`,
-          {
-            requestedAge: ageGroup,
-            usingAge: fallbackAge,
-          }
-        );
-      }
-    }
-  } else {
-    allPhrases = PHRASE_DATA.greetings?.[ageGroup] || PHRASE_DATA.greetings?.['7-9'] || [];
-    if (window.Debug) {
-      window.Debug.error(
-        'PHRASE_PRACTICE',
-        `カテゴリー${phraseCategory}が見つからないため、greetingsを使用`
-      );
-    }
-  }
-
-  const safePhrases = Array.isArray(allPhrases) ? allPhrases : [];
+  // 年齢横断プール・全カテゴリー対応（重複排除済み）
+  const safePhrases = getPhrasePool(phraseCategory, ageGroup);
 
   if (!safePhrases.length) {
     if (window.Debug) {
@@ -2134,20 +2292,7 @@ function generatePhrasePractice(
     });
   }
 
-  const categoryNames = {
-    greetings: 'あいさつ',
-    self_introduction: '自己紹介',
-    school: '学校生活',
-    shopping: '買い物',
-    travel: '旅行・移動',
-    feelings: '感情表現',
-    daily_life: '日常生活',
-    classroom_english: '教室での英語',
-    friend_making: '友達作り',
-    cultural_exchange: '文化交流',
-    emergency_situations: '緊急時の表現',
-    numbers_math: '数と算数',
-  };
+  const categoryNames = CATEGORY_NAMES;
 
   const usageLabels = {
     core: 'よく使う',
@@ -2559,20 +2704,8 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
   const showAnswers = Boolean(document.getElementById('showClozeAnswers')?.checked);
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
 
-  let allPhrases;
-  if (PHRASE_DATA[clozeCategory]) {
-    if (PHRASE_DATA[clozeCategory][ageGroup]) {
-      allPhrases = PHRASE_DATA[clozeCategory][ageGroup];
-    } else {
-      const availableAges = Object.keys(PHRASE_DATA[clozeCategory]);
-      const fallbackAge = availableAges.includes('7-9') ? '7-9' : availableAges[0];
-      allPhrases = PHRASE_DATA[clozeCategory][fallbackAge] || [];
-    }
-  } else {
-    allPhrases = PHRASE_DATA.greetings?.[ageGroup] || PHRASE_DATA.greetings?.['7-9'] || [];
-  }
-
-  const safePhrases = Array.isArray(allPhrases) ? allPhrases : [];
+  // 年齢横断プール・全カテゴリー対応（重複排除済み）
+  const safePhrases = getPhrasePool(clozeCategory, ageGroup);
 
   if (!safePhrases.length) {
     return `
@@ -2604,20 +2737,7 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
     return html;
   }
 
-  const categoryNames = {
-    greetings: 'あいさつ',
-    self_introduction: '自己紹介',
-    school: '学校生活',
-    shopping: '買い物',
-    travel: '旅行・移動',
-    feelings: '感情表現',
-    daily_life: '日常生活',
-    classroom_english: '教室での英語',
-    friend_making: '友達作り',
-    cultural_exchange: '文化交流',
-    emergency_situations: '緊急時の表現',
-    numbers_math: '数と算数',
-  };
+  const categoryNames = CATEGORY_NAMES;
 
   const blankTypeLabel = blankType === 'char' ? '文字レベル' : '単語レベル';
   const difficultyLabels = { easy: 'やさしい', normal: 'ふつう', hard: 'むずかしい' };
