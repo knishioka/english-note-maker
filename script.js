@@ -40,75 +40,6 @@ let setCurrentExamplesImpl = (examples) => {
 
 let setCurrentExampleIndicesImpl = () => {};
 
-// フレーズコレクション（src/data/collections/phrases/*.json）をViteのglobで一括取り込み。
-// _manifest.json は除外する。本番(vite build)・開発(vite)で有効。
-const COLLECTION_PHRASE_MODULES = import.meta.glob('./src/data/collections/phrases/*.json', {
-  eager: true,
-});
-
-// コレクションJSONを PHRASE_DATA[カテゴリー][年齢] 形へマージする。
-// english を正規化（小文字・前後空白除去）したキーで重複排除し、
-// 既存（phrase-data.js）のエントリを優先順序で先頭に残す。
-function mergePhraseCollections(base, modules) {
-  const normalize = (s) => (s || '').toString().trim().toLowerCase();
-  const bucketKey = (category, ageGroup) => `${category}|${ageGroup}`;
-
-  // 既存データを浅くコピー（元データを破壊しない）
-  const merged = {};
-  for (const category of Object.keys(base || {})) {
-    merged[category] = {};
-    for (const ageGroup of Object.keys(base[category] || {})) {
-      const arr = base[category][ageGroup];
-      merged[category][ageGroup] = Array.isArray(arr) ? [...arr] : [];
-    }
-  }
-
-  // 既存englishを重複チェック用に登録
-  const seenByBucket = new Map();
-  for (const category of Object.keys(merged)) {
-    for (const ageGroup of Object.keys(merged[category])) {
-      const set = new Set(merged[category][ageGroup].map((p) => normalize(p?.english)));
-      seenByBucket.set(bucketKey(category, ageGroup), set);
-    }
-  }
-
-  for (const path of Object.keys(modules || {})) {
-    if (path.includes('_manifest')) {
-      continue;
-    }
-    const mod = modules[path];
-    const data = mod && (mod.default || mod);
-    const items = data && Array.isArray(data.items) ? data.items : [];
-    for (const item of items) {
-      const category = item && item.category;
-      const ageGroup = item && item.ageGroup;
-      const english = item && item.english;
-      if (!category || !ageGroup || !english) {
-        continue;
-      }
-      if (!merged[category]) {
-        merged[category] = {};
-      }
-      if (!merged[category][ageGroup]) {
-        merged[category][ageGroup] = [];
-      }
-      const bk = bucketKey(category, ageGroup);
-      if (!seenByBucket.has(bk)) {
-        seenByBucket.set(bk, new Set());
-      }
-      const set = seenByBucket.get(bk);
-      const norm = normalize(english);
-      if (set.has(norm)) {
-        continue;
-      }
-      set.add(norm);
-      merged[category][ageGroup].push(item);
-    }
-  }
-
-  return merged;
-}
-
 const modulesReady = (async () => {
   const [
     exampleModule,
@@ -118,6 +49,7 @@ const modulesReady = (async () => {
     appConfigModule,
     sightWordsModule,
     phonicsModule,
+    phraseCollectionsModule,
   ] = await Promise.all([
     import('./src/data/example-sentences.js'),
     import('./src/data/word-lists.js'),
@@ -126,12 +58,13 @@ const modulesReady = (async () => {
     import('./src/models/app-config.js'),
     import('./src/data/sight-words.js'),
     import('./src/data/phonics-data.js'),
+    import('./src/data/phrase-collections.js'),
   ]);
 
   EXAMPLE_SENTENCES_BY_AGE = exampleModule.EXAMPLE_SENTENCES_BY_AGE;
   WORD_LISTS = wordModule.WORD_LISTS;
   ALPHABET_DATA = alphabetModule.ALPHABET_DATA;
-  PHRASE_DATA = mergePhraseCollections(phraseModule.PHRASE_DATA, COLLECTION_PHRASE_MODULES);
+  PHRASE_DATA = phraseCollectionsModule.mergePhraseCollections(phraseModule.PHRASE_DATA);
   SIGHT_WORDS_DATA = sightWordsModule.SIGHT_WORDS;
   SIGHT_WORD_SET_DATA = sightWordsModule.SIGHT_WORD_SET;
   SIGHT_WORD_MAP_DATA = sightWordsModule.SIGHT_WORD_MAP;
