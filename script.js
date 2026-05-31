@@ -162,7 +162,12 @@ const CATEGORY_NAMES = {
 // - 単一カテゴリーは選択年齢を先頭にし、続けて他年齢を連結（年齢横断プール）
 // - english を正規化して重複排除
 // - カテゴリーが存在しない場合は greetings にフォールバック
-function getPhrasePool(category, ageGroup) {
+function getPhrasePool(category, ageGroup, minCount = 0) {
+  // PHRASE_DATA 未初期化（ロード前・テスト環境など）でも安全に動くようガード
+  if (!PHRASE_DATA) {
+    return [];
+  }
+
   const normalize = (s) => (s || '').toString().trim().toLowerCase();
   const seen = new Set();
   const pool = [];
@@ -181,28 +186,37 @@ function getPhrasePool(category, ageGroup) {
     }
   };
 
-  const collectCategory = (cat) => {
+  const cats =
+    category === 'all'
+      ? Object.keys(PHRASE_DATA)
+      : PHRASE_DATA[category]
+        ? [category]
+        : ['greetings'];
+
+  // パス1: まず全対象カテゴリーの「選択年齢」を優先的に集める（年齢適合性を保つ）。
+  // category==='all' でも先頭カテゴリーに偏らず、全カテゴリーから満遍なく集まる。
+  for (const cat of cats) {
     const ageMap = PHRASE_DATA[cat];
-    if (!ageMap) {
-      return;
+    if (ageMap) {
+      pushUnique(ageMap[ageGroup]);
     }
-    pushUnique(ageMap[ageGroup]); // 選択年齢を優先
-    for (const age of Object.keys(ageMap)) {
-      if (age === ageGroup) {
+  }
+
+  // パス2: 選択年齢だけでは必要数(minCount)に満たない場合のみ、他年齢で補完する。
+  // 十分な数があるカテゴリーでは他年齢を混ぜないため、年齢に合った出題を維持できる。
+  if (pool.length < minCount) {
+    for (const cat of cats) {
+      const ageMap = PHRASE_DATA[cat];
+      if (!ageMap) {
         continue;
       }
-      pushUnique(ageMap[age]); // 残りの年齢を横断で補完
+      for (const age of Object.keys(ageMap)) {
+        if (age === ageGroup) {
+          continue;
+        }
+        pushUnique(ageMap[age]);
+      }
     }
-  };
-
-  if (category === 'all') {
-    for (const cat of Object.keys(PHRASE_DATA)) {
-      collectCategory(cat);
-    }
-  } else if (PHRASE_DATA[category]) {
-    collectCategory(category);
-  } else {
-    collectCategory('greetings');
   }
 
   return pool;
@@ -941,8 +955,6 @@ function getVarietyWarning(state) {
   const ageGroupEl = document.getElementById('ageGroup');
   const ageGroup = (ageGroupEl && ageGroupEl.value) || '7-9';
 
-  const uniqueCount = getPhrasePool(category, ageGroup).length;
-
   let perPage;
   if (mode === 'cloze') {
     perPage = calculateClozePracticeLayout(state.lineHeight, state.showClozeAnswers).baseValue || 1;
@@ -952,6 +964,8 @@ function getVarietyWarning(state) {
 
   const pageCount = Math.max(1, state.pageCount || 1);
   const needed = perPage * pageCount;
+
+  const uniqueCount = getPhrasePool(category, ageGroup, needed).length;
 
   if (uniqueCount >= needed) {
     return '';
@@ -970,6 +984,8 @@ function updateAutoLayoutNotice(result, state, baseLayout) {
   const show = (text, status) => {
     notice.textContent = text || '';
     notice.style.display = text ? 'block' : 'none';
+    // 自動調整メッセージとバリエーション警告を \n で連結した場合に改行表示されるように
+    notice.style.whiteSpace = text ? 'pre-line' : '';
     notice.dataset.status = text ? status : 'idle';
   };
 
@@ -2159,8 +2175,15 @@ function generatePhrasePractice(
     });
   }
 
-  // 年齢横断プール・全カテゴリー対応（重複排除済み）
-  const safePhrases = getPhrasePool(phraseCategory, ageGroup);
+  const layoutInfo = calculatePhrasePracticeLayout(lineHeight);
+  const layoutPhrasesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.phrasesPerPage);
+  // 難易度プリセットの上限と物理的なレイアウト上限の小さい方を採用。
+  const phrasesPerPage = Math.max(1, Math.min(layoutPhrasesPerPage, phrasePreset.maxPhrases));
+  const pageCount = Math.max(1, totalPages || 1);
+  const totalDesiredCount = phrasesPerPage * pageCount;
+
+  // 年齢横断プール・全カテゴリー対応（選択年齢を優先し、不足時のみ他年齢で補完）
+  const safePhrases = getPhrasePool(phraseCategory, ageGroup, totalDesiredCount);
 
   if (!safePhrases.length) {
     if (window.Debug) {
@@ -2177,12 +2200,6 @@ function generatePhrasePractice(
     `;
   }
 
-  const layoutInfo = calculatePhrasePracticeLayout(lineHeight);
-  const layoutPhrasesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.phrasesPerPage);
-  // 難易度プリセットの上限と物理的なレイアウト上限の小さい方を採用。
-  const phrasesPerPage = Math.max(1, Math.min(layoutPhrasesPerPage, phrasePreset.maxPhrases));
-  const pageCount = Math.max(1, totalPages || 1);
-  const totalDesiredCount = phrasesPerPage * pageCount;
   const phrases = ensurePhraseSequence(
     phraseCategory,
     ageGroup,
@@ -2637,8 +2654,12 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
   const showAnswers = Boolean(document.getElementById('showClozeAnswers')?.checked);
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
 
-  // 年齢横断プール・全カテゴリー対応（重複排除済み）
-  const safePhrases = getPhrasePool(clozeCategory, ageGroup);
+  const layoutInfo = calculateClozePracticeLayout(lineHeight, showAnswers);
+  const clozesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.clozesPerPage);
+  const pageCount = Math.max(1, totalPages || 1);
+
+  // 年齢横断プール・全カテゴリー対応（選択年齢を優先し、不足時のみ他年齢で補完）
+  const safePhrases = getPhrasePool(clozeCategory, ageGroup, clozesPerPage * pageCount);
 
   if (!safePhrases.length) {
     return `
@@ -2648,9 +2669,6 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
     `;
   }
 
-  const layoutInfo = calculateClozePracticeLayout(lineHeight, showAnswers);
-  const clozesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.clozesPerPage);
-  const pageCount = Math.max(1, totalPages || 1);
   const phrases = ensureClozeSequence(
     clozeCategory,
     ageGroup,
