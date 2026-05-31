@@ -11,9 +11,21 @@
  */
 
 // _manifest.json も含めて取り込まれるが、items を持たないためマージ時に無視される。
-const COLLECTION_PHRASE_MODULES = import.meta.glob('./collections/phrases/*.json', {
-  eager: true,
-});
+//
+// import.meta.glob は Vite 専用のビルド時マクロ。Vite(dev / build / 本番GitHub Pages)では
+// 全コレクションJSONに静的展開される。一方、Vite を介さずに配信された場合
+// (例: live-server / 素の静的サーバー / PlaywrightのwebServer) では import.meta.glob が
+// 関数として存在せず呼び出しが TypeError になり、データ読み込みチェーン全体が落ちてしまう。
+// その状況でもアプリがクラッシュしないよう try/catch でガードし、フォールバックとして
+// phrase-data.js の base データのみで動作させる。
+let COLLECTION_PHRASE_MODULES = {};
+try {
+  COLLECTION_PHRASE_MODULES = import.meta.glob('./collections/phrases/*.json', {
+    eager: true,
+  });
+} catch (_e) {
+  COLLECTION_PHRASE_MODULES = {};
+}
 
 /**
  * コレクション JSON を PHRASE_DATA[カテゴリー][年齢] 形へマージする。
