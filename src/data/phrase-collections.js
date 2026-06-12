@@ -87,11 +87,12 @@ async function fetchPhraseModules() {
  * @returns {Promise<Record<string, Record<string, Array>>>}
  */
 export async function loadMergedPhraseData(base) {
-  let modules = COLLECTION_PHRASE_MODULES;
-  if (!modules || Object.keys(modules).length === 0) {
-    modules = await fetchPhraseModules();
+  // fetch フォールバックの結果はモジュールスコープにキャッシュし、
+  // 複数回呼ばれてもマニフェスト/各JSONへの再フェッチが起きないようにする。
+  if (!COLLECTION_PHRASE_MODULES || Object.keys(COLLECTION_PHRASE_MODULES).length === 0) {
+    COLLECTION_PHRASE_MODULES = await fetchPhraseModules();
   }
-  return mergePhraseCollections(base, modules);
+  return mergePhraseCollections(base, COLLECTION_PHRASE_MODULES);
 }
 
 /**
