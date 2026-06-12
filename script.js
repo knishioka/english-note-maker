@@ -64,7 +64,7 @@ const modulesReady = (async () => {
   EXAMPLE_SENTENCES_BY_AGE = exampleModule.EXAMPLE_SENTENCES_BY_AGE;
   WORD_LISTS = wordModule.WORD_LISTS;
   ALPHABET_DATA = alphabetModule.ALPHABET_DATA;
-  PHRASE_DATA = phraseCollectionsModule.mergePhraseCollections(phraseModule.PHRASE_DATA);
+  PHRASE_DATA = await phraseCollectionsModule.loadMergedPhraseData(phraseModule.PHRASE_DATA);
   SIGHT_WORDS_DATA = sightWordsModule.SIGHT_WORDS;
   SIGHT_WORD_SET_DATA = sightWordsModule.SIGHT_WORD_SET;
   SIGHT_WORD_MAP_DATA = sightWordsModule.SIGHT_WORD_MAP;

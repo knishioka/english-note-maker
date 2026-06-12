@@ -1,23 +1,22 @@
 /**
  * フレーズコレクション統合モジュール
  *
- * src/data/collections/phrases/*.json（全カテゴリー）を Vite の import.meta.glob で
- * 取り込み、phrase-data.js 由来の PHRASE_DATA とマージする。
+ * src/data/collections/phrases/*.json（全カテゴリー）を取り込み、phrase-data.js 由来の
+ * PHRASE_DATA とマージする。
+ *
+ * 取り込み経路は 2 系統：
+ *   1. Vite(dev / build) 経由なら import.meta.glob で静的展開（同期・ネットワーク不要）。
+ *   2. Vite を介さない素の静的配信（本番 GitHub Pages の生ソース配信 / live-server /
+ *      Playwright の webServer 等）では import.meta.glob が未変換のままブラウザに渡るため
+ *      関数として存在せず、呼び出しが TypeError になる。この場合は _manifest.json を起点に
+ *      各 JSON を fetch() で読み込むフォールバックへ切り替える。
  *
  * NOTE: import.meta は ES モジュール専用のため、CommonJS として構文チェックされる
- * script.js には置けない（CI の `node -c script.js` が失敗する）。そのため
- * import.meta.glob を使う処理はこのモジュールに分離し、script.js からは動的 import で
- * 読み込む。実行は Vite（dev / build）前提。
+ * script.js には置けない（CI の `node -c script.js` が失敗する）。そのため import.meta を
+ * 使う処理はこのモジュールに分離し、script.js からは動的 import で読み込む。
  */
 
 // _manifest.json も含めて取り込まれるが、items を持たないためマージ時に無視される。
-//
-// import.meta.glob は Vite 専用のビルド時マクロ。Vite(dev / build / 本番GitHub Pages)では
-// 全コレクションJSONに静的展開される。一方、Vite を介さずに配信された場合
-// (例: live-server / 素の静的サーバー / PlaywrightのwebServer) では import.meta.glob が
-// 関数として存在せず呼び出しが TypeError になり、データ読み込みチェーン全体が落ちてしまう。
-// その状況でもアプリがクラッシュしないよう try/catch でガードし、フォールバックとして
-// phrase-data.js の base データのみで動作させる。
 let COLLECTION_PHRASE_MODULES = {};
 try {
   COLLECTION_PHRASE_MODULES = import.meta.glob('./collections/phrases/*.json', {
@@ -25,6 +24,74 @@ try {
   });
 } catch (_e) {
   COLLECTION_PHRASE_MODULES = {};
+}
+
+const COLLECTIONS_DIR = './collections/phrases';
+
+/**
+ * _manifest.json を起点に各コレクション JSON を fetch して、
+ * import.meta.glob と同じ形（{ [path]: { default: data } }）のモジュールマップを返す。
+ * Vite を介さない素の静的配信時のフォールバック専用。
+ * import.meta.url を基準に URL を解決するため、GitHub Pages のサブパス配信でも正しく辿れる。
+ *
+ * @returns {Promise<Record<string, { default: any }>>}
+ */
+async function fetchPhraseModules() {
+  const modules = {};
+
+  if (typeof fetch !== 'function' || typeof import.meta?.url !== 'string') {
+    return modules;
+  }
+
+  let manifest;
+  try {
+    const manifestUrl = new URL(`${COLLECTIONS_DIR}/_manifest.json`, import.meta.url);
+    const res = await fetch(manifestUrl);
+    if (!res.ok) {
+      return modules;
+    }
+    manifest = await res.json();
+  } catch (_e) {
+    return modules;
+  }
+
+  const files = Array.isArray(manifest && manifest.files) ? manifest.files : [];
+
+  await Promise.all(
+    files.map(async (entry) => {
+      const name = entry && entry.name;
+      if (!name) {
+        return;
+      }
+      const relPath = `${COLLECTIONS_DIR}/${name}.json`;
+      try {
+        const res = await fetch(new URL(relPath, import.meta.url));
+        if (!res.ok) {
+          return;
+        }
+        modules[relPath] = { default: await res.json() };
+      } catch (_e) {
+        // 個別ファイルの失敗は握りつぶし、読めたものだけマージする。
+      }
+    })
+  );
+
+  return modules;
+}
+
+/**
+ * base（phrase-data.js）にコレクション JSON をマージした PHRASE_DATA を返す。
+ * import.meta.glob が機能していればそれを使い、空（= 素の静的配信）なら fetch で補完する。
+ *
+ * @param {Record<string, Record<string, Array>>} base
+ * @returns {Promise<Record<string, Record<string, Array>>>}
+ */
+export async function loadMergedPhraseData(base) {
+  let modules = COLLECTION_PHRASE_MODULES;
+  if (!modules || Object.keys(modules).length === 0) {
+    modules = await fetchPhraseModules();
+  }
+  return mergePhraseCollections(base, modules);
 }
 
 /**
