@@ -370,11 +370,6 @@ function loadCustomExamplesFromStorage() {
     if (window.Debug) {
       window.Debug.warn('CUSTOM_EXAMPLES', '保存済みカスタム例文を読み込めませんでした', { error });
     }
-    try {
-      storage.removeItem(CUSTOM_EXAMPLES_STORAGE_KEY);
-    } catch {
-      // 読み取り不能な保存データは無視してプレビュー生成を継続する。
-    }
     return [];
   }
 }
@@ -1222,9 +1217,15 @@ function updateAutoLayoutNotice(result, state, baseLayout) {
 }
 
 function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+  const replacements = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+
+  return String(text ?? '').replace(/[&<>"']/g, (char) => replacements[char]);
 }
 
 function clampNumber(value, min, max) {

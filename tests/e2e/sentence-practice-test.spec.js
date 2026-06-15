@@ -207,6 +207,11 @@ test.describe('カスタム例文の永続化', () => {
     await expect(page.locator('#customExamplesCount')).toHaveText('0件');
     await expect(page.locator('#customExamplesList')).toContainText('保存済みの例文はありません。');
     await expect(page.locator('#notePreview .note-page')).toHaveCount(1);
+
+    const storedValue = await page.evaluate((storageKey) => {
+      return window.localStorage.getItem(storageKey);
+    }, CUSTOM_EXAMPLES_STORAGE_KEY);
+    expect(storedValue).toBe('{broken-json');
   });
 
   test('カスタム例文のHTML風入力はプレビューで実行されない', async ({ page }) => {
@@ -230,6 +235,25 @@ test.describe('カスタム例文の永続化', () => {
     await expect(page.locator('#customExamplesList img')).toHaveCount(0);
 
     const xssFlag = await page.evaluate(() => window.customExampleXss);
+    expect(xssFlag).toBeUndefined();
+  });
+
+  test('削除ボタンのaria-labelでは属性注入されない', async ({ page }) => {
+    await page.goto('http://localhost:3000');
+    await page.selectOption('#practiceMode', 'sentence');
+
+    const injectedEnglish = 'Bad" autofocus onfocus="window.customDeleteXss=1';
+    await page.fill('#customEnglish', injectedEnglish);
+    await page.fill('#customJapanese', '属性注入の検証');
+    page.once('dialog', (dialog) => dialog.accept());
+    await page.click('#addCustomExampleBtn');
+
+    const deleteButton = page.locator('.custom-example-item__delete');
+    await expect(deleteButton).toHaveAttribute('aria-label', `${injectedEnglish}を削除`);
+    await expect(deleteButton).not.toHaveAttribute('autofocus', '');
+    await expect(deleteButton).not.toHaveAttribute('onfocus', /customDeleteXss/);
+
+    const xssFlag = await page.evaluate(() => window.customDeleteXss);
     expect(xssFlag).toBeUndefined();
   });
 });
