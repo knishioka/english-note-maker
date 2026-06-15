@@ -33,12 +33,22 @@ const PX_TO_MM = 0.2645833333;
 const A4_HEIGHT_MM = 297;
 const A4_TOLERANCE_MM = 0.5;
 const MAX_AUTO_LAYOUT_ATTEMPTS = 12;
+const CUSTOM_EXAMPLES_STORAGE_KEY = 'english-note-maker.customExamples.v1';
+const VALID_CUSTOM_EXAMPLE_AGE_GROUPS = new Set(['4-6', '7-9', '10-12']);
+const VALID_CUSTOM_EXAMPLE_CATEGORIES = new Set(['daily', 'school', 'family', 'hobby']);
+const CUSTOM_EXAMPLE_CATEGORY_LABELS = {
+  daily: '日常会話',
+  school: '学校',
+  family: '家族',
+  hobby: '趣味',
+};
 
 let setCurrentExamplesImpl = (examples) => {
   currentExamples = Array.isArray(examples) ? examples : [];
 };
 
 let setCurrentExampleIndicesImpl = () => {};
+let setCustomExamplesImpl = () => {};
 
 const modulesReady = (async () => {
   const [
@@ -86,6 +96,10 @@ const modulesReady = (async () => {
   setCurrentExampleIndicesImpl = (indices) => {
     appConfigModule.setCurrentExampleIndices(indices);
   };
+
+  setCustomExamplesImpl = (examples) => {
+    appConfigModule.setCustomExamples(Array.isArray(examples) ? [...examples] : []);
+  };
 })();
 
 function setCurrentExamples(examples) {
@@ -98,6 +112,12 @@ function setCurrentExamples(examples) {
 
 function setCurrentExampleIndices(indices) {
   setCurrentExampleIndicesImpl(indices);
+}
+
+function setCustomExamples(examples) {
+  const nextExamples = Array.isArray(examples) ? [...examples] : [];
+  customExamples.splice(0, customExamples.length, ...nextExamples);
+  setCustomExamplesImpl(customExamples);
 }
 
 function resetExampleCacheMeta() {
@@ -276,6 +296,176 @@ function setCheckboxState(element, isChecked) {
   element.checked = Boolean(isChecked);
 }
 
+function normalizeCustomExample(rawExample) {
+  if (!rawExample || typeof rawExample !== 'object') {
+    return null;
+  }
+
+  const english = typeof rawExample.english === 'string' ? rawExample.english.trim() : '';
+  const japanese = typeof rawExample.japanese === 'string' ? rawExample.japanese.trim() : '';
+  const ageGroup =
+    typeof rawExample.ageGroup === 'string' &&
+    VALID_CUSTOM_EXAMPLE_AGE_GROUPS.has(rawExample.ageGroup)
+      ? rawExample.ageGroup
+      : '';
+  const category =
+    typeof rawExample.category === 'string' &&
+    VALID_CUSTOM_EXAMPLE_CATEGORIES.has(rawExample.category)
+      ? rawExample.category
+      : '';
+
+  if (!english || !japanese || !ageGroup || !category) {
+    return null;
+  }
+
+  const parsedDifficulty = Number(rawExample.difficulty);
+  const difficulty = Number.isFinite(parsedDifficulty)
+    ? Math.min(3, Math.max(1, Math.round(parsedDifficulty)))
+    : 1;
+
+  return {
+    english,
+    japanese,
+    category,
+    ageGroup,
+    difficulty,
+    custom: true,
+  };
+}
+
+function normalizeCustomExamples(rawExamples) {
+  if (!Array.isArray(rawExamples)) {
+    return [];
+  }
+  return rawExamples.map(normalizeCustomExample).filter(Boolean);
+}
+
+function getCustomExamplesStorage() {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      return null;
+    }
+    return window.localStorage;
+  } catch (error) {
+    if (window.Debug) {
+      window.Debug.warn('CUSTOM_EXAMPLES', 'localStorage にアクセスできません', { error });
+    }
+    return null;
+  }
+}
+
+function loadCustomExamplesFromStorage() {
+  const storage = getCustomExamplesStorage();
+  if (!storage) {
+    return [];
+  }
+
+  try {
+    const rawValue = storage.getItem(CUSTOM_EXAMPLES_STORAGE_KEY);
+    if (!rawValue) {
+      return [];
+    }
+    return normalizeCustomExamples(JSON.parse(rawValue));
+  } catch (error) {
+    if (window.Debug) {
+      window.Debug.warn('CUSTOM_EXAMPLES', '保存済みカスタム例文を読み込めませんでした', { error });
+    }
+    return [];
+  }
+}
+
+function saveCustomExamplesToStorage() {
+  const storage = getCustomExamplesStorage();
+  if (!storage) {
+    return;
+  }
+
+  try {
+    storage.setItem(CUSTOM_EXAMPLES_STORAGE_KEY, JSON.stringify(customExamples));
+  } catch (error) {
+    if (window.Debug) {
+      window.Debug.warn('CUSTOM_EXAMPLES', 'カスタム例文を保存できませんでした', { error });
+    }
+  }
+}
+
+function hydrateCustomExamplesFromStorage() {
+  setCustomExamples(loadCustomExamplesFromStorage());
+}
+
+function getCustomExampleMetaLabel(example) {
+  const categoryLabel = CUSTOM_EXAMPLE_CATEGORY_LABELS[example.category] || example.category;
+  return `${example.ageGroup} / ${categoryLabel}`;
+}
+
+function renderCustomExamplesList() {
+  const listElement = document.getElementById('customExamplesList');
+  const countElement = document.getElementById('customExamplesCount');
+
+  if (countElement) {
+    countElement.textContent = `${customExamples.length}件`;
+  }
+
+  if (!listElement) {
+    return;
+  }
+
+  if (customExamples.length === 0) {
+    listElement.innerHTML = '<p class="custom-examples__empty">保存済みの例文はありません。</p>';
+    return;
+  }
+
+  listElement.innerHTML = customExamples
+    .map(
+      (example, index) => `
+        <div class="custom-example-item">
+          <div>
+            <div class="custom-example-item__english">${escapeHtml(example.english)}</div>
+            <div class="custom-example-item__japanese">${escapeHtml(example.japanese)}</div>
+            <div class="custom-example-item__meta">${escapeHtml(getCustomExampleMetaLabel(example))}</div>
+          </div>
+          <button
+            class="custom-example-item__delete"
+            type="button"
+            data-custom-example-index="${index}"
+            aria-label="${escapeHtml(example.english)}を削除"
+          >
+            ×
+          </button>
+        </div>
+      `
+    )
+    .join('');
+}
+
+function removeCustomExample(index) {
+  if (!Number.isInteger(index) || index < 0 || index >= customExamples.length) {
+    return;
+  }
+
+  const nextExamples = customExamples.filter((_, currentIndex) => currentIndex !== index);
+  setCustomExamples(nextExamples);
+  saveCustomExamplesToStorage();
+  renderCustomExamplesList();
+  setCurrentExamples([]);
+  resetSentenceCache();
+  updatePreview();
+}
+
+function handleCustomExamplesListClick(event) {
+  const target = event.target;
+  const deleteButton =
+    typeof target?.closest === 'function'
+      ? target.closest('[data-custom-example-index]')
+      : target?.parentElement?.closest?.('[data-custom-example-index]');
+  if (!deleteButton) {
+    return;
+  }
+
+  const index = Number.parseInt(deleteButton.dataset.customExampleIndex, 10);
+  removeCustomExample(index);
+}
+
 // コンテンツ統計
 const CONTENT_STATS = {
   lastUpdated: '2025年1月',
@@ -380,7 +570,9 @@ function syncPhonicsPatternOptions() {
 
 function init() {
   syncPhonicsPatternOptions();
+  hydrateCustomExamplesFromStorage();
   setupEventListeners();
+  renderCustomExamplesList();
   updateOptionsVisibility();
   updatePreview();
 }
@@ -403,6 +595,7 @@ function setupEventListeners() {
     phonicsPattern: document.getElementById('phonicsPattern'),
     shufflePhonicsBtn: document.getElementById('shufflePhonics'),
     addCustomExampleBtn: document.getElementById('addCustomExampleBtn'),
+    customExamplesList: document.getElementById('customExamplesList'),
     alphabetType: document.getElementById('alphabetType'),
     alphabetMode: document.getElementById('alphabetMode'),
     alphabetTraceRepeat: document.getElementById('alphabetTraceRepeat'),
@@ -483,6 +676,7 @@ function setupEventListeners() {
     updatePreview();
   });
   addEventListenerIfExists(elements.addCustomExampleBtn, 'click', handleAddCustomExample);
+  addEventListenerIfExists(elements.customExamplesList, 'click', handleCustomExamplesListClick);
   addEventListenerIfExists(elements.alphabetType, 'change', updatePreview);
   addEventListenerIfExists(elements.alphabetMode, 'change', updatePreview);
   addEventListenerIfExists(elements.alphabetTraceRepeat, 'change', updatePreview);
@@ -1023,9 +1217,15 @@ function updateAutoLayoutNotice(result, state, baseLayout) {
 }
 
 function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+  const replacements = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+
+  return String(text ?? '').replace(/[&<>"']/g, (char) => replacements[char]);
 }
 
 function clampNumber(value, min, max) {
@@ -1583,13 +1783,15 @@ function horizRepeatForText(text, lineHeight = 10) {
 // 例文表示生成
 function generateExampleSentence(sentence, showTranslation) {
   const difficulty = '★'.repeat(sentence.difficulty || 1);
+  const english = escapeHtml(sentence.english || '');
+  const japanese = escapeHtml(sentence.japanese || '');
   return `
         <div class="example-sentence">
             <div class="example-english">
-                ${sentence.english}
+                ${english}
                 <span style="font-size: 10pt; color: #999; margin-left: 5mm;">${difficulty}</span>
             </div>
-            ${showTranslation ? `<div class="example-japanese">${sentence.japanese}</div>` : ''}
+            ${showTranslation ? `<div class="example-japanese">${japanese}</div>` : ''}
         </div>
     `;
 }
@@ -3048,15 +3250,27 @@ function ensureClozeSequence(category, ageGroup, perPage, pageCount, phrases, di
 
 // Phase 2: カスタム例文機能
 function addCustomExample(english, japanese, category, ageGroup) {
-  customExamples.push({
+  const normalizedCategory = category === 'all' ? 'daily' : category;
+  const normalizedExample = normalizeCustomExample({
     english,
     japanese,
-    category: category === 'all' ? 'daily' : category,
+    category: VALID_CUSTOM_EXAMPLE_CATEGORIES.has(normalizedCategory)
+      ? normalizedCategory
+      : 'daily',
     ageGroup,
-    difficulty: 2,
+    difficulty: 1,
     custom: true,
   });
+
+  if (!normalizedExample) {
+    return;
+  }
+
+  setCustomExamples([...customExamples, normalizedExample]);
+  saveCustomExamplesToStorage();
+  renderCustomExamplesList();
   setCurrentExamples([]);
+  resetSentenceCache();
   updatePreview();
 }
 

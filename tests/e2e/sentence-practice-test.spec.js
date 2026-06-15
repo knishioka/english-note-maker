@@ -5,6 +5,8 @@
 
 import { test, expect } from '@playwright/test';
 
+const CUSTOM_EXAMPLES_STORAGE_KEY = 'english-note-maker.customExamples.v1';
+
 test.describe('文章練習モードテスト', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:3000');
@@ -144,6 +146,118 @@ test.describe('文章練習モードテスト', () => {
   });
 });
 
+test.describe('カスタム例文の永続化', () => {
+  test('追加したカスタム例文がリロード後も表示され、削除できる', async ({ page }) => {
+    await page.goto('http://localhost:3000');
+    await page.selectOption('#practiceMode', 'sentence');
+    await page.selectOption('#ageGroup', '4-6');
+    await page.selectOption('#exampleCategory', 'school');
+    await page.fill('#pageCount', '2');
+
+    await page.fill('#customEnglish', 'I read a red book.');
+    await page.fill('#customJapanese', 'わたしは赤い本を読みます。');
+    page.once('dialog', (dialog) => dialog.accept());
+    await page.click('#addCustomExampleBtn');
+
+    await expect(page.locator('#customExamplesCount')).toHaveText('1件');
+    await expect(page.locator('#customExamplesList')).toContainText('I read a red book.');
+    await expect(page.locator('#customExamplesList')).toContainText('4-6 / 学校');
+
+    const storedExamples = await page.evaluate((storageKey) => {
+      return JSON.parse(window.localStorage.getItem(storageKey));
+    }, CUSTOM_EXAMPLES_STORAGE_KEY);
+    expect(storedExamples).toMatchObject([
+      {
+        english: 'I read a red book.',
+        japanese: 'わたしは赤い本を読みます。',
+        category: 'school',
+        ageGroup: '4-6',
+        custom: true,
+      },
+    ]);
+
+    await page.reload();
+    await expect(page.locator('#customExamplesCount')).toHaveText('1件');
+
+    await page.selectOption('#practiceMode', 'sentence');
+    await page.selectOption('#ageGroup', '4-6');
+    await page.selectOption('#exampleCategory', 'school');
+    await page.fill('#pageCount', '2');
+    await expect(page.locator('#notePreview')).toContainText('I read a red book.');
+
+    await page.getByRole('button', { name: 'I read a red book.を削除' }).click();
+
+    await expect(page.locator('#customExamplesCount')).toHaveText('0件');
+    await expect(page.locator('#customExamplesList')).toContainText('保存済みの例文はありません。');
+
+    const storedAfterDelete = await page.evaluate((storageKey) => {
+      return JSON.parse(window.localStorage.getItem(storageKey));
+    }, CUSTOM_EXAMPLES_STORAGE_KEY);
+    expect(storedAfterDelete).toEqual([]);
+  });
+
+  test('不正な保存データはプレビュー生成を壊さず空リストとして扱われる', async ({ page }) => {
+    await page.addInitScript((storageKey) => {
+      window.localStorage.setItem(storageKey, '{broken-json');
+    }, CUSTOM_EXAMPLES_STORAGE_KEY);
+
+    await page.goto('http://localhost:3000');
+    await page.selectOption('#practiceMode', 'sentence');
+
+    await expect(page.locator('#customExamplesCount')).toHaveText('0件');
+    await expect(page.locator('#customExamplesList')).toContainText('保存済みの例文はありません。');
+    await expect(page.locator('#notePreview .note-page')).toHaveCount(1);
+
+    const storedValue = await page.evaluate((storageKey) => {
+      return window.localStorage.getItem(storageKey);
+    }, CUSTOM_EXAMPLES_STORAGE_KEY);
+    expect(storedValue).toBe('{broken-json');
+  });
+
+  test('カスタム例文のHTML風入力はプレビューで実行されない', async ({ page }) => {
+    await page.goto('http://localhost:3000');
+    await page.selectOption('#practiceMode', 'sentence');
+    await page.selectOption('#ageGroup', '4-6');
+    await page.selectOption('#exampleCategory', 'school');
+    await page.fill('#pageCount', '2');
+
+    await page.fill(
+      '#customEnglish',
+      '<img src=x onerror="window.customExampleXss=1"> Safe sentence.'
+    );
+    await page.fill('#customJapanese', '<b>安全な表示</b>');
+    page.once('dialog', (dialog) => dialog.accept());
+    await page.click('#addCustomExampleBtn');
+
+    await expect(page.locator('#notePreview')).toContainText('Safe sentence.');
+    await expect(page.locator('#notePreview img')).toHaveCount(0);
+    await expect(page.locator('#notePreview b')).toHaveCount(0);
+    await expect(page.locator('#customExamplesList img')).toHaveCount(0);
+
+    const xssFlag = await page.evaluate(() => window.customExampleXss);
+    expect(xssFlag).toBeUndefined();
+  });
+
+  test('削除ボタンのaria-labelでは属性注入されない', async ({ page }) => {
+    await page.goto('http://localhost:3000');
+    await page.selectOption('#practiceMode', 'sentence');
+
+    const injectedEnglish = 'Bad" autofocus onfocus="window.customDeleteXss=1';
+    await page.fill('#customEnglish', injectedEnglish);
+    await page.fill('#customJapanese', '属性注入の検証');
+    page.once('dialog', (dialog) => dialog.accept());
+    await page.click('#addCustomExampleBtn');
+
+    const deleteButton = page.locator('.custom-example-item__delete');
+    await expect(deleteButton).toHaveAttribute('aria-label', `${injectedEnglish}を削除`);
+    await expect(deleteButton).not.toHaveAttribute('autofocus', '');
+    await expect(deleteButton).not.toHaveAttribute('onfocus', /customDeleteXss/);
+
+    const xssFlag = await page.evaluate(() => window.customDeleteXss);
+    expect(xssFlag).toBeUndefined();
+  });
+});
+
 test('複数ページ生成しても同一ページ内に例文の重複が出ない', async ({ page }) => {
   await page.goto('http://localhost:3000');
   await page.selectOption('#practiceMode', 'sentence');
@@ -189,6 +303,7 @@ test('難易度セレクタが存在し、難易度を切り替えると表示�
 test('文章練習モードの全体統合テスト', async ({ page }) => {
   await page.goto('http://localhost:3000');
   await page.selectOption('#practiceMode', 'sentence');
+  await expect(page.locator('#translationOptions')).toBeVisible();
 
   // 例文を表示
   await page.check('#showExamples');

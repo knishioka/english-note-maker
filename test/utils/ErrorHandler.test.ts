@@ -111,6 +111,74 @@ describe('ErrorHandler', () => {
 
       expect(result.severity).toBe(ErrorSeverity.LOW);
     });
+
+    it('should escalate unclassified Error objects by message content', () => {
+      // name not in any list → falls through to message-content checks.
+      // 'cannot' exercises the right operand of the failed/cannot branch.
+      const result = errorHandler.handleError(new Error('cannot complete operation'));
+
+      expect(result.severity).toBe(ErrorSeverity.HIGH);
+    });
+
+    it('should escalate unclassified non-Error errors by message content', () => {
+      // Non-Error path goes through determineSeverityFromName; cover both operands.
+      const failedResult = errorHandler.handleError({
+        name: 'ObscureError',
+        message: 'request failed',
+      });
+      expect(failedResult.severity).toBe(ErrorSeverity.HIGH);
+
+      const cannotResult = errorHandler.handleError({
+        name: 'ObscureError',
+        message: 'cannot connect',
+      });
+      expect(cannotResult.severity).toBe(ErrorSeverity.HIGH);
+    });
+
+    it('should classify real Error objects by name across the Error path', () => {
+      // Object-literal cases hit determineSeverityFromName; real Error instances
+      // hit determineSeverity / determineErrorType, which need their own coverage.
+      const layoutError = new Error('layout broke');
+      layoutError.name = 'LayoutError'; // mediumSeverityErrors → MEDIUM + RENDERING type
+      expect(errorHandler.handleError(layoutError).severity).toBe(ErrorSeverity.MEDIUM);
+
+      const validationError = new Error('bad input');
+      validationError.name = 'ValidationError';
+      expect(errorHandler.handleError(validationError).severity).toBe(ErrorSeverity.MEDIUM);
+    });
+
+    it('should classify real Error objects by message content across the Error path', () => {
+      // Drive the errorMessage.includes(...) operands of determineErrorType
+      // (and the failed/cannot severity branch) via real Error instances.
+      const cases = ['render failed', 'validation missing', 'print jammed', 'fetch dropped'];
+      cases.forEach((message) => {
+        const err = new Error(message);
+        err.name = 'GenericError'; // not in any name list → message branches decide
+        expect(() => errorHandler.handleError(err)).not.toThrow();
+      });
+    });
+
+    it('should map non-Error message patterns and fall back gracefully', () => {
+      // Non-Error path → getUserFriendlyMessageFromName; cover its pattern
+      // branches (localStorage/print) and the messageMap||message||default chain.
+      expect(errorHandler.handleError({ name: 'X', message: 'localStorage denied' }).message).toBe(
+        'ブラウザのストレージにアクセスできません'
+      );
+      expect(errorHandler.handleError({ name: 'X', message: 'print broke' }).message).toBe(
+        '印刷機能が利用できません'
+      );
+      expect(errorHandler.handleError({ name: 'X', message: 'fetch boom' }).message).toBe(
+        'サーバーとの通信に失敗しました'
+      );
+      // name not in map, message present → returns the raw message
+      expect(errorHandler.handleError({ name: 'X', message: 'plain message' }).message).toBe(
+        'plain message'
+      );
+      // name not in map, empty message → final default
+      expect(errorHandler.handleError({ name: 'X', message: '' }).message).toBe(
+        '予期しないエラーが発生しました'
+      );
+    });
   });
 
   describe('user-friendly messages', () => {
@@ -328,6 +396,38 @@ describe('ErrorHandler', () => {
       const highResult = errorHandler.handleError(highSeverityError);
       const shouldReportHigh = (errorHandler as any).shouldReportError(highResult);
       expect(shouldReportHigh).toBe(true);
+    });
+
+    it('should not report errors seen too many times', () => {
+      // High severity passes the LOW gate, so this exercises the count>10 branch.
+      const error = new TypeError('Repeated type error');
+      let result = errorHandler.handleError(error);
+
+      // handleError bumps errorCounts via trackErrorFrequency; drive it past 10.
+      for (let i = 0; i < 11; i++) {
+        result = errorHandler.handleError(error);
+      }
+
+      const shouldReport = (errorHandler as any).shouldReportError(result);
+      expect(shouldReport).toBe(false);
+    });
+
+    it('should report to monitoring when running in production', () => {
+      // handleError only calls reportToMonitoring when isProduction() is true.
+      vi.spyOn(errorHandler as any, 'isProduction').mockReturnValue(true);
+      expect(() => errorHandler.handleError(new TypeError('prod error'))).not.toThrow();
+    });
+
+    it('should report eligible errors to monitoring without throwing', () => {
+      // reportToMonitoring serializes only when shouldReportError is true.
+      const highResult = errorHandler.handleError(new TypeError('Reportable error'));
+      expect(() => (errorHandler as any).reportToMonitoring(highResult)).not.toThrow();
+    });
+
+    it('should skip monitoring for non-reportable errors', () => {
+      // Low severity short-circuits shouldReportError, skipping serialization.
+      const lowResult = errorHandler.handleError({ name: 'Info', message: 'Info message' });
+      expect(() => (errorHandler as any).reportToMonitoring(lowResult)).not.toThrow();
     });
   });
 
