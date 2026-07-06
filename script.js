@@ -1,5 +1,12 @@
 // === 英語罫線ノート作成スクリプト ===
 
+import {
+  URL_STATE_ELEMENT_IDS,
+  applyUrlStateToDocument,
+  parseUrlState,
+  serializeUrlStateToSearch,
+} from './src/url-state.js';
+
 // モジュールローダー（CommonJS互換のため動的インポートを使用）
 let EXAMPLE_SENTENCES_BY_AGE = {};
 let WORD_LISTS = {};
@@ -14,6 +21,8 @@ let buildPhonicsWordSequenceImpl = () => [];
 let getPhonicsPatternConfigImpl = () => null;
 
 let currentExamples = [];
+let urlStateSyncEnabled = false;
+let shouldReplaceUrlOnNextPreview = false;
 
 let currentExamplesMeta = { key: '', perPageCount: 0, pageCount: 0 };
 let wordSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
@@ -571,10 +580,68 @@ function syncPhonicsPatternOptions() {
 function init() {
   syncPhonicsPatternOptions();
   hydrateCustomExamplesFromStorage();
+  updateOptionsVisibility();
+  hydrateWorksheetSettingsFromUrl();
   setupEventListeners();
   renderCustomExamplesList();
-  updateOptionsVisibility();
   updatePreview();
+}
+
+function hydrateWorksheetSettingsFromUrl() {
+  if (typeof window === 'undefined' || !window.location) {
+    return;
+  }
+
+  const parsedState = parseUrlState(window.location.search, document);
+  if (!Object.keys(parsedState).length) {
+    return;
+  }
+
+  shouldReplaceUrlOnNextPreview = true;
+
+  if (Object.prototype.hasOwnProperty.call(parsedState, 'practiceMode')) {
+    applyUrlStateToDocument({ practiceMode: parsedState.practiceMode }, document);
+    updateOptionsVisibility();
+  }
+
+  applyUrlStateToDocument(parsedState, document);
+  resetWordCache();
+  resetPhraseCache();
+  resetPhonicsCache();
+  resetClozeCache();
+  resetSentenceCache();
+  setCurrentExamples([]);
+}
+
+function handleUrlStateControlInteraction(event) {
+  const target = event.target;
+  if (!target || !URL_STATE_ELEMENT_IDS.has(target.id)) {
+    return;
+  }
+
+  urlStateSyncEnabled = true;
+}
+
+function updateBrowserUrlState() {
+  if (typeof window === 'undefined' || !window.history || !window.location) {
+    return;
+  }
+
+  if (!urlStateSyncEnabled && !shouldReplaceUrlOnNextPreview) {
+    return;
+  }
+
+  const nextSearch = serializeUrlStateToSearch(document);
+  const nextUrl = `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}${
+    window.location.hash
+  }`;
+  const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+  if (nextUrl !== currentUrl) {
+    window.history.replaceState(null, '', nextUrl);
+  }
+
+  shouldReplaceUrlOnNextPreview = false;
 }
 
 // イベントリスナーのセットアップ
@@ -614,6 +681,9 @@ function setupEventListeners() {
     phraseDifficulty: document.getElementById('phraseDifficulty'),
     sentenceDifficulty: document.getElementById('sentenceDifficulty'),
   };
+
+  document.addEventListener('change', handleUrlStateControlInteraction, true);
+  document.addEventListener('input', handleUrlStateControlInteraction, true);
 
   addEventListenerIfExists(elements.showExamples, 'change', updatePreview);
   addEventListenerIfExists(elements.showTranslation, 'change', updatePreview);
@@ -813,6 +883,7 @@ function updatePreview() {
   const adjustmentResult = autoAdjustPreview(notePreview, state, baseLayout, initialOverrides);
 
   updateAutoLayoutNotice(adjustmentResult, state, baseLayout);
+  updateBrowserUrlState();
 }
 
 // アルファベット練習で全文字を表示できる枚数を返す（モードでなければ null）
