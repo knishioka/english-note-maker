@@ -2982,7 +2982,7 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
     html += `
       <div class="cloze-item">
         <div class="cloze-header">
-          <div class="cloze-number">Q${questionNumber}</div>
+          <div class="cloze-number" data-testid="cloze-number">Q${questionNumber}</div>
           <div class="cloze-main">
             <div class="cloze-english">${clozeResult.display}</div>
             <div class="cloze-japanese">${escapeHtml(phrase.japanese)}</div>
@@ -3005,7 +3005,7 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
     for (let i = 0; i < clozeResults.length; i++) {
       const answerList = escapeHtml(clozeResults[i].answers.join(', '));
       // 問題側と同じ番号を使う（ページごとに 1 から）
-      html += `<div class="cloze-answer-item"><span class="cloze-answer-number">Q${i + 1}</span> ${answerList}</div>`;
+      html += `<div class="cloze-answer-item"><span class="cloze-answer-number" data-testid="cloze-answer-number">Q${i + 1}</span> ${answerList}</div>`;
     }
     html += '</div>';
     html += '</div>';
@@ -3088,10 +3088,17 @@ function getSentenceDifficultyPreset(difficulty) {
 // indistinguishable, even enlarged. Boxes survive the same treatment. Boxes also
 // keep lines shorter than a fixed-width rule for the short sight words that make
 // up most word-level answers.
+// マスは枠だけで中身を持たないため、そのままでは支援技術に何も伝わらない。
+// 従来のアンダースコアは「空所があること」と「その文字数」をテキストとして
+// 持っていたので、その情報を視覚的に隠したテキストで補い、枠自体は
+// aria-hidden で読み上げ対象から外す。
 function buildBlankBoxes(count) {
-  return Array.from({ length: Math.max(1, count) }, () => '<span class="cloze-box"></span>').join(
-    ''
-  );
+  const boxCount = Math.max(1, count);
+  const boxes = Array.from(
+    { length: boxCount },
+    () => '<span class="cloze-box" aria-hidden="true"></span>'
+  ).join('');
+  return `<span class="visually-hidden">［${boxCount}文字の空所］</span>${boxes}`;
 }
 
 function buildWordBlankSpan(cleanWord) {

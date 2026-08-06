@@ -426,7 +426,7 @@ export class NoteGeneratorService {
       html += `
         <div class="cloze-item">
           <div class="cloze-header">
-            <div class="cloze-number">Q${i + 1}</div>
+            <div class="cloze-number" data-testid="cloze-number">Q${i + 1}</div>
             <div class="cloze-main">
               <div class="cloze-english">${clozeResult.display}</div>
               <div class="cloze-japanese">${this.escapeHtml(phrase.japanese)}</div>
@@ -469,10 +469,15 @@ export class NoteGeneratorService {
   // One discrete, visibly separated box per missing letter. A printed digit was
   // measured against this and lost — at photo resolution `(6)` collapses into an
   // unreadable blob, while boxes stay countable.
+  // マスは枠だけで中身を持たないため、視覚的に隠したテキストで文字数を伝え、
+  // 枠自体は aria-hidden で読み上げ対象から外す。
   private buildBlankBoxes(count: number): string {
-    return Array.from({ length: Math.max(1, count) }, () => '<span class="cloze-box"></span>').join(
-      ''
-    );
+    const boxCount = Math.max(1, count);
+    const boxes = Array.from(
+      { length: boxCount },
+      () => '<span class="cloze-box" aria-hidden="true"></span>'
+    ).join('');
+    return `<span class="visually-hidden">［${boxCount}文字の空所］</span>${boxes}`;
   }
 
   private buildWordBlankSpan(cleanWord: string): string {

@@ -201,15 +201,15 @@ test.describe('穴埋めフレーズ練習テスト', () => {
     expect(pages.length).toBeGreaterThanOrEqual(2);
 
     for (const pageBlock of pages) {
-      const numbers = (await pageBlock.locator('.cloze-number').allTextContents()).map((s) =>
+      const numbers = (await pageBlock.getByTestId('cloze-number').allTextContents()).map((s) =>
         s.trim()
       );
       expect(numbers.length).toBeGreaterThan(1);
       expect(numbers).toEqual(numbers.map((_, i) => `Q${i + 1}`));
 
-      const answerNumbers = (await pageBlock.locator('.cloze-answer-number').allTextContents()).map(
-        (s) => s.trim()
-      );
+      const answerNumbers = (
+        await pageBlock.getByTestId('cloze-answer-number').allTextContents()
+      ).map((s) => s.trim());
       expect(answerNumbers).toEqual(numbers);
     }
   });
