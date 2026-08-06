@@ -73,6 +73,27 @@ test.describe('穴埋めフレーズ練習テスト', () => {
     expect(boxes).toBeGreaterThanOrEqual(count);
   });
 
+  test('各空所でマスの個数と表示される文字数が一致する', async ({ page }) => {
+    for (const blankType of ['word', 'char']) {
+      await page.selectOption('#clozeBlankType', blankType);
+      await page.waitForTimeout(600);
+
+      // マスと数字は同じ情報を二重に符号化している。両者がずれると
+      // 採点側にどちらを信じるべきか判断できない矛盾が出るため、必ず一致させる。
+      const pairs = await page.locator('#notePreview .cloze-blank').evaluateAll((els) =>
+        els.map((el) => ({
+          boxes: el.querySelectorAll('.cloze-box').length,
+          label: el.querySelector('.cloze-letter-count')?.textContent ?? '',
+        }))
+      );
+
+      expect(pairs.length).toBeGreaterThan(0);
+      for (const { boxes, label } of pairs) {
+        expect(label).toBe(`(${boxes})`);
+      }
+    }
+  });
+
   test('単語レベルと文字レベルで異なる出力が生成される', async ({ page }) => {
     // 単語レベル
     await page.selectOption('#clozeBlankType', 'word');
