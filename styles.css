@@ -1029,10 +1029,15 @@ body::before {
     page-break-inside: avoid !important;
   }
 
-  /* 穴埋め練習の印刷時調整 */
+  /* 穴埋め練習の印刷時調整。
+     撮影・二値化しても輪郭が残るよう、空所は必ず黒＋十分な線幅で刷る。 */
+  /* マスの枠は currentColor なので、ここを黒にすれば枠も追従する */
   .cloze-blank {
     color: #000 !important;
-    border-bottom-color: #000 !important;
+  }
+
+  .cloze-number {
+    color: #000 !important;
   }
 
   .cloze-answers {
@@ -1713,6 +1718,20 @@ body::before {
 
 .cloze-main {
   flex: 1;
+  /* 番号ぶんの幅が減っても問題文が折り返さないよう、縮小を許可する */
+  min-width: 0;
+}
+
+/* 採点AIが解答と問題を対応づけるための番号。写真から確実に読めるよう、
+   本文と同等のサイズで印字し、数字だけだと文中の数（Two times three...）と
+   紛れるため必ず Q を付ける。 */
+.cloze-number {
+  flex: 0 0 auto;
+  font-size: 12pt;
+  font-weight: 700;
+  color: #334155;
+  min-width: 8mm;
+  line-height: 1.4;
 }
 
 .cloze-english {
@@ -1729,14 +1748,39 @@ body::before {
   line-height: 1.2;
 }
 
+/* 空所は「印刷 → 撮影 → OCR/生成AIで採点」を通る前提で、
+   長さではなく“数えられる形”で文字数を表現する。
+   詳細は script.js の buildBlankBoxes のコメント参照。 */
 .cloze-blank {
-  display: inline;
-  font-family: monospace;
-  font-weight: 700;
+  display: inline-block;
+  white-space: nowrap;
+  vertical-align: baseline;
   color: #3b82f6;
-  letter-spacing: 0.15em;
-  border-bottom: 2px solid #3b82f6;
-  padding: 0 1px;
+}
+
+/* マス群の外側は、マス間（1.2mm）より必ず広く空ける。
+   - 単語レベル: 空所が隣り合うと語間の空白（12pt で約0.9mm）のほうが狭くなり、
+     2つの空所が1つに見えて個数を読み違える。
+   - 文字レベル: h/l/k など縦画のある文字がマスに隣接すると、その縦画を
+     マスの枠と数えてしまう。語が分断されない範囲で離す。 */
+.cloze-blank--word {
+  margin: 0 1.5mm;
+}
+
+.cloze-blank--char {
+  margin: 0 1.2mm;
+}
+
+/* 1文字1マス。0.6mm ずつの余白で隣のマスと必ず分離させ、
+   写真からでもマスの個数を数えられる状態を保つ。 */
+.cloze-box {
+  display: inline-block;
+  width: 3.4mm;
+  height: 4.6mm;
+  margin: 0 0.6mm;
+  border: 0.4mm solid currentColor;
+  border-radius: 0.4mm;
+  vertical-align: -1mm;
 }
 
 .cloze-blank-char {

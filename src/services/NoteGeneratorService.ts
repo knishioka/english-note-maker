@@ -421,11 +421,12 @@ export class NoteGeneratorService {
     html += `<h3 class="practice-title practice-title--cloze">Fill in the Blanks - ${categoryNames[clozeCategory] || clozeCategory}</h3>`;
     html += '<div class="cloze-grid">';
 
-    for (const phrase of shuffledPhrases) {
+    shuffledPhrases.forEach((phrase, i) => {
       const clozeResult = this.generateClozeBlank(phrase.english, blankType);
       html += `
         <div class="cloze-item">
           <div class="cloze-header">
+            <div class="cloze-number">Q${i + 1}</div>
             <div class="cloze-main">
               <div class="cloze-english">${clozeResult.display}</div>
               <div class="cloze-japanese">${this.escapeHtml(phrase.japanese)}</div>
@@ -438,7 +439,7 @@ export class NoteGeneratorService {
           </div>
         </div>
       `;
-    }
+    });
 
     html += '</div>';
     html += '</div>';
@@ -457,6 +458,29 @@ export class NoteGeneratorService {
       leading: token.substring(0, wordIndex),
       trailing: token.substring(wordIndex + cleanWord.length),
     };
+  }
+
+  // Blanks are printed, photographed, and then read back by OCR / an LLM for
+  // grading. A run of underscores does not survive that trip: at print + camera
+  // resolution `___` and `_____` collapse into the same solid line, so the
+  // answer length is lost. Both helpers below encode the length in a way that
+  // stays countable in a photo. Keep in sync with script.js.
+
+  // One discrete, visibly separated box per missing letter. A printed digit was
+  // measured against this and lost — at photo resolution `(6)` collapses into an
+  // unreadable blob, while boxes stay countable.
+  private buildBlankBoxes(count: number): string {
+    return Array.from({ length: Math.max(1, count) }, () => '<span class="cloze-box"></span>').join(
+      ''
+    );
+  }
+
+  private buildWordBlankSpan(cleanWord: string): string {
+    return `<span class="cloze-blank cloze-blank--word">${this.buildBlankBoxes(cleanWord.length)}</span>`;
+  }
+
+  private buildCharBlankSpan(count: number): string {
+    return `<span class="cloze-blank cloze-blank--char">${this.buildBlankBoxes(count)}</span>`;
   }
 
   private generateClozeBlank(
@@ -479,10 +503,10 @@ export class NoteGeneratorService {
           const patternIndex = cleanWord.toLowerCase().indexOf(pattern.toLowerCase());
           if (patternIndex >= 0) {
             const prefix = cleanWord.substring(0, patternIndex);
-            const blanked = '_'.repeat(pattern.length);
+            const blanked = this.buildCharBlankSpan(pattern.length);
             const suffix = cleanWord.substring(patternIndex + pattern.length);
             answers.push(pattern);
-            return `${this.escapeHtml(leading)}<span class="cloze-blank-char">${this.escapeHtml(prefix)}<span class="cloze-blank">${blanked}</span>${this.escapeHtml(suffix)}</span>${this.escapeHtml(trailing)}`;
+            return `${this.escapeHtml(leading)}<span class="cloze-blank-char">${this.escapeHtml(prefix)}${blanked}${this.escapeHtml(suffix)}</span>${this.escapeHtml(trailing)}`;
           }
         }
 
@@ -491,10 +515,10 @@ export class NoteGeneratorService {
           const midEnd = Math.ceil(cleanWord.length * 0.7);
           const blankedPart = cleanWord.substring(midStart, midEnd);
           const prefix = cleanWord.substring(0, midStart);
-          const blanked = '_'.repeat(midEnd - midStart);
+          const blanked = this.buildCharBlankSpan(midEnd - midStart);
           const suffix = cleanWord.substring(midEnd);
           answers.push(blankedPart);
-          return `${this.escapeHtml(leading)}<span class="cloze-blank-char">${this.escapeHtml(prefix)}<span class="cloze-blank">${blanked}</span>${this.escapeHtml(suffix)}</span>${this.escapeHtml(trailing)}`;
+          return `${this.escapeHtml(leading)}<span class="cloze-blank-char">${this.escapeHtml(prefix)}${blanked}${this.escapeHtml(suffix)}</span>${this.escapeHtml(trailing)}`;
         }
 
         return this.escapeHtml(token);
@@ -517,9 +541,8 @@ export class NoteGeneratorService {
       if (SIGHT_WORD_SET.has(cleanWord.toLowerCase())) {
         blankedCount++;
         const { leading, trailing } = this.extractPunctuation(token, cleanWord);
-        const blankWidth = Math.max(cleanWord.length * 2, 6);
         answers.push(cleanWord);
-        return `${this.escapeHtml(leading)}<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>${this.escapeHtml(trailing)}`;
+        return `${this.escapeHtml(leading)}${this.buildWordBlankSpan(cleanWord)}${this.escapeHtml(trailing)}`;
       }
 
       return this.escapeHtml(token);
@@ -538,10 +561,9 @@ export class NoteGeneratorService {
         }
         const cleanWord = target.w.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
         const { leading, trailing } = this.extractPunctuation(target.w, cleanWord);
-        const blankWidth = Math.max(cleanWord.length * 2, 6);
         answers.push(cleanWord);
         processed[target.i] =
-          `${this.escapeHtml(leading)}<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>${this.escapeHtml(trailing)}`;
+          `${this.escapeHtml(leading)}${this.buildWordBlankSpan(cleanWord)}${this.escapeHtml(trailing)}`;
       }
     }
 

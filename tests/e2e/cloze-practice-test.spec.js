@@ -44,15 +44,16 @@ test.describe('穴埋めフレーズ練習テスト', () => {
 
     const previewHtml = await page.locator('#notePreview').innerHTML();
 
-    // 単語レベルではアンダースコアを含むcloze-blank要素が存在する
+    // 単語レベルでは cloze-blank 要素が存在する
     expect(previewHtml).toContain('cloze-blank');
     const blanks = page.locator('#notePreview .cloze-blank');
     const count = await blanks.count();
     expect(count).toBeGreaterThan(0);
 
-    // 少なくとも1つの空欄にアンダースコアが含まれている
-    const firstBlank = await blanks.first().textContent();
-    expect(firstBlank).toMatch(/_+/);
+    // 文字数は下線の長さではなく1文字1マスで示す（撮影画像から数えられるようにするため）
+    expect(
+      await page.locator('#notePreview .cloze-blank--word .cloze-box').count()
+    ).toBeGreaterThan(0);
   });
 
   test('文字レベルの穴埋めが正しく動作する', async ({ page }) => {
@@ -66,6 +67,10 @@ test.describe('穴埋めフレーズ練習テスト', () => {
     const blanks = page.locator('#notePreview .cloze-blank');
     const count = await blanks.count();
     expect(count).toBeGreaterThan(0);
+
+    // 欠落文字は1文字1マスで表す（マスの個数が文字数を保持する）
+    const boxes = await page.locator('#notePreview .cloze-box').count();
+    expect(boxes).toBeGreaterThanOrEqual(count);
   });
 
   test('単語レベルと文字レベルで異なる出力が生成される', async ({ page }) => {
@@ -182,6 +187,30 @@ test.describe('穴埋めフレーズ練習テスト', () => {
       const items = await pageBlock.locator('.cloze-english').allTextContents();
       const unique = new Set(items.map((s) => s.trim()));
       expect(unique.size).toBe(items.length);
+    }
+  });
+
+  test('問題番号がページごとに Q1 から振られ、Answer Key と一致する', async ({ page }) => {
+    await page.selectOption('#clozeCategory', 'classroom_english');
+    await page.fill('#pageCount', '2');
+    await page.locator('#showClozeAnswers').check();
+    await page.waitForTimeout(800);
+
+    // 用紙は1枚で完結する想定なので、番号は各ページ Q1 から始まる連番
+    const pages = await page.locator('#notePreview .cloze-practice').all();
+    expect(pages.length).toBeGreaterThanOrEqual(2);
+
+    for (const pageBlock of pages) {
+      const numbers = (await pageBlock.locator('.cloze-number').allTextContents()).map((s) =>
+        s.trim()
+      );
+      expect(numbers.length).toBeGreaterThan(1);
+      expect(numbers).toEqual(numbers.map((_, i) => `Q${i + 1}`));
+
+      const answerNumbers = (await pageBlock.locator('.cloze-answer-number').allTextContents()).map(
+        (s) => s.trim()
+      );
+      expect(answerNumbers).toEqual(numbers);
     }
   });
 
