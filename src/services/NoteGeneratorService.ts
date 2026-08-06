@@ -477,7 +477,8 @@ export class NoteGeneratorService {
       { length: boxCount },
       () => '<span class="cloze-box" aria-hidden="true"></span>'
     ).join('');
-    return `<span class="visually-hidden">［${boxCount}文字の空所］</span>${boxes}`;
+    const letterCount = `<span class="cloze-letter-count" aria-hidden="true">(${boxCount})</span>`;
+    return `<span class="visually-hidden">［${boxCount}文字の空所］</span>${boxes}${letterCount}`;
   }
 
   private buildWordBlankSpan(cleanWord: string): string {

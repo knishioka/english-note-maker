@@ -1036,6 +1036,10 @@ body::before {
     color: #000 !important;
   }
 
+  .cloze-letter-count {
+    color: #000 !important;
+  }
+
   .cloze-number {
     color: #000 !important;
   }
@@ -1783,6 +1787,18 @@ body::before {
 
 .cloze-blank--char {
   margin: 0 1.2mm;
+}
+
+/* マスの個数と同じ情報を数字でも示す。撮影画像では 8pt・太字だと括弧と数字が
+   一つの黒い塊に潰れて 6/8/0/9 が判別できなくなるため、本文（12pt）に近い
+   サイズ・細めの字面・字間確保を保つこと。この指定で 130dpi 相当でも 10/10 で
+   読めることを実測している。 */
+.cloze-letter-count {
+  font-size: 11pt;
+  font-weight: 500;
+  color: #334155;
+  margin-left: 1.2mm;
+  letter-spacing: 0.04em;
 }
 
 /* 1文字1マス。0.6mm ずつの余白で隣のマスと必ず分離させ、

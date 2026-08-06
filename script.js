@@ -3077,28 +3077,32 @@ function getSentenceDifficultyPreset(difficulty) {
 // Blanks are printed, photographed, and then read back by OCR / an LLM for
 // grading. A run of underscores does not survive that trip: at print + camera
 // resolution `___` and `_____` collapse into the same solid line, so the answer
-// length — the main hint the exercise gives — is lost. Both blank styles below
-// therefore encode the length in a way that stays countable in a photo.
-
-// Both levels therefore use one discrete box per missing letter, separated by a
-// visible gap so the boxes stay individually countable in a photo.
+// length — the main hint the exercise gives — is lost.
 //
-// A printed digit — `____ (7)` — was measured against this and lost: at ~130dpi
-// with JPEG compression the parentheses merge into the digit and 6/8/0/9 become
-// indistinguishable, even enlarged. Boxes survive the same treatment. Boxes also
-// keep lines shorter than a fixed-width rule for the short sight words that make
-// up most word-level answers.
+// The length is therefore encoded twice, because the two encodings fail in
+// different ways and neither is free:
+//   - one discrete box per missing letter, separated by a visible gap
+//   - a printed digit next to the boxes
+//
+// Measured at ~130dpi with JPEG compression: boxes read 10/10 (word level),
+// and an 11pt digit also read 10/10. An 8pt digit read 0/13 — at that size the
+// parentheses merge into the digit and 6/8/0/9 become one blob, so the digit
+// must stay near body size. Boxes can be miscounted by ±1 on long runs at
+// full-page scale; the digit disambiguates those. The digit alone gives the
+// reader nothing to check against, which the boxes provide.
+//
 // マスは枠だけで中身を持たないため、そのままでは支援技術に何も伝わらない。
 // 従来のアンダースコアは「空所があること」と「その文字数」をテキストとして
-// 持っていたので、その情報を視覚的に隠したテキストで補い、枠自体は
-// aria-hidden で読み上げ対象から外す。
+// 持っていたので、その情報を視覚的に隠したテキストで補い、枠と数字は
+// aria-hidden で読み上げ対象から外す（読み上げが二重になるのを防ぐ）。
 function buildBlankBoxes(count) {
   const boxCount = Math.max(1, count);
   const boxes = Array.from(
     { length: boxCount },
     () => '<span class="cloze-box" aria-hidden="true"></span>'
   ).join('');
-  return `<span class="visually-hidden">［${boxCount}文字の空所］</span>${boxes}`;
+  const letterCount = `<span class="cloze-letter-count" aria-hidden="true">(${boxCount})</span>`;
+  return `<span class="visually-hidden">［${boxCount}文字の空所］</span>${boxes}${letterCount}`;
 }
 
 function buildWordBlankSpan(cleanWord) {
