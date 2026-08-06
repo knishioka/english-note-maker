@@ -2976,9 +2976,13 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
   for (let i = 0; i < pagePhrases.length; i++) {
     const phrase = pagePhrases[i];
     const clozeResult = clozeResults[i];
+    // 採点AIが「何番の解答か」を対応づけられるよう、必ず番号を印字する。
+    // 1枚で完結した用紙を複数枚刷る使い方なので、番号はページごとに 1 から振る。
+    const questionNumber = i + 1;
     html += `
       <div class="cloze-item">
         <div class="cloze-header">
+          <div class="cloze-number" data-testid="cloze-number">Q${questionNumber}</div>
           <div class="cloze-main">
             <div class="cloze-english">${clozeResult.display}</div>
             <div class="cloze-japanese">${escapeHtml(phrase.japanese)}</div>
@@ -3000,7 +3004,8 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
     html += '<div class="cloze-answers-grid">';
     for (let i = 0; i < clozeResults.length; i++) {
       const answerList = escapeHtml(clozeResults[i].answers.join(', '));
-      html += `<div class="cloze-answer-item"><span class="cloze-answer-number">${i + 1}.</span> ${answerList}</div>`;
+      // 問題側と同じ番号を使う（ページごとに 1 から）
+      html += `<div class="cloze-answer-item"><span class="cloze-answer-number" data-testid="cloze-answer-number">Q${i + 1}</span> ${answerList}</div>`;
     }
     html += '</div>';
     html += '</div>';
@@ -3069,9 +3074,39 @@ function getSentenceDifficultyPreset(difficulty) {
   return SENTENCE_DIFFICULTY_PRESETS[difficulty] || SENTENCE_DIFFICULTY_PRESETS.normal;
 }
 
+// Blanks are printed, photographed, and then read back by OCR / an LLM for
+// grading. A run of underscores does not survive that trip: at print + camera
+// resolution `___` and `_____` collapse into the same solid line, so the answer
+// length — the main hint the exercise gives — is lost. Both blank styles below
+// therefore encode the length in a way that stays countable in a photo.
+
+// Both levels therefore use one discrete box per missing letter, separated by a
+// visible gap so the boxes stay individually countable in a photo.
+//
+// A printed digit — `____ (7)` — was measured against this and lost: at ~130dpi
+// with JPEG compression the parentheses merge into the digit and 6/8/0/9 become
+// indistinguishable, even enlarged. Boxes survive the same treatment. Boxes also
+// keep lines shorter than a fixed-width rule for the short sight words that make
+// up most word-level answers.
+// マスは枠だけで中身を持たないため、そのままでは支援技術に何も伝わらない。
+// 従来のアンダースコアは「空所があること」と「その文字数」をテキストとして
+// 持っていたので、その情報を視覚的に隠したテキストで補い、枠自体は
+// aria-hidden で読み上げ対象から外す。
+function buildBlankBoxes(count) {
+  const boxCount = Math.max(1, count);
+  const boxes = Array.from(
+    { length: boxCount },
+    () => '<span class="cloze-box" aria-hidden="true"></span>'
+  ).join('');
+  return `<span class="visually-hidden">［${boxCount}文字の空所］</span>${boxes}`;
+}
+
 function buildWordBlankSpan(cleanWord) {
-  const blankWidth = Math.max(cleanWord.length * 2, 6);
-  return `<span class="cloze-blank" style="display:inline-block;min-width:${blankWidth}ch">${'_'.repeat(cleanWord.length)}</span>`;
+  return `<span class="cloze-blank cloze-blank--word">${buildBlankBoxes(cleanWord.length)}</span>`;
+}
+
+function buildCharBlankSpan(count) {
+  return `<span class="cloze-blank cloze-blank--char">${buildBlankBoxes(count)}</span>`;
 }
 
 function generateClozeText(text, blankType, difficulty = 'normal') {
@@ -3109,10 +3144,10 @@ function generateClozeText(text, blankType, difficulty = 'normal') {
         const patternIndex = cleanWord.toLowerCase().indexOf(pattern.toLowerCase());
         if (patternIndex >= 0) {
           const prefix = cleanWord.substring(0, patternIndex);
-          const blanked = '_'.repeat(pattern.length);
+          const blanked = buildCharBlankSpan(pattern.length);
           const suffix = cleanWord.substring(patternIndex + pattern.length);
           answers.push(pattern);
-          return `${escapeHtml(leading)}<span class="cloze-blank-char">${escapeHtml(prefix)}<span class="cloze-blank">${blanked}</span>${escapeHtml(suffix)}</span>${escapeHtml(trailing)}`;
+          return `${escapeHtml(leading)}<span class="cloze-blank-char">${escapeHtml(prefix)}${blanked}${escapeHtml(suffix)}</span>${escapeHtml(trailing)}`;
         }
       }
 
@@ -3121,10 +3156,10 @@ function generateClozeText(text, blankType, difficulty = 'normal') {
         const midEnd = Math.ceil(cleanWord.length * 0.7);
         const blankedPart = cleanWord.substring(midStart, midEnd);
         const prefix = cleanWord.substring(0, midStart);
-        const blanked = '_'.repeat(midEnd - midStart);
+        const blanked = buildCharBlankSpan(midEnd - midStart);
         const suffix = cleanWord.substring(midEnd);
         answers.push(blankedPart);
-        return `${escapeHtml(leading)}<span class="cloze-blank-char">${escapeHtml(prefix)}<span class="cloze-blank">${blanked}</span>${escapeHtml(suffix)}</span>${escapeHtml(trailing)}`;
+        return `${escapeHtml(leading)}<span class="cloze-blank-char">${escapeHtml(prefix)}${blanked}${escapeHtml(suffix)}</span>${escapeHtml(trailing)}`;
       }
 
       return escapeHtml(token);
