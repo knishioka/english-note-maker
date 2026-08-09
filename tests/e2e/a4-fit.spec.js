@@ -12,14 +12,15 @@ const A4_WIDTH_MM = 210;
 const A4_HEIGHT_MM = 297;
 const PX_TO_MM = 0.2645833333;
 
-// 1項目の高さが大きいモードは、1つ足すと必ずはみ出すため余白が残る。
-// モードごとに「これ以上余っていたら詰め込み不足」と言える値を上限にする。
+// 余白が残るのは詰め込み不足とは限らない。1項目が大きくて「あと1つ」が入らない場合と、
+// その年齢・カテゴリーの素材を使い切った場合（例: 色の単語は5語しかない）がある。
+// ここでは「モード構造上あり得る最大の余白」を上限にし、それを超える回帰だけを捕まえる。
 const MODES = [
-  { mode: 'normal', maxFreeMm: 30 },
-  { mode: 'sentence', maxFreeMm: 60 },
-  { mode: 'word', maxFreeMm: 40 },
+  { mode: 'normal', maxFreeMm: 30 }, // 1行10mm前後なのでほぼ埋まる
+  { mode: 'sentence', maxFreeMm: 65 }, // 例文1件が最大45mm＋間隔12mm
+  { mode: 'word', maxFreeMm: 60 }, // 1語31〜41mm。カテゴリーの在庫（5語）で頭打ちになる
   { mode: 'phonics', maxFreeMm: 40 },
-  { mode: 'phrase', maxFreeMm: 60 },
+  { mode: 'phrase', maxFreeMm: 60 }, // 1問が50〜66mm
   { mode: 'cloze', maxFreeMm: 40 },
 ];
 
@@ -80,5 +81,45 @@ test.describe('A4レイアウト', () => {
         expect(freeMm).toBeLessThan(maxFreeMm);
       });
     }
+  }
+});
+
+/**
+ * @media print で文字サイズや余白を変えると、プレビューで見た分量と
+ * 刷り上がりがずれる（自動調整は画面側の高さで判断しているため）。
+ * 色や線幅の印刷向け調整は高さに影響しないので、ここでは高さだけを比べる。
+ */
+test.describe('プレビューと印刷でレイアウトが変わらない', () => {
+  const usedHeightMm = (page) =>
+    page.evaluate((pxToMm) => {
+      const first = document.querySelector('.note-page');
+      const children = [...first.children];
+      const last = children[children.length - 1];
+      // offsetTop/offsetHeight はプレビューの transform 縮小の影響を受けない
+      return last ? +((last.offsetTop + last.offsetHeight) * pxToMm).toFixed(2) : 0;
+    }, PX_TO_MM);
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await page.waitForSelector('.note-page');
+  });
+
+  for (const { mode } of MODES) {
+    test(`${mode} は画面と印刷で1ページの分量が同じ`, async ({ page }) => {
+      await applySettings(page, { mode, ageGroup: '10-12', lineHeight: 10 });
+
+      await page.emulateMedia({ media: 'screen' });
+      const screenMm = await usedHeightMm(page);
+
+      await page.emulateMedia({ media: 'print' });
+      const printMm = await usedHeightMm(page);
+
+      await page.emulateMedia({ media: null });
+
+      expect(
+        Math.abs(printMm - screenMm),
+        `画面 ${screenMm}mm / 印刷 ${printMm}mm`
+      ).toBeLessThanOrEqual(1);
+    });
   }
 });
