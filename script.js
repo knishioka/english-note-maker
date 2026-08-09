@@ -2405,8 +2405,8 @@ window.testPDFLayout = function () {
     // ページごとの高さ情報
     const pages = document.querySelectorAll('.note-page');
     pages.forEach((page, index) => {
-      const rect = page.getBoundingClientRect();
-      const heightInMm = rect.height / 3.7795275591;
+      // 縮小表示の影響を受けない実寸で測る
+      const heightInMm = page.offsetHeight / 3.7795275591;
       if (window.Debug)
         window.Debug.debug('DIAGNOSTICS', `ページ${index + 1}の高さ`, {
           height: `${heightInMm.toFixed(2)}mm`,

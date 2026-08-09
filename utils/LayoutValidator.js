@@ -123,10 +123,11 @@ class LayoutValidator {
     const overflows = [];
 
     notePages.forEach((notePage, index) => {
-      const rect = notePage.getBoundingClientRect();
-      const heightInMm = this.pxToMm(rect.height);
+      // プレビューは transform で縮小表示しているため、印刷される実寸で測る
+      const heightInMm = this.pxToMm(notePage.offsetHeight);
 
-      if (heightInMm > 297) {
+      // offsetHeight の丸めで、ちょうど A4 でも 0.1mm ほど超えるため許容差を持たせる
+      if (heightInMm > 297 + 0.5) {
         overflows.push({
           pageIndex: index + 1,
           height: heightInMm.toFixed(1),
