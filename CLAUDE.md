@@ -337,6 +337,21 @@ if (report.errors.length > 0) {
 }
 ```
 
+#### 4. プレビューは A4 実寸で組む
+
+`.note-page` は常に **210mm 幅**で組み、画面に合わせた縮小は `transform: scale()`
+（`--preview-scale`、`applyPreviewScale()` が計算）だけで行う。幅を縮めると英文の
+折り返し位置が印刷と変わり、「プレビューでははみ出すのに、印刷すると下が余る」状態になる。
+
+- はみ出し判定は `offsetHeight`（縮小前の実寸）で行う。`getBoundingClientRect()` は
+  縮小後の値になるので使わない。
+- 1ページあたりの項目数は見積もりで決めきらず、`autoAdjustPreview()` が実際の描画高さを見て
+  **はみ出せば減らし、余っていれば増やす**。各モードの `calculate*PracticeLayout()` が返すのは
+  初期値と下限で、上限は `getLayoutMaxValue()`（既定は初期値の2倍）まで自動で伸ばす。
+- 難易度プリセットの件数（`maxWords` / `maxPhrases` など）は初期値としてのみ使い、
+  最終的な件数は上記の自動調整に任せる。難易度による差は表示項目（音節・訳の有無）で付ける。
+- 回帰テスト: `tests/e2e/a4-fit.spec.js`（A4に収まるか／下が空きすぎないか）
+
 ## 📖 技術スタック
 
 - **HTML5**: セマンティックマークアップ

@@ -99,6 +99,7 @@ export default [
         HTMLElement: 'readonly',
         DOMContentLoaded: 'readonly',
         getComputedStyle: 'readonly',
+        ResizeObserver: 'readonly',
         MouseEvent: 'readonly',
         fetch: 'readonly',
         alert: 'readonly',

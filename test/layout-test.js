@@ -44,6 +44,18 @@ test(
   cssContent.includes('@page') && cssContent.includes('margin:'),
   '印刷時の余白が設定されていません'
 );
+// プレビューを画面幅に合わせて縮めると行の折り返しが印刷とずれ、
+// 「プレビューでははみ出すのに印刷では下が余る」状態になる
+test(
+  'プレビューもA4実寸（210mm幅）で組んでいる',
+  /\.note-page\s*\{[^}]*width:\s*210mm/.test(cssContent),
+  '.note-page の幅が 210mm 固定になっていません'
+);
+test(
+  '表示の縮小は transform で行っている',
+  cssContent.includes('--preview-scale') && cssContent.includes('.note-page-frame'),
+  'プレビュー縮小用の枠（.note-page-frame / --preview-scale）が定義されていません'
+);
 
 // 2. 4本線ベースラインの設定確認
 console.log('\n📏 4本線ベースラインのチェック');

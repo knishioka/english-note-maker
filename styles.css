@@ -531,14 +531,26 @@ body::before {
 }
 
 /* === 英語ノートページ === */
+
+/* プレビューは必ず A4 実寸（210mm 幅）で組む。
+   画面幅に合わせて width を縮めると行の折り返し位置が印刷と変わり、
+   「プレビューでははみ出すのに印刷すると下が余る」状態になるため、
+   表示の縮小は transform だけで行う。 */
+.note-page-frame {
+  /* 縮小後のページがちょうど収まるよう、高さと左位置は JS が計算して指定する */
+  overflow: hidden;
+}
+
 .note-page {
-  width: 100%;
-  max-width: 210mm; /* A4幅 */
-  margin: 0 auto;
+  width: 210mm; /* A4幅 */
+  max-width: none;
+  margin: 0;
   background: white;
   padding: var(--margin-standard); /* 統一設定システムから取得 */
   min-height: 297mm; /* A4高さ */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: scale(var(--preview-scale, 1));
+  transform-origin: top left;
 }
 
 .note-page__header {
@@ -959,6 +971,13 @@ body::before {
     position: static !important;
   }
 
+  /* プレビュー用の縮小枠は印刷では素通しにする */
+  .note-page-frame {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
   /* ノートページ - 固定高さを削除してページ区切りで制御 */
   .note-page {
     width: 210mm !important;
@@ -972,6 +991,7 @@ body::before {
     overflow: visible !important;
     float: none !important;
     position: relative !important;
+    transform: none !important;
     /* ページ区切り制御 - 新旧両方のプロパティを指定 */
     page-break-inside: avoid !important;
     break-inside: avoid !important;
@@ -1174,7 +1194,8 @@ body::before {
   background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 4px;
-  padding: 5mm 10mm;
+  /* 中の .note-page が印刷と同じ余白を持つので、ここでは余白を足さない */
+  padding: 0;
   transform: scale(0.6);
   transform-origin: center;
   overflow: hidden;
@@ -1212,6 +1233,17 @@ body::before {
   padding: 0.45rem 1rem;
   font-size: 0.9rem;
   width: auto;
+}
+
+/* 印刷プレビューは A4 実寸のまま見せる（モーダル側で縮小しているため） */
+.a4-preview-page .note-page-frame {
+  display: block;
+  height: auto;
+  overflow: visible;
+}
+
+.a4-preview-page .note-page {
+  transform: none;
 }
 
 /* プレビュー内のスタイル調整 - 印刷スタイルを模倣 */
@@ -1322,10 +1354,7 @@ body::before {
     order: 1;
   }
 
-  .note-page {
-    transform: scale(0.8);
-    transform-origin: top center;
-  }
+  /* 幅に応じた縮小は --preview-scale（JS が設定）に一本化している */
 
   .phrase-grid {
     grid-template-columns: 1fr;
@@ -1776,17 +1805,17 @@ body::before {
   color: #3b82f6;
 }
 
-/* マス群の外側は、マス間（1.2mm）より必ず広く空ける。
+/* マス群の外側は、マス間（0.9mm）より必ず広く空ける。
    - 単語レベル: 空所が隣り合うと語間の空白（12pt で約0.9mm）のほうが狭くなり、
      2つの空所が1つに見えて個数を読み違える。
    - 文字レベル: h/l/k など縦画のある文字がマスに隣接すると、その縦画を
      マスの枠と数えてしまう。語が分断されない範囲で離す。 */
 .cloze-blank--word {
-  margin: 0 1.5mm;
+  margin: 0 1.2mm;
 }
 
 .cloze-blank--char {
-  margin: 0 1.2mm;
+  margin: 0 1.1mm;
 }
 
 /* マスの個数と同じ情報を数字でも示す。撮影画像では 8pt・太字だと括弧と数字が
@@ -1797,17 +1826,18 @@ body::before {
   font-size: 11pt;
   font-weight: 500;
   color: #334155;
-  margin-left: 1.2mm;
+  margin-left: 1mm;
   letter-spacing: 0.04em;
 }
 
-/* 1文字1マス。0.6mm ずつの余白で隣のマスと必ず分離させ、
-   写真からでもマスの個数を数えられる状態を保つ。 */
+/* 1文字1マス。0.45mm ずつの余白（マス間 0.9mm）で隣のマスと分離させ、
+   写真からでもマスの個数を数えられる状態を保つ。
+   これ以上詰めると 130dpi 相当の撮影画像で枠線同士がつながって見える。 */
 .cloze-box {
   display: inline-block;
   width: 3.4mm;
   height: 4.6mm;
-  margin: 0 0.6mm;
+  margin: 0 0.45mm;
   border: 0.4mm solid currentColor;
   border-radius: 0.4mm;
   vertical-align: -1mm;

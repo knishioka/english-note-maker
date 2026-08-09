@@ -40,6 +40,7 @@ let sentenceSequenceCache = {
 
 const PX_TO_MM = 0.2645833333;
 const A4_HEIGHT_MM = 297;
+const A4_WIDTH_MM = 210;
 const A4_TOLERANCE_MM = 0.5;
 const MAX_AUTO_LAYOUT_ATTEMPTS = 12;
 const CUSTOM_EXAMPLES_STORAGE_KEY = 'english-note-maker.customExamples.v1';
@@ -583,8 +584,32 @@ function init() {
   updateOptionsVisibility();
   hydrateWorksheetSettingsFromUrl();
   setupEventListeners();
+  setupPreviewScaleSync();
   renderCustomExamplesList();
   updatePreview();
+}
+
+// プレビュー領域の幅が変わったら縮小率を計算し直す（レイアウト自体は A4 実寸のまま）
+function setupPreviewScaleSync() {
+  const notePreview = document.getElementById('notePreview');
+  if (!notePreview || typeof window === 'undefined') return;
+
+  // applyPreviewScale は枠の高さを書き換えるため、高さの変化に反応すると
+  // ResizeObserver が自分自身を呼び続ける。幅が変わったときだけ再計算する。
+  let lastWidth = notePreview.clientWidth;
+  const resync = () => {
+    const width = notePreview.clientWidth;
+    if (width === lastWidth) return;
+    lastWidth = width;
+    applyPreviewScale(notePreview);
+  };
+
+  // ResizeObserver は描画フレームに紐づくため、非表示タブなどでは通知が来ない。
+  // 取りこぼしても崩れたままにならないよう resize イベントも併用する。
+  window.addEventListener('resize', resync);
+  if (typeof ResizeObserver === 'function') {
+    new ResizeObserver(resync).observe(notePreview);
+  }
 }
 
 function hydrateWorksheetSettingsFromUrl() {
@@ -973,12 +998,39 @@ function renderNotePreview(notePreview, state, overrides) {
                 </div>
             `;
     }
-    html += generateNotePage(page + 1, state.pageCount, overrides);
+    // ページは A4 実寸で組み、表示だけを縮小するため枠で包む
+    html += `<div class="note-page-frame">${generateNotePage(page + 1, state.pageCount, overrides)}</div>`;
   }
 
   notePreview.innerHTML = html;
+  applyPreviewScale(notePreview);
 }
 
+// A4 実寸のページを、プレビュー領域の幅に収まるよう transform で縮小する。
+// transform はレイアウトを変えないので、枠の高さは縮小後の実寸に合わせて指定する。
+function applyPreviewScale(notePreview) {
+  const frames = notePreview.querySelectorAll('.note-page-frame');
+  if (!frames.length) return;
+
+  // notePreview.clientWidth は内側パディングを含むので、枠自身の幅を基準にする
+  const available = frames[0].clientWidth;
+  const pageWidthPx = A4_WIDTH_MM / PX_TO_MM;
+  const scale = available > 0 ? Math.min(1, available / pageWidthPx) : 1;
+  // 左上を基準に縮小するので、余った幅の半分だけ右へずらして中央に置く
+  const offset = Math.max(0, (available - pageWidthPx * scale) / 2);
+
+  notePreview.style.setProperty('--preview-scale', String(scale));
+  frames.forEach((frame) => {
+    const page = frame.querySelector('.note-page');
+    if (!page) return;
+    page.style.marginLeft = `${offset}px`;
+    frame.style.height = `${page.offsetHeight * scale}px`;
+  });
+}
+
+// 1ページあたりの項目数を A4 の高さに合わせて調整する。
+// はみ出していれば減らし、余っていれば増やす。項目の高さは文の折り返し次第で
+// 変わるため、見積もりではなく実際に描画した高さで判定する。
 function autoAdjustPreview(notePreview, state, baseLayout, initialOverrides) {
   const appliedOverrides = cloneOverrides(initialOverrides);
   let overflowInfo = detectOverflow(notePreview);
@@ -987,7 +1039,7 @@ function autoAdjustPreview(notePreview, state, baseLayout, initialOverrides) {
   let nextValue = null;
 
   while (overflowInfo.hasOverflow && attempts < MAX_AUTO_LAYOUT_ATTEMPTS) {
-    const adjustment = computeNextOverrides(state, appliedOverrides, baseLayout);
+    const adjustment = computeNextOverrides(state, appliedOverrides, baseLayout, -1);
     if (!adjustment.changed) {
       return {
         adjusted: attempts > 0,
@@ -1011,13 +1063,38 @@ function autoAdjustPreview(notePreview, state, baseLayout, initialOverrides) {
     attempts += 1;
   }
 
+  // 一度も減らしていない＝まだ余白がある可能性があるので、はみ出す直前まで増やす
+  if (attempts === 0) {
+    while (attempts < MAX_AUTO_LAYOUT_ATTEMPTS) {
+      const adjustment = computeNextOverrides(state, appliedOverrides, baseLayout, +1);
+      if (!adjustment.changed) break;
+
+      const candidate = cloneOverrides(appliedOverrides);
+      Object.assign(candidate, adjustment.overrides);
+      renderNotePreview(notePreview, state, candidate);
+      attempts += 1;
+
+      if (detectOverflow(notePreview).hasOverflow) {
+        // 増やしすぎたので直前の状態へ戻す
+        renderNotePreview(notePreview, state, appliedOverrides);
+        break;
+      }
+
+      previousValue = adjustment.previous;
+      nextValue = adjustment.next;
+      Object.assign(appliedOverrides, adjustment.overrides);
+      overflowInfo = detectOverflow(notePreview);
+    }
+  }
+
   const modeLayout = baseLayout[state.practiceMode] || null;
   const finalValue = modeLayout
     ? (appliedOverrides[state.practiceMode]?.[modeLayout.property] ?? modeLayout.baseValue)
     : null;
 
   return {
-    adjusted: attempts > 0,
+    // 増やそうとして戻した場合は「調整なし」なので、値が変わったかで判定する
+    adjusted: modeLayout ? finalValue !== modeLayout.baseValue : attempts > 0,
     success: !overflowInfo.hasOverflow,
     attempts,
     mode: state.practiceMode,
@@ -1035,8 +1112,8 @@ function detectOverflow(notePreview) {
   const overflows = [];
 
   pages.forEach((page, index) => {
-    const rect = page.getBoundingClientRect();
-    const heightMm = rect.height * PX_TO_MM;
+    // 表示は transform で縮小しているので、実寸である offsetHeight で測る
+    const heightMm = page.offsetHeight * PX_TO_MM;
     const overflowMm = heightMm - A4_HEIGHT_MM;
 
     if (overflowMm > A4_TOLERANCE_MM) {
@@ -1056,19 +1133,20 @@ function detectOverflow(notePreview) {
   };
 }
 
-function computeNextOverrides(state, overrides, baseLayout) {
+function computeNextOverrides(state, overrides, baseLayout, direction = -1) {
   const layout = baseLayout[state.practiceMode];
   if (!layout) {
     return { changed: false, overrides };
   }
 
   const current = overrides[state.practiceMode]?.[layout.property] ?? layout.baseValue;
+  const limit = direction < 0 ? layout.minValue : getLayoutMaxValue(layout);
 
-  if (current <= layout.minValue) {
+  if (direction < 0 ? current <= limit : current >= limit) {
     return { changed: false, overrides };
   }
 
-  const next = current - 1;
+  const next = current + direction;
   const updated = cloneOverrides(overrides);
   if (!updated[state.practiceMode]) {
     updated[state.practiceMode] = {};
@@ -1096,12 +1174,17 @@ function calculateBaseLayout(state) {
   const effectiveSentenceShowTranslation =
     rawSentenceDifficulty === 'auto' ? state.showTranslation : sentencePreset.showJapanese;
 
+  const rawPhraseDifficulty = document.getElementById('phraseDifficulty')?.value || 'auto';
+  const phrasePreset = getPhraseDifficultyPreset(
+    resolvePhraseDifficulty(rawPhraseDifficulty, ageGroup)
+  );
+
   return {
     normal: calculateNormalPracticeLayout(state.lineHeight, state.showExamples),
     sentence: calculateSentencePracticeLayout(state.lineHeight, effectiveSentenceShowTranslation),
     word: calculateWordPracticeLayout(state.lineHeight, wordPreset.maxWords),
     phonics: calculatePhonicsPracticeLayout(state.lineHeight),
-    phrase: calculatePhrasePracticeLayout(state.lineHeight),
+    phrase: calculatePhrasePracticeLayout(state.lineHeight, phrasePreset.maxPhrases),
     cloze: calculateClozePracticeLayout(state.lineHeight, state.showClozeAnswers),
   };
 }
@@ -1157,7 +1240,9 @@ function calculateWordPracticeLayout(lineHeight, basePresetMaxWords = 8) {
   }
   const maxWords = Math.max(2, Math.floor(basePresetMaxWords * scale));
 
-  const minWords = Math.max(1, Math.min(maxWords - 1, Math.floor(maxWords * 0.7)));
+  // 1語につき4本線が2行ぶん必要で、行間や年齢によっては3〜4語しか載らない。
+  // 収まるところまで減らせるよう下限は小さく取る。
+  const minWords = Math.max(1, Math.min(maxWords - 1, 3));
 
   return {
     property: 'maxWords',
@@ -1189,8 +1274,8 @@ function getPhonicsCapacity(lineHeight) {
   return 4;
 }
 
-function calculatePhrasePracticeLayout(lineHeight) {
-  const basePhrases = getPhraseCapacity(lineHeight);
+function calculatePhrasePracticeLayout(lineHeight, presetMaxPhrases = 4) {
+  const basePhrases = Math.max(1, Math.min(getPhraseCapacity(lineHeight), presetMaxPhrases));
   const minPhrases = Math.max(1, Math.min(basePhrases - 1, Math.floor(basePhrases * 0.7)));
 
   return {
@@ -1279,7 +1364,7 @@ function updateAutoLayoutNotice(result, state, baseLayout) {
   if (modeLayout && result.adjusted) {
     const fromValue = modeLayout.baseValue;
     const label = modeLayout.label || '項目数';
-    const base = `A4に収めるため、1ページあたりの${label}を ${fromValue} → ${currentValue} に自動調整しました。`;
+    const base = `A4に合わせて、1ページあたりの${label}を ${fromValue} → ${currentValue} に自動調整しました。`;
     show(varietyWarning ? `${base}\n${varietyWarning}` : base, 'adjusted');
     return;
   }
@@ -1318,6 +1403,13 @@ function cloneOverrides(overrides) {
   return clone;
 }
 
+// 自動調整で増やせる上限。見積もりが控えめでも A4 を使い切れるよう、
+// 基準値の2倍まで試せるようにしておく（実際は、はみ出した時点で止まる）。
+function getLayoutMaxValue(layoutInfo) {
+  if (!layoutInfo) return undefined;
+  return layoutInfo.maxValue ?? Math.max(layoutInfo.baseValue, layoutInfo.baseValue * 2);
+}
+
 function resolveLayoutValue(layoutInfo, overrideValue) {
   if (!layoutInfo) {
     return Number.isFinite(overrideValue) ? overrideValue : undefined;
@@ -1331,7 +1423,7 @@ function resolveLayoutValue(layoutInfo, overrideValue) {
   }
 
   const rounded = Math.round(overrideValue);
-  return clampNumber(rounded, min, base);
+  return clampNumber(rounded, min, getLayoutMaxValue(layoutInfo));
 }
 
 // ノートページ生成
@@ -1734,11 +1826,10 @@ function generateWordPractice(pageNumber, totalPages, ageGroup, layoutOverride =
 
   // 行高さに応じて単語数を調整
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
-  const layoutInfo = calculateWordPracticeLayout(lineHeight);
-  const layoutMaxWords = resolveLayoutValue(layoutInfo, layoutOverride?.maxWords);
-  // 難易度プリセットの上限と物理的なレイアウト上限の小さい方を採用。
-  // 上限は preset 由来の方が優先（やさしい→6個、むずかしい→10個）。
-  const maxWords = Math.max(1, Math.min(layoutMaxWords, wordPreset.maxWords));
+  const layoutInfo = calculateWordPracticeLayout(lineHeight, wordPreset.maxWords);
+  // 何個載るかは autoAdjustPreview が実際の描画高さで決める（プリセット値は初期値）。
+  // 難易度による見た目の差は音節・日本語の表示有無で付く。
+  const maxWords = Math.max(1, resolveLayoutValue(layoutInfo, layoutOverride?.maxWords));
   const safeWords = Array.isArray(words) ? [...words] : [];
 
   if (!safeWords.length) {
@@ -2001,6 +2092,14 @@ function showPrintPreview() {
 
   // 現在のプレビュー内容をコピーして印刷用にスタイル調整
   previewPage.innerHTML = notePreview.innerHTML;
+
+  // 画面プレビュー用の縮小指定（枠の高さ・中央寄せ）は印刷プレビューでは不要
+  previewPage.querySelectorAll('.note-page-frame').forEach((frame) => {
+    frame.style.height = '';
+  });
+  previewPage.querySelectorAll('.note-page').forEach((page) => {
+    page.style.marginLeft = '';
+  });
 
   // プレビューページに印刷用の余白設定を適用（統一設定を使用）
   const previewNotePages = previewPage.querySelectorAll('.note-page');
@@ -2448,10 +2547,12 @@ function generatePhrasePractice(
     });
   }
 
-  const layoutInfo = calculatePhrasePracticeLayout(lineHeight);
-  const layoutPhrasesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.phrasesPerPage);
-  // 難易度プリセットの上限と物理的なレイアウト上限の小さい方を採用。
-  const phrasesPerPage = Math.max(1, Math.min(layoutPhrasesPerPage, phrasePreset.maxPhrases));
+  const layoutInfo = calculatePhrasePracticeLayout(lineHeight, phrasePreset.maxPhrases);
+  // 何問載るかは autoAdjustPreview が実際の描画高さで決める（プリセット値は初期値）。
+  const phrasesPerPage = Math.max(
+    1,
+    resolveLayoutValue(layoutInfo, layoutOverride?.phrasesPerPage)
+  );
   const pageCount = Math.max(1, totalPages || 1);
   const totalDesiredCount = phrasesPerPage * pageCount;
 
@@ -2838,41 +2939,48 @@ function ensureSentenceSequence(ageGroup, category, perPage, pageCount, difficul
 
 // === 穴埋めフレーズ練習（Cloze Practice） ===
 
+// A4（210×297mm・余白10mm）で実測したレイアウト値。
+// 1問の高さは「番号＋英文1行＋日本語1行＋内部余白（≒12.4mm）＋罫線の高さ」で、
+// 英文が折り返すと1行あたり約6mm増える。折り返し数は文の長さと空所の数で変わり
+// 事前には確定しないため、ここでは英文1行の場合の上限だけを出し、実際の高さ超過は
+// autoAdjustPreview の再描画ループが1問ずつ減らして解消する。
+const CLOZE_LAYOUT_MM = {
+  usableHeight: 277,
+  titleBlock: 26,
+  itemGap: 1.5,
+  itemBase: 12.4,
+  answersTop: 8,
+  answersRowHeight: 4.6,
+  answersPerRow: 2,
+};
+
+// 折り返しの多い問題文でも収まるところまで減らせるよう、下限は小さめに取る
+const CLOZE_MIN_ITEMS = 3;
+
 function calculateClozePracticeLayout(lineHeight, showAnswers = false) {
   const basePhrases = getClozeCapacity(lineHeight, showAnswers);
-  const minPhrases = Math.max(1, Math.min(basePhrases - 1, Math.floor(basePhrases * 0.7)));
 
   return {
     property: 'clozesPerPage',
     label: '穴埋め数',
     baseValue: basePhrases,
-    minValue: minPhrases,
+    minValue: Math.min(CLOZE_MIN_ITEMS, basePhrases),
   };
 }
 
 function getClozeCapacity(lineHeight, showAnswers = false) {
-  const availableHeight = 277;
-  const headerHeight = 12;
-  const gapHeight = 2;
-  const itemHeight = headerHeight + lineHeight + gapHeight;
-  const titleAreaHeight = 15;
-  const usableHeight = availableHeight - titleAreaHeight;
-  const answersPerRow = 2;
-  const answersSectionTop = 12;
-  const answerRowHeight = 4;
-  const answerRowGap = 1;
+  const layout = CLOZE_LAYOUT_MM;
+  const itemHeight = layout.itemBase + lineHeight + layout.itemGap;
+  const budget = layout.usableHeight - layout.titleBlock;
 
-  let maxItems = Math.max(1, Math.floor(usableHeight / itemHeight));
-  maxItems = Math.min(10, maxItems);
+  let maxItems = Math.max(CLOZE_MIN_ITEMS, Math.floor(budget / itemHeight));
 
   if (showAnswers) {
-    while (maxItems > 1) {
-      const answerRows = Math.ceil(maxItems / answersPerRow);
-      const answerRowsHeight =
-        answerRows * answerRowHeight + Math.max(0, answerRows - 1) * answerRowGap;
-      const totalHeight = maxItems * itemHeight + answersSectionTop + answerRowsHeight;
+    while (maxItems > CLOZE_MIN_ITEMS) {
+      const answerRows = Math.ceil(maxItems / layout.answersPerRow);
+      const answersHeight = layout.answersTop + answerRows * layout.answersRowHeight;
 
-      if (totalHeight <= usableHeight) {
+      if (maxItems * itemHeight + answersHeight <= budget) {
         break;
       }
 
@@ -2880,7 +2988,7 @@ function getClozeCapacity(lineHeight, showAnswers = false) {
     }
   }
 
-  return Math.min(10, Math.max(2, maxItems));
+  return maxItems;
 }
 
 function resolveClozeDifficulty(rawDifficulty, ageGroup) {
