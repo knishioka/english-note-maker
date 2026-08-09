@@ -47,6 +47,9 @@ class LayoutValidator {
 
     this.results = [];
     this.A4_HEIGHT_MM = 297; // A4の高さ
+    // offsetHeight は px 単位に丸められるため、ちょうど A4 でも 0.1mm ほど超える。
+    // script.js の detectOverflow と同じ許容差を使う。
+    this.A4_TOLERANCE_MM = 0.5;
     this.A4_WIDTH_MM = 210; // A4の幅
   }
 
@@ -108,9 +111,10 @@ class LayoutValidator {
     const results = [];
 
     pages.forEach((page, index) => {
-      const rect = page.getBoundingClientRect();
-      const heightInMm = this.pxToMm(rect.height);
-      const isValid = heightInMm <= this.A4_HEIGHT_MM;
+      // プレビューは transform で縮小表示しているため getBoundingClientRect では
+      // 見た目の高さになる。印刷されるのは実寸なので offsetHeight で測る。
+      const heightInMm = this.pxToMm(page.offsetHeight);
+      const isValid = heightInMm <= this.A4_HEIGHT_MM + this.A4_TOLERANCE_MM;
 
       results.push({
         rule: `pageHeight_${index + 1}`,

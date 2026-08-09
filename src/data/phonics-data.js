@@ -215,18 +215,21 @@ export function buildPhonicsWordSequence(patternKey, perPage, pageCount, data = 
     return shuffleEntries(words).slice(0, totalNeeded);
   }
 
+  // 在庫が足りないときは使い回すが、1枚の中で同じ単語が並ばないよう
+  // ページ単位で組み立てる（ページをまたぐ重複は許容する）。
+  // 通しでシャッフルを繰り返すと、シャッフルの切れ目がページの途中に来たときに
+  // 同じ単語が1ページ内で2回出てしまう。
   const result = [];
-  let workingSet = shuffleEntries(words);
-  let index = 0;
 
-  while (result.length < totalNeeded) {
-    if (index >= workingSet.length) {
-      workingSet = shuffleEntries(words);
-      index = 0;
+  for (let page = 0; page < pageCount; page += 1) {
+    let remaining = perPage;
+
+    while (remaining > 0) {
+      const chunk = shuffleEntries(words).slice(0, Math.min(remaining, words.length));
+      result.push(...chunk);
+      remaining -= chunk.length;
     }
-    result.push(workingSet[index]);
-    index += 1;
   }
 
-  return result;
+  return result.slice(0, totalNeeded);
 }

@@ -40,6 +40,21 @@ describe('phonics data', () => {
     expect(wordSet.size).toBe(4);
   });
 
+  it('在庫より1ページの数が少なくても、1ページ内で同じ単語を繰り返さない', () => {
+    const inventorySize = PHONICS_DATA.op.words.length;
+    const perPage = inventorySize - 1;
+    const pageCount = 3;
+    const sequence = buildPhonicsWordSequence('op', perPage, pageCount);
+
+    for (let page = 0; page < pageCount; page += 1) {
+      const pageWords = sequence
+        .slice(page * perPage, (page + 1) * perPage)
+        .map((entry) => entry.english);
+
+      expect(new Set(pageWords).size, `page ${page + 1}: ${pageWords.join(', ')}`).toBe(perPage);
+    }
+  });
+
   it('reuses words only after exhausting the pattern inventory', () => {
     const inventorySize = PHONICS_DATA.sh.words.length;
     const sequence = buildPhonicsWordSequence('sh', inventorySize, 2);

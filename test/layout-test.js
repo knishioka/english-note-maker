@@ -44,6 +44,41 @@ test(
   cssContent.includes('@page') && cssContent.includes('margin:'),
   '印刷時の余白が設定されていません'
 );
+// プレビューを画面幅に合わせて縮めると行の折り返しが印刷とずれ、
+// 「プレビューでははみ出すのに印刷では下が余る」状態になる
+test(
+  'プレビューもA4実寸（210mm幅）で組んでいる',
+  /\.note-page\s*\{[^}]*width:\s*210mm/.test(cssContent),
+  '.note-page の幅が 210mm 固定になっていません'
+);
+test(
+  '表示の縮小は transform で行っている',
+  cssContent.includes('--preview-scale') && cssContent.includes('.note-page-frame'),
+  'プレビュー縮小用の枠（.note-page-frame / --preview-scale）が定義されていません'
+);
+// getBoundingClientRect は transform 後の「見た目の高さ」を返すため、
+// 縮小表示中は A4 超過を見逃す。ページ高さの判定は必ず実寸で行う。
+const pageHeightCheckers = {
+  'utils/LayoutValidator.js': fs.readFileSync(
+    path.join(__dirname, '..', 'utils', 'LayoutValidator.js'),
+    'utf8'
+  ),
+  'utils/PrintSimulator.js': fs.readFileSync(
+    path.join(__dirname, '..', 'utils', 'PrintSimulator.js'),
+    'utf8'
+  ),
+  'src/quality-validator.js': fs.readFileSync(
+    path.join(__dirname, '..', 'src', 'quality-validator.js'),
+    'utf8'
+  ),
+};
+Object.entries(pageHeightCheckers).forEach(([name, content]) => {
+  test(
+    `${name} はページ高さを実寸(offsetHeight)で測っている`,
+    !/getBoundingClientRect\(\);?\s*\n\s*const\s+\w*[Hh]eight/.test(content),
+    `${name} が getBoundingClientRect の高さで A4 判定をしています（縮小表示中に超過を見逃します）`
+  );
+});
 
 // 2. 4本線ベースラインの設定確認
 console.log('\n📏 4本線ベースラインのチェック');

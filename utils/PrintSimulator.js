@@ -27,10 +27,11 @@ class PrintSimulator {
 
     const overflows = [];
     notePages.forEach((notePage, index) => {
-      const rect = notePage.getBoundingClientRect();
-      const heightInMm = this.pxToMm(rect.height);
+      // 表示は transform で縮小されるので、印刷される実寸（offsetHeight）で測る
+      const heightInMm = this.pxToMm(notePage.offsetHeight);
 
-      if (heightInMm > this.A4.height) {
+      // offsetHeight の丸めで、ちょうど A4 でも 0.1mm ほど超えるため許容差を持たせる
+      if (heightInMm > this.A4.height + 0.5) {
         overflows.push({
           page: index + 1,
           height: heightInMm.toFixed(1),
@@ -172,8 +173,8 @@ class PrintSimulator {
 
     const densityIssues = [];
     notePages.forEach((page, index) => {
-      const rect = page.getBoundingClientRect();
-      const pageHeightMm = this.pxToMm(rect.height);
+      // 同上。縮小表示の影響を受けない実寸で測る
+      const pageHeightMm = this.pxToMm(page.offsetHeight);
       const usageRatio = pageHeightMm / this.A4.height;
 
       // 95%以上使用していたら警告
