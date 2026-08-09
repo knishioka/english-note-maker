@@ -189,10 +189,11 @@ const CATEGORY_NAMES = {
 
 // フレーズプール取得（cloze / phrase 共有）。
 // - category === 'all' なら全カテゴリーを連結
-// - 単一カテゴリーは選択年齢を先頭にし、続けて他年齢を連結（年齢横断プール）
+// - 日本語は年齢ごとに漢字レベルを変えているため、選択年齢のフレーズだけを集める
+//   （他年齢で補うと、その年齢では読めない漢字の問題文が混ざる）
 // - english を正規化して重複排除
 // - カテゴリーが存在しない場合は greetings にフォールバック
-function getPhrasePool(category, ageGroup, minCount = 0) {
+function getPhrasePool(category, ageGroup) {
   // PHRASE_DATA 未初期化（ロード前・テスト環境など）でも安全に動くようガード
   if (!PHRASE_DATA) {
     return [];
@@ -223,29 +224,14 @@ function getPhrasePool(category, ageGroup, minCount = 0) {
         ? [category]
         : ['greetings'];
 
-  // パス1: まず全対象カテゴリーの「選択年齢」を優先的に集める（年齢適合性を保つ）。
+  // 全対象カテゴリーから「選択年齢」だけを集める。
   // category==='all' でも先頭カテゴリーに偏らず、全カテゴリーから満遍なく集まる。
+  // 数が足りない場合は他年齢で補わず、同じ年齢のフレーズを繰り返す
+  // （足りないことは getVarietyWarning() が利用者に伝える）。
   for (const cat of cats) {
     const ageMap = PHRASE_DATA[cat];
     if (ageMap) {
       pushUnique(ageMap[ageGroup]);
-    }
-  }
-
-  // パス2: 選択年齢だけでは必要数(minCount)に満たない場合のみ、他年齢で補完する。
-  // 十分な数があるカテゴリーでは他年齢を混ぜないため、年齢に合った出題を維持できる。
-  if (pool.length < minCount) {
-    for (const cat of cats) {
-      const ageMap = PHRASE_DATA[cat];
-      if (!ageMap) {
-        continue;
-      }
-      for (const age of Object.keys(ageMap)) {
-        if (age === ageGroup) {
-          continue;
-        }
-        pushUnique(ageMap[age]);
-      }
     }
   }
 
@@ -1037,53 +1023,58 @@ function autoAdjustPreview(notePreview, state, baseLayout, initialOverrides) {
   let attempts = 0;
   let previousValue = null;
   let nextValue = null;
+  let exhausted = false;
 
-  while (overflowInfo.hasOverflow && attempts < MAX_AUTO_LAYOUT_ATTEMPTS) {
-    const adjustment = computeNextOverrides(state, appliedOverrides, baseLayout, -1);
-    if (!adjustment.changed) {
-      return {
-        adjusted: attempts > 0,
-        success: false,
-        attempts,
-        mode: state.practiceMode,
-        baseLayout,
-        appliedOverrides,
-        overflow: overflowInfo,
-        previousValue,
-        nextValue,
-      };
-    }
-
-    previousValue = adjustment.previous;
-    nextValue = adjustment.next;
-    Object.assign(appliedOverrides, adjustment.overrides);
-
-    renderNotePreview(notePreview, state, appliedOverrides);
+  // 描画したあとの実寸だけを判定材料にする。
+  // 出題内容はランダムなので、同じ設定で描き直しても中身が変わることがある。
+  // 「測った状態」と「最後に画面へ残した状態」を必ず一致させること。
+  const renderAndMeasure = (overrides) => {
+    renderNotePreview(notePreview, state, overrides);
     overflowInfo = detectOverflow(notePreview);
-    attempts += 1;
-  }
+  };
 
-  // 一度も減らしていない＝まだ余白がある可能性があるので、はみ出す直前まで増やす
-  if (attempts === 0) {
+  // はみ出している間、収まるまで1つずつ減らす
+  const shrinkUntilFits = () => {
+    while (overflowInfo.hasOverflow && attempts < MAX_AUTO_LAYOUT_ATTEMPTS) {
+      const adjustment = computeNextOverrides(state, appliedOverrides, baseLayout, -1);
+      if (!adjustment.changed) {
+        exhausted = true;
+        return;
+      }
+
+      previousValue = adjustment.previous;
+      nextValue = adjustment.next;
+      Object.assign(appliedOverrides, adjustment.overrides);
+
+      renderAndMeasure(appliedOverrides);
+      attempts += 1;
+    }
+  };
+
+  shrinkUntilFits();
+
+  // 減らす必要がなかった＝まだ余白がある可能性があるので、はみ出す直前まで増やす
+  if (attempts === 0 && !exhausted) {
     while (attempts < MAX_AUTO_LAYOUT_ATTEMPTS) {
       const adjustment = computeNextOverrides(state, appliedOverrides, baseLayout, +1);
       if (!adjustment.changed) break;
 
       const candidate = cloneOverrides(appliedOverrides);
       Object.assign(candidate, adjustment.overrides);
-      renderNotePreview(notePreview, state, candidate);
+      renderAndMeasure(candidate);
       attempts += 1;
 
-      if (detectOverflow(notePreview).hasOverflow) {
-        // 増やしすぎたので直前の状態へ戻す
-        renderNotePreview(notePreview, state, appliedOverrides);
+      if (overflowInfo.hasOverflow) {
+        // 増やしすぎたので直前の設定へ戻す。戻した描画でも出題内容は選び直されるため、
+        // 測り直したうえで、それでもはみ出していれば収まるまで減らす。
+        renderAndMeasure(appliedOverrides);
+        shrinkUntilFits();
         break;
       }
 
       previousValue = adjustment.previous;
       nextValue = adjustment.next;
       Object.assign(appliedOverrides, adjustment.overrides);
-      overflowInfo = detectOverflow(notePreview);
     }
   }
 
@@ -1179,13 +1170,61 @@ function calculateBaseLayout(state) {
     resolvePhraseDifficulty(rawPhraseDifficulty, ageGroup)
   );
 
+  const phraseCategory = document.getElementById('phraseCategory')?.value || 'greetings';
+  const clozeCategory = document.getElementById('clozeCategory')?.value || 'greetings';
+  const wordCategory = document.getElementById('wordCategory')?.value || 'animals';
+  const exampleCategory = document.getElementById('exampleCategory')?.value || 'all';
+  const phonicsPattern = document.getElementById('phonicsPattern')?.value || '';
+
   return {
     normal: calculateNormalPracticeLayout(state.lineHeight, state.showExamples),
-    sentence: calculateSentencePracticeLayout(state.lineHeight, effectiveSentenceShowTranslation),
-    word: calculateWordPracticeLayout(state.lineHeight, wordPreset.maxWords),
-    phonics: calculatePhonicsPracticeLayout(state.lineHeight),
-    phrase: calculatePhrasePracticeLayout(state.lineHeight, phrasePreset.maxPhrases),
-    cloze: calculateClozePracticeLayout(state.lineHeight, state.showClozeAnswers),
+    sentence: clampLayoutToPool(
+      calculateSentencePracticeLayout(state.lineHeight, effectiveSentenceShowTranslation),
+      getFilteredSentencesForPractice(ageGroup, exampleCategory, sentencePreset).length
+    ),
+    word: clampLayoutToPool(
+      calculateWordPracticeLayout(state.lineHeight, wordPreset.maxWords),
+      getWordPoolSize(wordCategory, ageGroup)
+    ),
+    phonics: clampLayoutToPool(
+      calculatePhonicsPracticeLayout(state.lineHeight),
+      getPhonicsPoolSize(phonicsPattern)
+    ),
+    phrase: clampLayoutToPool(
+      calculatePhrasePracticeLayout(state.lineHeight, phrasePreset.maxPhrases),
+      getPhrasePool(phraseCategory, ageGroup).length
+    ),
+    cloze: clampLayoutToPool(
+      calculateClozePracticeLayout(state.lineHeight, state.showClozeAnswers),
+      getPhrasePool(clozeCategory, ageGroup).length
+    ),
+  };
+}
+
+function getWordPoolSize(category, ageGroup) {
+  const list = WORD_LISTS?.[category]?.[ageGroup];
+  return Array.isArray(list) ? list.length : 0;
+}
+
+function getPhonicsPoolSize(patternKey) {
+  const config = getPhonicsPatternConfigImpl(patternKey);
+  return Array.isArray(config?.words) ? config.words.length : 0;
+}
+
+// 1ページに載せる数がその年齢の項目数を超えると、同じ問題が1枚の中で重複する。
+// 自動調整で増やす場合も含め、プールの実数を超えないようにする。
+function clampLayoutToPool(layout, poolSize) {
+  if (!Number.isFinite(poolSize) || poolSize <= 0) {
+    return layout;
+  }
+
+  const baseValue = Math.max(1, Math.min(layout.baseValue, poolSize));
+
+  return {
+    ...layout,
+    baseValue,
+    minValue: Math.min(layout.minValue, baseValue),
+    maxValue: Math.max(baseValue, Math.min(getLayoutMaxValue(layout), poolSize)),
   };
 }
 
@@ -1315,7 +1354,7 @@ function getVarietyWarning(state) {
   const pageCount = Math.max(1, state.pageCount || 1);
   const needed = perPage * pageCount;
 
-  const uniqueCount = getPhrasePool(category, ageGroup, needed).length;
+  const uniqueCount = getPhrasePool(category, ageGroup).length;
 
   if (uniqueCount >= needed) {
     return '';
@@ -2556,8 +2595,8 @@ function generatePhrasePractice(
   const pageCount = Math.max(1, totalPages || 1);
   const totalDesiredCount = phrasesPerPage * pageCount;
 
-  // 年齢横断プール・全カテゴリー対応（選択年齢を優先し、不足時のみ他年齢で補完）
-  const safePhrases = getPhrasePool(phraseCategory, ageGroup, totalDesiredCount);
+  // 選択年齢のフレーズだけを使う（他年齢を混ぜると漢字レベルが合わなくなる）
+  const safePhrases = getPhrasePool(phraseCategory, ageGroup);
 
   if (!safePhrases.length) {
     if (window.Debug) {
@@ -3039,8 +3078,8 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
   const clozesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.clozesPerPage);
   const pageCount = Math.max(1, totalPages || 1);
 
-  // 年齢横断プール・全カテゴリー対応（選択年齢を優先し、不足時のみ他年齢で補完）
-  const safePhrases = getPhrasePool(clozeCategory, ageGroup, clozesPerPage * pageCount);
+  // 選択年齢のフレーズだけを使う（他年齢を混ぜると漢字レベルが合わなくなる）
+  const safePhrases = getPhrasePool(clozeCategory, ageGroup);
 
   if (!safePhrases.length) {
     return `

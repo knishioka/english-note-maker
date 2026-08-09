@@ -572,7 +572,7 @@
       "id": "phrase-weather-it-is-windy-4-6",
       "type": "phrase",
       "english": "It is windy.",
-      "japanese": "かぜが つよいです。",
+      "japanese": "かぜが ふいて います。",
       "situation": "てんきを つたえる とき",
       "category": "weather",
       "ageGroup": "4-6",

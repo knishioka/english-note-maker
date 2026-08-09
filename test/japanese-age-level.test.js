@@ -103,13 +103,15 @@ describe('年齢別の日本語表記', () => {
 });
 
 describe('穴埋め練習の答えが一意に決まること', () => {
-  it('同じ年齢・カテゴリー・日本語・場面に複数の英文が割り当てられていない', () => {
+  // 1枚の用紙は「同じ年齢・同じカテゴリー」から出題される。そこに同じ日本語が
+  // 2問並ぶと、場面説明が違っても学習者はどちらの英文を書くか決められない。
+  it('同じ年齢・カテゴリーで同じ日本語に複数の英文が割り当てられていない', () => {
     const byPrompt = new Map();
 
     for (const item of ALL_ITEMS) {
       if (item.type === 'word' || item.type === 'alphabet') continue;
       if (!item.english || !item.japanese) continue;
-      const key = [item.ageGroup, item.category, item.japanese, item.situation || ''].join(' | ');
+      const key = [item.ageGroup, item.category, item.japanese].join(' | ');
       if (!byPrompt.has(key)) byPrompt.set(key, new Set());
       byPrompt.get(key).add(item.english);
     }

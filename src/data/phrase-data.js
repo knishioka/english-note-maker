@@ -233,7 +233,11 @@ export const PHRASE_DATA = {
       { english: 'Thank you!', japanese: 'ありがとう！', situation: 'かんしゃする とき' },
       { english: 'Hi!', japanese: 'やあ！', situation: 'カジュアルな あいさつ' },
       { english: 'Bye!', japanese: 'バイバイ！', situation: 'わかれるとき' },
-      { english: 'Good afternoon!', japanese: 'こんにちは！', situation: 'ごごのあいさつ' },
+      {
+        english: 'Good afternoon!',
+        japanese: 'こんにちは！（ごごの あいさつ）',
+        situation: 'ごごのあいさつ',
+      },
       { english: 'Good evening!', japanese: 'こんばんは！', situation: 'ゆうがたの あいさつ' },
       {
         english: 'See you tomorrow!',
@@ -1935,7 +1939,11 @@ export const PHRASE_DATA = {
   },
   emergency_situations: {
     '4-6': [
-      { english: 'Help me!', japanese: 'たすけて！', situation: 'たすけが ひつような とき' },
+      {
+        english: 'Help me!',
+        japanese: 'わたしを たすけて！',
+        situation: 'たすけが ひつような とき',
+      },
       { english: "I'm lost.", japanese: 'まいごになった。', situation: 'みちに まよった とき' },
       { english: 'It hurts.', japanese: 'いたい。', situation: 'いたみを つたえる とき' },
       {
