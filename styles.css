@@ -696,9 +696,11 @@ body::before {
 }
 
 /* === 例文表示 === */
+/* 文字サイズは他モード（英文12pt・訳9.5〜10pt）とそろえ、印刷とも同じにする。
+   ここを画面だけ大きくすると、プレビューと刷り上がりで1ページの分量が変わる。 */
 .example-sentence {
   margin-bottom: 2mm;
-  font-size: 14pt;
+  font-size: 12pt;
   color: #666;
   page-break-inside: avoid;
 }
@@ -711,7 +713,7 @@ body::before {
 
 .example-japanese {
   font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
-  font-size: 11pt;
+  font-size: 10pt;
   color: #888;
   margin-bottom: 2mm;
 }
@@ -1025,14 +1027,8 @@ body::before {
     border-bottom: 0.8px solid #808080 !important; /* 細い実線 */
   }
 
-  /* 例文 */
-  .example-sentence {
-    font-size: 12pt !important;
-  }
-
-  .example-japanese {
-    font-size: 10pt !important;
-  }
+  /* 例文の文字サイズは画面と同じ（通常のCSSで 12pt / 10pt に統一済み）。
+     ここで印刷だけ変えると、プレビューと刷り上がりで分量がずれる。 */
 
   /* 文字色調整 */
   .guide-letter {
@@ -1331,13 +1327,8 @@ body::before {
   color: #e0e0e0;
 }
 
-.a4-preview-page .example-sentence {
-  font-size: 12pt;
-}
-
-.a4-preview-page .example-japanese {
-  font-size: 10pt;
-}
+/* 例文の文字サイズは通常のCSSで印刷と同じ 12pt / 10pt にそろえてあるため、
+   印刷プレビュー用の上書きは不要 */
 
 /* === レスポンシブデザイン === */
 @media (max-width: 768px) {

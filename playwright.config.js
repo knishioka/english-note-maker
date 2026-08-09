@@ -64,11 +64,13 @@ export default defineConfig({
       use: { ...devices['iPhone 12'] },
     },
     // Print testing project
+    // 注意: これは「A4サイズのビューポート」であって、@media print は評価されない
+    // （メディア種別は use では指定できず page.emulateMedia が必要）。
+    // 印刷用CSSの検証は tests/e2e/a4-fit.spec.js が明示的に切り替えて行う。
     {
       name: 'print',
       use: {
         ...devices['Desktop Chrome'],
-        // Emulate print media
         colorScheme: 'light',
         viewport: { width: 794, height: 1123 }, // A4 at 96dpi
       },
