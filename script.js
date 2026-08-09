@@ -887,7 +887,9 @@ function updatePreview() {
   }
 
   const baseLayout = calculateBaseLayout(state);
-  const initialOverrides = {};
+  // 各モードの生成関数は override が無いとプリセット由来の値を自前で計算するため、
+  // プールで抑えた基準値を最初の描画から渡す（自動調整の起点とも一致させる）。
+  const initialOverrides = buildInitialOverrides(state.practiceMode, baseLayout);
 
   renderNotePreview(notePreview, state, initialOverrides);
 
@@ -1199,6 +1201,14 @@ function calculateBaseLayout(state) {
       getPhrasePool(clozeCategory, ageGroup).length
     ),
   };
+}
+
+function buildInitialOverrides(practiceMode, baseLayout) {
+  const layout = baseLayout?.[practiceMode];
+  if (!layout) {
+    return {};
+  }
+  return { [practiceMode]: { [layout.property]: layout.baseValue } };
 }
 
 function getWordPoolSize(category, ageGroup) {
@@ -1621,7 +1631,10 @@ function generateSentencePractice(
 
   // 行高さに応じた例文数は、実際に表示する翻訳有無で計算する。
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
-  const layoutInfo = calculateSentencePracticeLayout(lineHeight, effectiveShowTranslation);
+  const layoutInfo = clampLayoutToPool(
+    calculateSentencePracticeLayout(lineHeight, effectiveShowTranslation),
+    getFilteredSentencesForPractice(ageGroup, category, sentencePreset).length
+  );
   const maxExamples = resolveLayoutValue(layoutInfo, layoutOverride?.maxExamples);
 
   const pageCount = Math.max(1, totalPages || 1);
@@ -1763,10 +1776,13 @@ function generatePhonicsPractice(pageNumber, totalPages, layoutOverride = {}) {
   }
 
   const lineHeight = parseInt(document.getElementById('lineHeight').value, 10);
-  const layoutInfo = calculatePhonicsPracticeLayout(lineHeight);
+  const safeWords = Array.isArray(patternConfig.words) ? patternConfig.words.filter(Boolean) : [];
+  const layoutInfo = clampLayoutToPool(
+    calculatePhonicsPracticeLayout(lineHeight),
+    safeWords.length
+  );
   const wordsPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.wordsPerPage);
   const pageCount = Math.max(1, totalPages || 1);
-  const safeWords = Array.isArray(patternConfig.words) ? patternConfig.words.filter(Boolean) : [];
 
   if (!safeWords.length) {
     html += '<p class="phrase-empty">このパターンには現在表示できる単語がありません。</p>';
@@ -1865,11 +1881,14 @@ function generateWordPractice(pageNumber, totalPages, ageGroup, layoutOverride =
 
   // 行高さに応じて単語数を調整
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
-  const layoutInfo = calculateWordPracticeLayout(lineHeight, wordPreset.maxWords);
+  const safeWords = Array.isArray(words) ? [...words] : [];
   // 何個載るかは autoAdjustPreview が実際の描画高さで決める（プリセット値は初期値）。
   // 難易度による見た目の差は音節・日本語の表示有無で付く。
+  const layoutInfo = clampLayoutToPool(
+    calculateWordPracticeLayout(lineHeight, wordPreset.maxWords),
+    safeWords.length
+  );
   const maxWords = Math.max(1, resolveLayoutValue(layoutInfo, layoutOverride?.maxWords));
-  const safeWords = Array.isArray(words) ? [...words] : [];
 
   if (!safeWords.length) {
     html +=
@@ -2586,17 +2605,21 @@ function generatePhrasePractice(
     });
   }
 
-  const layoutInfo = calculatePhrasePracticeLayout(lineHeight, phrasePreset.maxPhrases);
+  // 選択年齢のフレーズだけを使う（他年齢を混ぜると漢字レベルが合わなくなる）
+  const safePhrases = getPhrasePool(phraseCategory, ageGroup);
+
   // 何問載るかは autoAdjustPreview が実際の描画高さで決める（プリセット値は初期値）。
+  // 1枚の中で同じ問題が重なるのを防ぐため、上限はプールの件数に収める。
+  const layoutInfo = clampLayoutToPool(
+    calculatePhrasePracticeLayout(lineHeight, phrasePreset.maxPhrases),
+    safePhrases.length
+  );
   const phrasesPerPage = Math.max(
     1,
     resolveLayoutValue(layoutInfo, layoutOverride?.phrasesPerPage)
   );
   const pageCount = Math.max(1, totalPages || 1);
   const totalDesiredCount = phrasesPerPage * pageCount;
-
-  // 選択年齢のフレーズだけを使う（他年齢を混ぜると漢字レベルが合わなくなる）
-  const safePhrases = getPhrasePool(phraseCategory, ageGroup);
 
   if (!safePhrases.length) {
     if (window.Debug) {
@@ -3074,12 +3097,16 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
   const showAnswers = Boolean(document.getElementById('showClozeAnswers')?.checked);
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
 
-  const layoutInfo = calculateClozePracticeLayout(lineHeight, showAnswers);
-  const clozesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.clozesPerPage);
-  const pageCount = Math.max(1, totalPages || 1);
-
   // 選択年齢のフレーズだけを使う（他年齢を混ぜると漢字レベルが合わなくなる）
   const safePhrases = getPhrasePool(clozeCategory, ageGroup);
+
+  // 1枚の中で同じ問題が重なるのを防ぐため、上限はプールの件数に収める。
+  const layoutInfo = clampLayoutToPool(
+    calculateClozePracticeLayout(lineHeight, showAnswers),
+    safePhrases.length
+  );
+  const clozesPerPage = resolveLayoutValue(layoutInfo, layoutOverride?.clozesPerPage);
+  const pageCount = Math.max(1, totalPages || 1);
 
   if (!safePhrases.length) {
     return `
