@@ -6,6 +6,7 @@ import {
   parseUrlState,
   serializeUrlStateToSearch,
 } from './src/url-state.js';
+import { buildSightWordSequence, sanitizeSightWordCount } from './src/sight-word-sequence.js';
 
 // モジュールローダー（CommonJS互換のため動的インポートを使用）
 let EXAMPLE_SENTENCES_BY_AGE = {};
@@ -37,6 +38,7 @@ let sentenceSequenceCache = {
   sequence: [],
   emptySource: false,
 };
+let sightWordSequenceCache = { perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 
 const PX_TO_MM = 0.2645833333;
 const A4_HEIGHT_MM = 297;
@@ -159,6 +161,10 @@ function resetSentenceCache() {
     sequence: [],
     emptySource: false,
   };
+}
+
+function resetSightWordCache() {
+  sightWordSequenceCache = { perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 }
 
 // カテゴリーキー → 日本語ラベル（cloze / phrase 両モードで共有）
@@ -483,6 +489,7 @@ const OPTION_SECTION_IDS = [
   'clozeOptions',
   'phonicsOptions',
   'sentenceDifficultyOptions',
+  'sightWordOptions',
 ];
 
 const PRACTICE_MODE_CONFIGS = {
@@ -514,6 +521,10 @@ const PRACTICE_MODE_CONFIGS = {
   },
   cloze: {
     sections: ['ageOptions', 'clozeOptions'],
+    checkboxes: { showExamples: false, showTranslation: false },
+  },
+  sightWords: {
+    sections: ['sightWordOptions'],
     checkboxes: { showExamples: false, showTranslation: false },
   },
   default: {
@@ -691,6 +702,8 @@ function setupEventListeners() {
     wordDifficulty: document.getElementById('wordDifficulty'),
     phraseDifficulty: document.getElementById('phraseDifficulty'),
     sentenceDifficulty: document.getElementById('sentenceDifficulty'),
+    sightWordCount: document.getElementById('sightWordCount'),
+    shuffleSightWordsBtn: document.getElementById('shuffleSightWords'),
   };
 
   document.addEventListener('change', handleUrlStateControlInteraction, true);
@@ -812,6 +825,14 @@ function setupEventListeners() {
     resetSentenceCache();
     updatePreview();
   });
+  addEventListenerIfExists(elements.sightWordCount, 'change', () => {
+    resetSightWordCache();
+    updatePreview();
+  });
+  addEventListenerIfExists(elements.shuffleSightWordsBtn, 'click', () => {
+    resetSightWordCache();
+    updatePreview();
+  });
 
   addEventListenerIfExists(elements.printBtn, 'click', printNote);
 
@@ -831,6 +852,7 @@ function setupEventListeners() {
     resetClozeCache();
     resetPhonicsCache();
     resetSentenceCache();
+    resetSightWordCache();
     setCurrentExamples([]);
     updatePreview();
   });
@@ -1200,6 +1222,18 @@ function calculateBaseLayout(state) {
       calculateClozePracticeLayout(state.lineHeight, state.showClozeAnswers),
       getPhrasePool(clozeCategory, ageGroup).length
     ),
+    sightWords: calculateSightWordPracticeLayout(),
+  };
+}
+
+function calculateSightWordPracticeLayout() {
+  const selected = sanitizeSightWordCount(document.getElementById('sightWordCount')?.value);
+  return {
+    property: 'wordsPerPage',
+    label: 'サイトワード数',
+    baseValue: selected,
+    minValue: Math.min(4, selected),
+    maxValue: selected,
   };
 }
 
@@ -1443,7 +1477,7 @@ function cloneOverrides(overrides) {
     return clone;
   }
 
-  ['normal', 'sentence', 'word', 'phonics', 'phrase', 'cloze'].forEach((key) => {
+  ['normal', 'sentence', 'word', 'phonics', 'phrase', 'cloze', 'sightWords'].forEach((key) => {
     if (overrides[key]) {
       clone[key] = { ...overrides[key] };
     }
@@ -1546,6 +1580,8 @@ function generateNotePage(pageNumber, totalPages, layoutOverrides = {}) {
     );
   } else if (practiceMode === 'cloze') {
     html += generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverrides.cloze);
+  } else if (practiceMode === 'sightWords') {
+    html += generateSightWordPractice(pageNumber, totalPages, layoutOverrides.sightWords);
   } else {
     html += generateNormalPractice(
       pageNumber,
@@ -1560,6 +1596,62 @@ function generateNotePage(pageNumber, totalPages, layoutOverrides = {}) {
   html += '</div>';
 
   return html;
+}
+
+function ensureSightWordSequence(perPage, pageCount) {
+  const fingerprint = SIGHT_WORDS_DATA.map((item) => item.word).join('|');
+  const totalNeeded = Math.min(perPage * pageCount, SIGHT_WORDS_DATA.length);
+  if (
+    sightWordSequenceCache.perPage !== perPage ||
+    sightWordSequenceCache.pageCount !== pageCount ||
+    sightWordSequenceCache.fingerprint !== fingerprint ||
+    sightWordSequenceCache.sequence.length < totalNeeded
+  ) {
+    sightWordSequenceCache = {
+      perPage,
+      pageCount,
+      fingerprint,
+      sequence: buildSightWordSequence(SIGHT_WORDS_DATA, perPage, pageCount),
+    };
+  }
+  return sightWordSequenceCache.sequence;
+}
+
+function generateSightWordPractice(pageNumber, totalPages, layoutOverride = {}) {
+  const layout = calculateSightWordPracticeLayout();
+  const wordsPerPage = Math.max(1, resolveLayoutValue(layout, layoutOverride?.wordsPerPage));
+  const pageCount = Math.max(1, totalPages || 1);
+  const sequence = ensureSightWordSequence(wordsPerPage, pageCount);
+  const start = (pageNumber - 1) * wordsPerPage;
+  const words = sequence.slice(start, start + wordsPerPage);
+  const pageLabel = pageCount > 1 ? ` (${pageNumber}/${pageCount})` : '';
+
+  let html = `<section class="sight-word-practice sight-word-practice--count-${wordsPerPage}">
+    <h3 class="practice-title practice-title--sight-word">Sight Word Practice${pageLabel}</h3>
+    <div class="sight-word-grid">`;
+
+  for (const item of words) {
+    const word = escapeHtml(item.word);
+    const japanese = escapeHtml(item.japanese);
+    html += `<article class="sight-word-item" data-sight-word="${word}">
+      <div class="sight-word-step sight-word-step--read">
+        <span class="sight-word-step__label">1 Read / Trace</span>
+        <span class="sight-word-model">${word}</span><span class="sight-word-japanese">${japanese}</span>
+        ${generateBaselineGroup(item.word, 3)}
+      </div>
+      <div class="sight-word-step sight-word-step--copy">
+        <span class="sight-word-step__label">2 Copy</span><span class="sight-word-copy-model">${word}</span>
+        ${generateBaselineGroup()}
+      </div>
+      <div class="sight-word-step sight-word-step--recall">
+        <span class="sight-word-step__label">3 Recall</span><span class="sight-word-japanese">${japanese}</span>
+        ${generateBaselineGroup()}
+      </div>
+    </article>`;
+  }
+
+  if (!words.length) html += '<p class="sight-word-empty">表示できるサイトワードがありません。</p>';
+  return `${html}</div></section>`;
 }
 
 // 通常練習モード生成

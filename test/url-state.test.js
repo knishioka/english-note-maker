@@ -46,6 +46,7 @@ function setupWorksheetControls() {
     'word',
     'alphabet',
     'cloze',
+    'sightWords',
   ]);
   appendControl('ageGroup', 'select', ['4-6', '7-9', '10-12'], '7-9');
   appendControl('pageCount', 'input', { type: 'number', min: 1, max: 60 }, 1);
@@ -71,6 +72,7 @@ function setupWorksheetControls() {
   appendControl('alphabetWordCount', 'select', ['1', '2', '3'], '2');
   appendControl('showAlphabetExample', 'input', { type: 'checkbox' }, true);
   appendControl('phonicsPattern', 'select', ['short-a', 'long-a'], 'short-a');
+  appendControl('sightWordCount', 'select', ['4', '6', '8'], '6');
 }
 
 describe('url-state', () => {
@@ -183,5 +185,16 @@ describe('url-state', () => {
     });
     expect(search).not.toContain('customEnglish');
     expect(search).not.toContain('shuffleSeed');
+  });
+
+  it('round-trips sight-word settings and ignores invalid counts', () => {
+    setupWorksheetControls();
+    expect(parseUrlState('?practiceMode=sightWords&sightWordCount=8')).toEqual({
+      practiceMode: 'sightWords',
+      sightWordCount: 8,
+    });
+    expect(parseUrlState('?practiceMode=sightWords&sightWordCount=5')).toEqual({
+      practiceMode: 'sightWords',
+    });
   });
 });
