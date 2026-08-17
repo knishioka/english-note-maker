@@ -22,6 +22,7 @@ const MODES = [
   { mode: 'phonics', maxFreeMm: 40 },
   { mode: 'phrase', maxFreeMm: 60 }, // 1問が50〜66mm
   { mode: 'cloze', maxFreeMm: 40 },
+  { mode: 'sightWords', maxFreeMm: 100 },
 ];
 
 async function applySettings(page, { mode, ageGroup, lineHeight }) {
