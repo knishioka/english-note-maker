@@ -45,8 +45,23 @@
               <option value="word">単語練習</option>
               <option value="alphabet">アルファベット練習</option>
               <option value="cloze">穴埋めフレーズ練習</option>
+              <option value="sightWords">サイトワード練習</option>
             </select>
           </label>
+        </div>
+
+        <div class="controls__group" id="sightWordOptions" style="display: none">
+          <label class="controls__label">
+            1ページの単語数:
+            <select id="sightWordCount" class="controls__select">
+              <option value="4">4語</option>
+              <option value="6" selected>6語</option>
+              <option value="8">8語</option>
+            </select>
+          </label>
+          <button id="shuffleSightWords" class="btn btn--secondary" type="button">
+            🔄 別の単語を表示
+          </button>
         </div>
 
         <div class="controls__group" id="ageOptions" style="display: none">

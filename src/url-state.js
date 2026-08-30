@@ -35,7 +35,7 @@ export const URL_STATE_PARAM_SPECS = {
   practiceMode: {
     elementId: 'practiceMode',
     type: 'enum',
-    values: ['phrase', 'phonics', 'normal', 'sentence', 'word', 'alphabet', 'cloze'],
+    values: ['phrase', 'phonics', 'normal', 'sentence', 'word', 'alphabet', 'cloze', 'sightWords'],
   },
   ageGroup: { elementId: 'ageGroup', type: 'enum', values: ['4-6', '7-9', '10-12'] },
   pageCount: { elementId: 'pageCount', type: 'integer', min: 1, max: 60 },
@@ -95,6 +95,7 @@ export const URL_STATE_PARAM_SPECS = {
   alphabetWordCount: { elementId: 'alphabetWordCount', type: 'integer', values: [1, 2, 3] },
   showAlphabetExample: { elementId: 'showAlphabetExample', type: 'boolean' },
   phonicsPattern: { elementId: 'phonicsPattern', type: 'select' },
+  sightWordCount: { elementId: 'sightWordCount', type: 'integer', values: [4, 6, 8] },
 };
 
 export const URL_STATE_PARAM_KEYS = Object.keys(URL_STATE_PARAM_SPECS);

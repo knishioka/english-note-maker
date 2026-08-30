@@ -1708,6 +1708,65 @@ body::before {
   padding: 0;
 }
 
+/* === サイトワード練習 === */
+.sight-word-practice {
+  padding: 0;
+}
+.practice-title--sight-word {
+  margin-bottom: 3mm;
+}
+.sight-word-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2mm 5mm;
+}
+.sight-word-item {
+  min-width: 0;
+  padding: 1.5mm 2mm;
+  border: 1px solid #dbe3ee;
+  border-radius: 2mm;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.sight-word-step {
+  position: relative;
+  min-width: 0;
+}
+.sight-word-step + .sight-word-step {
+  margin-top: 0.7mm;
+}
+.sight-word-step__label {
+  display: inline-block;
+  min-width: 21mm;
+  font-size: 7.5pt;
+  font-weight: 700;
+  color: #475569;
+}
+.sight-word-model,
+.sight-word-copy-model {
+  margin-right: 2mm;
+  font-family: var(--font-handwriting);
+  font-size: 12pt;
+  font-weight: 700;
+  color: var(--text-color);
+}
+.sight-word-japanese {
+  font-size: 8pt;
+  color: #64748b;
+}
+.sight-word-item .baseline-group {
+  margin-top: 0.5mm;
+  margin-bottom: 0;
+}
+.sight-word-item .guide-letter {
+  color: #aeb8c7;
+}
+.sight-word-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #64748b;
+}
+
 .practice-title--cloze {
   margin-bottom: 2mm;
 }
