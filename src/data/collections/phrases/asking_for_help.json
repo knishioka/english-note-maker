@@ -535,10 +535,10 @@
       "category": "asking_for_help",
       "ageGroup": "4-6",
       "difficulty": 1,
-      "pattern": "statement",
+      "pattern": "question",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["asking_for_help"]
+      "tags": ["asking_for_help", "question"]
     },
     {
       "id": "phrase-asking_for_help-i-don-t-know-4-6",

@@ -577,10 +577,10 @@
       "category": "food_eating",
       "ageGroup": "4-6",
       "difficulty": 1,
-      "pattern": "statement",
+      "pattern": "invitation",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["food_eating"]
+      "tags": ["food_eating", "invitation"]
     },
     {
       "id": "phrase-food_eating-i-am-full-4-6",

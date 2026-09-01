@@ -779,10 +779,10 @@
       "tags": ["friend_making"]
     },
     {
-      "id": "phrase-friend_making-let-s-be-friends-forever-4-6",
+      "id": "phrase-friend_making-i-want-to-be-your-friend-4-6",
       "type": "phrase",
-      "english": "Let's be friends forever.",
-      "japanese": "ずっと ともだちで いようね。",
+      "english": "I want to be your friend.",
+      "japanese": "あなたと ともだちに なりたいな。",
       "situation": "ともだちに なりたい とき",
       "category": "friend_making",
       "ageGroup": "4-6",
@@ -790,7 +790,7 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["friend_making"]
+      "tags": ["friend_making", "statement"]
     },
     {
       "id": "phrase-friend_making-what-s-your-name-4-6",

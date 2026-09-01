@@ -1166,7 +1166,7 @@ export const PHRASE_DATA = {
       },
       {
         english: 'Is this seat taken?',
-        japanese: 'このせきに、だれかすわっていますか？',
+        japanese: 'このせきはつかわれていますか？',
         situation: 'せきをたしかめるとき',
       },
       {

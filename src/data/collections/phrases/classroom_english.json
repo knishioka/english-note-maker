@@ -521,10 +521,10 @@
       "category": "classroom_english",
       "ageGroup": "4-6",
       "difficulty": 1,
-      "pattern": "statement",
+      "pattern": "invitation",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["classroom_english"]
+      "tags": ["classroom_english", "invitation"]
     },
     {
       "id": "phrase-classroom_english-be-quiet-please-4-6",
@@ -936,7 +936,7 @@
       "id": "phrase-classroom_english-hands-up-4-6",
       "type": "phrase",
       "english": "Hands up!",
-      "japanese": "りょうてを あげて！",
+      "japanese": "みんな、てを あげて！",
       "situation": "てを あげるのを うながす とき",
       "category": "classroom_english",
       "ageGroup": "4-6",
