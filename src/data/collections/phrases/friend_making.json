@@ -516,7 +516,7 @@
       "id": "phrase-friend_making-do-you-want-to-be-friends-4-6",
       "type": "phrase",
       "english": "Do you want to be friends?",
-      "japanese": "ともだちに なろう？",
+      "japanese": "ともだちに なりたい？",
       "situation": "ともだちに なりたい とき",
       "category": "friend_making",
       "ageGroup": "4-6",
@@ -779,10 +779,10 @@
       "tags": ["friend_making"]
     },
     {
-      "id": "phrase-friend_making-let-s-be-friends-4-6-2",
+      "id": "phrase-friend_making-i-want-to-be-your-friend-4-6",
       "type": "phrase",
-      "english": "Let's be friends.",
-      "japanese": "ともだちに なろう。",
+      "english": "I want to be your friend.",
+      "japanese": "あなたと ともだちに なりたいな。",
       "situation": "ともだちに なりたい とき",
       "category": "friend_making",
       "ageGroup": "4-6",
@@ -790,7 +790,7 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["friend_making"]
+      "tags": ["friend_making", "statement"]
     },
     {
       "id": "phrase-friend_making-what-s-your-name-4-6",
@@ -1104,7 +1104,7 @@
       "id": "phrase-friend_making-what-do-you-like-to-do-for-fun-10-12",
       "type": "phrase",
       "english": "What do you like to do for fun?",
-      "japanese": "楽しみは何？",
+      "japanese": "楽しむために何をするのが好き？",
       "situation": "会話を始めるとき",
       "category": "friend_making",
       "ageGroup": "10-12",

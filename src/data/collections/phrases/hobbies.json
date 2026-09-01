@@ -807,10 +807,10 @@
       "tags": ["hobbies"]
     },
     {
-      "id": "phrase-hobbies-i-started-learning-calligraphy-recently-10-12",
+      "id": "phrase-hobbies-i-practice-calligraphy-every-week-10-12",
       "type": "phrase",
-      "english": "I started learning calligraphy recently.",
-      "japanese": "最近、書道を習い始めました。",
+      "english": "I practice calligraphy every week.",
+      "japanese": "毎週、書道をれんしゅうしています。",
       "situation": "習い事の話をするとき",
       "category": "hobbies",
       "ageGroup": "10-12",
@@ -818,7 +818,7 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["hobbies"]
+      "tags": ["hobbies", "statement", "study"]
     },
     {
       "id": "phrase-hobbies-reading-novels-is-my-favorite-pastime-10-12",
