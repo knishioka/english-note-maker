@@ -208,7 +208,7 @@
       "id": "phrase-food_eating-i-usually-have-rice-for-breakf-7-9",
       "type": "phrase",
       "english": "I usually have rice for breakfast.",
-      "japanese": "わたしはふだん、朝ごはんを食べます。",
+      "japanese": "わたしはふだん、朝ごはんにごはんを食べます。",
       "situation": "朝食について話すとき",
       "category": "food_eating",
       "ageGroup": "7-9",
@@ -569,10 +569,10 @@
       "tags": ["food_eating"]
     },
     {
-      "id": "phrase-food_eating-let-s-eat-4-6",
+      "id": "phrase-food_eating-let-s-start-eating-4-6",
       "type": "phrase",
-      "english": "Let's eat.",
-      "japanese": "たべましょう。",
+      "english": "Let's start eating.",
+      "japanese": "たべはじめましょう。",
       "situation": "ごはんを はじめる とき",
       "category": "food_eating",
       "ageGroup": "4-6",

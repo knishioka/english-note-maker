@@ -103,6 +103,11 @@ describe('年齢別の日本語表記', () => {
 });
 
 describe('穴埋め練習の答えが一意に決まること', () => {
+  // スペースや句読点だけが違う日本語は、学習者には同じ問題に見える。
+  // 「ありがとう。」と「ありがとう！」に別の英文が割り当たっていると答えを選べない。
+  // （）内は「こんにちは！（ごごの あいさつ）」のような書き分けなので残す。
+  const normalizePrompt = (japanese) => japanese.replace(/[\s、。，．・!！?？]/g, '');
+
   // 1枚の用紙は「同じ年齢・同じカテゴリー」から出題される。そこに同じ日本語が
   // 2問並ぶと、場面説明が違っても学習者はどちらの英文を書くか決められない。
   it('同じ年齢・カテゴリーで同じ日本語に複数の英文が割り当てられていない', () => {
@@ -111,7 +116,7 @@ describe('穴埋め練習の答えが一意に決まること', () => {
     for (const item of ALL_ITEMS) {
       if (item.type === 'word' || item.type === 'alphabet') continue;
       if (!item.english || !item.japanese) continue;
-      const key = [item.ageGroup, item.category, item.japanese].join(' | ');
+      const key = [item.ageGroup, item.category, normalizePrompt(item.japanese)].join(' | ');
       if (!byPrompt.has(key)) byPrompt.set(key, new Set());
       byPrompt.get(key).add(item.english);
     }

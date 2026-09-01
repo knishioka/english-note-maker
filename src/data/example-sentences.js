@@ -155,7 +155,7 @@ export const EXAMPLE_SENTENCES_BY_AGE = {
     },
     {
       english: 'Reading helps improve vocabulary.',
-      japanese: '読書はことばの力の向上に役立ちます。',
+      japanese: '読書は語い力をのばすのに役立ちます。',
       category: 'school',
       difficulty: 3,
     },

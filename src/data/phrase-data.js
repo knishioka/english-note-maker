@@ -936,7 +936,7 @@ export const PHRASE_DATA = {
       { english: 'Thank you.', japanese: 'ありがとう。', situation: 'かいものを おえる とき' },
       {
         english: 'Can I have one?',
-        japanese: 'ひとつください。',
+        japanese: 'ひとつ もらえますか？',
         situation: 'ほしい ものを たのむ とき',
       },
       {
@@ -1166,7 +1166,7 @@ export const PHRASE_DATA = {
       },
       {
         english: 'Is this seat taken?',
-        japanese: 'このせきは空いていますか？',
+        japanese: 'このせきに、だれかすわっていますか？',
         situation: 'せきをたしかめるとき',
       },
       {
@@ -1378,7 +1378,7 @@ export const PHRASE_DATA = {
         situation: '不安を伝えるとき',
       },
       {
-        english: "I'm inspired by your story.",
+        english: "I'm moved by your story.",
         japanese: 'あなたの話に、とても感動しました。',
         situation: '感動を伝えるとき',
       },
@@ -1394,7 +1394,7 @@ export const PHRASE_DATA = {
       },
       {
         english: "I'm sympathetic to your situation.",
-        japanese: 'あなたの気持ち、よくわかります。',
+        japanese: 'あなたのじょうきょうに共感します。',
         situation: '思いやりを伝えるとき',
       },
       {
@@ -1974,7 +1974,7 @@ export const PHRASE_DATA = {
       },
       {
         english: 'I need a grown-up.',
-        japanese: 'おとなの ひとに きて ほしいです。',
+        japanese: 'おとなの ひとが ひつようです。',
         situation: 'おとなの たすけが ひつような とき',
       },
       {
@@ -2098,7 +2098,7 @@ export const PHRASE_DATA = {
       },
       {
         english: 'I have important medical information.',
-        japanese: '体について、知っておいてほしいことがあります。',
+        japanese: '大切な医りょうのじょうほうがあります。',
         situation: '体のことを伝えるとき',
       },
       {
@@ -2293,7 +2293,7 @@ export const PHRASE_DATA = {
       },
       {
         english: 'This pencil is longer than that one.',
-        japanese: 'この ペンは あちらより ながいです。',
+        japanese: 'この えんぴつは あの えんぴつより ながいです。',
         situation: 'ながさの くらべかた',
       },
       {
