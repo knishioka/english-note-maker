@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('穴埋めフレーズ練習テスト', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/?view=worksheet');
     await page.selectOption('#practiceMode', 'cloze');
     await page.waitForTimeout(500);
   });

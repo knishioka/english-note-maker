@@ -1,8 +1,14 @@
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+import { PHRASE_DATA } from '../../src/data/phrase-data.js';
+
+const collection = JSON.parse(
+  readFileSync('src/data/collections/phrases/numbers_math.json', 'utf8')
+);
 
 test.describe('数と算数カテゴリーテスト', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/?view=worksheet');
     await page.selectOption('#practiceMode', 'phrase');
     await page.selectOption('#phraseCategory', 'numbers_math');
     await page.waitForTimeout(500);
@@ -13,56 +19,21 @@ test.describe('数と算数カテゴリーテスト', () => {
     expect(categoryValue).toBe('numbers_math');
   });
 
-  test('4-6歳グループで基本的な足し算フレーズが表示される', async ({ page }) => {
-    await page.selectOption('#ageGroup', '4-6');
-    await page.waitForTimeout(500);
-
-    const previewContent = await page.locator('#notePreview').textContent();
-
-    // タイトル確認
-    expect(previewContent).toContain('Phrase Practice - 数と算数');
-
-    // 基本的な数のフレーズを確認
-    const hasBasicMath =
-      previewContent.includes('plus') ||
-      previewContent.includes('minus') ||
-      previewContent.includes('equals') ||
-      previewContent.includes('bigger') ||
-      previewContent.includes('smaller');
-
-    expect(hasBasicMath).toBeTruthy();
-  });
-
-  test('7-9歳グループで位の概念フレーズが表示される', async ({ page }) => {
-    await page.selectOption('#ageGroup', '7-9');
-    await page.waitForTimeout(500);
-
-    const previewContent = await page.locator('#notePreview').textContent();
-
-    // 位の概念を確認
-    const hasTensOnes =
-      previewContent.includes('ten') ||
-      previewContent.includes('ones') ||
-      previewContent.includes('fifteen');
-
-    expect(hasTensOnes).toBeTruthy();
-  });
-
-  test('10-12歳グループで四則演算フレーズが表示される', async ({ page }) => {
-    await page.selectOption('#ageGroup', '10-12');
-    await page.waitForTimeout(500);
-
-    const previewContent = await page.locator('#notePreview').textContent();
-
-    // 四則演算を確認
-    const hasAdvancedMath =
-      previewContent.includes('times') ||
-      previewContent.includes('divided') ||
-      previewContent.includes('sum') ||
-      previewContent.includes('hundred');
-
-    expect(hasAdvancedMath).toBeTruthy();
-  });
+  for (const ageGroup of ['4-6', '7-9', '10-12']) {
+    test(ageGroup + '歳向けの数と算数フレーズが表示される', async ({ page }) => {
+      await page.selectOption('#ageGroup', ageGroup);
+      await expect(page.locator('#notePreview .practice-title')).toContainText('数と算数');
+      const valid = new Set(
+        [
+          ...PHRASE_DATA.numbers_math[ageGroup],
+          ...collection.items.filter((item) => item.ageGroup === ageGroup),
+        ].map((item) => item.english)
+      );
+      const phrases = await page.locator('#notePreview .phrase-english').allTextContents();
+      expect(phrases.length).toBeGreaterThan(0);
+      for (const phrase of phrases) expect(valid.has(phrase.trim())).toBe(true);
+    });
+  }
 
   test('年齢グループを変更してもカテゴリーが維持される', async ({ page }) => {
     // 4-6歳を選択

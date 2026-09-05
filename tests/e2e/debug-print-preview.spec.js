@@ -10,7 +10,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Print Preview Debugging', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to the application
-    await page.goto('/');
+    await page.goto('/?view=worksheet');
 
     // Start capturing console messages
     page.on('console', (msg) => {
@@ -196,12 +196,15 @@ test.describe('Print Preview Debugging', () => {
     for (let i = 0; i < 5; i++) {
       await page.waitForTimeout(100);
 
-      const state = await modal.evaluate((el) => ({
-        time: i * 100,
-        display: window.getComputedStyle(el).display,
-        opacity: window.getComputedStyle(el).opacity,
-        classList: Array.from(el.classList),
-      }));
+      const state = await modal.evaluate(
+        (el, time) => ({
+          time,
+          display: window.getComputedStyle(el).display,
+          opacity: window.getComputedStyle(el).opacity,
+          classList: Array.from(el.classList),
+        }),
+        i * 100
+      );
 
       console.log(`Modal state at ${state.time}ms:`, state);
     }
@@ -253,7 +256,7 @@ test.describe('Print Preview Debugging', () => {
 
 test.describe('Performance Debugging', () => {
   test('measure rendering performance', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?view=worksheet');
 
     // Measure page load performance
     const performanceMetrics = await page.evaluate(() => {
@@ -293,7 +296,7 @@ test.describe('Performance Debugging', () => {
   });
 
   test('debug memory usage', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?view=worksheet');
 
     // Check initial memory usage
     const initialMemory = await page.evaluate(() => {

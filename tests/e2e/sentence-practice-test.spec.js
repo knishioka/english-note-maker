@@ -9,7 +9,7 @@ const CUSTOM_EXAMPLES_STORAGE_KEY = 'english-note-maker.customExamples.v1';
 
 test.describe('文章練習モードテスト', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/?view=worksheet');
     await page.selectOption('#practiceMode', 'sentence');
     await expect(page.locator('#exampleOptions')).toBeVisible();
   });
@@ -148,7 +148,7 @@ test.describe('文章練習モードテスト', () => {
 
 test.describe('カスタム例文の永続化', () => {
   test('追加したカスタム例文がリロード後も表示され、削除できる', async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/?view=worksheet');
     await page.selectOption('#practiceMode', 'sentence');
     await page.selectOption('#ageGroup', '4-6');
     await page.selectOption('#exampleCategory', 'school');
@@ -201,7 +201,7 @@ test.describe('カスタム例文の永続化', () => {
       window.localStorage.setItem(storageKey, '{broken-json');
     }, CUSTOM_EXAMPLES_STORAGE_KEY);
 
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/?view=worksheet');
     await page.selectOption('#practiceMode', 'sentence');
 
     await expect(page.locator('#customExamplesCount')).toHaveText('0件');
@@ -215,7 +215,7 @@ test.describe('カスタム例文の永続化', () => {
   });
 
   test('カスタム例文のHTML風入力はプレビューで実行されない', async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/?view=worksheet');
     await page.selectOption('#practiceMode', 'sentence');
     await page.selectOption('#ageGroup', '4-6');
     await page.selectOption('#exampleCategory', 'school');
@@ -239,7 +239,7 @@ test.describe('カスタム例文の永続化', () => {
   });
 
   test('削除ボタンのaria-labelでは属性注入されない', async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/?view=worksheet');
     await page.selectOption('#practiceMode', 'sentence');
 
     const injectedEnglish = 'Bad" autofocus onfocus="window.customDeleteXss=1';
@@ -259,7 +259,7 @@ test.describe('カスタム例文の永続化', () => {
 });
 
 test('複数ページ生成しても同一ページ内に例文の重複が出ない', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'sentence');
   await page.check('#showExamples');
   await page.selectOption('#exampleCategory', 'all');
@@ -280,7 +280,7 @@ test('複数ページ生成しても同一ページ内に例文の重複が出�
 });
 
 test('難易度セレクタが存在し、難易度を切り替えると表示例文が変わる', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'sentence');
   await page.check('#showExamples');
   await expect(page.locator('#sentenceDifficulty')).toBeVisible();
@@ -301,7 +301,7 @@ test('難易度セレクタが存在し、難易度を切り替えると表示�
 });
 
 test('文章練習モードの全体統合テスト', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'sentence');
   await expect(page.locator('#translationOptions')).toBeVisible();
 

@@ -60,7 +60,7 @@ async function measurePages(page) {
 
 test.describe('A4レイアウト', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?view=worksheet');
     await page.waitForSelector('.note-page');
   });
 
@@ -101,7 +101,7 @@ test.describe('プレビューと印刷でレイアウトが変わらない', ()
     }, PX_TO_MM);
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?view=worksheet');
     await page.waitForSelector('.note-page');
   });
 
