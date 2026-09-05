@@ -10,9 +10,9 @@ test('five-question practice, retry, persistence and worksheet handoff', async (
     for (const input of await page.locator('#questionEnglish input').all())
       await input.fill('wrong');
     await page.getByRole('button', { name: '答え合わせ', exact: true }).click();
-    await expect(page.locator('#answerFeedback')).toContainText('お手本を見て');
+    await expect(page.locator('#answerFeedback')).toContainText('お手本とくらべて');
     answers.push(
-      (await page.locator('.answer-key').textContent()).replace('答え：', '').split(' / ')
+      (await page.locator('.answer-key').textContent()).replace('答えの例：', '').split(' / ')
     );
     await page.locator('#nextQuestion').click();
   }

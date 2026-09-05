@@ -1,12 +1,12 @@
 {
   "type": "phrase",
-  "version": "1.0.0",
-  "lastUpdated": "2026-01-01T12:34:13.662Z",
+  "version": "1.1.0",
+  "lastUpdated": "2026-09-05T00:00:00.000Z",
   "files": [
     {
       "name": "greetings",
       "path": "./greetings.json",
-      "itemCount": 62,
+      "itemCount": 61,
       "ageGroups": ["4-6", "7-9", "10-12"]
     },
     {
@@ -42,7 +42,7 @@
     {
       "name": "feelings",
       "path": "./feelings.json",
-      "itemCount": 101,
+      "itemCount": 99,
       "ageGroups": ["4-6", "7-9", "10-12"]
     },
     {
@@ -72,7 +72,7 @@
     {
       "name": "numbers_math",
       "path": "./numbers_math.json",
-      "itemCount": 72,
+      "itemCount": 137,
       "ageGroups": ["4-6", "7-9", "10-12"]
     },
     {
@@ -130,6 +130,6 @@
       "ageGroups": ["4-6", "7-9", "10-12"]
     }
   ],
-  "totalItems": 1514,
+  "totalItems": 1576,
   "loadStrategy": "lazy"
 }

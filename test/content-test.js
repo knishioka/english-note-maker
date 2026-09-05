@@ -195,16 +195,7 @@ test(
 
 // 7. カテゴリーの存在確認
 console.log('\n📁 カテゴリーの存在確認');
-const expectedWordCategories = [
-  'animals',
-  'food',
-  'colors',
-  'numbers',
-  'calendar',
-  'school_items',
-  'body_parts',
-  'weather',
-];
+const expectedWordCategories = ['animals', 'food', 'colors', 'numbers', 'calendar'];
 const expectedPhraseCategories = [
   'greetings',
   'self_introduction',

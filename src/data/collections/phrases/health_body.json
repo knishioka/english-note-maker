@@ -2,8 +2,8 @@
   "metadata": {
     "type": "phrase",
     "category": "health_body",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T12:30:44.742Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
     "totalCount": 63,
     "schemaVersion": "1.0.0"
   },
@@ -362,7 +362,7 @@
       "id": "phrase-health_body-i-think-im-coming-down-with-so-10-12",
       "type": "phrase",
       "english": "I think I'm coming down with something.",
-      "japanese": "何かにかかりそうな気がします。",
+      "japanese": "何か病気にかかり始めている気がします。",
       "situation": "病気の兆候を伝えるとき",
       "category": "health_body",
       "ageGroup": "10-12",
@@ -370,7 +370,8 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["health_body", "statement"]
+      "tags": ["health_body", "statement"],
+      "revision": 2
     },
     {
       "id": "phrase-health_body-i-should-take-better-care-of-m-10-12",
@@ -460,7 +461,7 @@
       "id": "phrase-health_body-its-important-to-stay-hydrated-10-12",
       "type": "phrase",
       "english": "It's important to stay hydrated.",
-      "japanese": "水分をとることを続けることが大切です。",
+      "japanese": "体に必要な水分をとることが大切です。",
       "situation": "健康アドバイスを言うとき",
       "category": "health_body",
       "ageGroup": "10-12",
@@ -468,7 +469,8 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["health_body", "statement"]
+      "tags": ["health_body", "statement"],
+      "revision": 2
     },
     {
       "id": "phrase-health_body-ive-been-working-out-to-stay-f-10-12",

@@ -1,205 +1,127 @@
-import {
-  SIGHT_WORD_SET as SIGHT_WORD_SET_DATA,
-  SIGHT_WORD_MAP as SIGHT_WORD_MAP_DATA,
-} from '../data/sight-words.js';
+import { SIGHT_WORD_SET, SIGHT_WORD_MAP } from '../data/sight-words.js';
 
-function escapeHtml(text) {
-  const replacements = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-  };
-
-  return String(text ?? '').replace(/[&<>"']/g, (char) => replacements[char]);
-}
-
-function shuffleArray(array) {
-  const clone = Array.isArray(array) ? [...array] : [];
-  for (let i = clone.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [clone[i], clone[j]] = [clone[j], clone[i]];
-  }
-  return clone;
-}
-
-function extractPunctuation(token, cleanWord) {
-  const lowerToken = token.toLowerCase();
-  const lowerClean = cleanWord.toLowerCase();
-  const wordIndex = lowerToken.indexOf(lowerClean);
-  if (wordIndex < 0) {
-    return { leading: '', trailing: token.substring(cleanWord.length) };
-  }
-  return {
-    leading: token.substring(0, wordIndex),
-    trailing: token.substring(wordIndex + cleanWord.length),
-  };
-}
-
-// Difficulty presets controlling blank ratio and which kinds of words are
-// preferred as blanks. Higher score = more likely to be picked.
-const CLOZE_DIFFICULTY_PRESETS = {
-  easy: { ratio: 0.2, sightScore: 10, contentScore: 0, otherScore: 0 },
-  normal: { ratio: 0.3, sightScore: 6, contentScore: 3, otherScore: 1 },
-  hard: { ratio: 0.5, sightScore: 3, contentScore: 8, otherScore: 1 },
+const PRESETS = {
+  easy: { ratio: 0.2, sight: 10, content: 0 },
+  normal: { ratio: 0.3, sight: 6, content: 3 },
+  hard: { ratio: 0.5, sight: 3, content: 8 },
 };
 
-function getClozeDifficultyPreset(difficulty) {
-  return CLOZE_DIFFICULTY_PRESETS[difficulty] || CLOZE_DIFFICULTY_PRESETS.normal;
+function escapeHtml(text) {
+  const replacements = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  return String(text).replace(/[&<>"']/g, (char) => replacements[char]);
 }
 
-// Blanks are printed, photographed, and then read back by OCR / an LLM for
-// grading. A run of underscores does not survive that trip: at print + camera
-// resolution `___` and `_____` collapse into the same solid line, so the answer
-// length — the main hint the exercise gives — is lost.
-//
-// The length is therefore encoded twice, because the two encodings fail in
-// different ways and neither is free:
-//   - one discrete box per missing letter, separated by a visible gap
-//   - a printed digit next to the boxes
-//
-// Measured at ~130dpi with JPEG compression: boxes read 10/10 (word level),
-// and an 11pt digit also read 10/10. An 8pt digit read 0/13 — at that size the
-// parentheses merge into the digit and 6/8/0/9 become one blob, so the digit
-// must stay near body size. Boxes can be miscounted by ±1 on long runs at
-// full-page scale; the digit disambiguates those. The digit alone gives the
-// reader nothing to check against, which the boxes provide.
-//
-// マスは枠だけで中身を持たないため、そのままでは支援技術に何も伝わらない。
-// 従来のアンダースコアは「空所があること」と「その文字数」をテキストとして
-// 持っていたので、その情報を視覚的に隠したテキストで補い、枠と数字は
-// aria-hidden で読み上げ対象から外す（読み上げが二重になるのを防ぐ）。
-function buildBlankBoxes(count) {
-  const boxCount = Math.max(1, count);
-  const boxes = Array.from(
-    { length: boxCount },
-    () => '<span class="cloze-box" aria-hidden="true"></span>'
-  ).join('');
-  const letterCount = `<span class="cloze-letter-count" aria-hidden="true">(${boxCount})</span>`;
-  return `<span class="visually-hidden">［${boxCount}文字の空所］</span>${boxes}${letterCount}`;
+function boxes(count) {
+  return (
+    '<span class="visually-hidden">［' +
+    count +
+    '文字の空所］</span>' +
+    Array.from({ length: count }, () => '<span class="cloze-box" aria-hidden="true"></span>').join(
+      ''
+    ) +
+    '<span class="cloze-letter-count" aria-hidden="true">(' +
+    count +
+    ')</span>'
+  );
 }
 
-function buildWordBlankSpan(cleanWord) {
-  return `<span class="cloze-blank cloze-blank--word">${buildBlankBoxes(cleanWord.length)}</span>`;
+// Persist offsets, never HTML. Saved and imported exercises pass this validator
+// before being rendered, so markup cannot be supplied through localStorage.
+export function validBlanks(text, blanks) {
+  if (
+    typeof text !== 'string' ||
+    text.length > 500 ||
+    !Array.isArray(blanks) ||
+    !blanks.length ||
+    blanks.length > 40
+  )
+    return false;
+  let end = 0;
+  return blanks.every((blank) => {
+    const valid =
+      blank &&
+      Number.isInteger(blank.start) &&
+      Number.isInteger(blank.end) &&
+      blank.start >= end &&
+      blank.end > blank.start &&
+      blank.end <= text.length &&
+      /[a-z]/i.test(text.slice(blank.start, blank.end)) &&
+      !/\s/.test(text.slice(blank.start, blank.end));
+    if (valid) end = blank.end;
+    return valid;
+  });
 }
 
-function buildCharBlankSpan(count) {
-  return `<span class="cloze-blank cloze-blank--char">${buildBlankBoxes(count)}</span>`;
-}
-
-export function generateClozeText(text, blankType, difficulty = 'normal') {
-  const words = text.split(/(\s+)/);
+export function renderClozeText(text, blanks, blankType = 'word') {
+  if (!validBlanks(text, blanks)) return { display: escapeHtml(text), answers: [], blanks: [] };
+  let cursor = 0;
+  let display = '';
   const answers = [];
-  const preset = getClozeDifficultyPreset(difficulty);
-
-  if (blankType === 'char') {
-    // Char-level: collect candidate words first, then keep only a difficulty-
-    // dependent fraction. Selection within candidates is randomized so the same
-    // sentence can produce different blanks across regenerations.
-    const candidateIndexes = [];
-    words.forEach((token, i) => {
-      if (/^\s+$/.test(token)) return;
-      const cleanWord = token.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
-      if (cleanWord.length < 3) return;
-      candidateIndexes.push(i);
-    });
-
-    const charBlankRatio = { easy: 0.4, normal: 0.65, hard: 1.0 }[difficulty] ?? 0.65;
-    const targetCount = Math.max(1, Math.round(candidateIndexes.length * charBlankRatio));
-    const chosenIndexes = new Set(
-      shuffleArray([...candidateIndexes]).slice(0, Math.min(targetCount, candidateIndexes.length))
-    );
-
-    const processed = words.map((token, i) => {
-      if (/^\s+$/.test(token)) return escapeHtml(token);
-      const cleanWord = token.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
-      if (cleanWord.length < 3 || !chosenIndexes.has(i)) return escapeHtml(token);
-
-      const { leading, trailing } = extractPunctuation(token, cleanWord);
-      const sightWord = SIGHT_WORD_MAP_DATA.get(cleanWord.toLowerCase());
-      if (sightWord && (sightWord.blankType === 'char' || sightWord.blankType === 'both')) {
-        const pattern = sightWord.phonicsPattern;
-        const patternIndex = cleanWord.toLowerCase().indexOf(pattern.toLowerCase());
-        if (patternIndex >= 0) {
-          const prefix = cleanWord.substring(0, patternIndex);
-          const blanked = buildCharBlankSpan(pattern.length);
-          const suffix = cleanWord.substring(patternIndex + pattern.length);
-          answers.push(pattern);
-          return `${escapeHtml(leading)}<span class="cloze-blank-char">${escapeHtml(prefix)}${blanked}${escapeHtml(suffix)}</span>${escapeHtml(trailing)}`;
-        }
-      }
-
-      if (cleanWord.length >= 3) {
-        const midStart = Math.floor(cleanWord.length * 0.3);
-        const midEnd = Math.ceil(cleanWord.length * 0.7);
-        const blankedPart = cleanWord.substring(midStart, midEnd);
-        const prefix = cleanWord.substring(0, midStart);
-        const blanked = buildCharBlankSpan(midEnd - midStart);
-        const suffix = cleanWord.substring(midEnd);
-        answers.push(blankedPart);
-        return `${escapeHtml(leading)}<span class="cloze-blank-char">${escapeHtml(prefix)}${blanked}${escapeHtml(suffix)}</span>${escapeHtml(trailing)}`;
-      }
-
-      return escapeHtml(token);
-    });
-
-    if (!answers.length) return generateClozeText(text, 'word', difficulty);
-    return { display: processed.join(''), answers };
+  for (const { start, end } of blanks) {
+    const answer = text.slice(start, end);
+    display +=
+      escapeHtml(text.slice(cursor, start)) +
+      '<span class="cloze-blank cloze-blank--' +
+      (blankType === 'char' ? 'char' : 'word') +
+      '">' +
+      boxes(answer.length) +
+      '</span>';
+    answers.push(answer);
+    cursor = end;
   }
+  return {
+    display: display + escapeHtml(text.slice(cursor)),
+    answers,
+    blanks: blanks.map(({ start, end }) => ({ start, end })),
+  };
+}
 
-  // word-level blanks: score every candidate word by difficulty, randomize
-  // within score tier, then take the top-N positions.
-  const wordEntries = [];
-  words.forEach((token, i) => {
-    if (/^\s+$/.test(token)) return;
-    const cleanWord = token.replace(/^[.,!?;:'"()]+|[.,!?;:'"()]+$/g, '');
-    if (cleanWord.length < 2) return;
-    const lower = cleanWord.toLowerCase();
-    const isSight = SIGHT_WORD_SET_DATA.has(lower);
-    // "Content word" ≈ non-sight word with substance: nouns/verbs/adjectives
-    // typically ≥3 chars. Cheap heuristic; good enough for early-learner text.
-    const isContent = !isSight && cleanWord.length >= 3;
-    let baseScore;
-    if (isSight) baseScore = preset.sightScore;
-    else if (isContent) baseScore = preset.contentScore;
-    else baseScore = preset.otherScore;
-    wordEntries.push({
-      token,
-      index: i,
-      cleanWord,
-      score: baseScore + Math.random(),
-    });
-  });
-
-  const totalWordCount = wordEntries.length;
-  const maxBlanks = Math.max(1, Math.round(totalWordCount * preset.ratio));
-
-  // Highest-score-first; ties broken by the random component already baked in.
-  const ranked = [...wordEntries].sort((a, b) => b.score - a.score);
-  // Filter out zero-score entries (e.g. easy mode has no sight words in the
-  // sentence — the fallback below will still ensure at least one blank).
-  const chosen = ranked.filter((e) => e.score >= 1).slice(0, maxBlanks);
-  const chosenByIndex = new Map(chosen.map((e) => [e.index, e]));
-
-  const processed = words.map((token, i) => {
-    if (/^\s+$/.test(token)) return token;
-    const entry = chosenByIndex.get(i);
-    if (!entry) return escapeHtml(token);
-    const { leading, trailing } = extractPunctuation(token, entry.cleanWord);
-    answers.push(entry.cleanWord);
-    return `${escapeHtml(leading)}${buildWordBlankSpan(entry.cleanWord)}${escapeHtml(trailing)}`;
-  });
-
-  // Fallback: if no candidate qualified (e.g. easy mode + sentence has zero
-  // sight words), blank the middle content word so the exercise is non-empty.
-  if (answers.length === 0 && wordEntries.length > 0) {
-    const target = wordEntries[Math.floor(wordEntries.length / 2)];
-    const { leading, trailing } = extractPunctuation(target.token, target.cleanWord);
-    answers.push(target.cleanWord);
-    processed[target.index] =
-      `${escapeHtml(leading)}${buildWordBlankSpan(target.cleanWord)}${escapeHtml(trailing)}`;
-  }
-
-  return { display: processed.join(''), answers };
+export function generateClozeText(text, blankType, difficulty = 'normal', options = {}) {
+  const preset = PRESETS[difficulty] || PRESETS.normal;
+  const focus = new Set(
+    (options.focusWords || []).flatMap(
+      (word) => word.toLowerCase().match(/[a-z]+(?:['’][a-z]+)*/g) || []
+    )
+  );
+  const words = [...text.matchAll(/[a-z]+(?:['’][a-z]+)*/gi)]
+    .map((match) => ({ word: match[0], start: match.index }))
+    .filter(({ word }) => word.length >= 2);
+  const ranked = words
+    .map((entry) => ({
+      ...entry,
+      score:
+        (focus.has(entry.word.toLowerCase())
+          ? 20
+          : SIGHT_WORD_SET.has(entry.word.toLowerCase())
+            ? preset.sight
+            : preset.content) + Math.random(),
+    }))
+    .sort((a, b) => b.score - a.score);
+  const ratio =
+    blankType === 'char'
+      ? ({ easy: 0.4, normal: 0.65, hard: 1 }[difficulty] ?? 0.65)
+      : preset.ratio;
+  const chosen = ranked.slice(0, Math.max(1, Math.round(words.length * ratio)));
+  if (!chosen.length && blankType === 'char')
+    return generateClozeText(text, 'word', difficulty, options);
+  const blanks = chosen
+    .map(({ word, start }) => {
+      if (blankType !== 'char') return { start, end: start + word.length };
+      const sight = SIGHT_WORD_MAP.get(word.toLowerCase());
+      const pattern =
+        sight && ['char', 'both'].includes(sight.blankType) ? sight.phonicsPattern : '';
+      const at = pattern ? word.toLowerCase().indexOf(pattern.toLowerCase()) : -1;
+      if (at >= 0 && pattern.length < word.length)
+        return { start: start + at, end: start + at + pattern.length };
+      // Keep the initial and final letter visible, including in three-letter words.
+      // Apostrophes remain visible: character exercises practice letters only.
+      const letters = [...word.matchAll(/[a-z]+/gi)].sort((a, b) => b[0].length - a[0].length)[0];
+      const offset = letters.index;
+      const length = letters[0].length;
+      const from = length > 2 ? Math.max(1, Math.floor(length * 0.3)) : 0;
+      const to = length > 2 ? Math.min(length - 1, Math.ceil(length * 0.7)) : 1;
+      return { start: start + offset + from, end: start + offset + to };
+    })
+    .sort((a, b) => a.start - b.start);
+  return renderClozeText(text, blanks, blankType);
 }

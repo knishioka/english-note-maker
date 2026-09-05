@@ -872,3 +872,25 @@
     display: block;
   }
 }
+.lesson-library {
+  margin-top: 2rem;
+}
+
+.lesson-library .field-label {
+  max-width: 100%;
+  margin-top: 1.25rem;
+}
+
+.lesson-library select,
+.lesson-library input {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.fixed-worksheet-notice {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.5rem;
+  border: 1px solid #bdd7ca;
+  border-radius: 16px;
+  background: #edf5ef;
+}

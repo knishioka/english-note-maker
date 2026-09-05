@@ -237,6 +237,9 @@ npm run dev
 - テンプレートリテラルでの HTML 生成は XSS を誘発しないように慎重に扱う
 - 印刷関連の寸法（mm/px 変換）は `quality-validator` の制約を満たす必要がある
 - Playwright テストは `tests/e2e` のコンベンションに従い、`data-testid` 属性の追加で安定性を確保
+- フレーズの正本は `src/data/collections/phrases/*.json`。英文・和訳を修正しても `id` は変えず、`revision` を増やす。英文を変える場合は `legacyEnglish` に旧文を残して v1 復習記録を移行可能にする
+- `focusWords` は実際の英文に含まれる学習対象、`acceptedEnglish` は文脈・和訳に対応する完成文の別解として点検する。汎用の同義語置換で別解を増やさない
+- 教材追加・修正時は `metadata.totalCount` と `_manifest.json` の件数も同期し、`test/content-quality.test.js` と `test/reusable-learning.test.js` を実行する。共有ファイルには問題のみを含め、学習記録を混ぜない
 
 ---
 

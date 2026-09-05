@@ -22,7 +22,7 @@ try {
   COLLECTION_PHRASE_MODULES = import.meta.glob('./collections/phrases/*.json', {
     eager: true,
   });
-} catch (_e) {
+} catch {
   COLLECTION_PHRASE_MODULES = {};
 }
 
@@ -40,39 +40,28 @@ async function fetchPhraseModules() {
   const modules = {};
 
   if (typeof fetch !== 'function' || typeof import.meta?.url !== 'string') {
-    return modules;
+    throw new Error('教材を読み込む機能が利用できません。');
   }
 
-  let manifest;
-  try {
-    const manifestUrl = new URL(`${COLLECTIONS_DIR}/_manifest.json`, import.meta.url);
-    const res = await fetch(manifestUrl);
-    if (!res.ok) {
-      return modules;
-    }
-    manifest = await res.json();
-  } catch (_e) {
-    return modules;
-  }
-
-  const files = Array.isArray(manifest && manifest.files) ? manifest.files : [];
+  const manifestUrl = new URL(`${COLLECTIONS_DIR}/_manifest.json`, import.meta.url);
+  const response = await fetch(manifestUrl);
+  if (!response.ok) throw new Error('教材の一覧を読み込めませんでした。');
+  const manifest = await response.json();
+  const files = Array.isArray(manifest?.files) ? manifest.files : [];
+  if (!files.length) throw new Error('教材の一覧が空です。');
 
   await Promise.all(
     files.map(async (entry) => {
       const name = entry && entry.name;
-      if (!name) {
-        return;
-      }
+      if (typeof name !== 'string' || !/^[a-z_]+$/.test(name))
+        throw new Error('教材名が不正です。');
       const relPath = `${COLLECTIONS_DIR}/${name}.json`;
-      try {
-        const res = await fetch(new URL(relPath, import.meta.url));
-        if (!res.ok) {
-          return;
-        }
-        modules[relPath] = { default: await res.json() };
-      } catch (_e) {
-        // 個別ファイルの失敗は握りつぶし、読めたものだけマージする。
-      }
+      const res = await fetch(new URL(relPath, import.meta.url));
+      if (!res.ok) throw new Error('教材を読み込めませんでした：' + name);
+      const data = await res.json();
+      if (!Array.isArray(data.items) || !data.items.length)
+        throw new Error('教材が空です：' + name);
+      modules[relPath] = { default: data };
     })
   );
 
@@ -97,8 +86,8 @@ export async function loadMergedPhraseData(base) {
 
 /**
  * コレクション JSON を PHRASE_DATA[カテゴリー][年齢] 形へマージする。
- * english を正規化（小文字・前後空白除去）したキーで重複排除し、
- * 既存（phrase-data.js）のエントリを優先順序で先頭に残す。
+ * JSON を正本とし、同じカテゴリー・年齢の旧データを置き換える。
+ * 読み込まれないカテゴリーに限り、互換データを残す。
  *
  * @param {Record<string, Record<string, Array<{english:string}>>>} base
  * @returns {Record<string, Record<string, Array>>}
@@ -117,16 +106,10 @@ export function mergePhraseCollections(base, modules = COLLECTION_PHRASE_MODULES
     }
   }
 
-  // 既存 english を重複チェック用に登録
+  // JSON内の同一カテゴリー・年齢で英文の重複を除く。
   const seenByBucket = new Map();
-  for (const category of Object.keys(merged)) {
-    for (const ageGroup of Object.keys(merged[category])) {
-      const set = new Set(merged[category][ageGroup].map((p) => normalize(p?.english)));
-      seenByBucket.set(bucketKey(category, ageGroup), set);
-    }
-  }
 
-  for (const path of Object.keys(modules || {})) {
+  for (const path of Object.keys(modules || {}).sort()) {
     if (path.includes('_manifest')) {
       continue;
     }
@@ -149,6 +132,7 @@ export function mergePhraseCollections(base, modules = COLLECTION_PHRASE_MODULES
       const bk = bucketKey(category, ageGroup);
       if (!seenByBucket.has(bk)) {
         seenByBucket.set(bk, new Set());
+        merged[category][ageGroup] = [];
       }
       const set = seenByBucket.get(bk);
       const norm = normalize(english);
@@ -156,7 +140,7 @@ export function mergePhraseCollections(base, modules = COLLECTION_PHRASE_MODULES
         continue;
       }
       set.add(norm);
-      merged[category][ageGroup].push(item);
+      merged[category][ageGroup].push({ ...item, revision: item.revision || 1 });
     }
   }
 

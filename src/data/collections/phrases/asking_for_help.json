@@ -2,8 +2,8 @@
   "metadata": {
     "type": "phrase",
     "category": "asking_for_help",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T12:30:44.738Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
     "totalCount": 66,
     "schemaVersion": "1.0.0"
   },
@@ -48,7 +48,8 @@
       "pattern": "request",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["asking_for_help", "request"]
+      "tags": ["asking_for_help", "request"],
+      "acceptedEnglish": ["Could you help me?"]
     },
     {
       "id": "phrase-asking_for_help-i-cant-do-it-4-6",
@@ -684,7 +685,7 @@
       "id": "phrase-asking_for_help-please-wait-for-me-7-9",
       "type": "phrase",
       "english": "Please wait for me.",
-      "japanese": "まってください。",
+      "japanese": "わたしをまってください。",
       "situation": "まってほしいとき",
       "category": "asking_for_help",
       "ageGroup": "7-9",
@@ -692,7 +693,8 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["asking_for_help"]
+      "tags": ["asking_for_help"],
+      "revision": 2
     },
     {
       "id": "phrase-asking_for_help-could-you-show-me-how-7-9",
@@ -810,7 +812,7 @@
       "id": "phrase-asking_for_help-can-someone-help-me-move-this-10-12",
       "type": "phrase",
       "english": "Can someone help me move this?",
-      "japanese": "これを動かすのを手伝ってくれますか？",
+      "japanese": "だれか、これを動かすのを手伝ってくれますか？",
       "situation": "手伝いをつのるとき",
       "category": "asking_for_help",
       "ageGroup": "10-12",
@@ -818,7 +820,8 @@
       "pattern": "question",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["asking_for_help"]
+      "tags": ["asking_for_help"],
+      "revision": 2
     },
     {
       "id": "phrase-asking_for_help-i-need-help-finding-my-way-10-12",

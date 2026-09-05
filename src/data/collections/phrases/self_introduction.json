@@ -2,8 +2,8 @@
   "metadata": {
     "type": "phrase",
     "category": "self_introduction",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T09:14:07.029Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
     "totalCount": 89,
     "schemaVersion": "1.0.0"
   },
@@ -137,7 +137,7 @@
     {
       "id": "phrase-self_introduction-i-have-a-sister-4-6",
       "type": "phrase",
-      "english": "I have a sister.",
+      "english": "I have an older sister.",
       "japanese": "わたしには おねえちゃんが います。",
       "situation": "かぞくに ついて はなす とき",
       "category": "self_introduction",
@@ -146,12 +146,14 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["self_introduction", "statement", "introduction"]
+      "tags": ["self_introduction", "statement", "introduction"],
+      "legacyEnglish": ["I have a sister."],
+      "revision": 2
     },
     {
       "id": "phrase-self_introduction-i-have-a-brother-4-6",
       "type": "phrase",
-      "english": "I have a brother.",
+      "english": "I have an older brother.",
       "japanese": "わたしには おにいちゃんが います。",
       "situation": "かぞくに ついて はなす とき",
       "category": "self_introduction",
@@ -160,7 +162,9 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["self_introduction", "statement", "introduction"]
+      "tags": ["self_introduction", "statement", "introduction"],
+      "legacyEnglish": ["I have a brother."],
+      "revision": 2
     },
     {
       "id": "phrase-self_introduction-i-live-in-tokyo-4-6",
@@ -474,7 +478,7 @@
       "id": "phrase-self_introduction-my-favorite-subject-is-math-10-12",
       "type": "phrase",
       "english": "My favorite subject is math.",
-      "japanese": "わたしの好きな科目は数学です。",
+      "japanese": "わたしの好きな教科は算数です。",
       "situation": "好きな科目を言うとき",
       "category": "self_introduction",
       "ageGroup": "10-12",
@@ -482,7 +486,8 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": ["favorite"],
-      "tags": ["self_introduction", "statement", "preference", "introduction"]
+      "tags": ["self_introduction", "statement", "preference", "introduction"],
+      "revision": 2
     },
     {
       "id": "phrase-self_introduction-i-m-passionate-about-environme-10-12",
@@ -543,7 +548,7 @@
     {
       "id": "phrase-self_introduction-i-have-one-brother-4-6",
       "type": "phrase",
-      "english": "I have one brother.",
+      "english": "I have one older brother.",
       "japanese": "わたしには おにいちゃんが ひとり います。",
       "situation": "かぞくの ことを はなす とき",
       "category": "self_introduction",
@@ -552,12 +557,14 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["self_introduction"]
+      "tags": ["self_introduction"],
+      "legacyEnglish": ["I have one brother."],
+      "revision": 2
     },
     {
       "id": "phrase-self_introduction-i-have-one-sister-4-6",
       "type": "phrase",
-      "english": "I have one sister.",
+      "english": "I have one younger sister.",
       "japanese": "わたしには いもうとが ひとり います。",
       "situation": "かぞくの ことを はなす とき",
       "category": "self_introduction",
@@ -566,7 +573,9 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["self_introduction"]
+      "tags": ["self_introduction"],
+      "legacyEnglish": ["I have one sister."],
+      "revision": 2
     },
     {
       "id": "phrase-self_introduction-i-like-bananas-4-6",
@@ -908,7 +917,7 @@
       "id": "phrase-self_introduction-i-usually-walk-to-school-7-9",
       "type": "phrase",
       "english": "I usually walk to school.",
-      "japanese": "わたしはいつも歩いて学校に行きます。",
+      "japanese": "わたしはふだん歩いて学校に行きます。",
       "situation": "学校までの行き方をつたえるとき",
       "category": "self_introduction",
       "ageGroup": "7-9",
@@ -916,7 +925,8 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["self_introduction"]
+      "tags": ["self_introduction"],
+      "revision": 2
     },
     {
       "id": "phrase-self_introduction-i-have-two-pets-7-9",
@@ -1160,7 +1170,7 @@
       "id": "phrase-self_introduction-i-usually-study-for-two-hours-after-scho-10-12",
       "type": "phrase",
       "english": "I usually study for two hours after school.",
-      "japanese": "放課後、いつも2時間勉強します。",
+      "japanese": "放課後、ふだんは2時間勉強します。",
       "situation": "しゅうかんを伝えるとき",
       "category": "self_introduction",
       "ageGroup": "10-12",
@@ -1168,7 +1178,8 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["self_introduction"]
+      "tags": ["self_introduction"],
+      "revision": 2
     },
     {
       "id": "phrase-self_introduction-my-favorite-season-is-autumn-10-12",

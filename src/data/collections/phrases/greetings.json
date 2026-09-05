@@ -2,9 +2,9 @@
   "metadata": {
     "type": "phrase",
     "category": "greetings",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T12:34:13.647Z",
-    "totalCount": 62,
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
+    "totalCount": 61,
     "schemaVersion": "1.0.0"
   },
   "items": [
@@ -194,29 +194,31 @@
       "id": "phrase-greetings-please-4-6",
       "type": "phrase",
       "english": "Please!",
-      "japanese": "どうぞ！",
-      "situation": "なにかを すすめる とき",
+      "japanese": "おねがい！",
+      "situation": "おねがいする とき",
       "category": "greetings",
       "ageGroup": "4-6",
       "difficulty": 1,
       "pattern": "request",
       "usageFrequency": "core",
       "focusWords": ["please"],
-      "tags": ["greetings", "request", "polite"]
+      "tags": ["greetings", "request", "polite"],
+      "revision": 2
     },
     {
       "id": "phrase-greetings-excuse-me-4-6",
       "type": "phrase",
       "english": "Excuse me!",
-      "japanese": "ごめんなさい！",
-      "situation": "あやまるとき",
+      "japanese": "すみません！",
+      "situation": "ひとに よびかける とき",
       "category": "greetings",
       "ageGroup": "4-6",
       "difficulty": 1,
       "pattern": "exclamation",
       "usageFrequency": "core",
       "focusWords": ["excuse me"],
-      "tags": ["greetings", "exclamation"]
+      "tags": ["greetings", "exclamation"],
+      "revision": 2
     },
     {
       "id": "phrase-greetings-how-are-you-7-9",
@@ -244,7 +246,8 @@
       "pattern": "introduction",
       "usageFrequency": "core",
       "focusWords": ["thank you"],
-      "tags": ["greetings", "introduction", "polite"]
+      "tags": ["greetings", "introduction", "polite"],
+      "acceptedEnglish": ["I'm well, thank you."]
     },
     {
       "id": "phrase-greetings-nice-to-meet-you-7-9",
@@ -272,7 +275,8 @@
       "pattern": "question",
       "usageFrequency": "core",
       "focusWords": ["have a good"],
-      "tags": ["greetings", "question"]
+      "tags": ["greetings", "question"],
+      "acceptedEnglish": ["Have a nice day!"]
     },
     {
       "id": "phrase-greetings-excuse-me-7-9",
@@ -787,20 +791,6 @@
       "category": "greetings",
       "ageGroup": "7-9",
       "difficulty": 2,
-      "pattern": "statement",
-      "usageFrequency": "core",
-      "focusWords": [],
-      "tags": ["greetings", "statement"]
-    },
-    {
-      "id": "phrase-greetings-its-a-pleasure-to-meet-you-10-12",
-      "type": "phrase",
-      "english": "It's a pleasure to meet you.",
-      "japanese": "お会いできて光栄です。",
-      "situation": "フォーマルな初対面で",
-      "category": "greetings",
-      "ageGroup": "10-12",
-      "difficulty": 3,
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],

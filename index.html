@@ -110,6 +110,7 @@
               <p id="questionSituation" class="situation-label"></p>
               <h2 id="questionJapanese">問題を準備しています</h2>
               <p id="questionInstruction" class="muted"></p>
+              <p id="questionRevision" class="storage-notice" role="status"></p>
               <form id="answerForm">
                 <div id="questionEnglish" class="question-english" lang="en"></div>
                 <div class="hint-row">
@@ -145,9 +146,13 @@
                 ><button id="newLesson" class="btn btn--secondary" type="button">
                   新しい練習へ</button
                 ><button id="printLesson" class="text-button" type="button">
-                  同じテーマのプリントを作る →
+                  この問題をそのまま印刷 →
+                </button>
+                <button id="saveLesson" class="btn btn--secondary" type="button">
+                  問題セットを保存
                 </button>
               </div>
+              <p id="saveLessonNotice" class="storage-notice" role="status"></p>
             </section>
           </div>
           <aside class="learning-aside" aria-label="学習の記録とヒント">
@@ -169,6 +174,29 @@
             <p id="storageNotice" class="storage-notice" role="status"></p>
           </aside>
         </div>
+        <section class="lesson-library lesson-card" aria-labelledby="libraryHeading">
+          <p class="eyebrow">YOUR LESSON LIBRARY</p>
+          <h2 id="libraryHeading">保存した問題セット</h2>
+          <p class="muted">
+            同じ順番・同じ空欄で練習と印刷。教材が改訂された問題は最新版に更新します。
+          </p>
+          <label class="field-label">問題セット<select id="savedLessonSelect"></select></label>
+          <div class="result-actions">
+            <button id="practiceSavedLesson" class="btn btn--secondary" type="button">
+              もう一度練習
+            </button>
+            <button id="printSavedLesson" class="btn btn--secondary" type="button">
+              プリントを作る
+            </button>
+            <button id="exportLesson" class="text-button" type="button">ファイルに書き出す</button>
+            <button id="removeLesson" class="text-button" type="button">選んだセットを削除</button>
+          </div>
+          <label class="field-label"
+            >問題セットの読み込み（JSON・250KBまで）
+            <input id="importLesson" type="file" accept=".json,application/json" disabled />
+          </label>
+          <p id="libraryNotice" class="storage-notice" role="status"></p>
+        </section>
         <div class="learning-guide">
           <div>
             <span>01 / TRY</span>
@@ -196,6 +224,7 @@
         <p class="eyebrow">YOUR REVIEW NOTEBOOK</p>
         <h1 id="reviewHeading">もう一度が、力になる。</h1>
         <p id="reviewSummary" class="intro-copy"></p>
+        <p id="reviewUnavailable" class="storage-notice" role="status"></p>
         <button id="startReview" class="btn btn--primary" type="button">復習をはじめる →</button>
         <ul id="reviewList" class="review-list"></ul>
       </section>
@@ -212,6 +241,12 @@
             <p class="muted">テーマに合わせて4本線の練習ノートを。A4で印刷・PDF保存できます。</p>
           </div>
           <span class="small-badge">8つの練習モード</span>
+        </div>
+        <div id="fixedWorksheetNotice" class="fixed-worksheet-notice no-print" hidden>
+          <p>選んだ問題を、同じ順番・同じ空欄で印刷します。ページ数は自動調整されます。</p>
+          <button id="releaseWorksheet" class="btn btn--secondary" type="button">
+            通常のプリント作成に戻る
+          </button>
         </div>
         <div class="main">
           <section class="controls" aria-label="プリントの設定">
@@ -312,14 +347,6 @@
                   <option value="colors">色</option>
                   <option value="numbers">数字</option>
                   <option value="calendar">曜日・月</option>
-                  <option value="school_items">学用品</option>
-                  <option value="body_parts">身体</option>
-                  <option value="weather">天気</option>
-                  <option value="classroom_objects">教室の物</option>
-                  <option value="subjects">教科</option>
-                  <option value="sports_activities">スポーツ・活動</option>
-                  <option value="emotions_advanced">感情（上級）</option>
-                  <option value="academic_words">学習用語</option>
                 </select>
               </label>
             </div>
@@ -490,7 +517,7 @@
                 難易度:
                 <select id="clozeDifficulty" class="controls__select">
                   <option value="auto">自動（年齢に合わせる）</option>
-                  <option value="easy">やさしい（穴 約20%・基本語のみ）</option>
+                  <option value="easy">やさしい（穴 約20%）</option>
                   <option value="normal">ふつう（穴 約30%）</option>
                   <option value="hard">むずかしい（穴 約50%・内容語も）</option>
                 </select>

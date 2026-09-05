@@ -2,8 +2,8 @@
   "metadata": {
     "type": "phrase",
     "category": "daily_life",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T09:14:07.030Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
     "totalCount": 84,
     "schemaVersion": "1.0.0"
   },
@@ -782,7 +782,7 @@
       "id": "phrase-daily_life-i-pack-my-bag-for-tomorrow-7-9",
       "type": "phrase",
       "english": "I pack my bag for tomorrow.",
-      "japanese": "あしたのために、かばんをつめます。",
+      "japanese": "あしたのために、かばんにひつようなものを入れます。",
       "situation": "ねる前のじゅんびのとき",
       "category": "daily_life",
       "ageGroup": "7-9",
@@ -790,7 +790,8 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["daily_life"]
+      "tags": ["daily_life"],
+      "revision": 2
     },
     {
       "id": "phrase-daily_life-i-listen-to-music-at-home-7-9",
@@ -851,8 +852,8 @@
     {
       "id": "phrase-daily_life-i-usually-sleep-at-nine-o-clock-7-9",
       "type": "phrase",
-      "english": "I usually sleep at nine o’clock.",
-      "japanese": "いつも9時にねます。",
+      "english": "I usually go to bed at nine o'clock.",
+      "japanese": "ふだんは9時にねます。",
       "situation": "ねる時間をつたえるとき",
       "category": "daily_life",
       "ageGroup": "7-9",
@@ -860,7 +861,9 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["daily_life"]
+      "tags": ["daily_life"],
+      "legacyEnglish": ["I usually sleep at nine o’clock."],
+      "revision": 2
     },
     {
       "id": "phrase-daily_life-i-have-cereal-for-breakfast-7-9",
@@ -950,7 +953,7 @@
       "id": "phrase-daily_life-i-do-my-chores-before-relaxing-10-12",
       "type": "phrase",
       "english": "I do my chores before relaxing.",
-      "japanese": "休む前に用事をすませます。",
+      "japanese": "くつろぐ前に家の仕事をすませます。",
       "situation": "しゅうかんを伝えるとき",
       "category": "daily_life",
       "ageGroup": "10-12",
@@ -958,7 +961,8 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["daily_life"]
+      "tags": ["daily_life"],
+      "revision": 2
     },
     {
       "id": "phrase-daily_life-i-spend-an-hour-studying-every-evening-10-12",
@@ -1104,7 +1108,7 @@
       "id": "phrase-daily_life-i-usually-finish-my-homework-by-eight-10-12",
       "type": "phrase",
       "english": "I usually finish my homework by eight.",
-      "japanese": "いつも8時までに宿題を終えます。",
+      "japanese": "ふだんは8時までに宿題を終えます。",
       "situation": "しゅうかんを伝えるとき",
       "category": "daily_life",
       "ageGroup": "10-12",
@@ -1112,7 +1116,8 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["daily_life"]
+      "tags": ["daily_life"],
+      "revision": 2
     },
     {
       "id": "phrase-daily_life-i-take-the-dog-for-a-long-walk-10-12",

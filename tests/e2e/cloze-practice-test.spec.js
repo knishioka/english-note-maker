@@ -109,8 +109,8 @@ test.describe('穴埋めフレーズ練習テスト', () => {
     expect(wordHtml).toContain('cloze-blank');
     expect(charHtml).toContain('cloze-blank');
 
-    // 文字レベルではcloze-blank-char要素が含まれる
-    expect(charHtml).toContain('cloze-blank-char');
+    // 空所の種類を示す共通マークアップを確認する。
+    expect(charHtml).toContain('cloze-blank--char');
   });
 
   test('解答表示チェックボックスで解答セクションが表示・非表示になる', async ({ page }) => {

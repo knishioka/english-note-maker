@@ -2,8 +2,8 @@
   "metadata": {
     "type": "phrase",
     "category": "weather",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T12:30:44.738Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
     "totalCount": 64,
     "schemaVersion": "1.0.0"
   },
@@ -221,8 +221,8 @@
     {
       "id": "phrase-weather-we-should-bring-jackets-7-9",
       "type": "phrase",
-      "english": "We should bring a jacket.",
-      "japanese": "ジャケットを1まいもっていきましょう。",
+      "english": "We should bring our jackets.",
+      "japanese": "それぞれジャケットをもっていきましょう。",
       "situation": "きるものについてていあんするとき",
       "category": "weather",
       "ageGroup": "7-9",
@@ -230,7 +230,9 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["weather", "statement"]
+      "tags": ["weather", "statement"],
+      "legacyEnglish": ["We should bring a jacket."],
+      "revision": 2
     },
     {
       "id": "phrase-weather-the-temperature-is-25-degrees-7-9",
@@ -334,7 +336,7 @@
       "id": "phrase-weather-autumn-leaves-are-beautiful-7-9",
       "type": "phrase",
       "english": "Autumn leaves are beautiful.",
-      "japanese": "もみじがうつくしいです。",
+      "japanese": "秋の色づいたはっぱはうつくしいです。",
       "situation": "秋のけしきについて言うとき",
       "category": "weather",
       "ageGroup": "7-9",
@@ -342,7 +344,8 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["weather", "statement"]
+      "tags": ["weather", "statement"],
+      "revision": 2
     },
     {
       "id": "phrase-weather-whats-the-weather-going-to-be--10-12",
@@ -879,8 +882,8 @@
     {
       "id": "phrase-weather-the-rainy-season-starts-in-june-10-12",
       "type": "phrase",
-      "english": "The rainy season starts in June.",
-      "japanese": "つゆは6月に始まります。",
+      "english": "The rainy season usually starts in June in Tokyo.",
+      "japanese": "東京では、つゆはふつう6月に始まります。",
       "situation": "季節を伝えるとき",
       "category": "weather",
       "ageGroup": "10-12",
@@ -888,7 +891,9 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["weather"]
+      "tags": ["weather"],
+      "legacyEnglish": ["The rainy season starts in June."],
+      "revision": 2
     },
     {
       "id": "phrase-weather-the-weather-changes-quickly-in-the-mount-10-12",
