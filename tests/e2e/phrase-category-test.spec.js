@@ -4,11 +4,28 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+import { PHRASE_DATA } from '../../src/data/phrase-data.js';
+
+async function expectCategoryContent(page, category, ageGroup = '7-9') {
+  const collection = JSON.parse(
+    readFileSync('src/data/collections/phrases/' + category + '.json', 'utf8')
+  );
+  const valid = new Set(
+    [
+      ...PHRASE_DATA[category][ageGroup],
+      ...collection.items.filter((item) => item.ageGroup === ageGroup),
+    ].map((item) => item.english)
+  );
+  const displayed = await page.locator('#notePreview .phrase-english').allTextContents();
+  expect(displayed.length).toBeGreaterThan(0);
+  for (const text of displayed) expect(valid.has(text.trim())).toBe(true);
+}
 
 test.describe('フレーズカテゴリー切り替えテスト', () => {
   test.beforeEach(async ({ page }) => {
     // 開発サーバーにアクセス
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/?view=worksheet');
 
     // フレーズ練習モードを選択
     await page.selectOption('#practiceMode', 'phrase');
@@ -27,14 +44,7 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     // カテゴリー名が表示されていることを確認
     expect(previewContent).toContain('Phrase Practice - あいさつ');
 
-    // あいさつに関連するフレーズが表示されていることを確認
-    const hasGreetings =
-      previewContent.includes('Hello') ||
-      previewContent.includes('Good morning') ||
-      previewContent.includes('How are you') ||
-      previewContent.includes('Nice to meet you');
-
-    expect(hasGreetings).toBeTruthy();
+    await expectCategoryContent(page, 'greetings');
   });
 
   test('自己紹介カテゴリーが正しく表示される', async ({ page }) => {
@@ -50,14 +60,7 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     // カテゴリー名が表示されていることを確認
     expect(previewContent).toContain('Phrase Practice - 自己紹介');
 
-    // 自己紹介に関連するフレーズが表示されていることを確認
-    const hasSelfIntroduction =
-      previewContent.includes('My name is') ||
-      previewContent.includes('I am') ||
-      previewContent.includes('from Japan') ||
-      previewContent.includes('My hobby');
-
-    expect(hasSelfIntroduction).toBeTruthy();
+    await expectCategoryContent(page, 'self_introduction');
   });
 
   test('学校生活カテゴリーが正しく表示される', async ({ page }) => {
@@ -73,14 +76,7 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     // カテゴリー名が表示されていることを確認
     expect(previewContent).toContain('Phrase Practice - 学校生活');
 
-    // 学校に関連するフレーズが表示されていることを確認
-    const hasSchool =
-      previewContent.includes('school') ||
-      previewContent.includes('teacher') ||
-      previewContent.includes('homework') ||
-      previewContent.includes('class');
-
-    expect(hasSchool).toBeTruthy();
+    await expectCategoryContent(page, 'school');
   });
 
   test('買い物カテゴリーが正しく表示される', async ({ page }) => {
@@ -110,17 +106,11 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     // カテゴリー名が表示されていることを確認
     expect(previewContent).toContain('Phrase Practice - 日常生活');
 
-    // 日常生活に関連するフレーズが表示されていることを確認
-    const hasDailyLife =
-      previewContent.includes('wake up') ||
-      previewContent.includes('brush') ||
-      previewContent.includes('bed') ||
-      previewContent.includes('watch TV');
-
-    expect(hasDailyLife).toBeTruthy();
+    await expectCategoryContent(page, 'daily_life');
   });
 
   test('シャッフルボタンでフレーズが更新される', async ({ page }) => {
+    await page.selectOption('#phraseCategory', 'greetings');
     // シャッフルボタンをクリック
     await page.click('#shufflePhrases');
 
@@ -130,9 +120,8 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     // 更新後のプレビュー内容を取得
     const updatedContent = await page.locator('#notePreview').textContent();
 
-    // 内容が変わっていることを確認（カテゴリー名は同じだが、フレーズが変わる可能性がある）
-    // ランダムなので必ず変わるとは限らないが、テストは通るはず
     expect(updatedContent).toContain('Phrase Practice - あいさつ');
+    await expectCategoryContent(page, 'greetings');
   });
 
   test('年齢グループを変更してもカテゴリーが維持される', async ({ page }) => {
@@ -150,20 +139,13 @@ test.describe('フレーズカテゴリー切り替えテスト', () => {
     // カテゴリーが維持されていることを確認
     expect(previewContent).toContain('Phrase Practice - 自己紹介');
 
-    // 10-12歳向けのフレーズが表示されていることを確認
-    const hasAdvancedPhrases =
-      previewContent.includes('interested in') ||
-      previewContent.includes('dream') ||
-      previewContent.includes('studying') ||
-      previewContent.includes('good at');
-
-    expect(hasAdvancedPhrases).toBeTruthy();
+    await expectCategoryContent(page, 'self_introduction', '10-12');
   });
 });
 
 // 全カテゴリーの網羅的テスト
 test('全カテゴリーが切り替え可能', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'phrase');
 
   const categories = [
@@ -198,7 +180,7 @@ test('全カテゴリーが切り替え可能', async ({ page }) => {
 
 // カテゴリー切り替え時のプレビュー更新テスト
 test('カテゴリー切り替え時にプレビューが更新される', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'phrase');
 
   // greetingsカテゴリーを選択
@@ -231,7 +213,7 @@ test('カテゴリー切り替え時にプレビューが更新される', async
 
 // 複数ページ生成時に同一ページ内のフレーズが重複しないことを検証
 test('複数ページ生成しても同一ページ内にフレーズの重複が出ない', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'phrase');
   await page.selectOption('#phraseCategory', 'classroom_english');
   await page.fill('#pageCount', '3');
@@ -250,7 +232,7 @@ test('複数ページ生成しても同一ページ内にフレーズの重複�
 });
 
 test('難易度セレクタが存在し、難易度を切り替えると表示フレーズが変わる', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'phrase');
   await expect(page.locator('#phraseDifficulty')).toBeVisible();
   await page.selectOption('#phraseCategory', 'classroom_english');
@@ -272,7 +254,7 @@ test('難易度セレクタが存在し、難易度を切り替えると表示�
 
 // 複数カテゴリーを連続して切り替えるテスト
 test('複数カテゴリーを連続して切り替えても正しく表示される', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'phrase');
 
   // テストするカテゴリーのシーケンス

@@ -32,7 +32,7 @@ test.describe('URL preset sharing', () => {
   });
 
   test('updates the URL with replaceState when supported settings change', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?view=worksheet');
     const initialHistoryLength = await page.evaluate(() => window.history.length);
 
     await page.locator('#practiceMode').selectOption('cloze');

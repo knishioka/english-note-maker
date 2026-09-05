@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('数と算数カテゴリーテスト', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/?view=worksheet');
     await page.selectOption('#practiceMode', 'phrase');
     await page.selectOption('#phraseCategory', 'numbers_math');
     await page.waitForTimeout(500);

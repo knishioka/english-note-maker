@@ -9,7 +9,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Stable Print Preview Tests', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to the application
-    await page.goto('/');
+    await page.goto('/?view=worksheet');
 
     // Wait for complete page load including all resources
     await page.waitForLoadState('networkidle');
@@ -218,7 +218,7 @@ test.describe('Cross-browser compatibility', () => {
     test(`print preview works in ${browserName}`, async ({ page, browserName: currentBrowser }) => {
       test.skip(currentBrowser !== browserName, `Skipping ${browserName} test`);
 
-      await page.goto('/');
+      await page.goto('/?view=worksheet');
       await page.waitForLoadState('networkidle');
 
       // Basic functionality test

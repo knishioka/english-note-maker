@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('サイトワード練習', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?view=worksheet');
     await page.selectOption('#practiceMode', 'sightWords');
   });
 

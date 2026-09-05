@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('単語練習モードテスト', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/?view=worksheet');
     await page.selectOption('#practiceMode', 'word');
     await expect(page.locator('#wordOptions')).toBeVisible();
   });
@@ -120,7 +120,7 @@ test.describe('単語練習モードテスト', () => {
 });
 
 test('複数ページ生成しても同一ページ内に単語の重複が出ない', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'word');
   await page.selectOption('#wordCategory', 'animals');
   await page.fill('#pageCount', '3');
@@ -141,7 +141,7 @@ test('複数ページ生成しても同一ページ内に単語の重複が出�
 });
 
 test('難易度セレクタが存在し、難易度を切り替えると表示単語が変わる', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'word');
   await expect(page.locator('#wordDifficulty')).toBeVisible();
   await page.selectOption('#wordCategory', 'animals');
@@ -167,7 +167,7 @@ test('難易度セレクタが存在し、難易度を切り替えると表示�
 });
 
 test('全カテゴリーが切り替え可能', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'word');
 
   const categories = [

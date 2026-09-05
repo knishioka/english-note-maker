@@ -5,418 +5,614 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="app-name" content="english-note-maker" />
     <meta name="version" content="1.0.0" />
-    <title>英語罫線ノート作成ツール</title>
+    <meta
+      name="description"
+      content="5問から始める英語の穴埋め練習。答え合わせ、復習、4本線プリント作成まで、自分のペースで。"
+    />
+    <title>English Note — まいにち、英語を少しずつ。</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="src/learning/studio.css" />
   </head>
 
   <body>
-    <header class="header">
-      <div class="header__content">
-        <div class="header__text">
-          <span class="header__badge">✏️ はじめてでも安心</span>
-          <h1 class="header__title">英語罫線ノート作成ツール</h1>
-          <p class="header__description">
-            美しいアルファベット練習用の4本線ノートを簡単に作成できます。お気に入りの色やサイズに調整して、学習をもっと楽しくしましょう。
-          </p>
-        </div>
-        <div class="header__illustration" aria-hidden="true">
-          <div class="header__bubble header__bubble--one"></div>
-          <div class="header__bubble header__bubble--two"></div>
-          <div class="header__mascot">
-            <span class="header__mascot-letter">A</span>
-            <span class="header__mascot-letter">B</span>
-            <span class="header__mascot-letter">C</span>
-          </div>
-        </div>
-      </div>
+    <a class="skip-link" href="#appMain">メインコンテンツへ</a>
+    <header class="studio-header no-print">
+      <a href="./" class="brand" aria-label="English Note ホーム">
+        <span class="brand-mark" aria-hidden="true">En<span>ノート</span></span>
+        <span>English Note<small>小さな練習、大きな一歩。</small></span>
+      </a>
+      <nav class="studio-nav" aria-label="メインナビゲーション">
+        <button type="button" data-view-link="learn" aria-current="page">今日の練習</button>
+        <button type="button" data-view-link="review">復習</button>
+        <button type="button" data-view-link="worksheet">プリント作成</button>
+      </nav>
+      <span class="header-note">LEARN AT YOUR PACE</span>
     </header>
 
-    <main class="main">
-      <section class="controls">
-        <div class="controls__group">
-          <label class="controls__label">
-            練習モード:
-            <select id="practiceMode" class="controls__select">
-              <option value="phrase">フレーズ練習</option>
-              <option value="phonics">フォニックス練習</option>
-              <option value="normal">通常練習</option>
-              <option value="sentence">文章練習</option>
-              <option value="word">単語練習</option>
-              <option value="alphabet">アルファベット練習</option>
-              <option value="cloze">穴埋めフレーズ練習</option>
-              <option value="sightWords">サイトワード練習</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="controls__group" id="sightWordOptions" style="display: none">
-          <label class="controls__label">
-            1ページの単語数:
-            <select id="sightWordCount" class="controls__select">
-              <option value="4">4語</option>
-              <option value="6" selected>6語</option>
-              <option value="8">8語</option>
-            </select>
-          </label>
-          <button id="shuffleSightWords" class="btn btn--secondary" type="button">
-            🔄 別の単語を表示
-          </button>
-        </div>
-
-        <div class="controls__group" id="ageOptions" style="display: none">
-          <label class="controls__label">
-            年齢:
-            <select id="ageGroup" class="controls__select">
-              <option value="4-6">4〜6歳</option>
-              <option value="7-9" selected>7〜9歳</option>
-              <option value="10-12">10〜12歳</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="controls__group" id="exampleOptions" style="display: none">
-          <label class="controls__label">
-            <input type="checkbox" id="showExamples" class="controls__checkbox" checked />
-            例文を表示
-          </label>
-
-          <label class="controls__label" style="margin-top: 0.5rem">
-            例文カテゴリー:
-            <select id="exampleCategory" class="controls__select">
-              <option value="all">すべて</option>
-              <option value="daily">日常会話</option>
-              <option value="school">学校</option>
-              <option value="family">家族</option>
-              <option value="hobby">趣味</option>
-            </select>
-          </label>
-
-          <button
-            id="refreshExamplesBtn"
-            class="btn btn--secondary"
-            style="margin-top: 0.5rem; font-size: 0.9rem"
-            type="button"
-          >
-            例文を更新
-          </button>
-        </div>
-
-        <div class="controls__group" id="translationOptions" style="display: none">
-          <label class="controls__label">
-            <input type="checkbox" id="showTranslation" class="controls__checkbox" />
-            日本語訳を表示
-          </label>
-        </div>
-
-        <div class="controls__group" id="sentenceDifficultyOptions" style="display: none">
-          <label class="controls__label">
-            難易度:
-            <select id="sentenceDifficulty" class="controls__select">
-              <option value="auto">自動（年齢に合わせる）</option>
-              <option value="easy">やさしい（短い文・易しい例文のみ）</option>
-              <option value="normal">ふつう（中程度まで）</option>
-              <option value="hard">むずかしい（長文も含む・日本語訳なし）</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="controls__group" id="wordOptions" style="display: none">
-          <label class="controls__label">
-            単語カテゴリー:
-            <select id="wordCategory" class="controls__select">
-              <option value="animals">動物</option>
-              <option value="food">食べ物</option>
-              <option value="colors">色</option>
-              <option value="numbers">数字</option>
-              <option value="calendar">曜日・月</option>
-              <option value="school_items">学用品</option>
-              <option value="body_parts">身体</option>
-              <option value="weather">天気</option>
-              <option value="classroom_objects">教室の物</option>
-              <option value="subjects">教科</option>
-              <option value="sports_activities">スポーツ・活動</option>
-              <option value="emotions_advanced">感情（上級）</option>
-              <option value="academic_words">学習用語</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="controls__group" id="wordDifficultyOptions" style="display: none">
-          <label class="controls__label">
-            難易度:
-            <select id="wordDifficulty" class="controls__select">
-              <option value="auto">自動（年齢に合わせる）</option>
-              <option value="easy">やさしい（6個・音節と訳を表示）</option>
-              <option value="normal">ふつう（8個・音節と訳を表示）</option>
-              <option value="hard">むずかしい（10個・英語のみ）</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="controls__group" id="phonicsOptions" style="display: none">
-          <label class="controls__label">
-            フォニックスパターン:
-            <select id="phonicsPattern" class="controls__select"></select>
-          </label>
-          <p class="controls__help">1ページで1つの音パターンに集中して練習します。</p>
-          <button
-            id="shufflePhonics"
-            class="btn btn--secondary"
-            style="margin-top: 0.5rem"
-            type="button"
-          >
-            🔄 別の単語を表示
-          </button>
-        </div>
-
-        <div class="controls__group" id="alphabetOptions" style="display: none">
-          <label class="controls__label">
-            文字の種類:
-            <select id="alphabetType" class="controls__select">
-              <option value="uppercase">大文字 (A-Z)</option>
-              <option value="lowercase">小文字 (a-z)</option>
-              <option value="both">大文字・小文字</option>
-            </select>
-          </label>
-          <label class="controls__label">
-            練習モード:
-            <select id="alphabetMode" class="controls__select">
-              <option value="normal" selected>通常</option>
-              <option value="trace">なぞり書き</option>
-            </select>
-          </label>
-          <label class="controls__label">
-            なぞり書き行数:
-            <select id="alphabetTraceRepeat" class="controls__select">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3" selected>3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </label>
-          <label class="controls__label">
-            例示単語数:
-            <select id="alphabetWordCount" class="controls__select">
-              <option value="1">1</option>
-              <option value="2" selected>2</option>
-              <option value="3">3</option>
-            </select>
-          </label>
-          <label class="controls__label">
-            <input type="checkbox" id="showAlphabetExample" class="controls__checkbox" checked />
-            例示単語を表示
-          </label>
-        </div>
-
-        <div class="controls__group" id="phraseOptions" style="display: none">
-          <label class="controls__label">
-            フレーズカテゴリー:
-            <select id="phraseCategory" class="controls__select">
-              <option value="all">すべてのカテゴリー</option>
-              <option value="greetings">あいさつ</option>
-              <option value="self_introduction">自己紹介</option>
-              <option value="school">学校生活</option>
-              <option value="shopping">買い物</option>
-              <option value="travel">旅行・移動</option>
-              <option value="feelings">感情表現</option>
-              <option value="daily_life">日常生活</option>
-              <option value="classroom_english">教室での英語</option>
-              <option value="friend_making">友達作り</option>
-              <option value="cultural_exchange">文化交流</option>
-              <option value="emergency_situations">緊急時の表現</option>
-              <option value="numbers_math">数と算数</option>
-              <option value="family">家族</option>
-              <option value="hobbies">趣味・遊び</option>
-              <option value="food_eating">食べ物・食事</option>
-              <option value="weather">天気</option>
-              <option value="asking_for_help">助けを求める</option>
-              <option value="opinions_preferences">意見・好み</option>
-              <option value="making_plans">予定を立てる</option>
-              <option value="apologizing_thanking">謝る・感謝する</option>
-              <option value="health_body">体・健康</option>
-            </select>
-          </label>
-          <label class="controls__label">
-            <input type="checkbox" id="showSituation" class="controls__checkbox" checked />
-            使用場面を表示
-          </label>
-          <button
-            id="shufflePhrases"
-            class="btn btn--secondary"
-            style="margin-top: 0.5rem"
-            type="button"
-          >
-            🔄 別のフレーズを表示
-          </button>
-        </div>
-
-        <div class="controls__group" id="phraseDifficultyOptions" style="display: none">
-          <label class="controls__label">
-            難易度:
-            <select id="phraseDifficulty" class="controls__select">
-              <option value="auto">自動（年齢に合わせる）</option>
-              <option value="easy">やさしい（3個・訳と場面を表示）</option>
-              <option value="normal">ふつう（4個・訳のみ表示）</option>
-              <option value="hard">むずかしい（5個・英語のみ）</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="controls__group" id="clozeOptions" style="display: none">
-          <label class="controls__label">
-            フレーズカテゴリー:
-            <select id="clozeCategory" class="controls__select">
-              <option value="all">すべてのカテゴリー</option>
-              <option value="greetings">あいさつ</option>
-              <option value="self_introduction">自己紹介</option>
-              <option value="school">学校生活</option>
-              <option value="shopping">買い物</option>
-              <option value="travel">旅行・移動</option>
-              <option value="feelings">感情表現</option>
-              <option value="daily_life">日常生活</option>
-              <option value="classroom_english">教室での英語</option>
-              <option value="friend_making">友達作り</option>
-              <option value="cultural_exchange">文化交流</option>
-              <option value="emergency_situations">緊急時の表現</option>
-              <option value="numbers_math">数と算数</option>
-              <option value="family">家族</option>
-              <option value="hobbies">趣味・遊び</option>
-              <option value="food_eating">食べ物・食事</option>
-              <option value="weather">天気</option>
-              <option value="asking_for_help">助けを求める</option>
-              <option value="opinions_preferences">意見・好み</option>
-              <option value="making_plans">予定を立てる</option>
-              <option value="apologizing_thanking">謝る・感謝する</option>
-              <option value="health_body">体・健康</option>
-            </select>
-          </label>
-          <label class="controls__label">
-            穴埋めタイプ:
-            <select id="clozeBlankType" class="controls__select">
-              <option value="word">単語レベル（単語を空欄に）</option>
-              <option value="char">文字レベル（文字を空欄に）</option>
-            </select>
-          </label>
-          <label class="controls__label">
-            難易度:
-            <select id="clozeDifficulty" class="controls__select">
-              <option value="auto">自動（年齢に合わせる）</option>
-              <option value="easy">やさしい（穴 約20%・基本語のみ）</option>
-              <option value="normal">ふつう（穴 約30%）</option>
-              <option value="hard">むずかしい（穴 約50%・内容語も）</option>
-            </select>
-          </label>
-          <label class="controls__label">
-            <input type="checkbox" id="showClozeAnswers" class="controls__checkbox" />
-            解答を表示
-          </label>
-          <button
-            id="shuffleCloze"
-            class="btn btn--secondary"
-            style="margin-top: 0.5rem"
-            type="button"
-          >
-            🔄 別のフレーズを表示
-          </button>
-        </div>
-
-        <div class="controls__group" id="customExampleOptions" style="display: none">
-          <h3 class="controls__subtitle">カスタム例文</h3>
-          <label class="controls__label">
-            英語:
-            <input
-              type="text"
-              id="customEnglish"
-              class="controls__input"
-              placeholder="例: Hello, world!"
-            />
-          </label>
-          <label class="controls__label">
-            日本語:
-            <input
-              type="text"
-              id="customJapanese"
-              class="controls__input"
-              placeholder="例: こんにちは、世界！"
-            />
-          </label>
-          <button
-            id="addCustomExampleBtn"
-            class="btn btn--secondary"
-            style="margin-top: 0.5rem"
-            type="button"
-          >
-            例文を追加
-          </button>
-          <div class="custom-examples" aria-live="polite">
-            <div class="custom-examples__header">
-              <span class="custom-examples__title">保存済み例文</span>
-              <span id="customExamplesCount" class="custom-examples__count">0件</span>
-            </div>
-            <div id="customExamplesList" class="custom-examples__list">
-              <p class="custom-examples__empty">保存済みの例文はありません。</p>
-            </div>
+    <main id="appMain" tabindex="-1">
+      <section id="learnPanel" class="studio-panel no-print" aria-labelledby="learnHeading">
+        <div class="studio-intro">
+          <div>
+            <p class="eyebrow">A LITTLE ENGLISH, EVERY DAY</p>
+            <h1 id="learnHeading">まいにち、英語を<br /><span>少しずつ。</span></h1>
+            <p class="intro-copy">
+              思い出して、書いて、身につける。<br />まずは5問。今日の「できた」を増やそう。
+            </p>
+          </div>
+          <div class="notebook-art" aria-hidden="true">
+            <span class="art-tag">TODAY'S LITTLE STEP</span>
+            <span class="art-line">Hello, <em>world.</em></span>
+            <span class="art-line art-line--small"
+              >I can <span class="art-blank">do</span> it.</span
+            >
+            <span class="art-stamp">できた！<span>✦</span></span>
           </div>
         </div>
-
-        <div class="controls__group" id="customizeOptions" style="display: block">
-          <h3 class="controls__subtitle">カスタマイズ設定</h3>
-
-          <label class="controls__label">
-            罫線の高さ:
-            <select id="lineHeight" class="controls__select">
-              <option value="8">8mm（小さめ）</option>
-              <option value="10" selected>10mm（標準）</option>
-              <option value="12">12mm（大きめ）</option>
-            </select>
-          </label>
-
-          <label class="controls__label">
-            罫線の色:
-            <select id="lineColor" class="controls__select">
-              <option value="gray" selected>グレー</option>
-              <option value="blue">青</option>
-              <option value="green">緑</option>
-            </select>
-          </label>
-
-          <label class="controls__label">
-            <input type="checkbox" id="showHeader" class="controls__checkbox" />
-            名前・日付欄を表示
-          </label>
-
-          <label class="controls__label">
-            ページ数:
-            <input
-              type="number"
-              id="pageCount"
-              class="controls__input"
-              value="1"
-              min="1"
-              max="60"
-            />
-          </label>
+        <div class="learning-layout">
+          <div class="lesson-card">
+            <form id="lessonSetup">
+              <div class="card-heading">
+                <span class="step-icon">01</span>
+                <div>
+                  <p class="eyebrow">FILL IN THE BLANKS</p>
+                  <h2>今日の練習をえらぼう</h2>
+                </div>
+                <span class="small-badge">1回 最大5問</span>
+              </div>
+              <p class="muted setup-description">
+                日本語をヒントに、空欄に入る英語を考えてみよう。
+              </p>
+              <div class="lesson-fields">
+                <label class="field-label"
+                  >練習するテーマ<select id="learnCategory" required></select
+                ></label>
+                <label class="field-label"
+                  >学習する人の年齢<select id="learnAge">
+                    <option value="4-6">4〜6歳</option>
+                    <option value="7-9" selected>7〜9歳</option>
+                    <option value="10-12">10〜12歳</option>
+                  </select></label
+                >
+                <label class="field-label"
+                  >練習のしかた<select id="learnBlankType">
+                    <option value="word">単語の穴埋め</option>
+                    <option value="char">文字の穴埋め</option>
+                  </select></label
+                >
+                <label class="field-label"
+                  >チャレンジレベル<select id="learnDifficulty">
+                    <option value="easy" selected>やさしい · 空欄少なめ</option>
+                    <option value="normal">ふつう</option>
+                    <option value="hard">むずかしい · 空欄多め</option>
+                  </select></label
+                >
+              </div>
+              <div class="lesson-start">
+                <p>迷ったらヒントも使えます。</p>
+                <button id="startLesson" class="btn btn--primary" type="submit" disabled>
+                  練習をはじめる <span aria-hidden="true">→</span>
+                </button>
+              </div>
+              <p id="learnMessage" role="status"></p>
+            </form>
+            <section id="lessonSession" hidden aria-label="穴埋め練習">
+              <div class="session-top">
+                <p id="questionProgress" class="eyebrow"></p>
+                <button id="endLesson" class="text-button" type="button">練習を区切る</button>
+              </div>
+              <progress
+                id="lessonProgress"
+                value="0"
+                max="5"
+                aria-label="練習の進み具合"
+              ></progress>
+              <p id="questionSituation" class="situation-label"></p>
+              <h2 id="questionJapanese">問題を準備しています</h2>
+              <p id="questionInstruction" class="muted"></p>
+              <form id="answerForm">
+                <div id="questionEnglish" class="question-english" lang="en"></div>
+                <div class="hint-row">
+                  <button id="hintButton" class="text-button" type="button">ヒントを見る</button
+                  ><span id="hintText" role="status"></span>
+                </div>
+                <div
+                  id="answerFeedback"
+                  class="answer-feedback"
+                  role="status"
+                  aria-live="polite"
+                ></div>
+                <div class="session-actions">
+                  <button id="checkAnswer" class="btn btn--primary" type="submit">答え合わせ</button
+                  ><button id="nextQuestion" class="btn btn--primary" type="button" hidden>
+                    次の問題へ →
+                  </button>
+                </div>
+              </form>
+              <p class="session-note">
+                答え合わせした問題は自動で記録されます。入力途中の答えは保存されません。
+              </p>
+            </section>
+            <section id="lessonResult" hidden aria-labelledby="resultHeading">
+              <p class="eyebrow">LITTLE STEPS, REAL PROGRESS</p>
+              <h2 id="resultHeading" tabindex="-1">今日の「できた」</h2>
+              <p class="result-score"><span id="resultScore"></span><small>問 正解</small></p>
+              <p id="resultMessage" class="muted"></p>
+              <ul id="resultList" class="result-list"></ul>
+              <div class="result-actions">
+                <button id="retryMistakes" class="btn btn--primary" type="button">
+                  迷った問題をもう一度</button
+                ><button id="newLesson" class="btn btn--secondary" type="button">
+                  新しい練習へ</button
+                ><button id="printLesson" class="text-button" type="button">
+                  同じテーマのプリントを作る →
+                </button>
+              </div>
+            </section>
+          </div>
+          <aside class="learning-aside" aria-label="学習の記録とヒント">
+            <div class="review-card">
+              <span class="eyebrow">YOUR NEXT STEP</span>
+              <h2>思い出すと、<br />もっと身につく。</h2>
+              <p>今日の復習 <strong id="reviewCount">0</strong><span>問</span></p>
+              <button id="reviewShortcut" type="button">
+                復習ノートをひらく <span aria-hidden="true">↗</span>
+              </button>
+            </div>
+            <div class="stats-card">
+              <h3>これまでの小さな一歩</h3>
+              <div class="stats-grid">
+                <p><strong id="learnedCount">0</strong><span>自力で正解した問題</span></p>
+                <p><strong id="attemptCount">0</strong><span>答え合わせの回数</span></p>
+              </div>
+            </div>
+            <p id="storageNotice" class="storage-notice" role="status"></p>
+          </aside>
         </div>
-
-        <button id="previewBtn" class="btn btn--secondary" type="button">🔍 印刷プレビュー</button>
-        <button id="printBtn" class="btn btn--primary" type="button">印刷・PDF保存</button>
+        <div class="learning-guide">
+          <div>
+            <span>01 / TRY</span>
+            <h3>まずは、思い出す</h3>
+            <p>空欄をうめて、英語を自分の力で。</p>
+          </div>
+          <div>
+            <span>02 / CHECK</span>
+            <h3>答えを見て、声に出す</h3>
+            <p>文全体を読んで、意味もたしかめる。</p>
+          </div>
+          <div>
+            <span>03 / REMEMBER</span>
+            <h3>もう一度で、身につく</h3>
+            <p>迷った問題を、復習ノートでもう一度。</p>
+          </div>
+        </div>
       </section>
+      <section
+        id="reviewPanel"
+        class="studio-panel no-print"
+        hidden
+        aria-labelledby="reviewHeading"
+      >
+        <p class="eyebrow">YOUR REVIEW NOTEBOOK</p>
+        <h1 id="reviewHeading">もう一度が、力になる。</h1>
+        <p id="reviewSummary" class="intro-copy"></p>
+        <button id="startReview" class="btn btn--primary" type="button">復習をはじめる →</button>
+        <ul id="reviewList" class="review-list"></ul>
+      </section>
+      <section
+        id="worksheetPanel"
+        class="worksheet-panel"
+        hidden
+        aria-labelledby="worksheetHeading"
+      >
+        <div class="worksheet-intro no-print">
+          <div>
+            <p class="eyebrow">PAPER &amp; PENCIL</p>
+            <h1 id="worksheetHeading">書く時間を、つくろう。</h1>
+            <p class="muted">テーマに合わせて4本線の練習ノートを。A4で印刷・PDF保存できます。</p>
+          </div>
+          <span class="small-badge">8つの練習モード</span>
+        </div>
+        <div class="main">
+          <section class="controls" aria-label="プリントの設定">
+            <h2 class="settings-title">プリントの設定</h2>
+            <div class="controls__group">
+              <label class="controls__label">
+                練習モード:
+                <select id="practiceMode" class="controls__select">
+                  <option value="phrase">フレーズ練習</option>
+                  <option value="phonics">フォニックス練習</option>
+                  <option value="normal">通常練習</option>
+                  <option value="sentence">文章練習</option>
+                  <option value="word">単語練習</option>
+                  <option value="alphabet">アルファベット練習</option>
+                  <option value="cloze">穴埋めフレーズ練習</option>
+                  <option value="sightWords">サイトワード練習</option>
+                </select>
+              </label>
+            </div>
 
-      <section class="preview">
-        <div id="notePreview" class="note-preview"></div>
-        <div
-          id="autoLayoutNotice"
-          class="auto-layout-notice"
-          role="status"
-          aria-live="polite"
-        ></div>
+            <div class="controls__group" id="sightWordOptions" style="display: none">
+              <label class="controls__label">
+                1ページの単語数:
+                <select id="sightWordCount" class="controls__select">
+                  <option value="4">4語</option>
+                  <option value="6" selected>6語</option>
+                  <option value="8">8語</option>
+                </select>
+              </label>
+              <button id="shuffleSightWords" class="btn btn--secondary" type="button">
+                🔄 別の単語を表示
+              </button>
+            </div>
+
+            <div class="controls__group" id="ageOptions" style="display: none">
+              <label class="controls__label">
+                年齢:
+                <select id="ageGroup" class="controls__select">
+                  <option value="4-6">4〜6歳</option>
+                  <option value="7-9" selected>7〜9歳</option>
+                  <option value="10-12">10〜12歳</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="controls__group" id="exampleOptions" style="display: none">
+              <label class="controls__label">
+                <input type="checkbox" id="showExamples" class="controls__checkbox" checked />
+                例文を表示
+              </label>
+
+              <label class="controls__label" style="margin-top: 0.5rem">
+                例文カテゴリー:
+                <select id="exampleCategory" class="controls__select">
+                  <option value="all">すべて</option>
+                  <option value="daily">日常会話</option>
+                  <option value="school">学校</option>
+                  <option value="family">家族</option>
+                  <option value="hobby">趣味</option>
+                </select>
+              </label>
+
+              <button
+                id="refreshExamplesBtn"
+                class="btn btn--secondary"
+                style="margin-top: 0.5rem; font-size: 0.9rem"
+                type="button"
+              >
+                例文を更新
+              </button>
+            </div>
+
+            <div class="controls__group" id="translationOptions" style="display: none">
+              <label class="controls__label">
+                <input type="checkbox" id="showTranslation" class="controls__checkbox" />
+                日本語訳を表示
+              </label>
+            </div>
+
+            <div class="controls__group" id="sentenceDifficultyOptions" style="display: none">
+              <label class="controls__label">
+                難易度:
+                <select id="sentenceDifficulty" class="controls__select">
+                  <option value="auto">自動（年齢に合わせる）</option>
+                  <option value="easy">やさしい（短い文・易しい例文のみ）</option>
+                  <option value="normal">ふつう（中程度まで）</option>
+                  <option value="hard">むずかしい（長文も含む・日本語訳なし）</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="controls__group" id="wordOptions" style="display: none">
+              <label class="controls__label">
+                単語カテゴリー:
+                <select id="wordCategory" class="controls__select">
+                  <option value="animals">動物</option>
+                  <option value="food">食べ物</option>
+                  <option value="colors">色</option>
+                  <option value="numbers">数字</option>
+                  <option value="calendar">曜日・月</option>
+                  <option value="school_items">学用品</option>
+                  <option value="body_parts">身体</option>
+                  <option value="weather">天気</option>
+                  <option value="classroom_objects">教室の物</option>
+                  <option value="subjects">教科</option>
+                  <option value="sports_activities">スポーツ・活動</option>
+                  <option value="emotions_advanced">感情（上級）</option>
+                  <option value="academic_words">学習用語</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="controls__group" id="wordDifficultyOptions" style="display: none">
+              <label class="controls__label">
+                難易度:
+                <select id="wordDifficulty" class="controls__select">
+                  <option value="auto">自動（年齢に合わせる）</option>
+                  <option value="easy">やさしい（6個・音節と訳を表示）</option>
+                  <option value="normal">ふつう（8個・音節と訳を表示）</option>
+                  <option value="hard">むずかしい（10個・英語のみ）</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="controls__group" id="phonicsOptions" style="display: none">
+              <label class="controls__label">
+                フォニックスパターン:
+                <select id="phonicsPattern" class="controls__select"></select>
+              </label>
+              <p class="controls__help">1ページで1つの音パターンに集中して練習します。</p>
+              <button
+                id="shufflePhonics"
+                class="btn btn--secondary"
+                style="margin-top: 0.5rem"
+                type="button"
+              >
+                🔄 別の単語を表示
+              </button>
+            </div>
+
+            <div class="controls__group" id="alphabetOptions" style="display: none">
+              <label class="controls__label">
+                文字の種類:
+                <select id="alphabetType" class="controls__select">
+                  <option value="uppercase">大文字 (A-Z)</option>
+                  <option value="lowercase">小文字 (a-z)</option>
+                  <option value="both">大文字・小文字</option>
+                </select>
+              </label>
+              <label class="controls__label">
+                練習モード:
+                <select id="alphabetMode" class="controls__select">
+                  <option value="normal" selected>通常</option>
+                  <option value="trace">なぞり書き</option>
+                </select>
+              </label>
+              <label class="controls__label">
+                なぞり書き行数:
+                <select id="alphabetTraceRepeat" class="controls__select">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3" selected>3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </label>
+              <label class="controls__label">
+                例示単語数:
+                <select id="alphabetWordCount" class="controls__select">
+                  <option value="1">1</option>
+                  <option value="2" selected>2</option>
+                  <option value="3">3</option>
+                </select>
+              </label>
+              <label class="controls__label">
+                <input
+                  type="checkbox"
+                  id="showAlphabetExample"
+                  class="controls__checkbox"
+                  checked
+                />
+                例示単語を表示
+              </label>
+            </div>
+
+            <div class="controls__group" id="phraseOptions" style="display: none">
+              <label class="controls__label">
+                フレーズカテゴリー:
+                <select id="phraseCategory" class="controls__select">
+                  <option value="all">すべてのカテゴリー</option>
+                  <option value="greetings">あいさつ</option>
+                  <option value="self_introduction">自己紹介</option>
+                  <option value="school">学校生活</option>
+                  <option value="shopping">買い物</option>
+                  <option value="travel">旅行・移動</option>
+                  <option value="feelings">感情表現</option>
+                  <option value="daily_life">日常生活</option>
+                  <option value="classroom_english">教室での英語</option>
+                  <option value="friend_making">友達作り</option>
+                  <option value="cultural_exchange">文化交流</option>
+                  <option value="emergency_situations">緊急時の表現</option>
+                  <option value="numbers_math">数と算数</option>
+                  <option value="family">家族</option>
+                  <option value="hobbies">趣味・遊び</option>
+                  <option value="food_eating">食べ物・食事</option>
+                  <option value="weather">天気</option>
+                  <option value="asking_for_help">助けを求める</option>
+                  <option value="opinions_preferences">意見・好み</option>
+                  <option value="making_plans">予定を立てる</option>
+                  <option value="apologizing_thanking">謝る・感謝する</option>
+                  <option value="health_body">体・健康</option>
+                </select>
+              </label>
+              <label class="controls__label">
+                <input type="checkbox" id="showSituation" class="controls__checkbox" checked />
+                使用場面を表示
+              </label>
+              <button
+                id="shufflePhrases"
+                class="btn btn--secondary"
+                style="margin-top: 0.5rem"
+                type="button"
+              >
+                🔄 別のフレーズを表示
+              </button>
+            </div>
+
+            <div class="controls__group" id="phraseDifficultyOptions" style="display: none">
+              <label class="controls__label">
+                難易度:
+                <select id="phraseDifficulty" class="controls__select">
+                  <option value="auto">自動（年齢に合わせる）</option>
+                  <option value="easy">やさしい（3個・訳と場面を表示）</option>
+                  <option value="normal">ふつう（4個・訳のみ表示）</option>
+                  <option value="hard">むずかしい（5個・英語のみ）</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="controls__group" id="clozeOptions" style="display: none">
+              <label class="controls__label">
+                フレーズカテゴリー:
+                <select id="clozeCategory" class="controls__select">
+                  <option value="all">すべてのカテゴリー</option>
+                  <option value="greetings">あいさつ</option>
+                  <option value="self_introduction">自己紹介</option>
+                  <option value="school">学校生活</option>
+                  <option value="shopping">買い物</option>
+                  <option value="travel">旅行・移動</option>
+                  <option value="feelings">感情表現</option>
+                  <option value="daily_life">日常生活</option>
+                  <option value="classroom_english">教室での英語</option>
+                  <option value="friend_making">友達作り</option>
+                  <option value="cultural_exchange">文化交流</option>
+                  <option value="emergency_situations">緊急時の表現</option>
+                  <option value="numbers_math">数と算数</option>
+                  <option value="family">家族</option>
+                  <option value="hobbies">趣味・遊び</option>
+                  <option value="food_eating">食べ物・食事</option>
+                  <option value="weather">天気</option>
+                  <option value="asking_for_help">助けを求める</option>
+                  <option value="opinions_preferences">意見・好み</option>
+                  <option value="making_plans">予定を立てる</option>
+                  <option value="apologizing_thanking">謝る・感謝する</option>
+                  <option value="health_body">体・健康</option>
+                </select>
+              </label>
+              <label class="controls__label">
+                穴埋めタイプ:
+                <select id="clozeBlankType" class="controls__select">
+                  <option value="word">単語レベル（単語を空欄に）</option>
+                  <option value="char">文字レベル（文字を空欄に）</option>
+                </select>
+              </label>
+              <label class="controls__label">
+                難易度:
+                <select id="clozeDifficulty" class="controls__select">
+                  <option value="auto">自動（年齢に合わせる）</option>
+                  <option value="easy">やさしい（穴 約20%・基本語のみ）</option>
+                  <option value="normal">ふつう（穴 約30%）</option>
+                  <option value="hard">むずかしい（穴 約50%・内容語も）</option>
+                </select>
+              </label>
+              <label class="controls__label">
+                <input type="checkbox" id="showClozeAnswers" class="controls__checkbox" />
+                解答を表示
+              </label>
+              <button
+                id="shuffleCloze"
+                class="btn btn--secondary"
+                style="margin-top: 0.5rem"
+                type="button"
+              >
+                🔄 別のフレーズを表示
+              </button>
+            </div>
+
+            <div class="controls__group" id="customExampleOptions" style="display: none">
+              <h3 class="controls__subtitle">カスタム例文</h3>
+              <label class="controls__label">
+                英語:
+                <input
+                  type="text"
+                  id="customEnglish"
+                  class="controls__input"
+                  placeholder="例: Hello, world!"
+                />
+              </label>
+              <label class="controls__label">
+                日本語:
+                <input
+                  type="text"
+                  id="customJapanese"
+                  class="controls__input"
+                  placeholder="例: こんにちは、世界！"
+                />
+              </label>
+              <button
+                id="addCustomExampleBtn"
+                class="btn btn--secondary"
+                style="margin-top: 0.5rem"
+                type="button"
+              >
+                例文を追加
+              </button>
+              <div class="custom-examples" aria-live="polite">
+                <div class="custom-examples__header">
+                  <span class="custom-examples__title">保存済み例文</span>
+                  <span id="customExamplesCount" class="custom-examples__count">0件</span>
+                </div>
+                <div id="customExamplesList" class="custom-examples__list">
+                  <p class="custom-examples__empty">保存済みの例文はありません。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="controls__group" id="customizeOptions" style="display: block">
+              <h3 class="controls__subtitle">カスタマイズ設定</h3>
+
+              <label class="controls__label">
+                罫線の高さ:
+                <select id="lineHeight" class="controls__select">
+                  <option value="8">8mm（小さめ）</option>
+                  <option value="10" selected>10mm（標準）</option>
+                  <option value="12">12mm（大きめ）</option>
+                </select>
+              </label>
+
+              <label class="controls__label">
+                罫線の色:
+                <select id="lineColor" class="controls__select">
+                  <option value="gray" selected>グレー</option>
+                  <option value="blue">青</option>
+                  <option value="green">緑</option>
+                </select>
+              </label>
+
+              <label class="controls__label">
+                <input type="checkbox" id="showHeader" class="controls__checkbox" />
+                名前・日付欄を表示
+              </label>
+
+              <label class="controls__label">
+                ページ数:
+                <input
+                  type="number"
+                  id="pageCount"
+                  class="controls__input"
+                  value="1"
+                  min="1"
+                  max="60"
+                />
+              </label>
+            </div>
+
+            <button id="previewBtn" class="btn btn--secondary" type="button">
+              🔍 印刷プレビュー
+            </button>
+            <button id="printBtn" class="btn btn--primary" type="button">印刷・PDF保存</button>
+          </section>
+
+          <section class="preview">
+            <div class="preview-label no-print">
+              <h2>プリントのプレビュー</h2>
+              <span>A4 / 210 × 297 mm</span>
+            </div>
+            <div id="notePreview" class="note-preview"></div>
+            <div
+              id="autoLayoutNotice"
+              class="auto-layout-notice"
+              role="status"
+              aria-live="polite"
+            ></div>
+          </section>
+        </div>
       </section>
     </main>
 
     <footer class="footer no-print">
-      <p>&copy; 2025 英語罫線ノート作成ツール</p>
+      <p>English Note <span>— まなぶ、書く、思い出す。</span></p>
+      <p>アカウント不要 · ブラウザだけで使えます</p>
     </footer>
 
     <!-- 印刷プレビューモーダル -->
@@ -424,7 +620,14 @@
       <div class="print-preview-content">
         <div class="print-preview-header">
           <h3>🔍 印刷プレビュー</h3>
-          <button id="closePreviewBtn" class="close-btn" type="button">&times;</button>
+          <button
+            id="closePreviewBtn"
+            class="close-btn"
+            type="button"
+            aria-label="印刷プレビューを閉じる"
+          >
+            &times;
+          </button>
         </div>
 
         <div class="print-preview-body">

@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('アルファベット練習モードテスト', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/?view=worksheet');
     await page.selectOption('#practiceMode', 'alphabet');
     await expect(page.locator('#alphabetOptions')).toBeVisible();
   });
@@ -246,7 +246,7 @@ test.describe('アルファベット練習モードテスト', () => {
 });
 
 test('アルファベットモードの全体統合テスト', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'alphabet');
 
   const types = [

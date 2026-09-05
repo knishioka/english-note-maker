@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('通常練習モードテスト', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/?view=worksheet');
     await page.selectOption('#practiceMode', 'normal');
     await page.waitForTimeout(500);
   });
@@ -149,7 +149,7 @@ test.describe('通常練習モードテスト', () => {
 });
 
 test('通常練習モードの全体統合テスト', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'normal');
 
   // 各設定を変更
@@ -181,7 +181,7 @@ test('通常練習モードの全体統合テスト', async ({ page }) => {
 });
 
 test('レスポンシブデザインの確認', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000/?view=worksheet');
   await page.selectOption('#practiceMode', 'normal');
 
   // デスクトップビュー
