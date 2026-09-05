@@ -2,8 +2,8 @@
   "metadata": {
     "type": "phrase",
     "category": "school",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T12:34:13.650Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
     "totalCount": 103,
     "schemaVersion": "1.0.0"
   },
@@ -725,8 +725,8 @@
     {
       "id": "phrase-school-im-thinking-about-which-high-s-10-12",
       "type": "phrase",
-      "english": "I'm thinking about which high school to attend.",
-      "japanese": "どの高校に行くか考えています。",
+      "english": "I'm thinking about which club to join.",
+      "japanese": "どのクラブに入るか考えています。",
       "situation": "進路について話すとき",
       "category": "school",
       "ageGroup": "10-12",
@@ -734,7 +734,9 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["school", "statement"]
+      "tags": ["school", "statement"],
+      "legacyEnglish": ["I'm thinking about which high school to attend."],
+      "revision": 2
     },
     {
       "id": "phrase-school-our-teacher-gave-us-a-challeng-10-12",
@@ -1286,7 +1288,7 @@
       "id": "phrase-school-the-math-test-was-really-difficult-10-12",
       "type": "phrase",
       "english": "The math test was really difficult.",
-      "japanese": "数学のテストはとてもむずかしかったです。",
+      "japanese": "算数のテストはとてもむずかしかったです。",
       "situation": "テストの感想を言うとき",
       "category": "school",
       "ageGroup": "10-12",
@@ -1294,7 +1296,8 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["school"]
+      "tags": ["school"],
+      "revision": 2
     },
     {
       "id": "phrase-school-i-have-to-study-for-the-final-exam-10-12",

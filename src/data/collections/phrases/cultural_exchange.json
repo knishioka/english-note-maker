@@ -2,8 +2,8 @@
   "metadata": {
     "type": "phrase",
     "category": "cultural_exchange",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T09:14:07.032Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
     "totalCount": 65,
     "schemaVersion": "1.0.0"
   },
@@ -237,14 +237,15 @@
       "type": "phrase",
       "english": "How do you say this in your language?",
       "japanese": "あなたの言語でこれは何て言いますか？",
-      "situation": "日本語でなんと言うか聞くとき",
+      "situation": "あいてのことばでの言い方を聞くとき",
       "category": "cultural_exchange",
       "ageGroup": "7-9",
       "difficulty": 2,
       "pattern": "question",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["cultural_exchange", "question"]
+      "tags": ["cultural_exchange", "question"],
+      "revision": 2
     },
     {
       "id": "phrase-cultural_exchange-we-have-a-similar-custom-7-9",
@@ -517,14 +518,15 @@
       "type": "phrase",
       "english": "I am from Japan.",
       "japanese": "わたしは にほん しゅっしんです。",
-      "situation": "すんでいる ところを つたえる とき",
+      "situation": "しゅっしんを つたえる とき",
       "category": "cultural_exchange",
       "ageGroup": "4-6",
       "difficulty": 1,
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["cultural_exchange"]
+      "tags": ["cultural_exchange"],
+      "revision": 2
     },
     {
       "id": "phrase-cultural_exchange-this-is-a-japanese-flag-4-6",
@@ -615,20 +617,21 @@
       "type": "phrase",
       "english": "Where are you from?",
       "japanese": "どこの しゅっしんですか？",
-      "situation": "すんでいる ところを たずねる とき",
+      "situation": "しゅっしんを たずねる とき",
       "category": "cultural_exchange",
       "ageGroup": "4-6",
       "difficulty": 1,
       "pattern": "question",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["cultural_exchange"]
+      "tags": ["cultural_exchange"],
+      "revision": 2
     },
     {
       "id": "phrase-cultural_exchange-hello-in-japanese-is-konnichiwa-4-6",
       "type": "phrase",
       "english": "Hello in Japanese is konnichiwa.",
-      "japanese": "にほんごで こんにちはは konnichiwa です。",
+      "japanese": "えいごの ハローは、にほんごで こんにちはです。",
       "situation": "ことばを おしえる とき",
       "category": "cultural_exchange",
       "ageGroup": "4-6",
@@ -636,7 +639,8 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["cultural_exchange"]
+      "tags": ["cultural_exchange"],
+      "revision": 2
     },
     {
       "id": "phrase-cultural_exchange-in-japan-we-take-off-our-shoes-inside-7-9",

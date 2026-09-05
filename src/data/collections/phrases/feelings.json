@@ -2,9 +2,9 @@
   "metadata": {
     "type": "phrase",
     "category": "feelings",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T12:34:13.653Z",
-    "totalCount": 101,
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
+    "totalCount": 99,
     "schemaVersion": "1.0.0"
   },
   "items": [
@@ -513,20 +513,6 @@
       "tags": ["feelings", "introduction", "emotion"]
     },
     {
-      "id": "phrase-feelings-im-excited-4-6",
-      "type": "phrase",
-      "english": "I'm excited!",
-      "japanese": "ワクワクする！",
-      "situation": "わくわくしている とき",
-      "category": "feelings",
-      "ageGroup": "4-6",
-      "difficulty": 1,
-      "pattern": "statement",
-      "usageFrequency": "core",
-      "focusWords": [],
-      "tags": ["feelings", "statement"]
-    },
-    {
       "id": "phrase-feelings-im-nervous-4-6",
       "type": "phrase",
       "english": "I'm nervous.",
@@ -546,20 +532,6 @@
       "english": "I'm bored.",
       "japanese": "たいくつです。",
       "situation": "たいくつなとき",
-      "category": "feelings",
-      "ageGroup": "4-6",
-      "difficulty": 1,
-      "pattern": "statement",
-      "usageFrequency": "core",
-      "focusWords": [],
-      "tags": ["feelings", "statement"]
-    },
-    {
-      "id": "phrase-feelings-im-surprised-4-6",
-      "type": "phrase",
-      "english": "I'm surprised!",
-      "japanese": "びっくりした！",
-      "situation": "びっくりした とき",
       "category": "feelings",
       "ageGroup": "4-6",
       "difficulty": 1,
@@ -936,7 +908,7 @@
       "id": "phrase-feelings-i-am-shy-4-6",
       "type": "phrase",
       "english": "I am shy.",
-      "japanese": "わたしは はずかしいです。",
+      "japanese": "わたしは はずかしがりやです。",
       "situation": "きもちを つたえる とき",
       "category": "feelings",
       "ageGroup": "4-6",
@@ -944,7 +916,8 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["feelings"]
+      "tags": ["feelings"],
+      "revision": 2
     },
     {
       "id": "phrase-feelings-i-am-cold-4-6",
@@ -1034,7 +1007,7 @@
       "id": "phrase-feelings-i-feel-nervous-about-the-test-7-9",
       "type": "phrase",
       "english": "I feel nervous about the test.",
-      "japanese": "テストがきんちょうします。",
+      "japanese": "テストのことで、きんちょうしています。",
       "situation": "きもちをつたえるとき",
       "category": "feelings",
       "ageGroup": "7-9",
@@ -1042,7 +1015,8 @@
       "pattern": "statement",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["feelings"]
+      "tags": ["feelings"],
+      "revision": 2
     },
     {
       "id": "phrase-feelings-i-am-worried-about-my-friend-7-9",

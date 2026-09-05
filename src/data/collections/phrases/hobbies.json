@@ -2,8 +2,8 @@
   "metadata": {
     "type": "phrase",
     "category": "hobbies",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T12:30:44.736Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
     "totalCount": 68,
     "schemaVersion": "1.0.0"
   },
@@ -403,8 +403,8 @@
     {
       "id": "phrase-hobbies-i-like-creating-videos-for-soc-10-12",
       "type": "phrase",
-      "english": "I like creating videos for social media.",
-      "japanese": "わたしはSNS用の動画を作るのが好きです。",
+      "english": "I like creating short videos with my friends.",
+      "japanese": "わたしは友達と短い動画を作るのが好きです。",
       "situation": "しゅみを言うとき",
       "category": "hobbies",
       "ageGroup": "10-12",
@@ -412,7 +412,9 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["hobbies", "statement"]
+      "tags": ["hobbies", "statement"],
+      "legacyEnglish": ["I like creating videos for social media."],
+      "revision": 2
     },
     {
       "id": "phrase-hobbies-reading-novels-helps-me-relax-10-12",

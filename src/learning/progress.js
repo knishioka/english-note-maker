@@ -1,13 +1,17 @@
+import { normalizeAnswer, refreshItem, restoreItem, snapshotItem } from './exercises.js';
+export { normalizeAnswer } from './exercises.js';
+
 export const PROGRESS_KEY = 'english-note-maker.learning.v1';
 const DAY = 24 * 60 * 60 * 1000;
 const INTERVALS = [1, 3, 7, 14];
 
-export function normalizeAnswer(value) {
-  return String(value).normalize('NFKC').trim().toLowerCase().replace(/[’‘]/g, "'");
-}
-
 export function exerciseId(item) {
-  return JSON.stringify([item.english, item.age, item.blankType, item.difficulty]);
+  return JSON.stringify([
+    item.phraseId || normalizeAnswer(item.english),
+    item.age,
+    item.blankType,
+    item.difficulty,
+  ]);
 }
 
 export function readProgress(storage) {
@@ -15,7 +19,8 @@ export function readProgress(storage) {
     const raw = storage.getItem(PROGRESS_KEY);
     if (!raw) return { records: [], available: true };
     const data = JSON.parse(raw);
-    if (data.version !== 1 || !Array.isArray(data.records)) throw new Error('Invalid progress');
+    if (![1, 2].includes(data.version) || !Array.isArray(data.records))
+      throw new Error('Invalid progress');
     const records = data.records.filter(
       (item) =>
         item &&
@@ -30,7 +35,9 @@ export function readProgress(storage) {
         Number.isInteger(item.attempts) &&
         item.attempts > 0 &&
         Number.isFinite(item.dueAt) &&
-        Number.isFinite(item.updatedAt)
+        Number.isFinite(item.updatedAt) &&
+        (item.phraseId === undefined || typeof item.phraseId === 'string') &&
+        (item.snapshot === undefined || Boolean(restoreItem(item.snapshot)))
     );
     return { records, available: records.length === data.records.length };
   } catch {
@@ -40,7 +47,7 @@ export function readProgress(storage) {
 
 export function saveProgress(storage, records) {
   try {
-    storage.setItem(PROGRESS_KEY, JSON.stringify({ version: 1, records }));
+    storage.setItem(PROGRESS_KEY, JSON.stringify({ version: 2, records }));
     return true;
   } catch {
     return false;
@@ -61,8 +68,26 @@ export function recordAttempt(records, item, correct, now = Date.now()) {
     streak,
     updatedAt: now,
     dueAt: correct ? now + INTERVALS[streak - 1] * DAY : now,
+    ...(item.phraseId ? { phraseId: item.phraseId } : {}),
+    ...(item.exercise ? { snapshot: snapshotItem(item) } : {}),
   };
   return [...records.filter((entry) => exerciseId(entry) !== id), record];
+}
+
+export function migrateRecords(records, getPhrasePool) {
+  return records.map((record) => {
+    const previous = record.snapshot ? restoreItem(record.snapshot) : record;
+    const current = refreshItem(previous, getPhrasePool);
+    if (!current) return record;
+    return {
+      ...record,
+      english: current.english,
+      category: current.category,
+      phraseId: current.phraseId,
+      revised: Boolean(record.revised || current.revised),
+      snapshot: snapshotItem(current),
+    };
+  });
 }
 
 export function dueRecords(records, now = Date.now()) {

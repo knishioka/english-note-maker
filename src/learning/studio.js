@@ -1,10 +1,29 @@
-import { generateClozeText } from './cloze.js';
+import {
+  createLessonItem,
+  fillAnswers,
+  gradeAnswers,
+  learningFocus,
+  refreshItem,
+  restoreItem,
+  snapshotItem,
+} from './exercises.js';
+import {
+  createSet,
+  exportSet,
+  importSet,
+  MAX_IMPORT_BYTES,
+  MAX_SETS,
+  readLibrary,
+  saveLibrary,
+} from './lesson-library.js';
+export { createLessonItem } from './exercises.js';
 import {
   dueRecords,
   normalizeAnswer,
   readProgress,
   recordAttempt,
   saveProgress,
+  migrateRecords,
 } from './progress.js';
 
 const $ = (id) => document.getElementById(id);
@@ -16,15 +35,12 @@ function node(tag, className, text) {
   return element;
 }
 
-export function createLessonItem(phrase, settings) {
-  return {
-    ...phrase,
-    ...settings,
-    exercise: generateClozeText(phrase.english, settings.blankType, settings.difficulty),
-  };
-}
-
-export function initLearningStudio({ getPhrasePool, categoryNames, onWorksheetOpen }) {
+export function initLearningStudio({
+  getPhrasePool,
+  categoryNames,
+  onWorksheetOpen,
+  onPrintLesson,
+}) {
   let storage;
   try {
     storage = window.localStorage;
@@ -32,7 +48,12 @@ export function initLearningStudio({ getPhrasePool, categoryNames, onWorksheetOp
     /* Practice also works without storage. */
   }
   const saved = readProgress(storage);
-  let records = saved.records;
+  let records = migrateRecords(saved.records, getPhrasePool);
+  if (saved.available && JSON.stringify(records) !== JSON.stringify(saved.records)) {
+    saved.available = saveProgress(storage, records);
+  }
+  const library = readLibrary(storage);
+  let sets = library.sets;
   let session = null;
   let index = 0;
   let outcomes = [];
@@ -48,7 +69,7 @@ export function initLearningStudio({ getPhrasePool, categoryNames, onWorksheetOp
   $('learnCategory').value = 'greetings';
 
   function updateStats() {
-    $('reviewCount').textContent = dueRecords(records).length;
+    $('reviewCount').textContent = reviewItems().length;
     $('learnedCount').textContent = records.filter((item) => item.streak > 0).length;
     $('attemptCount').textContent = records.reduce((sum, item) => sum + item.attempts, 0);
     $('storageNotice').textContent = available
@@ -93,6 +114,7 @@ export function initLearningStudio({ getPhrasePool, categoryNames, onWorksheetOp
       return;
     }
     $('learnMessage').textContent = '';
+    $('saveLessonNotice').textContent = '';
     $('lessonSetup').hidden = true;
     $('lessonSession').hidden = false;
     $('lessonResult').hidden = true;
@@ -128,7 +150,10 @@ export function initLearningStudio({ getPhrasePool, categoryNames, onWorksheetOp
     $('questionInstruction').textContent =
       item.blankType === 'char'
         ? '空欄に入る文字だけを入力しよう。'
-        : '空欄に入る単語を入力しよう。';
+        : '空欄に入る単語を入力しよう。文字数はお手本の目安です。';
+    $('questionRevision').textContent = item.revised
+      ? '教材を最新版に更新しました。学習の記録は引き継いでいます。'
+      : '';
     // The shared generator escapes content before producing worksheet markup.
     $('questionEnglish').innerHTML = item.exercise.display;
     $('questionEnglish')
@@ -142,7 +167,7 @@ export function initLearningStudio({ getPhrasePool, categoryNames, onWorksheetOp
         input.setAttribute('autocapitalize', 'none');
         input.setAttribute(
           'aria-label',
-          '空欄 ' + (i + 1) + '（' + item.exercise.answers[i].length + '文字）'
+          '空欄 ' + (i + 1) + '（お手本は' + item.exercise.answers[i].length + '文字）'
         );
         input.setAttribute('aria-describedby', 'answerFeedback');
         input.style.width = Math.min(15, Math.max(5, item.exercise.answers[i].length + 2)) + 'ch';
@@ -175,27 +200,29 @@ export function initLearningStudio({ getPhrasePool, categoryNames, onWorksheetOp
       $('answerFeedback').textContent = '空欄に答えを入力してね。';
       return;
     }
-    const correct = inputs.every(
-      (input, i) => normalizeAnswer(input.value) === normalizeAnswer(item.exercise.answers[i])
-    );
+    const answers = inputs.map((input) => input.value.trim());
+    const correct = gradeAnswers(item, answers);
     inputs.forEach((input, i) => {
       input.readOnly = true;
       input.setAttribute(
         'aria-invalid',
-        String(normalizeAnswer(input.value) !== normalizeAnswer(item.exercise.answers[i]))
+        String(
+          !correct && normalizeAnswer(input.value) !== normalizeAnswer(item.exercise.answers[i])
+        )
       );
     });
     checked = true;
     outcomes.push({ item, correct, needsReview: !correct || hinted });
     records = recordAttempt(records, item, correct && !hinted);
-    available = saveProgress(storage, records);
+    available = saved.available && saveProgress(storage, records);
     updateStats();
     const feedback = $('answerFeedback');
     feedback.className = 'answer-feedback ' + (correct ? 'is-correct' : 'needs-review');
     feedback.replaceChildren(
-      node('strong', '', correct ? '正解！よくできました。' : 'お手本を見て、もう一度覚えよう。'),
-      node('p', 'answer-key', '答え：' + item.exercise.answers.join(' / ')),
+      node('strong', '', correct ? '正解！よくできました。' : 'お手本とくらべてみよう。'),
+      node('p', 'answer-key', '答えの例：' + item.exercise.answers.join(' / ')),
       node('p', 'complete-sentence', item.english),
+      node('p', 'feedback-note', learningFocus(item)),
       node(
         'p',
         'feedback-note',
@@ -204,6 +231,19 @@ export function initLearningStudio({ getPhrasePool, categoryNames, onWorksheetOp
           : '文全体を声に出して読んでみよう。'
       )
     );
+    if (correct && normalizeAnswer(fillAnswers(item, answers)) !== normalizeAnswer(item.english)) {
+      feedback.append(
+        node('p', 'feedback-note', 'あなたの答えも正しい言い方です：' + fillAnswers(item, answers))
+      );
+    } else if (!correct) {
+      feedback.append(
+        node(
+          'p',
+          'feedback-note',
+          '登録された答えとは異なりますが、別の言い方が成り立つこともあります。先生やおうちの人とたしかめてみよう。'
+        )
+      );
+    }
     $('checkAnswer').hidden = true;
     $('hintButton').disabled = true;
     $('nextQuestion').hidden = false;
@@ -248,14 +288,23 @@ export function initLearningStudio({ getPhrasePool, categoryNames, onWorksheetOp
 
   function reviewItems() {
     return dueRecords(records).flatMap((record) => {
-      const phrase = getPhrasePool(record.category, record.age).find(
-        (p) => p.english === record.english
+      const item = refreshItem(
+        record.snapshot ? restoreItem(record.snapshot) : record,
+        getPhrasePool
       );
-      return phrase ? [createLessonItem(phrase, record)] : [];
+      if (item) item.revised = Boolean(record.revised || item.revised);
+      return item ? [item] : [];
     });
   }
   function renderReview() {
-    const due = dueRecords(records);
+    const due = reviewItems();
+    const unavailable = records.filter(
+      (record) =>
+        !refreshItem(record.snapshot ? restoreItem(record.snapshot) : record, getPhrasePool)
+    ).length;
+    $('reviewUnavailable').textContent = unavailable
+      ? unavailable + '件は現在の教材にありません。記録を保持し、復習の件数には含めていません。'
+      : '';
     $('reviewHeading').textContent = due.length
       ? 'もう一度が、力になる。'
       : '今日の復習は、ひと休み。';
@@ -268,8 +317,9 @@ export function initLearningStudio({ getPhrasePool, categoryNames, onWorksheetOp
     [...records]
       .sort((a, b) => a.dueAt - b.dueAt)
       .forEach((record) => {
-        const phrase = getPhrasePool(record.category, record.age).find(
-          (p) => p.english === record.english
+        const phrase = refreshItem(
+          record.snapshot ? restoreItem(record.snapshot) : record,
+          getPhrasePool
         );
         const row = node('li', 'review-row');
         const text = node('div', '');
@@ -287,28 +337,144 @@ export function initLearningStudio({ getPhrasePool, categoryNames, onWorksheetOp
         });
         row.append(
           text,
-          node('span', 'due-label', record.dueAt <= Date.now() ? '復習しよう' : nextDate + ' ごろ')
+          node(
+            'span',
+            'due-label',
+            !phrase ? '教材なし' : record.dueAt <= Date.now() ? '復習しよう' : nextDate + ' ごろ'
+          )
         );
         list.append(row);
       });
   }
   $('startReview').addEventListener('click', () => start(reviewItems().slice(0, 5)));
   $('reviewShortcut').addEventListener('click', () => setView('review'));
-  $('printLesson').addEventListener('click', () => {
-    const first = session[0];
-    const values = {
-      practiceMode: 'cloze',
-      ageGroup: first.age,
-      clozeCategory: first.category,
-      clozeDifficulty: first.difficulty,
-      clozeBlankType: first.blankType,
-      pageCount: '1',
-    };
-    for (const [id, value] of Object.entries(values)) $(id).value = value;
-    $('showClozeAnswers').checked = false;
+  function printItems(items) {
+    if (!items.length) return;
     setView('worksheet');
-    $('practiceMode').dispatchEvent(new Event('change'));
+    onPrintLesson(items);
+  }
+  $('printLesson').addEventListener('click', () => printItems(session));
+
+  function renderLibrary() {
+    const selected = $('savedLessonSelect').value;
+    $('savedLessonSelect').replaceChildren();
+    for (const set of sets) {
+      const option = node('option', '', set.title);
+      option.value = set.id;
+      $('savedLessonSelect').append(option);
+    }
+    if (sets.some((set) => set.id === selected)) $('savedLessonSelect').value = selected;
+    for (const id of [
+      'practiceSavedLesson',
+      'printSavedLesson',
+      'exportLesson',
+      'removeLesson',
+      'savedLessonSelect',
+    ]) {
+      $(id).disabled = !sets.length;
+    }
+  }
+  function addSet(set) {
+    if (!library.available)
+      throw new Error('既存の保存データを読めないため、上書きせずに保存を止めました。');
+    if (sets.length >= MAX_SETS)
+      throw new Error('保存は20セットまでです。不要なセットを書き出してから削除してください。');
+    const next = [...sets, set];
+    if (!saveLibrary(storage, next))
+      throw new Error('保存できませんでした。ブラウザの保存設定や空き容量を確認してください。');
+    sets = next;
+    renderLibrary();
+    $('savedLessonSelect').value = set.id;
+  }
+  $('saveLesson').addEventListener('click', () => {
+    try {
+      const title =
+        (categoryNames[session[0].category] || '復習') +
+        ' · ' +
+        session.length +
+        '問 · ' +
+        new Date().toLocaleString('ja-JP');
+      addSet(createSet(session, title));
+      $('saveLessonNotice').textContent =
+        '問題セットを保存しました。下の一覧から何度でも使えます。';
+    } catch (error) {
+      $('saveLessonNotice').textContent = error.message;
+    }
   });
+  const selectedSet = () => sets.find((set) => set.id === $('savedLessonSelect').value);
+  function selectedItems() {
+    const set = selectedSet();
+    if (!set) return [];
+    const items = set.items.map(restoreItem).map((item) => refreshItem(item, getPhrasePool));
+    if (items.some((item) => !item)) {
+      $('libraryNotice').textContent =
+        '現在の教材にない問題が含まれるため、このセットは開始できません。書き出したファイルや教材を確認してください。';
+      return [];
+    }
+    const revised = items.some((item) => item.revised);
+    $('libraryNotice').textContent = revised
+      ? '改訂された教材を最新版に更新しました。英文が変わった問題の空欄は作り直しています。'
+      : '';
+    if (revised) {
+      const next = sets.map((entry) =>
+        entry.id === set.id ? { ...entry, items: items.map(snapshotItem) } : entry
+      );
+      if (saveLibrary(storage, next)) sets = next;
+      else
+        $('libraryNotice').textContent +=
+          ' 更新版を保存できませんでした。次回は空欄を作り直します。';
+    }
+    return items;
+  }
+  $('practiceSavedLesson').addEventListener('click', () => {
+    const items = selectedItems();
+    if (items.length) start(items);
+  });
+  $('printSavedLesson').addEventListener('click', () => printItems(selectedItems()));
+  $('exportLesson').addEventListener('click', () => {
+    const set = selectedSet();
+    if (!set) return;
+    const url = URL.createObjectURL(new Blob([exportSet(set)], { type: 'application/json' }));
+    const link = node('a', '');
+    link.href = url;
+    link.download = 'english-note-lesson.json';
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    $('libraryNotice').textContent =
+      '問題だけを書き出しました。学習記録や入力した答えは含みません。';
+  });
+  $('importLesson').addEventListener('change', async (event) => {
+    try {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (file.size > MAX_IMPORT_BYTES) throw new Error('ファイルは250KB以下にしてください。');
+      addSet(importSet(await file.text()));
+      $('libraryNotice').textContent = '問題セットを読み込みました。';
+    } catch (error) {
+      $('libraryNotice').textContent = error.message;
+    } finally {
+      event.target.value = '';
+    }
+  });
+  $('removeLesson').addEventListener('click', () => {
+    const set = selectedSet();
+    if (!set || !window.confirm('「' + set.title + '」を削除しますか？学習記録は残ります。'))
+      return;
+    const next = sets.filter((entry) => entry.id !== set.id);
+    if (!saveLibrary(storage, next)) {
+      $('libraryNotice').textContent = '削除を保存できませんでした。';
+      return;
+    }
+    sets = next;
+    renderLibrary();
+    $('libraryNotice').textContent =
+      'セットを削除しました。書き出したファイルがあれば読み込み直せます。';
+  });
+  renderLibrary();
+  $('importLesson').disabled = false;
+  if (!library.available)
+    $('libraryNotice').textContent =
+      '保存した問題セットを読み込めませんでした。ブラウザの保存設定を確認してください。';
   updateStats();
   $('startLesson').disabled = false;
   const params = new URL(window.location.href).searchParams;

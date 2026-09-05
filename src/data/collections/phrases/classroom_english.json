@@ -2,8 +2,8 @@
   "metadata": {
     "type": "phrase",
     "category": "classroom_english",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T09:14:07.031Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
     "totalCount": 69,
     "schemaVersion": "1.0.0"
   },
@@ -26,7 +26,7 @@
       "id": "phrase-classroom_english-repeat-after-me-4-6",
       "type": "phrase",
       "english": "Repeat after me.",
-      "japanese": "わたしの あとに ついて いって。",
+      "japanese": "わたしの あとに つづけて いってね。",
       "situation": "まねして いうのを もとめる とき",
       "category": "classroom_english",
       "ageGroup": "4-6",
@@ -34,7 +34,8 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["classroom_english", "statement"]
+      "tags": ["classroom_english", "statement"],
+      "revision": 2
     },
     {
       "id": "phrase-classroom_english-raise-your-hand-4-6",
@@ -216,7 +217,8 @@
       "pattern": "question",
       "usageFrequency": "critical",
       "focusWords": ["help"],
-      "tags": ["classroom_english", "question", "help"]
+      "tags": ["classroom_english", "question", "help"],
+      "acceptedEnglish": ["Could you help me?"]
     },
     {
       "id": "phrase-classroom_english-how-do-you-spell-it-7-9",

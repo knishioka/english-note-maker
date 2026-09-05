@@ -176,10 +176,9 @@ test('全カテゴリーが切り替え可能', async ({ page }) => {
     { value: 'colors', name: '色' },
     { value: 'numbers', name: '数字' },
     { value: 'calendar', name: '曜日・月' },
-    { value: 'school_items', name: '学用品' },
-    { value: 'body_parts', name: '身体' },
-    { value: 'weather', name: '天気' },
   ];
+
+  await expect(page.locator('#wordCategory option')).toHaveCount(categories.length);
 
   for (const category of categories) {
     await page.selectOption('#wordCategory', category.value);
@@ -187,5 +186,17 @@ test('全カテゴリーが切り替え可能', async ({ page }) => {
 
     const previewContent = await page.locator('#notePreview').textContent();
     expect(previewContent).toContain(`Word Practice - ${category.name}`);
+    const expected = {
+      animals: ['elephant', 'monkey', 'giraffe', 'penguin', 'dolphin'],
+      food: ['sandwich', 'pizza', 'hamburger', 'spaghetti', 'chocolate'],
+      colors: ['black', 'orange', 'purple', 'pink', 'brown'],
+      numbers: ['six', 'seven', 'eight', 'nine', 'ten'],
+      calendar: ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    };
+    const displayed = await page
+      .locator('#notePreview .word-practice-item > div:first-child > span:first-child')
+      .allTextContents();
+    expect(displayed.length).toBeGreaterThan(0);
+    for (const word of displayed) expect(expected[category.value]).toContain(word.trim());
   }
 });

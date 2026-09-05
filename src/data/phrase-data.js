@@ -251,8 +251,8 @@ export const PHRASE_DATA = {
         japanese: 'どういたしまして！',
         situation: 'おれいを いわれた とき',
       },
-      { english: 'Please!', japanese: 'どうぞ！', situation: 'なにかを すすめる とき' },
-      { english: 'Excuse me!', japanese: 'ごめんなさい！', situation: 'あやまるとき' },
+      { english: 'Please!', japanese: 'おねがい！', situation: 'おねがいする とき' },
+      { english: 'Excuse me!', japanese: 'すみません！', situation: 'ひとに よびかける とき' },
     ],
     '7-9': [
       { english: 'How are you?', japanese: '元気ですか？', situation: 'あいてのようすを聞くとき' },
@@ -409,12 +409,12 @@ export const PHRASE_DATA = {
         situation: 'すきな いろを いう とき',
       },
       {
-        english: 'I have a sister.',
+        english: 'I have an older sister.',
         japanese: 'わたしには おねえちゃんが います。',
         situation: 'かぞくに ついて はなす とき',
       },
       {
-        english: 'I have a brother.',
+        english: 'I have an older brother.',
         japanese: 'わたしには おにいちゃんが います。',
         situation: 'かぞくに ついて はなす とき',
       },
@@ -534,7 +534,7 @@ export const PHRASE_DATA = {
       },
       {
         english: 'My favorite subject is math.',
-        japanese: 'わたしの好きな科目は数学です。',
+        japanese: 'わたしの好きな教科は算数です。',
         situation: '好きな科目を言うとき',
       },
       {
@@ -1418,7 +1418,7 @@ export const PHRASE_DATA = {
       },
       {
         english: 'Repeat after me.',
-        japanese: 'わたしの あとに ついて いって。',
+        japanese: 'わたしの あとに つづけて いってね。',
         situation: 'まねして いうのを もとめる とき',
       },
       {
@@ -1733,9 +1733,9 @@ export const PHRASE_DATA = {
         situation: 'ゆうじょうの大切さを伝えるとき',
       },
       {
-        english: 'Would you like to exchange social media?',
-        japanese: 'SNSをこうかんしない？',
-        situation: 'SNSアカウントをこうかんするとき',
+        english: 'Would you like to exchange book recommendations?',
+        japanese: 'おすすめの本を教え合いませんか？',
+        situation: '本を通じて友達と交流するとき',
       },
       {
         english: "You're a great listener.",
@@ -1836,7 +1836,7 @@ export const PHRASE_DATA = {
       {
         english: 'How do you say this in your language?',
         japanese: 'あなたの言語でこれは何て言いますか？',
-        situation: '日本語でなんと言うか聞くとき',
+        situation: 'あいてのことばでの言い方を聞くとき',
       },
       {
         english: 'We have a similar custom.',
@@ -1983,9 +1983,9 @@ export const PHRASE_DATA = {
         situation: 'たいへんだと つたえる とき',
       },
       {
-        english: 'Call 911!',
-        japanese: '911に でんわして！',
-        situation: 'たすけを よんで ほしい とき',
+        english: 'Please call a grown-up!',
+        japanese: 'おとなの ひとを よんで！',
+        situation: 'おとなに たすけを もとめる とき',
       },
     ],
     '7-9': [
@@ -2186,8 +2186,8 @@ export const PHRASE_DATA = {
         situation: 'ひきざん',
       },
       {
-        english: 'I have five fingers.',
-        japanese: 'わたしは ゆびが 5ほん あります。',
+        english: 'I have five fingers on one hand.',
+        japanese: 'かたてに ゆびが 5ほん あります。',
         situation: 'からだを かぞえる',
       },
       {
@@ -2246,7 +2246,7 @@ export const PHRASE_DATA = {
         situation: 'じゅんばんを あらわす',
       },
       {
-        english: 'You are second, I am third.',
+        english: 'You are second, and I am third.',
         japanese: 'あなたが 2ばんめ、わたしが 3ばんめです。',
         situation: 'じゅんばんの かず',
       },
@@ -2282,8 +2282,8 @@ export const PHRASE_DATA = {
         situation: 'かずの くらべかた',
       },
       {
-        english: 'You have less than me.',
-        japanese: 'あなたは わたしより すくないです。',
+        english: 'You have fewer marbles than I do.',
+        japanese: 'あなたの ビーだまは わたしのより すくないです。',
         situation: 'かずの くらべかた',
       },
       {
@@ -2485,7 +2485,7 @@ export const PHRASE_DATA = {
         situation: '長さをたずねる',
       },
       {
-        english: 'I have thirty-seven marbles, you have twenty-four.',
+        english: 'I have thirty-seven marbles, and you have twenty-four.',
         japanese: 'わたしはビー玉を37こ、あなたは24こもっています。',
         situation: 'ぶんしょうだい',
       },
@@ -2678,8 +2678,8 @@ export const PHRASE_DATA = {
         situation: 'へいきんの計算',
       },
       {
-        english: 'If you add all the numbers and divide by three, you get the average.',
-        japanese: 'すべての数を足して3でわると、へいきんが出ます。',
+        english: 'To find the average of three numbers, add them and divide by three.',
+        japanese: '3つの数のへいきんは、その数をすべて足して3でわると求められます。',
         situation: 'へいきんの求め方',
       },
       {
@@ -2719,8 +2719,9 @@ export const PHRASE_DATA = {
         situation: 'ひの表し方',
       },
       {
-        english: 'If the ratio is two to one, there are twice as many.',
-        japanese: 'ひが2対1なら、2倍の数があります。',
+        english:
+          'If there are two red marbles for every blue marble, the ratio of red to blue is two to one.',
+        japanese: '青いビー玉1こにつき赤いビー玉が2こなら、赤と青のひは2対1です。',
         situation: 'ひのりかい',
       },
       {
@@ -2782,7 +2783,7 @@ export const PHRASE_DATA = {
       },
       {
         english: 'Summer days are longer than winter days.',
-        japanese: '夏の日は冬の日より長いです。',
+        japanese: '夏は冬より昼の時間が長いです。',
         situation: '時間のくらべ方',
       },
       {

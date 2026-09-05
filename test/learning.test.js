@@ -74,7 +74,7 @@ describe('learning progress', () => {
     for (const raw of [
       '{',
       'null',
-      '{"version":2,"records":[]}',
+      '{"version":3,"records":[]}',
       '{"version":1,"records":[null,{}]}',
     ]) {
       const storage = { getItem: () => raw };
@@ -123,7 +123,7 @@ describe('shared cloze generator', () => {
   }
   it('creates a character blank even for short three-letter words', () => {
     expect(generateClozeText('Cat dog.', 'char').answers.length).toBeGreaterThan(0);
-    expect(generateClozeText('Hi!', 'char').answers).toEqual(['Hi']);
+    expect(generateClozeText('Hi!', 'char').answers).toEqual(['H']);
   });
   it('escapes untrusted text instead of emitting executable markup', () => {
     const { display } = generateClozeText('<img src=x onerror=alert(1)> Hello!', 'word');

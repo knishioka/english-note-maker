@@ -117,6 +117,15 @@ export interface PhraseContentItem extends BaseContentItem {
 
   /** 重要単語リスト（自動抽出または指定） */
   focusWords?: string[];
+
+  /** 教材の改訂番号。id は英文の修正後も変更しない。 */
+  revision?: number;
+
+  /** v1 学習記録を固定 id に移行するための旧英文。 */
+  legacyEnglish?: string[];
+
+  /** この教材の文脈で確認した別解（完成した文全体）。 */
+  acceptedEnglish?: string[];
 }
 
 /**

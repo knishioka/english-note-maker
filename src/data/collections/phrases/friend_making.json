@@ -2,8 +2,8 @@
   "metadata": {
     "type": "phrase",
     "category": "friend_making",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T12:34:13.652Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
     "totalCount": 85,
     "schemaVersion": "1.0.0"
   },
@@ -473,16 +473,18 @@
     {
       "id": "phrase-friend_making-would-you-like-to-exchange-soc-10-12",
       "type": "phrase",
-      "english": "Would you like to exchange social media?",
-      "japanese": "SNSをこうかんしない？",
-      "situation": "SNSアカウントをこうかんするとき",
+      "english": "Would you like to exchange book recommendations?",
+      "japanese": "おすすめの本を教え合いませんか？",
+      "situation": "本を通じて友達と交流するとき",
       "category": "friend_making",
       "ageGroup": "10-12",
       "difficulty": 3,
       "pattern": "question",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["friend_making", "question"]
+      "tags": ["friend_making", "question"],
+      "legacyEnglish": ["Would you like to exchange social media?"],
+      "revision": 2
     },
     {
       "id": "phrase-friend_making-you-re-a-great-listener-10-12",
@@ -655,16 +657,18 @@
     {
       "id": "phrase-friend_making-can-i-add-you-on-social-media-7-9",
       "type": "phrase",
-      "english": "Can I add you on social media?",
-      "japanese": "SNSでつながってもいい？",
-      "situation": "れんらくさきをこうかんするとき",
+      "english": "Can we read together?",
+      "japanese": "いっしょに本を読んでもいい？",
+      "situation": "友だちをさそうとき",
       "category": "friend_making",
       "ageGroup": "7-9",
       "difficulty": 2,
       "pattern": "request",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["friend_making", "request"]
+      "tags": ["friend_making", "request"],
+      "legacyEnglish": ["Can I add you on social media?"],
+      "revision": 2
     },
     {
       "id": "phrase-friend_making-youre-really-fun-to-be-with-7-9",
@@ -1104,7 +1108,7 @@
       "id": "phrase-friend_making-what-do-you-like-to-do-for-fun-10-12",
       "type": "phrase",
       "english": "What do you like to do for fun?",
-      "japanese": "楽しむために何をするのが好き？",
+      "japanese": "ふだん、どんなことをして楽しみますか？",
       "situation": "会話を始めるとき",
       "category": "friend_making",
       "ageGroup": "10-12",
@@ -1112,7 +1116,8 @@
       "pattern": "question",
       "usageFrequency": "common",
       "focusWords": [],
-      "tags": ["friend_making"]
+      "tags": ["friend_making"],
+      "revision": 2
     },
     {
       "id": "phrase-friend_making-want-to-study-together-sometime-10-12",

@@ -2,8 +2,8 @@
   "metadata": {
     "type": "phrase",
     "category": "opinions_preferences",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-01T12:30:44.738Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-09-05T00:00:00.000Z",
     "totalCount": 63,
     "schemaVersion": "1.0.0"
   },
@@ -361,8 +361,8 @@
     {
       "id": "phrase-opinions_preferences-i-strongly-believe-that-10-12",
       "type": "phrase",
-      "english": "I strongly believe that...",
-      "japanese": "わたしは〜と強く信じています。",
+      "english": "I strongly believe that everyone can learn.",
+      "japanese": "わたしはだれもが学べると強く信じています。",
       "situation": "強い意見を言うとき",
       "category": "opinions_preferences",
       "ageGroup": "10-12",
@@ -370,13 +370,15 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["opinions_preferences", "statement"]
+      "tags": ["opinions_preferences", "statement"],
+      "legacyEnglish": ["I strongly believe that..."],
+      "revision": 2
     },
     {
       "id": "phrase-opinions_preferences-from-my-perspective-10-12",
       "type": "phrase",
-      "english": "From my perspective...",
-      "japanese": "わたしの見方から言うと...",
+      "english": "From my perspective, this rule is fair.",
+      "japanese": "わたしの見方では、このきまりは公平です。",
       "situation": "見方を言うとき",
       "category": "opinions_preferences",
       "ageGroup": "10-12",
@@ -384,13 +386,15 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["opinions_preferences", "statement"]
+      "tags": ["opinions_preferences", "statement"],
+      "legacyEnglish": ["From my perspective..."],
+      "revision": 2
     },
     {
       "id": "phrase-opinions_preferences-i-see-your-point-but-10-12",
       "type": "phrase",
-      "english": "I see your point, but...",
-      "japanese": "おっしゃることは分かりますが…",
+      "english": "I see your point, but I have a different idea.",
+      "japanese": "おっしゃることは分かりますが、わたしには別の考えがあります。",
       "situation": "反対の意見を言うとき",
       "category": "opinions_preferences",
       "ageGroup": "10-12",
@@ -398,7 +402,9 @@
       "pattern": "statement",
       "usageFrequency": "core",
       "focusWords": [],
-      "tags": ["opinions_preferences", "statement"]
+      "tags": ["opinions_preferences", "statement"],
+      "legacyEnglish": ["I see your point, but..."],
+      "revision": 2
     },
     {
       "id": "phrase-opinions_preferences-im-in-favor-of-this-plan-10-12",
