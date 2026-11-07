@@ -894,3 +894,131 @@
   border-radius: 16px;
   background: #edf5ef;
 }
+
+/* 印刷したプリントの記録と答え合わせ */
+.review-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.worksheet-log {
+  margin-top: 48px;
+}
+
+.worksheet-log h2 {
+  font-size: 22px;
+  margin: 8px 0 12px;
+}
+
+.sheet-list {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--studio-border);
+  overflow: hidden;
+}
+
+.sheet-list:empty {
+  display: none;
+}
+
+.sheet-row {
+  padding: 21px 25px;
+  border-bottom: 1px solid #edf0e9;
+}
+
+.sheet-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+}
+
+.sheet-head strong {
+  font-size: 14px;
+}
+
+.sheet-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.sheet-grade {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--studio-border);
+}
+
+.sheet-questions {
+  margin: 14px 0 18px;
+  padding: 0;
+  list-style: none;
+}
+
+.sheet-question {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #edf0e9;
+}
+
+.sheet-question-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.sheet-q {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--studio-green);
+}
+
+.sheet-english {
+  font:
+    18px/1.6 'Comic Neue',
+    sans-serif;
+  margin: 2px 0 4px;
+  overflow-wrap: anywhere;
+}
+
+.sheet-english mark {
+  background: #fdf0c2;
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+.sheet-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.sheet-check input {
+  width: 20px;
+  height: 20px;
+  accent-color: #b65c28;
+}
+
+@media (max-width: 640px) {
+  .sheet-row {
+    padding: 18px 16px;
+  }
+  .sheet-question {
+    flex-direction: column;
+    gap: 6px;
+  }
+}

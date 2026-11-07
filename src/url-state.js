@@ -67,6 +67,7 @@ export const URL_STATE_PARAM_SPECS = {
   clozeBlankType: { elementId: 'clozeBlankType', type: 'enum', values: ['word', 'char'] },
   clozeDifficulty: { elementId: 'clozeDifficulty', type: 'enum', values: DIFFICULTY_VALUES },
   showClozeAnswers: { elementId: 'showClozeAnswers', type: 'boolean' },
+  clozeSelection: { elementId: 'clozeSelection', type: 'enum', values: ['smart', 'random'] },
   alphabetType: {
     elementId: 'alphabetType',
     type: 'enum',

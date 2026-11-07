@@ -8,6 +8,8 @@ import {
 } from './src/url-state.js';
 import { buildSightWordSequence, sanitizeSightWordCount } from './src/sight-word-sequence.js';
 import { generateClozeText } from './src/learning/cloze.js';
+import { createLessonItem } from './src/learning/exercises.js';
+import { buildHistory, countPhrases, orderPhrases } from './src/learning/scheduler.js';
 import { initLearningStudio } from './src/learning/studio.js';
 import { SIGHT_WORDS } from './src/data/sight-words.js';
 
@@ -32,18 +34,26 @@ let phraseSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', 
 let clozeSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 const clozeExerciseCache = new Map();
 let fixedWorksheetItems = null;
+let fixedWorksheetTitle = '';
+// 学習記録・印刷記録の持ち主。穴埋めプリントの出題順と印刷の記録に使う。
+let learningStudio = null;
+// 直近に描画した穴埋めページの内容。印刷時にそのまま記録する。
+const renderedClozePages = new Map();
+let renderedClozeSettings = null;
 const FIXED_WORKSHEET_CONTROLS = [
   'practiceMode',
   'ageGroup',
   'clozeCategory',
   'clozeDifficulty',
   'clozeBlankType',
+  'clozeSelection',
   'pageCount',
   'shuffleCloze',
 ];
 
-function setFixedWorksheet(items) {
+function setFixedWorksheet(items, title = '') {
   fixedWorksheetItems = items;
+  fixedWorksheetTitle = items ? title : '';
   for (const id of FIXED_WORKSHEET_CONTROLS) {
     const element = document.getElementById(id);
     if (element) element.disabled = Boolean(items);
@@ -162,10 +172,76 @@ function resetPhraseCache() {
   phraseSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
 }
 
+// 出題順だけを作り直す（固定セットや空欄のキャッシュは保持）。
+// 学習記録や印刷記録が変わったときに呼ぶ。
+function resetClozeSequence() {
+  clozeSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
+}
+
 function resetClozeCache() {
   setFixedWorksheet(null);
   clozeExerciseCache.clear();
-  clozeSequenceCache = { key: '', perPage: 0, pageCount: 0, fingerprint: '', sequence: [] };
+  resetClozeSequence();
+}
+
+function getLearningHistory() {
+  const history = learningStudio?.getHistory?.() || { records: [], sheets: [] };
+  return buildHistory(history.records, history.sheets);
+}
+
+function getClozeSelectionMode() {
+  return document.getElementById('clozeSelection')?.value || 'smart';
+}
+
+// 穴埋めプリントの出題順。おまかせでは復習 → 未出題 → 出題済みの順に並べる。
+function orderClozePhrases(phrases, blankType, mode) {
+  return orderPhrases(phrases, { mode, blankType }, getLearningHistory());
+}
+
+function updateClozeHistoryNotice() {
+  const notice = document.getElementById('clozeHistoryNotice');
+  if (!notice) return;
+  if (fixedWorksheetItems || document.getElementById('practiceMode')?.value !== 'cloze') {
+    notice.textContent = '';
+    return;
+  }
+  const category = document.getElementById('clozeCategory')?.value || 'greetings';
+  const ageGroup = document.getElementById('ageGroup')?.value || '7-9';
+  const blankType = document.getElementById('clozeBlankType')?.value || 'word';
+  const pool = getPhrasePool(category, ageGroup);
+  if (!pool.length) {
+    notice.textContent = '';
+    return;
+  }
+  const counts = countPhrases(pool, blankType, getLearningHistory());
+  notice.textContent = `この条件の問題 ${pool.length}件：復習 ${counts.due} · 未出題 ${counts.fresh} · 出題済み ${counts.seen}`;
+}
+
+// 印刷する穴埋め問題を、描画した順番・空欄のまま学習記録側に渡す。
+function collectRenderedClozeItems() {
+  if (fixedWorksheetItems) return fixedWorksheetItems;
+  if (!renderedClozeSettings) return [];
+  const pages = [...renderedClozePages.keys()].sort((a, b) => a - b);
+  return pages.flatMap((page) =>
+    renderedClozePages
+      .get(page)
+      .map(({ phrase, exercise }) =>
+        createLessonItem(
+          phrase,
+          { ...renderedClozeSettings, category: phrase.category || renderedClozeSettings.category },
+          exercise
+        )
+      )
+  );
+}
+
+function logPrintedWorksheet() {
+  if (!learningStudio || document.getElementById('practiceMode')?.value !== 'cloze') return false;
+  const items = collectRenderedClozeItems();
+  if (!items.length) return false;
+  return Boolean(
+    learningStudio.logWorksheet(items, fixedWorksheetItems ? fixedWorksheetTitle : '')
+  );
 }
 
 function resetPhonicsCache() {
@@ -606,11 +682,13 @@ function init() {
   hydrateCustomExamplesFromStorage();
   updateOptionsVisibility();
   hydrateWorksheetSettingsFromUrl();
-  initLearningStudio({
+  learningStudio = initLearningStudio({
     getPhrasePool,
     categoryNames: CATEGORY_NAMES,
     onWorksheetOpen: updatePreview,
-    onPrintLesson: (items) => {
+    // 答え合わせや練習で記録が変わったら、次に開くプリントの出題順を作り直す
+    onHistoryChange: resetClozeSequence,
+    onPrintLesson: (items, title) => {
       const first = items[0];
       const values = {
         practiceMode: 'cloze',
@@ -622,7 +700,7 @@ function init() {
       for (const [id, value] of Object.entries(values)) document.getElementById(id).value = value;
       document.getElementById('practiceMode').dispatchEvent(new Event('change'));
       document.getElementById('showClozeAnswers').checked = false;
-      setFixedWorksheet(items);
+      setFixedWorksheet(items, title);
       updatePreview();
     },
   });
@@ -749,6 +827,7 @@ function setupEventListeners() {
     clozeCategory: document.getElementById('clozeCategory'),
     clozeBlankType: document.getElementById('clozeBlankType'),
     clozeDifficulty: document.getElementById('clozeDifficulty'),
+    clozeSelection: document.getElementById('clozeSelection'),
     showClozeAnswers: document.getElementById('showClozeAnswers'),
     shuffleClozeBtn: document.getElementById('shuffleCloze'),
     wordDifficulty: document.getElementById('wordDifficulty'),
@@ -860,6 +939,10 @@ function setupEventListeners() {
     updatePreview();
   });
   addEventListenerIfExists(elements.showClozeAnswers, 'change', updatePreview);
+  addEventListenerIfExists(elements.clozeSelection, 'change', () => {
+    resetClozeSequence();
+    updatePreview();
+  });
   addEventListenerIfExists(elements.shuffleClozeBtn, 'click', () => {
     resetClozeCache();
     updatePreview();
@@ -970,6 +1053,7 @@ function updatePreview() {
   const adjustmentResult = autoAdjustPreview(notePreview, state, baseLayout, initialOverrides);
 
   updateAutoLayoutNotice(adjustmentResult, state, baseLayout);
+  updateClozeHistoryNotice();
   updateBrowserUrlState();
 }
 
@@ -2268,7 +2352,11 @@ function printNote() {
     }
   }
 
+  // 穴埋めプリントは印刷のたびに問題を記録し、紙の答え合わせを後から入力できるようにする。
+  // ダイアログが閉じたあとにプレビューを描き直し、次のプリント番号を表示する。
+  const logged = logPrintedWorksheet();
   window.print();
+  if (logged) updatePreview();
 }
 
 // 印刷プレビュー機能
@@ -3246,6 +3334,7 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
   const difficultyElement = document.getElementById('clozeDifficulty');
   const rawDifficulty = (difficultyElement && difficultyElement.value) || 'auto';
   const difficulty = resolveClozeDifficulty(rawDifficulty, ageGroup);
+  const selectionMode = getClozeSelectionMode();
   const showAnswers = Boolean(document.getElementById('showClozeAnswers')?.checked);
   const lineHeight = parseInt(document.getElementById('lineHeight').value);
 
@@ -3270,7 +3359,16 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
 
   const phrases =
     fixedWorksheetItems ||
-    ensureClozeSequence(clozeCategory, ageGroup, clozesPerPage, pageCount, safePhrases, difficulty);
+    ensureClozeSequence(
+      clozeCategory,
+      ageGroup,
+      clozesPerPage,
+      pageCount,
+      safePhrases,
+      difficulty,
+      blankType,
+      selectionMode
+    );
 
   const startIndex = (pageNumber - 1) * clozesPerPage;
   const pagePhrases = phrases.slice(startIndex, startIndex + clozesPerPage).filter(Boolean);
@@ -3288,8 +3386,14 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
   const difficultyLabels = { easy: 'やさしい', normal: 'ふつう', hard: 'むずかしい' };
   const difficultyLabel = difficultyLabels[difficulty] || 'ふつう';
   const pageLabel = pageCount > 1 ? ` (${pageNumber}/${pageCount})` : '';
-  html += `<h3 class="practice-title practice-title--cloze">Fill in the Blanks - ${fixedWorksheetItems ? '選んだ問題セット' : categoryNames[clozeCategory] || clozeCategory}${pageLabel}</h3>`;
-  html += `<p class="cloze-type-label">${fixedWorksheetItems ? '保存した空欄で練習' : blankTypeLabel + '・' + difficultyLabel}（文字数は答え例の目安）</p>`;
+  // 印刷のたびに番号を振り、紙と「印刷したプリント」の記録を対応づける
+  const sheetNumber = learningStudio?.getHistory?.().nextNumber;
+  const sheetLabel = sheetNumber
+    ? ` · <span class="cloze-sheet-number" data-testid="cloze-sheet-number">プリント No.${sheetNumber}</span>`
+    : '';
+  const fixedTitle = escapeHtml(fixedWorksheetTitle || '選んだ問題セット');
+  html += `<h3 class="practice-title practice-title--cloze">Fill in the Blanks - ${fixedWorksheetItems ? fixedTitle : categoryNames[clozeCategory] || clozeCategory}${pageLabel}</h3>`;
+  html += `<p class="cloze-type-label">${fixedWorksheetItems ? '保存した空欄で練習' : blankTypeLabel + '・' + difficultyLabel}（文字数は答え例の目安）${sheetLabel}</p>`;
   html += '<div class="cloze-grid">';
 
   const clozeResults = pagePhrases.map((p) => {
@@ -3300,6 +3404,14 @@ function generateClozePractice(pageNumber, totalPages, ageGroup, layoutOverride 
     }
     return clozeExerciseCache.get(key);
   });
+
+  // 印刷時に記録するため、最後に描画した内容をページ順に控える
+  if (pageNumber === 1) renderedClozePages.clear();
+  renderedClozePages.set(
+    pageNumber,
+    pagePhrases.map((phrase, i) => ({ phrase, exercise: clozeResults[i] }))
+  );
+  renderedClozeSettings = { category: clozeCategory, age: ageGroup, blankType, difficulty };
 
   for (let i = 0; i < pagePhrases.length; i++) {
     const phrase = pagePhrases[i];
@@ -3473,8 +3585,17 @@ function buildPagedUniqueSequence(source, perPage, pageCount, getKey) {
   return result;
 }
 
-function ensureClozeSequence(category, ageGroup, perPage, pageCount, phrases, difficulty) {
-  const key = `${category}|${ageGroup}|${difficulty || 'auto'}`;
+function ensureClozeSequence(
+  category,
+  ageGroup,
+  perPage,
+  pageCount,
+  phrases,
+  difficulty,
+  blankType = 'word',
+  selectionMode = 'smart'
+) {
+  const key = `${category}|${ageGroup}|${difficulty || 'auto'}|${blankType}|${selectionMode}`;
   const totalNeeded = perPage * pageCount;
   const fingerprint = phrases.map((phrase) => phrase?.english || '').join('|');
   const needsRefresh =
@@ -3489,7 +3610,7 @@ function ensureClozeSequence(category, ageGroup, perPage, pageCount, phrases, di
       clozeSequenceCache.key === key && clozeSequenceCache.fingerprint === fingerprint;
     const cycle = samePool
       ? clozeSequenceCache.sequence.slice(0, phrases.length)
-      : shuffleArray(phrases);
+      : orderClozePhrases(phrases, blankType, selectionMode);
     const sequence = Array.from(
       { length: Math.max(totalNeeded, cycle.length) },
       (_, index) => cycle[index % cycle.length]

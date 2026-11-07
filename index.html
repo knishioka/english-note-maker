@@ -225,8 +225,23 @@
         <h1 id="reviewHeading">もう一度が、力になる。</h1>
         <p id="reviewSummary" class="intro-copy"></p>
         <p id="reviewUnavailable" class="storage-notice" role="status"></p>
-        <button id="startReview" class="btn btn--primary" type="button">復習をはじめる →</button>
+        <div class="review-actions">
+          <button id="startReview" class="btn btn--primary" type="button">復習をはじめる →</button>
+          <button id="printReview" class="btn btn--secondary" type="button" disabled>
+            復習プリントを印刷
+          </button>
+        </div>
         <ul id="reviewList" class="review-list"></ul>
+        <section class="worksheet-log" aria-labelledby="worksheetLogHeading">
+          <p class="eyebrow">PRINTED WORKSHEETS</p>
+          <h2 id="worksheetLogHeading">印刷したプリント</h2>
+          <p class="muted">
+            穴埋めプリントを印刷すると、問題がここに記録されます。紙で答え合わせをしたら結果を記録しましょう。まちがえた問題は復習に入り、次のプリントで先に出ます。
+          </p>
+          <p id="worksheetNotice" class="storage-notice" role="status"></p>
+          <p id="worksheetEmpty" class="muted">まだ印刷したプリントはありません。</p>
+          <ul id="worksheetList" class="sheet-list"></ul>
+        </section>
       </section>
       <section
         id="worksheetPanel"
@@ -522,6 +537,14 @@
                   <option value="hard">むずかしい（穴 約50%・内容語も）</option>
                 </select>
               </label>
+              <label class="controls__label">
+                出題のえらび方:
+                <select id="clozeSelection" class="controls__select">
+                  <option value="smart">おまかせ（復習 → 未出題 → 前に出た問題）</option>
+                  <option value="random">ランダム</option>
+                </select>
+              </label>
+              <p id="clozeHistoryNotice" class="controls__help" role="status"></p>
               <label class="controls__label">
                 <input type="checkbox" id="showClozeAnswers" class="controls__checkbox" />
                 解答を表示
