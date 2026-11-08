@@ -25,6 +25,15 @@ import {
   saveProgress,
   migrateRecords,
 } from './progress.js';
+import {
+  appendWorksheet,
+  createWorksheet,
+  gradeWorksheet,
+  MAX_WORKSHEET_ITEMS,
+  readWorksheetLog,
+  saveWorksheetLog,
+  summarizeWorksheet,
+} from './worksheet-log.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -40,6 +49,7 @@ export function initLearningStudio({
   categoryNames,
   onWorksheetOpen,
   onPrintLesson,
+  onHistoryChange,
 }) {
   let storage;
   try {
@@ -54,6 +64,10 @@ export function initLearningStudio({
   }
   const library = readLibrary(storage);
   let sets = library.sets;
+  const log = readWorksheetLog(storage);
+  let sheets = log.sheets;
+  let nextNumber = log.nextNumber;
+  let expandedSheet = null;
   let session = null;
   let index = 0;
   let outcomes = [];
@@ -216,6 +230,7 @@ export function initLearningStudio({
     records = recordAttempt(records, item, correct && !hinted);
     available = saved.available && saveProgress(storage, records);
     updateStats();
+    notifyHistory();
     const feedback = $('answerFeedback');
     feedback.className = 'answer-feedback ' + (correct ? 'is-correct' : 'needs-review');
     feedback.replaceChildren(
@@ -309,9 +324,11 @@ export function initLearningStudio({
       ? 'もう一度が、力になる。'
       : '今日の復習は、ひと休み。';
     $('reviewSummary').textContent = due.length
-      ? due.length + '問の復習があります。最大5問ずつ、自分のペースで進めよう。'
+      ? due.length +
+        '問の復習があります。画面では最大5問ずつ。まとめて印刷して、紙で解くこともできます。'
       : '練習すると、ここに復習する問題が集まります。正解した問題も、1・3・7・14日後に振り返れます。';
-    $('startReview').disabled = !reviewItems().length;
+    $('startReview').disabled = !due.length;
+    $('printReview').disabled = !due.length;
     const list = $('reviewList');
     list.replaceChildren();
     [...records]
@@ -345,15 +362,211 @@ export function initLearningStudio({
         );
         list.append(row);
       });
+    renderWorksheets();
   }
   $('startReview').addEventListener('click', () => start(reviewItems().slice(0, 5)));
+  $('printReview').addEventListener('click', () => printItems(reviewItems(), '復習プリント'));
   $('reviewShortcut').addEventListener('click', () => setView('review'));
-  function printItems(items) {
+  function printItems(items, title = '') {
     if (!items.length) return;
     setView('worksheet');
-    onPrintLesson(items);
+    onPrintLesson(items, title);
   }
   $('printLesson').addEventListener('click', () => printItems(session));
+  function notifyHistory() {
+    if (typeof onHistoryChange === 'function') onHistoryChange();
+  }
+
+  // --- 印刷したプリントの記録 ---
+  // 印刷のたびに問題を控え、紙で答え合わせした結果を学習記録に反映する。
+  function sheetTitle(sheet) {
+    const categories = [...new Set(sheet.items.map((item) => item.category))];
+    const theme =
+      categories.length === 1 ? categoryNames[categories[0]] || categories[0] : 'いろいろなテーマ';
+    const types = [...new Set(sheet.items.map((item) => item.blankType))];
+    const type = types.length === 1 ? (types[0] === 'char' ? '文字の穴埋め' : '単語の穴埋め') : '';
+    return sheet.title || theme + (type ? ' · ' + type : '');
+  }
+  function persistSheets(next, number = nextNumber) {
+    if (log.available && !saveWorksheetLog(storage, next, number)) return false;
+    sheets = next;
+    nextNumber = number;
+    return true;
+  }
+  function logWorksheet(items, title = '') {
+    if (!items.length || items.length > MAX_WORKSHEET_ITEMS) return null;
+    const sheet = createWorksheet(items, nextNumber, title);
+    const next = appendWorksheet(sheets, sheet);
+    if (!persistSheets(next, nextNumber + 1)) {
+      // 保存できなくても、この画面を開いている間は記録して答え合わせできるようにする
+      sheets = next;
+      nextNumber += 1;
+      $('worksheetNotice').textContent =
+        'プリントの記録を保存できませんでした。ブラウザの保存設定や空き容量を確認してください。';
+    }
+    renderWorksheets();
+    return sheet;
+  }
+  function markedEnglish(item) {
+    const text = node('p', 'sheet-english');
+    let cursor = 0;
+    for (const { start, end } of item.exercise.blanks) {
+      text.append(
+        item.english.slice(cursor, start),
+        node('mark', '', item.english.slice(start, end))
+      );
+      cursor = end;
+    }
+    text.append(item.english.slice(cursor));
+    return text;
+  }
+  function gradeForm(sheet) {
+    const items = sheet.items.map(restoreItem);
+    const form = node('form', 'sheet-grade');
+    form.setAttribute('aria-label', 'No.' + sheet.number + ' の答え合わせ');
+    form.append(
+      node(
+        'p',
+        'muted',
+        '紙の答えとくらべて、まちがえた問題に「もう一度」をつけてね。つけなかった問題は「できた」として記録します。'
+      )
+    );
+    const list = node('ol', 'sheet-questions');
+    items.forEach((item, index) => {
+      const row = node('li', 'sheet-question');
+      const body = node('div', 'sheet-question-body');
+      body.append(node('span', 'sheet-q', 'Q' + (index + 1)), markedEnglish(item));
+      body.append(node('p', 'muted', item.japanese));
+      const label = node('label', 'sheet-check');
+      const box = node('input', '');
+      box.type = 'checkbox';
+      box.name = 'wrong';
+      box.value = String(index);
+      label.append(box, node('span', '', 'もう一度'));
+      row.append(body, label);
+      list.append(row);
+    });
+    const submit = node('button', 'btn btn--primary', '結果を記録する');
+    submit.type = 'submit';
+    form.append(list, submit);
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const wrong = [...form.querySelectorAll('input[name="wrong"]:checked')].map((input) =>
+        Number(input.value)
+      );
+      recordSheet(sheet, items, wrong);
+    });
+    return form;
+  }
+  function recordSheet(sheet, items, wrong) {
+    const wrongSet = new Set(wrong);
+    const now = Date.now();
+    items.forEach((item, index) => {
+      records = recordAttempt(records, item, !wrongSet.has(index), now);
+    });
+    available = saved.available && saveProgress(storage, records);
+    const next = sheets.map((entry) =>
+      entry.id === sheet.id ? gradeWorksheet(entry, wrong, now) : entry
+    );
+    if (persistSheets(next)) {
+      $('worksheetNotice').textContent =
+        'No.' +
+        sheet.number +
+        ' の結果を記録しました。' +
+        (wrong.length
+          ? 'もう一度の問題は復習と次のプリントに入ります。'
+          : '全問できました！次の復習は日をあけて。');
+    } else {
+      sheets = next;
+      $('worksheetNotice').textContent =
+        '学習記録は更新しましたが、プリントの記録を保存できませんでした。';
+    }
+    expandedSheet = null;
+    updateStats();
+    renderReview();
+    notifyHistory();
+  }
+  function reprintSheet(sheet) {
+    const items = sheet.items.map(restoreItem).map((item) => refreshItem(item, getPhrasePool));
+    if (items.some((item) => !item)) {
+      $('worksheetNotice').textContent =
+        '現在の教材にない問題が含まれるため、このプリントは印刷できません。';
+      return;
+    }
+    printItems(items, 'No.' + sheet.number + ' をもう一度');
+  }
+  function removeSheet(sheet) {
+    if (!window.confirm('No.' + sheet.number + ' の記録を消しますか？学習記録は残ります。')) return;
+    if (!persistSheets(sheets.filter((entry) => entry.id !== sheet.id))) {
+      $('worksheetNotice').textContent = '記録の削除を保存できませんでした。';
+      return;
+    }
+    $('worksheetNotice').textContent = 'No.' + sheet.number + ' の記録を消しました。';
+    renderWorksheets();
+    notifyHistory();
+  }
+  function renderWorksheets() {
+    const list = $('worksheetList');
+    list.replaceChildren();
+    $('worksheetEmpty').hidden = sheets.length > 0;
+    [...sheets].reverse().forEach((sheet) => {
+      const summary = summarizeWorksheet(sheet);
+      const row = node('li', 'sheet-row');
+      row.dataset.sheetId = sheet.id;
+      const head = node('div', 'sheet-head');
+      const text = node('div', '');
+      text.append(
+        node('strong', '', 'No.' + sheet.number + ' · ' + sheetTitle(sheet)),
+        node(
+          'p',
+          'muted',
+          new Date(sheet.printedAt).toLocaleDateString('ja-JP', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          }) +
+            ' · ' +
+            summary.total +
+            '問'
+        )
+      );
+      head.append(
+        text,
+        node(
+          'span',
+          'due-label',
+          summary.graded ? 'できた ' + summary.correct + ' / ' + summary.total : '答え合わせ待ち'
+        )
+      );
+      const actions = node('div', 'sheet-actions');
+      if (!summary.graded) {
+        const grade = node(
+          'button',
+          'btn btn--primary',
+          expandedSheet === sheet.id ? '閉じる' : '答え合わせを記録'
+        );
+        grade.type = 'button';
+        grade.dataset.action = 'grade';
+        grade.addEventListener('click', () => {
+          expandedSheet = expandedSheet === sheet.id ? null : sheet.id;
+          renderWorksheets();
+        });
+        actions.append(grade);
+      }
+      const reprint = node('button', 'btn btn--secondary', 'もう一度印刷');
+      reprint.type = 'button';
+      reprint.dataset.action = 'reprint';
+      reprint.addEventListener('click', () => reprintSheet(sheet));
+      const remove = node('button', 'text-button', '記録を消す');
+      remove.type = 'button';
+      remove.dataset.action = 'remove';
+      remove.addEventListener('click', () => removeSheet(sheet));
+      actions.append(reprint, remove);
+      row.append(head, actions);
+      if (expandedSheet === sheet.id && !summary.graded) row.append(gradeForm(sheet));
+      list.append(row);
+    });
+  }
 
   function renderLibrary() {
     const selected = $('savedLessonSelect').value;
@@ -475,8 +688,17 @@ export function initLearningStudio({
   if (!library.available)
     $('libraryNotice').textContent =
       '保存した問題セットを読み込めませんでした。ブラウザの保存設定を確認してください。';
+  if (!log.available)
+    $('worksheetNotice').textContent =
+      '印刷したプリントの記録を読み込めませんでした。上書きせず、この画面を開いている間だけ記録します。';
+  renderWorksheets();
   updateStats();
   $('startLesson').disabled = false;
   const params = new URL(window.location.href).searchParams;
   setView(params.get('view') || (params.has('practiceMode') ? 'worksheet' : 'learn'));
+
+  return {
+    getHistory: () => ({ records, sheets, nextNumber }),
+    logWorksheet,
+  };
 }

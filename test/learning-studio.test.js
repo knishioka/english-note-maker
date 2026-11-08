@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { initLearningStudio } from '../src/learning/studio.js';
 import { LIBRARY_KEY } from '../src/learning/lesson-library.js';
+import { createLessonItem } from '../src/learning/exercises.js';
+import { WORKSHEET_LOG_KEY } from '../src/learning/worksheet-log.js';
 
 const html = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../index.html'), 'utf8');
 const $ = (id) => document.getElementById(id);
@@ -60,7 +62,8 @@ describe('learning studio interactions', () => {
     expect($('resultScore').textContent).toBe('5 / 5');
     $('printLesson').click();
     expect(print).toHaveBeenCalledWith(
-      expect.arrayContaining([expect.objectContaining({ english: 'Have a good day!' })])
+      expect.arrayContaining([expect.objectContaining({ english: 'Have a good day!' })]),
+      ''
     );
     document.querySelector('[data-view-link="learn"]').click();
     $('printSavedLesson').click();
@@ -114,6 +117,78 @@ describe('learning studio interactions', () => {
     $('nextQuestion').click();
     $('newLesson').click();
     expect($('lessonSetup').hidden).toBe(false);
+  });
+
+  it('logs printed worksheets, records paper results into review and reprints or removes them', () => {
+    const print = vi.fn();
+    const historyChanged = vi.fn();
+    const studio = initLearningStudio({
+      getPhrasePool: () => pool,
+      categoryNames: { greetings: 'あいさつ' },
+      onWorksheetOpen: vi.fn(),
+      onPrintLesson: print,
+      onHistoryChange: historyChanged,
+    });
+    expect($('worksheetEmpty').hidden).toBe(false);
+    expect(studio.getHistory().nextNumber).toBe(1);
+    const settings = { category: 'greetings', age: '7-9', blankType: 'word', difficulty: 'easy' };
+    const items = pool.slice(0, 3).map((phrase) => createLessonItem(phrase, settings));
+    const sheet = studio.logWorksheet(items);
+    expect(sheet.number).toBe(1);
+    expect(studio.getHistory()).toMatchObject({ nextNumber: 2, sheets: [{ number: 1 }] });
+    expect(JSON.parse(window.localStorage.getItem(WORKSHEET_LOG_KEY)).nextNumber).toBe(2);
+    expect(studio.logWorksheet([])).toBeNull();
+    document.querySelector('[data-view-link="review"]').click();
+    expect($('worksheetEmpty').hidden).toBe(true);
+    expect($('worksheetList').textContent).toContain('No.1 · あいさつ · 単語の穴埋め');
+    expect($('worksheetList').textContent).toContain('答え合わせ待ち');
+    expect($('printReview').disabled).toBe(true);
+    $('worksheetList').querySelector('[data-action="grade"]').click();
+    const form = $('worksheetList').querySelector('form');
+    expect(form.querySelectorAll('.sheet-question').length).toBe(3);
+    expect(form.querySelector('mark').textContent).toBe('good');
+    form.querySelector('input[value="1"]').checked = true;
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    expect($('worksheetNotice').textContent).toContain('No.1 の結果を記録しました');
+    expect($('worksheetList').textContent).toContain('できた 2 / 3');
+    expect($('worksheetList').querySelector('[data-action="grade"]')).toBeNull();
+    expect(historyChanged).toHaveBeenCalled();
+    expect($('reviewCount').textContent).toBe('1');
+    expect($('learnedCount').textContent).toBe('2');
+    expect($('attemptCount').textContent).toBe('3');
+    expect($('printReview').disabled).toBe(false);
+    $('printReview').click();
+    expect(print).toHaveBeenCalledWith(
+      [expect.objectContaining({ phraseId: 'phrase-1' })],
+      '復習プリント'
+    );
+    document.querySelector('[data-view-link="review"]').click();
+    $('worksheetList').querySelector('[data-action="reprint"]').click();
+    expect(print).toHaveBeenLastCalledWith(
+      expect.arrayContaining([expect.objectContaining({ phraseId: 'phrase-0' })]),
+      'No.1 をもう一度'
+    );
+    document.querySelector('[data-view-link="review"]').click();
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    $('worksheetList').querySelector('[data-action="remove"]').click();
+    expect($('worksheetEmpty').hidden).toBe(false);
+    expect(studio.getHistory().sheets).toEqual([]);
+    expect(studio.getHistory().records.length).toBe(3);
+  });
+
+  it('keeps logging worksheets in memory when the stored log cannot be read', () => {
+    window.localStorage.setItem(WORKSHEET_LOG_KEY, '{"version":99}');
+    const studio = initLearningStudio({
+      getPhrasePool: () => pool,
+      categoryNames: { greetings: 'あいさつ' },
+      onWorksheetOpen: vi.fn(),
+      onPrintLesson: vi.fn(),
+    });
+    expect($('worksheetNotice').textContent).toContain('読み込めませんでした');
+    const settings = { category: 'greetings', age: '7-9', blankType: 'char', difficulty: 'hard' };
+    studio.logWorksheet([createLessonItem(pool[0], settings)]);
+    expect(studio.getHistory().sheets.length).toBe(1);
+    expect(window.localStorage.getItem(WORKSHEET_LOG_KEY)).toBe('{"version":99}');
   });
 
   it('handles empty pools and preserves unreadable storage rather than overwriting it', () => {

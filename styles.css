@@ -1825,3 +1825,9 @@ body::before {
 .debug-mode .baseline--bottom {
   border-color: orange !important;
 }
+
+/* 印刷番号。紙と「印刷したプリント」の記録を対応づける */
+.cloze-sheet-number {
+  font-weight: 700;
+  color: #334155;
+}

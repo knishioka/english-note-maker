@@ -13,9 +13,15 @@ export function normalizeAnswer(value) {
     .replace(/\s+/g, ' ');
 }
 
-export function createLessonItem(phrase, settings) {
+export function phraseIdOf(phrase) {
+  return phrase.id || phrase.phraseId || 'legacy:' + phrase.english;
+}
+
+// `exercise` lets a caller keep blanks that were already rendered (for example
+// the worksheet that was just printed) instead of drawing new ones.
+export function createLessonItem(phrase, settings, exercise) {
   return {
-    phraseId: phrase.id || phrase.phraseId || 'legacy:' + phrase.english,
+    phraseId: phraseIdOf(phrase),
     revision: phrase.revision || 1,
     english: phrase.english,
     japanese: phrase.japanese || '',
@@ -26,7 +32,9 @@ export function createLessonItem(phrase, settings) {
     difficulty: settings.difficulty,
     focusWords: phrase.focusWords || [],
     acceptedEnglish: phrase.acceptedEnglish || [],
-    exercise: generateClozeText(phrase.english, settings.blankType, settings.difficulty, phrase),
+    exercise:
+      exercise ||
+      generateClozeText(phrase.english, settings.blankType, settings.difficulty, phrase),
   };
 }
 
